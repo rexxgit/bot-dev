@@ -1,6 +1,19 @@
 {
     "version": 2,
+    "builds": [
+        {
+            "src": "api/**/*.js",
+            "use": "@vercel/node",
+            "config": {
+                "excludeFiles": "**/*.py"
+            }
+        }
+    ],
     "routes": [
+        {
+            "src": "/api/trigger",
+            "dest": "/api/trigger"
+        },
         {
             "src": "/(.*)",
             "dest": "/index.html"
