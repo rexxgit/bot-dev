@@ -1,10 +1,11 @@
 {
     "version": 2,
-    "functions": {
-        "api/query.py": {
-            "runtime": "python3.10"
+    "builds": [
+        {
+            "src": "api/**/*.js",
+            "use": "@vercel/node"
         }
-    },
+    ],
     "routes": [
         {
             "src": "/api/query",
