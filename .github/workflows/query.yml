@@ -1,0 +1,100 @@
+name: Query Bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      query:
+        description: 'Your question'
+        required: true
+        type: string
+  repository_dispatch:
+    types: [ask-question]
+
+jobs:
+  answer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 sentence-transformers faiss-cpu numpy lxml
+      
+      - name: Run scraper and answer
+        env:
+          QUERY: ${{ github.event.inputs.query || github.event.client_payload.query }}
+        run: |
+          python -c "
+          import os
+          import json
+          import requests
+          from bs4 import BeautifulSoup
+          import numpy as np
+          import faiss
+          from sentence_transformers import SentenceTransformer
+          from datetime import datetime
+          
+          QUERY = os.environ.get('QUERY', 'What are the July 2026 AI models?')
+          TARGET_URL = 'https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/'
+          
+          print(f'📝 Query: {QUERY}')
+          print(f'📡 Live scraping: {TARGET_URL}')
+          
+          # Scrape
+          headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+          response = requests.get(TARGET_URL, headers=headers, timeout=15)
+          response.raise_for_status()
+          
+          soup = BeautifulSoup(response.text, 'html.parser')
+          title_elem = soup.find('h1', class_='rtp-h1')
+          title = title_elem.get_text(strip=True) if title_elem else 'No Title'
+          paragraphs = [p.get_text(strip=True) for p in soup.find_all('p') if len(p.get_text(strip=True)) > 10]
+          
+          full_content = f'{title}\n\n' + '\n\n'.join(paragraphs)
+          print(f'✅ Scraped: {title} ({len(full_content)} chars)')
+          
+          # FAISS
+          model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+          chunks = [' '.join(full_content.split()[i:i+500]) for i in range(0, len(full_content.split()), 500)]
+          embeddings = model.encode(chunks)
+          faiss.normalize_L2(embeddings)
+          index = faiss.IndexFlatIP(embeddings.shape[1])
+          index.add(embeddings.astype('float32'))
+          
+          query_embedding = model.encode([QUERY])
+          faiss.normalize_L2(query_embedding)
+          distances, indices = index.search(query_embedding.astype('float32'), 3)
+          
+          retrieved = [chunks[idx] for idx in indices[0] if idx < len(chunks)]
+          
+          # Build response
+          response_text = f'**Answer based on the article:**\n\n**Title:** {title}\n\n'
+          for i, chunk in enumerate(retrieved[:3]):
+              response_text += f'Source {i+1}: {chunk[:300]}...\n\n'
+          response_text += f'\n---\nSource: {TARGET_URL}'
+          
+          result = {
+              'query': QUERY,
+              'response': response_text,
+              'timestamp': datetime.now().isoformat()
+          }
+          
+          with open('query_result.json', 'w') as f:
+              json.dump(result, f, indent=2)
+          
+          print('✅ Response generated')
+          print(response_text)
+          "
+      
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: query-result
+          path: query_result.json
