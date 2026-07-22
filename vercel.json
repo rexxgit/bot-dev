@@ -1,9 +1,14 @@
 {
     "version": 2,
+    "functions": {
+        "api/query.py": {
+            "runtime": "python3.10"
+        }
+    },
     "routes": [
         {
-            "src": "/api/trigger",
-            "dest": "/api/trigger"
+            "src": "/api/query",
+            "dest": "/api/query"
         },
         {
             "src": "/(.*)",
