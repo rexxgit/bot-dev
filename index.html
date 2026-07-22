@@ -13,16 +13,16 @@
                 <span class="text-2xl">🤖</span>
                 <h1 class="text-xl font-bold text-gray-800">Omni Brand Intelligence Bot</h1>
             </div>
-            <span class="text-sm text-gray-500">Python + GitHub Actions</span>
+            <span class="text-sm text-gray-500">GitHub + Vercel</span>
         </div>
     </header>
 
     <div class="flex flex-1 max-w-6xl mx-auto w-full">
         <aside class="w-64 bg-white border-r p-4 hidden md:block">
             <div class="space-y-4">
-                <div class="bg-green-50 rounded-lg p-3 border border-green-200">
-                    <p class="text-sm text-green-700 font-medium">🐍 Python + FAISS</p>
-                    <p class="text-xs text-green-600 mt-1">AI-powered RAG bot</p>
+                <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                    <p class="text-sm text-blue-700 font-medium">⚡ AI-Powered</p>
+                    <p class="text-xs text-blue-600 mt-1">RAG + FAISS + Python</p>
                 </div>
 
                 <div id="status-box" class="bg-gray-50 rounded-lg p-3">
@@ -33,7 +33,7 @@
                     <p class="text-xs text-gray-500">How it works:</p>
                     <ul class="text-xs text-gray-600 space-y-1 mt-1">
                         <li>1. You ask a question</li>
-                        <li>2. Triggers GitHub Actions</li>
+                        <li>2. GitHub Actions runs</li>
                         <li>3. Python scrapes + FAISS</li>
                         <li>4. Result saved as artifact</li>
                     </ul>
@@ -68,15 +68,12 @@
                         Clear
                     </button>
                 </div>
-                <p class="text-xs text-gray-400 mt-2 text-center">Response will be available in GitHub Actions → Artifacts</p>
+                <p class="text-xs text-gray-400 mt-2 text-center">Response in GitHub Actions → Artifacts</p>
             </div>
         </div>
     </div>
 
     <script>
-        // ================================================
-        // CONFIGURATION
-        // ================================================
         const API_URL = '/api/trigger';
         let isProcessing = false;
 
@@ -91,7 +88,7 @@
             document.getElementById('send-btn').disabled = true;
             input.disabled = true;
 
-            addMessage('assistant', '🔄 Triggering Python backend... Check the Actions tab for results.');
+            addMessage('assistant', '🔄 Triggering GitHub Actions... Check the Actions tab for results.');
 
             try {
                 document.getElementById('status').textContent = '🔄 Triggering...';
@@ -122,12 +119,12 @@
                     const bubble = last.querySelector('div');
                     if (bubble) {
                         bubble.innerHTML = `
-                            ✅ **Workflow triggered successfully!**<br><br>
+                            ✅ **Workflow triggered!**<br><br>
                             <strong>Query:</strong> ${message}<br><br>
                             <strong>Next steps:</strong><br>
                             1. Go to <a href="https://github.com/rexxgit/bot-dev/actions" target="_blank">Actions tab</a><br>
-                            2. Click on the latest <strong>"Query Bot"</strong> run<br>
-                            3. Download the <strong>query-result</strong> artifact
+                            2. Click on <strong>"Query Bot"</strong><br>
+                            3. Download <strong>query-result</strong> artifact
                         `;
                     }
                 }
