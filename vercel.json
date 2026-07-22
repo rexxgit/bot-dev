@@ -2,10 +2,6 @@
     "version": 2,
     "routes": [
         {
-            "src": "/api/data",
-            "dest": "/api/data"
-        },
-        {
             "src": "/api/trigger",
             "dest": "/api/trigger"
         },
