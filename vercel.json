@@ -2,14 +2,18 @@
     "version": 2,
     "builds": [
         {
-            "src": "api/**/*.js",
+            "src": "api/trigger.js",
             "use": "@vercel/node"
         }
     ],
     "routes": [
         {
+            "src": "/api/trigger",
+            "dest": "/api/trigger"
+        },
+        {
             "src": "/api/query",
-            "dest": "/api/query"
+            "dest": "/api/trigger"
         },
         {
             "src": "/(.*)",
