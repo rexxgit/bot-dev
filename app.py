@@ -703,6 +703,31 @@ with gr.Blocks(
 # ================================================
 # RUN
 # ================================================
+# Add this at the end of app.py, before the if __name__ == "__main__" block
+
+def get_scraped_data() -> Dict:
+    """Return the scraped data for the UI"""
+    if scraped_data:
+        return scraped_data[0]
+    return None
+
+def answer_question_api(query: str) -> Dict:
+    """API-compatible version of answer_question"""
+    if not query or not query.strip():
+        return {
+            'response': 'Please enter a question.',
+            'sources': [],
+            'metadata': {}
+        }
+    
+    result = rag.generate_response(query)
+    return result
+
+def get_formatted_scraped_content() -> str:
+    """Return formatted HTML of scraped content"""
+    if not scraped_data:
+        return "No data available"
+    return format_scraped_content_ui(scraped_data[0])
 
 if __name__ == "__main__":
     print('\n🚀 Starting Gradio interface...')
