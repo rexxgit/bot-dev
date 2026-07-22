@@ -257,6 +257,55 @@ class RAGPipeline:
                 })
         
         return results
+    
+    def generate_response(self, query: str) -> Dict:
+        """Generate a response with sources"""
+        results = self.search(query, top_k=5)
+        
+        if not results:
+            return {
+                'response': 'No relevant information found.',
+                'sources': []
+            }
+        
+        # Build response with structure
+        response_parts = []
+        for i, r in enumerate(results):
+            response_parts.append(
+                f"**Source {i+1}** (relevance: {r['score']:.2f}):\n{r['chunk'][:350]}..."
+            )
+        
+        response_text = f"**📊 Answer based on the article:**\n\n"
+        
+        if self.documents:
+            doc = self.documents[0]
+            response_text += f"**Title:** {doc.get('title', 'Unknown')}\n"
+            response_text += f"**Author:** {doc.get('author', 'Unknown')}\n"
+            response_text += f"**Date:** {doc.get('date', 'Unknown')}\n"
+            
+            if doc.get('sub_sections'):
+                response_text += f"\n**Key Sections:**\n"
+                for sub in doc['sub_sections'][:3]:
+                    response_text += f"  • {sub}\n"
+            
+            if doc.get('tables'):
+                response_text += f"\n**Tables:** {len(doc['tables'])} found\n"
+        
+        response_text += f"\n\n**Relevant Sources:**\n\n"
+        response_text += '\n\n'.join(response_parts)
+        response_text += f"\n\n---\n*Source: {self.documents[0]['url'] if self.documents else TARGET_URL}*"
+        
+        return {
+            'response': response_text,
+            'sources': results,
+            'metadata': {
+                'title': self.documents[0].get('title', 'Unknown') if self.documents else 'Unknown',
+                'author': self.documents[0].get('author', 'Unknown') if self.documents else 'Unknown',
+                'date': self.documents[0].get('date', 'Unknown') if self.documents else 'Unknown',
+                'sub_sections': self.documents[0].get('sub_sections', []) if self.documents else [],
+                'tables_count': len(self.documents[0].get('tables', [])) if self.documents else 0
+            }
+        }
 
 # ================================================
 # FORMAT RESPONSE FOR UI
@@ -541,6 +590,34 @@ def answer_question(query: str) -> str:
     return format_answer_with_sources(query, result)
 
 # ================================================
+# API FUNCTIONS (for Vercel)
+# ================================================
+
+def get_scraped_data() -> Dict:
+    """Return the scraped data for the UI"""
+    if scraped_data:
+        return scraped_data[0]
+    return None
+
+def answer_question_api(query: str) -> Dict:
+    """API-compatible version of answer_question"""
+    if not query or not query.strip():
+        return {
+            'response': 'Please enter a question.',
+            'sources': [],
+            'metadata': {}
+        }
+    
+    result = rag.generate_response(query)
+    return result
+
+def get_formatted_scraped_content() -> str:
+    """Return formatted HTML of scraped content"""
+    if not scraped_data:
+        return "No data available"
+    return format_scraped_content_ui(scraped_data[0])
+
+# ================================================
 # GRADIO INTERFACE
 # ================================================
 
@@ -703,31 +780,6 @@ with gr.Blocks(
 # ================================================
 # RUN
 # ================================================
-# Add this at the end of app.py, before the if __name__ == "__main__" block
-
-def get_scraped_data() -> Dict:
-    """Return the scraped data for the UI"""
-    if scraped_data:
-        return scraped_data[0]
-    return None
-
-def answer_question_api(query: str) -> Dict:
-    """API-compatible version of answer_question"""
-    if not query or not query.strip():
-        return {
-            'response': 'Please enter a question.',
-            'sources': [],
-            'metadata': {}
-        }
-    
-    result = rag.generate_response(query)
-    return result
-
-def get_formatted_scraped_content() -> str:
-    """Return formatted HTML of scraped content"""
-    if not scraped_data:
-        return "No data available"
-    return format_scraped_content_ui(scraped_data[0])
 
 if __name__ == "__main__":
     print('\n🚀 Starting Gradio interface...')
