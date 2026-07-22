@@ -1,14 +1,10 @@
 {
     "version": 2,
-    "builds": [
-        {
-            "src": "api/**/*.js",
-            "use": "@vercel/node",
-            "config": {
-                "excludeFiles": "**/*.py"
-            }
+    "functions": {
+        "api/trigger.js": {
+            "runtime": "nodejs20.x"
         }
-    ],
+    },
     "routes": [
         {
             "src": "/api/trigger",
