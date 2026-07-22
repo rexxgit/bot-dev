@@ -1,88 +1,13 @@
-// api/data.js - Fast JSON serving
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export default async function handler(req, res) {
-    // CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
-    
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-    
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
-    }
-
-    try {
-        const { query } = req.body;
-        
-        // Read data.json
-        const dataPath = path.join(__dirname, '..', 'data.json');
-        
-        if (!fs.existsSync(dataPath)) {
-            return res.status(200).json({
-                response: '📊 **Data not yet available.**\n\nPlease run the scraper first.',
-                sources: [],
-                metadata: { status: 'pending' }
-            });
-        }
-
-        const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-        
-        // If no query, return the full data
-        if (!query) {
-            return res.status(200).json({
-                type: 'scraped',
-                data: data
-            });
-        }
-        
-        // Fast search
-        const queryLower = query.toLowerCase();
-        const content = data.content || '';
-        const paragraphs = content.split('\n\n');
-        
-        // Find relevant paragraphs
-        const matches = paragraphs.filter(p => 
-            p.toLowerCase().includes(queryLower)
-        );
-        
-        // Build response
-        const results = matches.length > 0 ? matches : [content.substring(0, 400)];
-        const displayContent = results.slice(0, 3).join('\n\n---\n\n');
-        
-        const responseText = `**📊 Answer based on the article:**\n\n` +
-            `**Title:** ${data.title || 'Unknown'}\n` +
-            `**Author:** ${data.author || 'Unknown'}\n` +
-            `**Date:** ${data.date || 'Unknown'}\n` +
-            `**Words:** ${data.word_count || 0}\n\n` +
-            displayContent;
-        
-        return res.status(200).json({
-            response: responseText,
-            sources: results.slice(0, 3).map((chunk, i) => ({
-                source: data.url || 'Unknown',
-                score: 0.95 - (i * 0.05),
-                chunk: chunk.substring(0, 200) + '...'
-            })),
-            metadata: {
-                title: data.title || 'Unknown',
-                author: data.author || 'Unknown',
-                date: data.date || 'Unknown',
-                word_count: data.word_count || 0,
-                sections: data.sections?.slice(0, 5) || []
-            }
-        });
-        
-    } catch (error) {
-        console.error('Error:', error);
-        return res.status(500).json({ error: error.message || 'Internal server error' });
-    }
+{
+    "title": "GPT-5.6, CLAUDE SONNET 5 AND GROK 4.5: WHAT THE JULY 2026 AI MODEL WAVE MEANS FOR YOUR BUSINESS",
+    "author": "Yuvraj Raulji",
+    "date": "July 12, 2026",
+    "url": "https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/",
+    "word_count": 1200,
+    "sections": [
+        "What Actually Launched in the July 2026 Model Wave",
+        "Why This Pace Is the Real Story",
+        "The Open-Source Surge Behind the Headlines"
+    ],
+    "content": "The middle of 2026 has been one of the busiest stretches the AI industry has ever seen. In a matter of weeks, Anthropic shipped Claude Sonnet 5, OpenAI began rolling out its GPT-5.6 family, and xAI released Grok 4.5, while a wave of open-source models kept pace right behind them. For business leaders, the headlines are exciting and a little overwhelming. The real question is not which model won this month, it is what this pace of change means for the decisions you are making about AI right now.\n\nThree frontier releases anchored the last few weeks, each aimed at a slightly different strength. Understanding what each one is good at matters more than the leaderboard position, because the right model depends on the job you are giving it.\n\nClaude Sonnet 5 | Anthropic | June 30, 2026 | Balanced reasoning, coding, and long, reliable agent runs\nGPT-5.6 (Sol, Terra, Luna) | OpenAI | Rolling out from late June | Top-end benchmark scores\nGrok 4.5 | xAI | July 8, 2026 | Real-time data and fast conversational responses\n\nThe July 2026 wave did not crown a single winner. It confirmed that several frontier models are now close in quality, so your advantage comes from how you use them, not which logo you pick."
 }
