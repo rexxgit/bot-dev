@@ -1,18 +1,13 @@
 {
     "version": 2,
-    "builds": [
-        {
-            "src": "api/trigger.js",
-            "use": "@vercel/node"
+    "functions": {
+        "api/trigger.js": {
+            "runtime": "nodejs20.x"
         }
-    ],
+    },
     "routes": [
         {
             "src": "/api/trigger",
-            "dest": "/api/trigger"
-        },
-        {
-            "src": "/api/query",
             "dest": "/api/trigger"
         },
         {
