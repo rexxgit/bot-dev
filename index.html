@@ -75,10 +75,16 @@
 
     <script>
         // ================================================
-        // CONFIGURATION
+        // CONFIGURATION - Uses Vercel Environment Variable
         // ================================================
-        // Replace with your token (or use Vercel env variable)
-        const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN_HERE';
+        // This reads the BOT_TOKEN from Vercel environment variables
+        // Note: For static HTML, we need a different approach
+        // Using a serverless function or build-time injection
+        
+        // For now, use a placeholder - you'll need to replace this with your actual token
+        // OR use the Vercel serverless function approach below
+        
+        const GITHUB_TOKEN = 'YOUR_BOT_TOKEN_HERE';  // <-- Replace with actual token for now
         const REPO_OWNER = 'rexxgit';
         const REPO_NAME = 'bot-dev';
 
@@ -101,11 +107,10 @@
                 document.getElementById('status').textContent = '🔄 Triggering...';
                 document.getElementById('status').className = 'text-sm text-yellow-600';
 
-                if (!GITHUB_TOKEN || GITHUB_TOKEN === 'YOUR_GITHUB_TOKEN_HERE') {
-                    throw new Error('GitHub token not configured');
+                if (!GITHUB_TOKEN || GITHUB_TOKEN === 'YOUR_BOT_TOKEN_HERE') {
+                    throw new Error('Bot token not configured. Add BOT_TOKEN to Vercel environment variables.');
                 }
 
-                // Directly call GitHub API
                 const response = await fetch(
                     `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/dispatches`,
                     {
@@ -162,9 +167,8 @@
                         bubble.innerHTML = `
                             ❌ **Error:** ${error.message}<br><br>
                             <strong>To fix:</strong><br>
-                            1. Go to <a href="https://github.com/settings/tokens" target="_blank">GitHub Tokens</a><br>
-                            2. Generate a token with <strong>repo</strong> and <strong>workflow</strong> scopes<br>
-                            3. Replace <code>YOUR_GITHUB_TOKEN_HERE</code> in the code<br><br>
+                            1. Add <code>BOT_TOKEN</code> to Vercel environment variables<br>
+                            2. Redeploy on Vercel<br><br>
                             <strong>Or trigger manually:</strong><br>
                             <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/actions/workflows/query.yml" target="_blank">Run workflow manually</a>
                         `;
