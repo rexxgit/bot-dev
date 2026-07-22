@@ -1,5 +1,7 @@
 {
     "name": "bot-dev",
     "version": "1.0.0",
-    "description": "Omni Brand Intelligence Bot"
+    "dependencies": {
+        "@vercel/node": "^3.0.0"
+    }
 }
