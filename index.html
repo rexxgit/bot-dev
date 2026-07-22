@@ -44,6 +44,13 @@
         .response-content li {
             margin-bottom: 0.25rem;
         }
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -183,7 +190,7 @@
                 `;
             }
             
-            return html;
+            return html || '<p class="text-gray-500">No response content available.</p>';
         }
 
         // ================================================
@@ -214,12 +221,21 @@
                     body: JSON.stringify({ query: message })
                 });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to process request');
+                // Get response text first
+                const responseText = await response.text();
+                
+                // Try to parse as JSON
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Parse error:', responseText);
+                    throw new Error('Server returned invalid response. Please try again.');
                 }
 
-                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || `Server error: ${response.status}`);
+                }
 
                 document.getElementById('status').textContent = '✅ Complete!';
                 document.getElementById('status').className = 'text-sm text-green-600';
@@ -249,10 +265,10 @@
                     const bubble = last.querySelector('div');
                     if (bubble) {
                         bubble.innerHTML = `
-                            <div class="text-red-600">
+                            <div class="error-message">
                                 <strong>❌ Error</strong>
                                 <p class="mt-2">${error.message}</p>
-                                <p class="text-sm text-gray-500 mt-2">Please try again.</p>
+                                <p class="text-sm text-gray-600 mt-2">Please check that the Python backend is running.</p>
                             </div>
                         `;
                     }
