@@ -1,13 +1,7 @@
 {
-    "version": 2,
-    "routes": [
-        {
-            "src": "/api/trigger",
-            "dest": "/api/trigger"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
-        }
-    ]
+    "name": "bot-dev",
+    "version": "1.0.0",
+    "dependencies": {
+        "@vercel/node": "^3.0.0"
+    }
 }
