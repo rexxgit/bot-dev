@@ -5,37 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Omni Brand Intelligence Bot</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .source-card {
+            border-left: 4px solid #3b82f6;
+            transition: all 0.2s ease;
+        }
+        .source-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .relevance-high { background: #dcfce7; color: #166534; }
+        .relevance-medium { background: #fef3c7; color: #92400e; }
+        .relevance-low { background: #fee2e2; color: #991b1b; }
+        .loading-dots::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+        .response-content {
+            line-height: 1.8;
+        }
+        .response-content h3 {
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .response-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        .response-content li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <header class="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <span class="text-2xl">🤖</span>
                 <h1 class="text-xl font-bold text-gray-800">Omni Brand Intelligence Bot</h1>
             </div>
-            <span class="text-sm text-gray-500">GitHub + Vercel</span>
+            <div class="flex items-center gap-3">
+                <span class="text-sm text-gray-500">Live RAG</span>
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            </div>
         </div>
     </header>
 
-    <div class="flex flex-1 max-w-6xl mx-auto w-full">
+    <div class="flex flex-1 max-w-7xl mx-auto w-full">
         <aside class="w-64 bg-white border-r p-4 hidden md:block">
             <div class="space-y-4">
-                <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
-                    <p class="text-sm text-blue-700 font-medium">⚡ AI-Powered</p>
-                    <p class="text-xs text-blue-600 mt-1">RAG + FAISS + Python</p>
+                <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                    <p class="text-sm text-green-700 font-medium">⚡ AI-Powered</p>
+                    <p class="text-xs text-green-600 mt-1">RAG + FAISS + Python</p>
                 </div>
 
                 <div id="status-box" class="bg-gray-50 rounded-lg p-3">
                     <p id="status" class="text-sm text-gray-600">Ready. Ask a question!</p>
+                    <p id="timestamp" class="text-xs text-gray-400 mt-1"></p>
                 </div>
 
                 <div class="border-t pt-4">
                     <p class="text-xs text-gray-500">How it works:</p>
                     <ul class="text-xs text-gray-600 space-y-1 mt-1">
                         <li>1. You ask a question</li>
-                        <li>2. GitHub Actions runs</li>
-                        <li>3. Python scrapes + FAISS</li>
-                        <li>4. Result saved as artifact</li>
+                        <li>2. Python scrapes live content</li>
+                        <li>3. FAISS finds relevant sources</li>
+                        <li>4. AI generates the answer</li>
                     </ul>
                 </div>
             </div>
@@ -48,6 +92,7 @@
                         <p class="text-4xl mb-4">🤖</p>
                         <p>Ask a question about the July 2026 AI model wave,</p>
                         <p>GPT-5.6, Claude Sonnet 5, Grok 4.5, or AI strategy.</p>
+                        <p class="text-xs mt-4 text-gray-300">Powered by RAG + FAISS</p>
                     </div>
                 </div>
             </div>
@@ -68,15 +113,82 @@
                         Clear
                     </button>
                 </div>
-                <p class="text-xs text-gray-400 mt-2 text-center">Response in GitHub Actions → Artifacts</p>
+                <p class="text-xs text-gray-400 mt-2 text-center">Responses are generated in real-time</p>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = '/api/trigger';
+        // ================================================
+        // CONFIGURATION
+        // ================================================
+        const API_URL = '/api/query';
         let isProcessing = false;
 
+        // ================================================
+        // FORMAT RESPONSE
+        // ================================================
+        function formatResponse(data) {
+            let html = '';
+            
+            // Response content
+            if (data.response) {
+                html += `<div class="response-content">${data.response}</div>`;
+            }
+            
+            // Sources
+            if (data.sources && data.sources.length > 0) {
+                html += `
+                    <div class="mt-4">
+                        <h3 class="font-semibold text-gray-700 mb-2">📚 Sources</h3>
+                        <div class="space-y-2">
+                `;
+                
+                data.sources.forEach((source, index) => {
+                    const score = source.score || 0;
+                    const relevanceClass = score > 0.7 ? 'relevance-high' : 
+                                         score > 0.4 ? 'relevance-medium' : 'relevance-low';
+                    const relevanceText = score > 0.7 ? 'High' : score > 0.4 ? 'Medium' : 'Low';
+                    
+                    html += `
+                        <div class="source-card bg-white p-3 rounded-lg shadow-sm">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-800">Source ${index + 1}</span>
+                                    <span class="text-xs text-gray-500 ml-2">${source.source || 'Unknown'}</span>
+                                </div>
+                                <span class="text-xs px-2 py-1 rounded-full ${relevanceClass}">
+                                    ${relevanceText} (${(score * 100).toFixed(0)}%)
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">${source.chunk ? source.chunk.substring(0, 200) + '...' : ''}</p>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Metadata
+            if (data.metadata) {
+                html += `
+                    <div class="mt-4 text-xs text-gray-400 border-t pt-2">
+                        <p>📄 Title: ${data.metadata.title || 'Unknown'}</p>
+                        <p>✍️ Author: ${data.metadata.author || 'Unknown'}</p>
+                        <p>📅 Date: ${data.metadata.date || 'Unknown'}</p>
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        // ================================================
+        // SEND MESSAGE
+        // ================================================
         async function sendMessage() {
             const input = document.getElementById('message-input');
             const message = input.value.trim();
@@ -88,10 +200,10 @@
             document.getElementById('send-btn').disabled = true;
             input.disabled = true;
 
-            addMessage('assistant', '🔄 Triggering GitHub Actions... Check the Actions tab for results.');
+            addMessage('assistant', '🔄 Processing your question... <span class="loading-dots"></span>');
 
             try {
-                document.getElementById('status').textContent = '🔄 Triggering...';
+                document.getElementById('status').textContent = '🔄 Processing...';
                 document.getElementById('status').className = 'text-sm text-yellow-600';
 
                 const response = await fetch(API_URL, {
@@ -104,28 +216,23 @@
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to trigger workflow');
+                    throw new Error(errorData.error || 'Failed to process request');
                 }
 
                 const data = await response.json();
 
-                document.getElementById('status').textContent = '✅ Workflow triggered!';
+                document.getElementById('status').textContent = '✅ Complete!';
                 document.getElementById('status').className = 'text-sm text-green-600';
+                document.getElementById('timestamp').textContent = new Date().toLocaleTimeString();
 
+                // Display the formatted response
                 const container = document.getElementById('chat-messages');
                 const messages = container.querySelectorAll('.flex.justify-start');
                 if (messages.length > 0) {
                     const last = messages[messages.length - 1];
                     const bubble = last.querySelector('div');
                     if (bubble) {
-                        bubble.innerHTML = `
-                            ✅ **Workflow triggered!**<br><br>
-                            <strong>Query:</strong> ${message}<br><br>
-                            <strong>Next steps:</strong><br>
-                            1. Go to <a href="https://github.com/rexxgit/bot-dev/actions" target="_blank">Actions tab</a><br>
-                            2. Click on <strong>"Query Bot"</strong><br>
-                            3. Download <strong>query-result</strong> artifact
-                        `;
+                        bubble.innerHTML = formatResponse(data);
                     }
                 }
 
@@ -141,7 +248,13 @@
                     const last = messages[messages.length - 1];
                     const bubble = last.querySelector('div');
                     if (bubble) {
-                        bubble.textContent = `❌ Error: ${error.message}\n\nPlease try again.`;
+                        bubble.innerHTML = `
+                            <div class="text-red-600">
+                                <strong>❌ Error</strong>
+                                <p class="mt-2">${error.message}</p>
+                                <p class="text-sm text-gray-500 mt-2">Please try again.</p>
+                            </div>
+                        `;
                     }
                 }
             }
@@ -152,6 +265,9 @@
             input.focus();
         }
 
+        // ================================================
+        // UI FUNCTIONS
+        // ================================================
         function addMessage(role, content) {
             const container = document.getElementById('chat-messages');
             
@@ -161,10 +277,10 @@
             }
 
             const messageDiv = document.createElement('div');
-            messageDiv.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+            messageDiv.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`;
             
             const bubble = document.createElement('div');
-            bubble.className = `max-w-[80%] rounded-lg px-4 py-2 whitespace-pre-wrap ${
+            bubble.className = `max-w-[85%] rounded-lg px-4 py-3 whitespace-pre-wrap ${
                 role === 'user' 
                     ? 'bg-blue-600 text-white' 
                     : 'bg-white border shadow-sm text-gray-800'
@@ -179,6 +295,8 @@
             messageDiv.appendChild(bubble);
             container.appendChild(messageDiv);
             container.scrollTop = container.scrollHeight;
+            
+            return messageDiv;
         }
 
         function clearChat() {
@@ -189,12 +307,14 @@
                         <p class="text-4xl mb-4">🤖</p>
                         <p>Ask a question about the July 2026 AI model wave,</p>
                         <p>GPT-5.6, Claude Sonnet 5, Grok 4.5, or AI strategy.</p>
+                        <p class="text-xs mt-4 text-gray-300">Powered by RAG + FAISS</p>
                     </div>
                 </div>
             `;
             
             document.getElementById('status').textContent = 'Ready. Ask a question!';
             document.getElementById('status').className = 'text-sm text-gray-600';
+            document.getElementById('timestamp').textContent = '';
         }
     </script>
 </body>
