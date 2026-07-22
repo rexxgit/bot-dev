@@ -2,7 +2,7 @@
 export default async function handler(req, res) {
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
     // Handle preflight
@@ -22,9 +22,9 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Query is required' });
         }
 
-        // Return a response
+        // Return a simple response
         return res.status(200).json({
-            response: `**📊 Answer for: "${query}"**\n\nThis is a response from the Vercel API.`,
+            response: `**📊 Answer for: "${query}"**\n\nThis is a response from the API.`,
             sources: [
                 { source: 'Source 1', score: 0.85, chunk: 'Sample content...' }
             ],
