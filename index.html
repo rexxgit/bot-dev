@@ -6,6 +6,7 @@
     <title>Omni Brand Intelligence Bot</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Source card styling */
         .source-card {
             border-left: 4px solid #3b82f6;
             transition: all 0.2s ease;
@@ -14,9 +15,13 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+        
+        /* Relevance score colors */
         .relevance-high { background: #dcfce7; color: #166534; }
         .relevance-medium { background: #fef3c7; color: #92400e; }
         .relevance-low { background: #fee2e2; color: #991b1b; }
+        
+        /* Loading animation */
         .loading-dots::after {
             content: '...';
             animation: dots 1.5s steps(4, end) infinite;
@@ -27,8 +32,13 @@
             50% { content: '..'; }
             75% { content: '...'; }
         }
+        
+        /* Response content styling */
         .response-content {
             line-height: 1.8;
+        }
+        .response-content strong {
+            color: #1e293b;
         }
         .response-content h3 {
             font-weight: 600;
@@ -36,24 +46,21 @@
             margin-top: 1rem;
             margin-bottom: 0.5rem;
         }
-        .response-content ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-            margin: 0.5rem 0;
-        }
-        .response-content li {
-            margin-bottom: 0.25rem;
-        }
-        .error-message {
-            background: #fee2e2;
-            border: 1px solid #ef4444;
-            color: #991b1b;
-            padding: 1rem;
-            border-radius: 8px;
+        
+        /* Metadata pill */
+        .meta-pill {
+            background: #f1f5f9;
+            padding: 0.2rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            color: #475569;
+            display: inline-block;
+            margin: 0.15rem;
         }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header -->
     <header class="bg-white shadow-sm border-b sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
@@ -68,11 +75,12 @@
     </header>
 
     <div class="flex flex-1 max-w-7xl mx-auto w-full">
+        <!-- Sidebar -->
         <aside class="w-64 bg-white border-r p-4 hidden md:block">
             <div class="space-y-4">
                 <div class="bg-green-50 rounded-lg p-3 border border-green-200">
-                    <p class="text-sm text-green-700 font-medium">⚡ AI-Powered</p>
-                    <p class="text-xs text-green-600 mt-1">RAG + FAISS + Python</p>
+                    <p class="text-sm text-green-700 font-medium">⚡ Live Scraping</p>
+                    <p class="text-xs text-green-600 mt-1">Real data from competitor websites</p>
                 </div>
 
                 <div id="status-box" class="bg-gray-50 rounded-lg p-3">
@@ -84,14 +92,15 @@
                     <p class="text-xs text-gray-500">How it works:</p>
                     <ul class="text-xs text-gray-600 space-y-1 mt-1">
                         <li>1. You ask a question</li>
-                        <li>2. Python scrapes live content</li>
-                        <li>3. FAISS finds relevant sources</li>
-                        <li>4. AI generates the answer</li>
+                        <li>2. Searches scraped data</li>
+                        <li>3. Finds relevant content</li>
+                        <li>4. Returns sources with scores</li>
                     </ul>
                 </div>
             </div>
         </aside>
 
+        <!-- Chat Area -->
         <div class="flex-1 flex flex-col h-[calc(100vh-80px)]">
             <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
                 <div class="flex items-center justify-center h-full text-gray-400">
@@ -99,11 +108,12 @@
                         <p class="text-4xl mb-4">🤖</p>
                         <p>Ask a question about the July 2026 AI model wave,</p>
                         <p>GPT-5.6, Claude Sonnet 5, Grok 4.5, or AI strategy.</p>
-                        <p class="text-xs mt-4 text-gray-300">Powered by RAG + FAISS</p>
+                        <p class="text-xs mt-4 text-gray-300">Powered by live web scraping</p>
                     </div>
                 </div>
             </div>
 
+            <!-- Input Area -->
             <div class="border-t bg-white p-4">
                 <div class="flex gap-2">
                     <input
@@ -120,7 +130,7 @@
                         Clear
                     </button>
                 </div>
-                <p class="text-xs text-gray-400 mt-2 text-center">Responses are generated in real-time</p>
+                <p class="text-xs text-gray-400 mt-2 text-center">Responses are generated from live scraped data</p>
             </div>
         </div>
     </div>
@@ -133,14 +143,14 @@
         let isProcessing = false;
 
         // ================================================
-        // FORMAT RESPONSE
+        // FORMAT RESPONSE (Polished)
         // ================================================
         function formatResponse(data) {
             let html = '';
             
             // Response content
             if (data.response) {
-                html += `<div class="response-content">${data.response}</div>`;
+                html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
             }
             
             // Sources
@@ -153,22 +163,26 @@
                 
                 data.sources.forEach((source, index) => {
                     const score = source.score || 0;
-                    const relevanceClass = score > 0.7 ? 'relevance-high' : 
-                                         score > 0.4 ? 'relevance-medium' : 'relevance-low';
-                    const relevanceText = score > 0.7 ? 'High' : score > 0.4 ? 'Medium' : 'Low';
+                    const maxScore = 20;
+                    const pct = Math.min((score / maxScore) * 100, 100);
+                    const relevanceClass = pct > 60 ? 'relevance-high' : 
+                                         pct > 30 ? 'relevance-medium' : 'relevance-low';
+                    const relevanceText = pct > 60 ? 'High' : pct > 30 ? 'Medium' : 'Low';
                     
                     html += `
                         <div class="source-card bg-white p-3 rounded-lg shadow-sm">
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
-                                    <span class="font-medium text-gray-800">Source ${index + 1}</span>
-                                    <span class="text-xs text-gray-500 ml-2">${source.source || 'Unknown'}</span>
+                                    <span class="font-medium text-gray-800">${source.title || 'Source ' + (index + 1)}</span>
+                                    <span class="text-xs text-gray-500 ml-2">${source.author || 'Unknown'}</span>
+                                    <span class="text-xs text-gray-400 ml-2">${source.date || ''}</span>
                                 </div>
                                 <span class="text-xs px-2 py-1 rounded-full ${relevanceClass}">
-                                    ${relevanceText} (${(score * 100).toFixed(0)}%)
+                                    ${relevanceText} (${Math.round(pct)}%)
                                 </span>
                             </div>
                             <p class="text-sm text-gray-600 mt-1">${source.chunk ? source.chunk.substring(0, 200) + '...' : ''}</p>
+                            <a href="${source.source || '#'}" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 inline-block">🔗 View source</a>
                         </div>
                     `;
                 });
@@ -183,14 +197,14 @@
             if (data.metadata) {
                 html += `
                     <div class="mt-4 text-xs text-gray-400 border-t pt-2">
-                        <p>📄 Title: ${data.metadata.title || 'Unknown'}</p>
-                        <p>✍️ Author: ${data.metadata.author || 'Unknown'}</p>
-                        <p>📅 Date: ${data.metadata.date || 'Unknown'}</p>
+                        <span class="meta-pill">📊 ${data.metadata.total_sources || 0} sources</span>
+                        <span class="meta-pill">🔄 ${data.metadata.matches_found || 0} matches</span>
+                        <span class="meta-pill">🕐 ${data.metadata.last_updated ? new Date(data.metadata.last_updated).toLocaleString() : 'N/A'}</span>
                     </div>
                 `;
             }
             
-            return html || '<p class="text-gray-500">No response content available.</p>';
+            return html || '<p class="text-gray-500">No response available.</p>';
         }
 
         // ================================================
@@ -207,10 +221,10 @@
             document.getElementById('send-btn').disabled = true;
             input.disabled = true;
 
-            addMessage('assistant', '🔄 Processing your question... <span class="loading-dots"></span>');
+            addMessage('assistant', '🔄 Searching scraped data... <span class="loading-dots"></span>');
 
             try {
-                document.getElementById('status').textContent = '🔄 Processing...';
+                document.getElementById('status').textContent = '🔄 Searching...';
                 document.getElementById('status').className = 'text-sm text-yellow-600';
 
                 const response = await fetch(API_URL, {
@@ -221,21 +235,11 @@
                     body: JSON.stringify({ query: message })
                 });
 
-                // Get response text first
-                const responseText = await response.text();
-                
-                // Try to parse as JSON
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                } catch (parseError) {
-                    console.error('Parse error:', responseText);
-                    throw new Error('Server returned invalid response. Please try again.');
+                if (!response.ok) {
+                    throw new Error('Server error: ' + response.status);
                 }
 
-                if (!response.ok) {
-                    throw new Error(data.error || `Server error: ${response.status}`);
-                }
+                const data = await response.json();
 
                 document.getElementById('status').textContent = '✅ Complete!';
                 document.getElementById('status').className = 'text-sm text-green-600';
@@ -249,6 +253,19 @@
                     const bubble = last.querySelector('div');
                     if (bubble) {
                         bubble.innerHTML = formatResponse(data);
+                        
+                        // Add copy button
+                        const copyBtn = document.createElement('button');
+                        copyBtn.className = 'text-xs text-gray-400 hover:text-gray-600 mt-2 transition block';
+                        copyBtn.innerHTML = '📋 Copy Response';
+                        copyBtn.onclick = () => {
+                            const textToCopy = data.response || '';
+                            navigator.clipboard.writeText(textToCopy).then(() => {
+                                copyBtn.innerHTML = '✅ Copied!';
+                                setTimeout(() => { copyBtn.innerHTML = '📋 Copy Response'; }, 2000);
+                            });
+                        };
+                        bubble.appendChild(copyBtn);
                     }
                 }
 
@@ -265,10 +282,10 @@
                     const bubble = last.querySelector('div');
                     if (bubble) {
                         bubble.innerHTML = `
-                            <div class="error-message">
+                            <div class="text-red-600">
                                 <strong>❌ Error</strong>
                                 <p class="mt-2">${error.message}</p>
-                                <p class="text-sm text-gray-600 mt-2">Please check that the Python backend is running.</p>
+                                <p class="text-sm text-gray-500 mt-2">Please try again.</p>
                             </div>
                         `;
                     }
@@ -323,7 +340,7 @@
                         <p class="text-4xl mb-4">🤖</p>
                         <p>Ask a question about the July 2026 AI model wave,</p>
                         <p>GPT-5.6, Claude Sonnet 5, Grok 4.5, or AI strategy.</p>
-                        <p class="text-xs mt-4 text-gray-300">Powered by RAG + FAISS</p>
+                        <p class="text-xs mt-4 text-gray-300">Powered by live web scraping</p>
                     </div>
                 </div>
             `;
