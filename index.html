@@ -6,7 +6,6 @@
     <title>Omni Brand Intelligence Bot</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Source card styling */
         .source-card {
             border-left: 4px solid #3b82f6;
             transition: all 0.2s ease;
@@ -15,13 +14,9 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        
-        /* Relevance score colors */
         .relevance-high { background: #dcfce7; color: #166534; }
         .relevance-medium { background: #fef3c7; color: #92400e; }
         .relevance-low { background: #fee2e2; color: #991b1b; }
-        
-        /* Loading animation */
         .loading-dots::after {
             content: '...';
             animation: dots 1.5s steps(4, end) infinite;
@@ -32,22 +27,12 @@
             50% { content: '..'; }
             75% { content: '...'; }
         }
-        
-        /* Response content styling */
         .response-content {
             line-height: 1.8;
         }
         .response-content strong {
             color: #1e293b;
         }
-        .response-content h3 {
-            font-weight: 600;
-            color: #1e293b;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Metadata pill */
         .meta-pill {
             background: #f1f5f9;
             padding: 0.2rem 0.75rem;
@@ -60,7 +45,6 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
-    <!-- Header -->
     <header class="bg-white shadow-sm border-b sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
@@ -68,14 +52,13 @@
                 <h1 class="text-xl font-bold text-gray-800">Omni Brand Intelligence Bot</h1>
             </div>
             <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-500">Live RAG</span>
+                <span class="text-sm text-gray-500">Live Scraping</span>
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
             </div>
         </div>
     </header>
 
     <div class="flex flex-1 max-w-7xl mx-auto w-full">
-        <!-- Sidebar -->
         <aside class="w-64 bg-white border-r p-4 hidden md:block">
             <div class="space-y-4">
                 <div class="bg-green-50 rounded-lg p-3 border border-green-200">
@@ -100,7 +83,6 @@
             </div>
         </aside>
 
-        <!-- Chat Area -->
         <div class="flex-1 flex flex-col h-[calc(100vh-80px)]">
             <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
                 <div class="flex items-center justify-center h-full text-gray-400">
@@ -113,7 +95,6 @@
                 </div>
             </div>
 
-            <!-- Input Area -->
             <div class="border-t bg-white p-4">
                 <div class="flex gap-2">
                     <input
@@ -136,24 +117,16 @@
     </div>
 
     <script>
-        // ================================================
-        // CONFIGURATION
-        // ================================================
         const API_URL = '/api/data';
         let isProcessing = false;
 
-        // ================================================
-        // FORMAT RESPONSE (Polished)
-        // ================================================
         function formatResponse(data) {
             let html = '';
             
-            // Response content
             if (data.response) {
                 html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
             }
             
-            // Sources
             if (data.sources && data.sources.length > 0) {
                 html += `
                     <div class="mt-4">
@@ -193,7 +166,6 @@
                 `;
             }
             
-            // Metadata
             if (data.metadata) {
                 html += `
                     <div class="mt-4 text-xs text-gray-400 border-t pt-2">
@@ -207,9 +179,6 @@
             return html || '<p class="text-gray-500">No response available.</p>';
         }
 
-        // ================================================
-        // SEND MESSAGE
-        // ================================================
         async function sendMessage() {
             const input = document.getElementById('message-input');
             const message = input.value.trim();
@@ -245,7 +214,6 @@
                 document.getElementById('status').className = 'text-sm text-green-600';
                 document.getElementById('timestamp').textContent = new Date().toLocaleTimeString();
 
-                // Display the formatted response
                 const container = document.getElementById('chat-messages');
                 const messages = container.querySelectorAll('.flex.justify-start');
                 if (messages.length > 0) {
@@ -254,7 +222,6 @@
                     if (bubble) {
                         bubble.innerHTML = formatResponse(data);
                         
-                        // Add copy button
                         const copyBtn = document.createElement('button');
                         copyBtn.className = 'text-xs text-gray-400 hover:text-gray-600 mt-2 transition block';
                         copyBtn.innerHTML = '📋 Copy Response';
@@ -298,9 +265,6 @@
             input.focus();
         }
 
-        // ================================================
-        // UI FUNCTIONS
-        // ================================================
         function addMessage(role, content) {
             const container = document.getElementById('chat-messages');
             
