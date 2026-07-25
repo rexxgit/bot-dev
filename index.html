@@ -46,6 +46,22 @@
             background: #dbeafe;
             color: #1d4ed8;
         }
+        .domain-badge {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.65rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+        .status-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.6rem;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+        .status-badge-green { background: #dcfce7; color: #166534; }
+        .status-badge-blue { background: #dbeafe; color: #1d4ed8; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -73,6 +89,10 @@
                 <div id="status-box" class="bg-gray-50 rounded-lg p-3">
                     <p id="status" class="text-sm text-gray-600">Ready. Ask a question!</p>
                     <p id="timestamp" class="text-xs text-gray-400 mt-1"></p>
+                    <div id="status-badges" class="flex flex-wrap gap-1 mt-2">
+                        <span class="status-badge status-badge-green">🟢 Live</span>
+                        <span class="status-badge status-badge-blue">🧠 AI-Powered</span>
+                    </div>
                 </div>
 
                 <div class="border-t pt-4">
@@ -81,7 +101,7 @@
                         <li>1. You ask a question</li>
                         <li>2. Searches scraped data</li>
                         <li>3. Finds relevant content</li>
-                        <li>4. Returns sources with scores</li>
+                        <li>4. Returns AI-generated answer with sources</li>
                     </ul>
                 </div>
             </div>
@@ -94,7 +114,7 @@
                         <p class="text-4xl mb-4">🤖</p>
                         <p>Ask a question about the July 2026 AI model wave,</p>
                         <p>GPT-5.6, Claude Sonnet 5, Grok 4.5, or AI strategy.</p>
-                        <p class="text-xs mt-4 text-gray-300">Powered by live web scraping</p>
+                        <p class="text-xs mt-4 text-gray-300">Powered by live web scraping + AI</p>
                     </div>
                 </div>
             </div>
@@ -115,7 +135,7 @@
                         Clear
                     </button>
                 </div>
-                <p class="text-xs text-gray-400 mt-2 text-center">Responses are generated from live scraped data</p>
+                <p class="text-xs text-gray-400 mt-2 text-center">AI-generated responses with source attribution</p>
             </div>
         </div>
     </div>
@@ -125,7 +145,7 @@
         let isProcessing = false;
 
         // ================================================
-        // FORMAT RESPONSE - COMPLETE VERSION
+        // FORMAT RESPONSE - WITH SOURCE BADGES
         // ================================================
         function formatResponse(data) {
             let html = '';
@@ -144,7 +164,7 @@
                 `;
             }
             
-            // Sources section
+            // Sources section with domain badges
             if (data.sources && data.sources.length > 0) {
                 html += `
                     <div class="mt-4">
@@ -160,6 +180,13 @@
                                          pct > 30 ? 'relevance-medium' : 'relevance-low';
                     const relevanceText = pct > 60 ? 'High' : pct > 30 ? 'Medium' : 'Low';
                     
+                    // Extract domain
+                    let domain = 'Unknown';
+                    try {
+                        const url = new URL(source.source || '#');
+                        domain = url.hostname.replace('www.', '');
+                    } catch (e) {}
+                    
                     html += `
                         <div class="source-card bg-white p-3 rounded-lg shadow-sm">
                             <div class="flex justify-between items-start">
@@ -168,9 +195,12 @@
                                     <span class="text-xs text-gray-500 ml-2">${source.author || 'Unknown'}</span>
                                     <span class="text-xs text-gray-400 ml-2">${source.date || ''}</span>
                                 </div>
-                                <span class="text-xs px-2 py-1 rounded-full ${relevanceClass}">
-                                    ${relevanceText} (${Math.round(pct)}%)
-                                </span>
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="text-xs px-2 py-1 rounded-full ${relevanceClass}">
+                                        ${relevanceText} (${Math.round(pct)}%)
+                                    </span>
+                                    <span class="domain-badge">📰 ${domain}</span>
+                                </div>
                             </div>
                             <p class="text-sm text-gray-600 mt-1">${source.chunk ? source.chunk.substring(0, 200) + '...' : ''}</p>
                             <a href="${source.source || '#'}" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 inline-block">🔗 View source</a>
@@ -184,13 +214,16 @@
                 `;
             }
             
-            // Metadata
+            // Metadata section
             if (data.metadata) {
                 html += `
-                    <div class="mt-4 text-xs text-gray-400 border-t pt-2">
-                        <span class="meta-pill">📊 ${data.metadata.total_sources || 0} sources</span>
-                        <span class="meta-pill">🔄 ${data.metadata.matches_found || 0} matches</span>
-                        <span class="meta-pill">🕐 ${data.metadata.last_updated ? new Date(data.metadata.last_updated).toLocaleString() : 'N/A'}</span>
+                    <div class="mt-4 pt-3 border-t border-gray-200">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="meta-pill">📊 ${data.metadata.total_sources || 0} sources</span>
+                            <span class="meta-pill">🔄 ${data.metadata.matches_found || 0} matches</span>
+                            <span class="meta-pill">🕐 ${data.metadata.last_updated ? new Date(data.metadata.last_updated).toLocaleString() : 'N/A'}</span>
+                            ${data.metadata.ai_generated ? `<span class="meta-pill ai-badge">🧠 AI-Generated</span>` : ''}
+                        </div>
                     </div>
                 `;
             }
@@ -329,7 +362,7 @@
                         <p class="text-4xl mb-4">🤖</p>
                         <p>Ask a question about the July 2026 AI model wave,</p>
                         <p>GPT-5.6, Claude Sonnet 5, Grok 4.5, or AI strategy.</p>
-                        <p class="text-xs mt-4 text-gray-300">Powered by live web scraping</p>
+                        <p class="text-xs mt-4 text-gray-300">Powered by live web scraping + AI</p>
                     </div>
                 </div>
             `;
