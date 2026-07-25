@@ -42,6 +42,10 @@
             display: inline-block;
             margin: 0.15rem;
         }
+        .ai-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -120,25 +124,33 @@
         const API_URL = '/api/data';
         let isProcessing = false;
 
-       function formatResponse(data) {
-    let html = '';
-    
-    // Response content
-    if (data.response) {
-        html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
-    }
-    
-    // Show AI badge if generated
-    if (data.metadata && data.metadata.ai_generated) {
-        html += `
-            <div style="margin-top: 0.5rem;">
-                <span class="meta-pill" style="background: #dbeafe; color: #1d4ed8;">🧠 AI-Generated</span>
-            </div>
-        `;
-    }
-    
-    // ... rest of your formatResponse function
-}
+        // ================================================
+        // FORMAT RESPONSE - COMPLETE VERSION
+        // ================================================
+        function formatResponse(data) {
+            let html = '';
+            
+            // Response content
+            if (data.response) {
+                html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
+            }
+            
+            // Show AI badge if generated
+            if (data.metadata && data.metadata.ai_generated) {
+                html += `
+                    <div style="margin-top: 0.5rem;">
+                        <span class="meta-pill ai-badge">🧠 AI-Generated</span>
+                    </div>
+                `;
+            }
+            
+            // Sources section
+            if (data.sources && data.sources.length > 0) {
+                html += `
+                    <div class="mt-4">
+                        <h3 class="font-semibold text-gray-700 mb-2">📚 Sources</h3>
+                        <div class="space-y-2">
+                `;
                 
                 data.sources.forEach((source, index) => {
                     const score = source.score || 0;
@@ -172,6 +184,7 @@
                 `;
             }
             
+            // Metadata
             if (data.metadata) {
                 html += `
                     <div class="mt-4 text-xs text-gray-400 border-t pt-2">
@@ -185,6 +198,9 @@
             return html || '<p class="text-gray-500">No response available.</p>';
         }
 
+        // ================================================
+        // SEND MESSAGE
+        // ================================================
         async function sendMessage() {
             const input = document.getElementById('message-input');
             const message = input.value.trim();
@@ -271,6 +287,9 @@
             input.focus();
         }
 
+        // ================================================
+        // UI FUNCTIONS
+        // ================================================
         function addMessage(role, content) {
             const container = document.getElementById('chat-messages');
             
