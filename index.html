@@ -120,19 +120,25 @@
         const API_URL = '/api/data';
         let isProcessing = false;
 
-        function formatResponse(data) {
-            let html = '';
-            
-            if (data.response) {
-                html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
-            }
-            
-            if (data.sources && data.sources.length > 0) {
-                html += `
-                    <div class="mt-4">
-                        <h3 class="font-semibold text-gray-700 mb-2">📚 Sources</h3>
-                        <div class="space-y-2">
-                `;
+       function formatResponse(data) {
+    let html = '';
+    
+    // Response content
+    if (data.response) {
+        html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
+    }
+    
+    // Show AI badge if generated
+    if (data.metadata && data.metadata.ai_generated) {
+        html += `
+            <div style="margin-top: 0.5rem;">
+                <span class="meta-pill" style="background: #dbeafe; color: #1d4ed8;">🧠 AI-Generated</span>
+            </div>
+        `;
+    }
+    
+    // ... rest of your formatResponse function
+}
                 
                 data.sources.forEach((source, index) => {
                     const score = source.score || 0;
