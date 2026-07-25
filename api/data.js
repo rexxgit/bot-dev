@@ -1,4 +1,4 @@
-// api/data.js - With OpenAI Integration
+// api/data.js - With Groq Integration
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -87,25 +87,25 @@ export default async function handler(req, res) {
         const topResults = allResults.slice(0, 3);
 
         // ============================================
-        // OPENAI GENERATION
+        // GROQ GENERATION (Blazing Fast!)
         // ============================================
         let aiAnswer = null;
-        const openaiKey = process.env.OPENAI_API_KEY;
+        const groqKey = process.env.GROQ_API_KEY;
 
-        if (openaiKey && topResults.length > 0) {
+        if (groqKey && topResults.length > 0) {
             try {
                 const context = topResults.map((r, i) => 
                     `Source ${i+1}: ${r.content}`
                 ).join('\n\n');
 
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${openaiKey}`,
+                        'Authorization': `Bearer ${groqKey}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        model: 'gpt-4o-mini',
+                        model: 'llama-3.1-8b-instant',
                         messages: [
                             {
                                 role: 'system',
@@ -122,13 +122,13 @@ export default async function handler(req, res) {
                 });
 
                 if (response.ok) {
-                    const openaiData = await response.json();
-                    aiAnswer = openaiData.choices?.[0]?.message?.content || null;
+                    const groqData = await response.json();
+                    aiAnswer = groqData.choices?.[0]?.message?.content || null;
                 } else {
-                    console.log('OpenAI API error:', await response.text());
+                    console.log('Groq API error:', await response.text());
                 }
             } catch (error) {
-                console.error('OpenAI generation error:', error);
+                console.error('Groq generation error:', error);
             }
         }
 
