@@ -62,6 +62,8 @@
         }
         .status-badge-green { background: #dcfce7; color: #166534; }
         .status-badge-blue { background: #dbeafe; color: #1d4ed8; }
+        .status-badge-yellow { background: #fef3c7; color: #92400e; }
+        .status-badge-red { background: #fee2e2; color: #991b1b; }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -180,12 +182,8 @@
                                          pct > 30 ? 'relevance-medium' : 'relevance-low';
                     const relevanceText = pct > 60 ? 'High' : pct > 30 ? 'Medium' : 'Low';
                     
-                    // Extract domain
-                    let domain = 'Unknown';
-                    try {
-                        const url = new URL(source.source || '#');
-                        domain = url.hostname.replace('www.', '');
-                    } catch (e) {}
+                    // Use domain from source if available
+                    const domain = source.domain || 'Unknown';
                     
                     html += `
                         <div class="source-card bg-white p-3 rounded-lg shadow-sm">
@@ -214,7 +212,7 @@
                 `;
             }
             
-            // Metadata section
+            // Metadata section with enhanced details
             if (data.metadata) {
                 html += `
                     <div class="mt-4 pt-3 border-t border-gray-200">
@@ -223,12 +221,52 @@
                             <span class="meta-pill">🔄 ${data.metadata.matches_found || 0} matches</span>
                             <span class="meta-pill">🕐 ${data.metadata.last_updated ? new Date(data.metadata.last_updated).toLocaleString() : 'N/A'}</span>
                             ${data.metadata.ai_generated ? `<span class="meta-pill ai-badge">🧠 AI-Generated</span>` : ''}
+                            ${data.metadata.error ? `<span class="meta-pill" style="background: #fee2e2; color: #991b1b;">⚠️ ${data.metadata.error}</span>` : ''}
                         </div>
                     </div>
                 `;
             }
             
             return html || '<p class="text-gray-500">No response available.</p>';
+        }
+
+        // ================================================
+        // ERROR HANDLING DISPLAY
+        // ================================================
+        function displayError(message, details = null) {
+            let html = `
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+                    <strong>❌ Error</strong>
+                    <p class="mt-1">${message}</p>
+            `;
+            if (details) {
+                html += `<p class="text-xs text-red-500 mt-2">${details}</p>`;
+            }
+            html += `
+                    <p class="text-sm text-gray-500 mt-2">Please try again or check the logs.</p>
+                </div>
+            `;
+            return html;
+        }
+
+        function displayRateLimit() {
+            return `
+                <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 text-orange-700">
+                    <strong>⏳ Rate Limit Exceeded</strong>
+                    <p class="mt-1">You've made too many requests. Please wait a moment and try again.</p>
+                    <p class="text-xs text-gray-500 mt-2">The AI service has a rate limit of 30 requests per minute.</p>
+                </div>
+            `;
+        }
+
+        function displayNoResults() {
+            return `
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
+                    <strong>🔍 No Results Found</strong>
+                    <p class="mt-1">Try asking about AI models, strategy, or industry trends.</p>
+                    <p class="text-xs text-gray-500 mt-2">Example questions: "What are the July 2026 AI models?" or "What does the article say about open-source AI?"</p>
+                </div>
+            `;
         }
 
         // ================================================
@@ -260,7 +298,12 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Server error: ' + response.status);
+                    let errorMsg = `Server error: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.error || errorMsg;
+                    } catch (e) {}
+                    throw new Error(errorMsg);
                 }
 
                 const data = await response.json();
@@ -303,13 +346,20 @@
                     const last = messages[messages.length - 1];
                     const bubble = last.querySelector('div');
                     if (bubble) {
-                        bubble.innerHTML = `
-                            <div class="text-red-600">
-                                <strong>❌ Error</strong>
-                                <p class="mt-2">${error.message}</p>
-                                <p class="text-sm text-gray-500 mt-2">Please try again.</p>
-                            </div>
-                        `;
+                        const errorMsg = error.message;
+                        let errorHtml;
+                        if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate')) {
+                            errorHtml = displayRateLimit();
+                        } else if (errorMsg.includes('401') || errorMsg.toLowerCase().includes('key')) {
+                            errorHtml = displayError('Authentication Error', 'Please check your API key configuration.');
+                        } else if (errorMsg.includes('404')) {
+                            errorHtml = displayError('Resource Not Found', 'The requested data was not available.');
+                        } else if (errorMsg.includes('No matching content')) {
+                            errorHtml = displayNoResults();
+                        } else {
+                            errorHtml = displayError(errorMsg, 'Please try again or check the logs.');
+                        }
+                        bubble.innerHTML = errorHtml;
                     }
                 }
             }
