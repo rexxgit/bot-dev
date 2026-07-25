@@ -1,4 +1,4 @@
-// api/data.js - With Groq Integration
+// api/data.js - With Source Badges, Error Handling & Professional Formatting
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -87,9 +87,26 @@ export default async function handler(req, res) {
         const topResults = allResults.slice(0, 3);
 
         // ============================================
+        // HANDLE NO RESULTS
+        // ============================================
+        if (topResults.length === 0) {
+            return res.status(200).json({
+                response: '🔍 **No matching content found.**\n\nTry asking about:\n- July 2026 AI models\n- GPT-5.6, Claude Sonnet 5, or Grok 4.5\n- AI strategy and industry trends',
+                sources: [],
+                metadata: {
+                    total_sources: data.total_sources || 0,
+                    matches_found: 0,
+                    last_updated: data.last_updated || 'Unknown',
+                    ai_generated: false
+                }
+            });
+        }
+
+        // ============================================
         // GROQ GENERATION (Blazing Fast!)
         // ============================================
         let aiAnswer = null;
+        let aiError = null;
         const groqKey = process.env.GROQ_API_KEY;
 
         if (groqKey && topResults.length > 0) {
@@ -125,27 +142,62 @@ export default async function handler(req, res) {
                     const groqData = await response.json();
                     aiAnswer = groqData.choices?.[0]?.message?.content || null;
                 } else {
-                    console.log('Groq API error:', await response.text());
+                    const errorText = await response.text();
+                    console.log('Groq API error:', errorText);
+                    aiError = {
+                        status: response.status,
+                        message: errorText
+                    };
+                    
+                    // Handle specific error codes
+                    if (response.status === 429) {
+                        return res.status(200).json({
+                            response: `⏳ **Rate Limit Exceeded**\n\nThe AI service is temporarily unavailable due to high demand. Please wait a moment and try again.\n\nIn the meantime, here are the search results:\n\n${topResults.map((r, i) => `**Source ${i+1}:** ${r.title}\n${r.content}`).join('\n\n')}`,
+                            sources: topResults.map(r => ({
+                                source: r.url,
+                                title: r.title,
+                                author: r.author,
+                                date: r.date,
+                                score: r.score,
+                                chunk: r.content.substring(0, 300) + '...'
+                            })),
+                            metadata: {
+                                total_sources: data.total_sources || 0,
+                                last_updated: data.last_updated || 'Unknown',
+                                matches_found: topResults.length,
+                                ai_generated: false,
+                                error: 'rate_limit'
+                            }
+                        });
+                    }
                 }
             } catch (error) {
                 console.error('Groq generation error:', error);
+                aiError = {
+                    message: error.message
+                };
             }
         }
 
         // ============================================
-        // BUILD RESPONSE
+        // BUILD RESPONSE WITH SOURCE BADGES
         // ============================================
         let responseText = '';
 
         if (aiAnswer) {
             responseText = `**🤖 AI-Generated Answer**\n\n${aiAnswer}\n\n---\n*Based on ${topResults.length} source(s)*`;
+        } else if (aiError && aiError.status === 429) {
+            // Rate limit already handled above
+            responseText = `⏳ **Rate Limit Exceeded**\n\nThe AI service is temporarily unavailable. Please wait a moment and try again.`;
         } else if (topResults.length > 0) {
             responseText = `**📊 Answer based on ${topResults.length} source(s):**\n\n`;
             for (let i = 0; i < topResults.length; i++) {
                 const r = topResults[i];
+                const domain = new URL(r.url).hostname.replace('www.', '');
                 responseText += `**Source ${i + 1}: ${r.title}**\n`;
                 responseText += `✍️ Author: ${r.author}\n`;
                 responseText += `📅 Date: ${r.date}\n`;
+                responseText += `📰 Source: ${domain}\n`;
                 responseText += `📊 Relevance: ${Math.min((r.score / 20) * 100, 100).toFixed(0)}%\n\n`;
                 responseText += `${r.content}\n\n---\n\n`;
             }
@@ -153,26 +205,42 @@ export default async function handler(req, res) {
             responseText = '🔍 **No matching content found.**';
         }
 
-        return res.status(200).json({
-            response: responseText,
-            sources: topResults.map(r => ({
+        // Build sources with domain badges
+        const sourcesWithBadges = topResults.map(r => {
+            let domain = 'Unknown';
+            try {
+                domain = new URL(r.url).hostname.replace('www.', '');
+            } catch (e) {}
+            
+            return {
                 source: r.url,
                 title: r.title,
                 author: r.author,
                 date: r.date,
                 score: r.score,
+                domain: domain,
                 chunk: r.content.substring(0, 300) + '...'
-            })),
+            };
+        });
+
+        return res.status(200).json({
+            response: responseText,
+            sources: sourcesWithBadges,
             metadata: {
                 total_sources: data.total_sources || 0,
                 last_updated: data.last_updated || 'Unknown',
                 matches_found: topResults.length,
-                ai_generated: !!aiAnswer
+                ai_generated: !!aiAnswer,
+                error: aiError ? aiError.message : null
             }
         });
 
     } catch (error) {
         console.error('Error:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({
+            error: 'Internal server error',
+            details: error.message,
+            timestamp: new Date().toISOString()
+        });
     }
 }
