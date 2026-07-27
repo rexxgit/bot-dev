@@ -54,6 +54,14 @@
             border-radius: 9999px;
             display: inline-block;
         }
+        .source-name-badge {
+            background: #e0e7ff;
+            color: #3730a3;
+            font-size: 0.65rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 9999px;
+            display: inline-block;
+        }
         .status-badge {
             font-size: 0.65rem;
             padding: 0.15rem 0.6rem;
@@ -74,7 +82,7 @@
                 <h1 class="text-xl font-bold text-gray-800">Omni Brand Intelligence Bot</h1>
             </div>
             <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-500">Live Scraping</span>
+                <span class="text-sm text-gray-500">Multi-Source AI</span>
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
             </div>
         </div>
@@ -84,8 +92,8 @@
         <aside class="w-64 bg-white border-r p-4 hidden md:block">
             <div class="space-y-4">
                 <div class="bg-green-50 rounded-lg p-3 border border-green-200">
-                    <p class="text-sm text-green-700 font-medium">⚡ Live Scraping</p>
-                    <p class="text-xs text-green-600 mt-1">Real data from competitor websites</p>
+                    <p class="text-sm text-green-700 font-medium">⚡ Multi-Source Scraping</p>
+                    <p class="text-xs text-green-600 mt-1">5+ competitor websites</p>
                 </div>
 
                 <div id="status-box" class="bg-gray-50 rounded-lg p-3">
@@ -94,6 +102,7 @@
                     <div id="status-badges" class="flex flex-wrap gap-1 mt-2">
                         <span class="status-badge status-badge-green">🟢 Live</span>
                         <span class="status-badge status-badge-blue">🧠 AI-Powered</span>
+                        <span class="status-badge status-badge-blue">📚 5+ Sources</span>
                     </div>
                 </div>
 
@@ -101,7 +110,7 @@
                     <p class="text-xs text-gray-500">How it works:</p>
                     <ul class="text-xs text-gray-600 space-y-1 mt-1">
                         <li>1. You ask a question</li>
-                        <li>2. Searches scraped data</li>
+                        <li>2. Searches 5+ scraped sources</li>
                         <li>3. Finds relevant content</li>
                         <li>4. Returns AI-generated answer with sources</li>
                     </ul>
@@ -114,8 +123,8 @@
                 <div class="flex items-center justify-center h-full text-gray-400">
                     <div class="text-center">
                         <p class="text-4xl mb-4">🤖</p>
-                        <p>Ask a question about the July 2026 AI model wave,</p>
-                        <p>GPT-5.6, Claude Sonnet 5, Grok 4.5, or AI strategy.</p>
+                        <p>Ask a question about AI tools, platforms, or industry trends.</p>
+                        <p>ChatGPT, Claude, Gemini, Grok, and more.</p>
                         <p class="text-xs mt-4 text-gray-300">Powered by live web scraping + AI</p>
                     </div>
                 </div>
@@ -147,7 +156,7 @@
         let isProcessing = false;
 
         // ================================================
-        // FORMAT RESPONSE - WITH SOURCE BADGES
+        // FORMAT RESPONSE - WITH SOURCE BADGES & NAMES
         // ================================================
         function formatResponse(data) {
             let html = '';
@@ -166,7 +175,7 @@
                 `;
             }
             
-            // Sources section with domain badges
+            // Sources section with domain badges and source names
             if (data.sources && data.sources.length > 0) {
                 html += `
                     <div class="mt-4">
@@ -182,8 +191,8 @@
                                          pct > 30 ? 'relevance-medium' : 'relevance-low';
                     const relevanceText = pct > 60 ? 'High' : pct > 30 ? 'Medium' : 'Low';
                     
-                    // Use domain from source if available
                     const domain = source.domain || 'Unknown';
+                    const sourceName = source.source_name || 'Unknown';
                     
                     html += `
                         <div class="source-card bg-white p-3 rounded-lg shadow-sm">
@@ -192,6 +201,9 @@
                                     <span class="font-medium text-gray-800">${source.title || 'Source ' + (index + 1)}</span>
                                     <span class="text-xs text-gray-500 ml-2">${source.author || 'Unknown'}</span>
                                     <span class="text-xs text-gray-400 ml-2">${source.date || ''}</span>
+                                    <div class="mt-1">
+                                        <span class="source-name-badge">🏷️ ${sourceName}</span>
+                                    </div>
                                 </div>
                                 <div class="flex flex-col items-end gap-1">
                                     <span class="text-xs px-2 py-1 rounded-full ${relevanceClass}">
@@ -263,8 +275,8 @@
             return `
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
                     <strong>🔍 No Results Found</strong>
-                    <p class="mt-1">Try asking about AI models, strategy, or industry trends.</p>
-                    <p class="text-xs text-gray-500 mt-2">Example questions: "What are the July 2026 AI models?" or "What does the article say about open-source AI?"</p>
+                    <p class="mt-1">Try asking about AI tools, platforms, or industry trends.</p>
+                    <p class="text-xs text-gray-500 mt-2">Example: "What are the best AI tools for 2026?" or "Compare ChatGPT and Claude"</p>
                 </div>
             `;
         }
@@ -283,7 +295,7 @@
             document.getElementById('send-btn').disabled = true;
             input.disabled = true;
 
-            addMessage('assistant', '🔄 Searching scraped data... <span class="loading-dots"></span>');
+            addMessage('assistant', '🔄 Searching 5+ sources... <span class="loading-dots"></span>');
 
             try {
                 document.getElementById('status').textContent = '🔄 Searching...';
@@ -410,8 +422,8 @@
                 <div class="flex items-center justify-center h-full text-gray-400">
                     <div class="text-center">
                         <p class="text-4xl mb-4">🤖</p>
-                        <p>Ask a question about the July 2026 AI model wave,</p>
-                        <p>GPT-5.6, Claude Sonnet 5, Grok 4.5, or AI strategy.</p>
+                        <p>Ask a question about AI tools, platforms, or industry trends.</p>
+                        <p>ChatGPT, Claude, Gemini, Grok, and more.</p>
                         <p class="text-xs mt-4 text-gray-300">Powered by live web scraping + AI</p>
                     </div>
                 </div>
