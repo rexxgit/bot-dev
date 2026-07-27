@@ -1,4 +1,10 @@
-// api/data.js - With Source Badges, Error Handling & Professional Formatting
+// api/data.js - Dynamic Multi-Source with Source Badges & Error Handling
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -16,30 +22,58 @@ export default async function handler(req, res) {
         const { query } = req.body;
 
         // ============================================
-        // YOUR SCRAPED DATA
+        // READ DATA FROM data.json (DYNAMIC)
         // ============================================
-        const data = {
-            "sources": [
-                {
-                    "source_name": "Raulji Technologies",
-                    "url": "https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/",
-                    "title": "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
-                    "content": "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business, and how to turn it…\n\nIn July 2026, Anthropic's Claude Sonnet 5, OpenAI's GPT-5.6 and xAI's Grok 4.5 all launched within weeks of each other. For most businesses the winning move is not chasing whichever model leads the benchmarks this month, it is building on a flexible setup you can swap newer models into as they improve.\n\nThe middle of 2026 has been one of the busiest stretches the AI industry has ever seen. In a matter of weeks, Anthropic shipped Claude Sonnet 5, OpenAI began rolling out its GPT-5.6 family, and xAI released Grok 4.5, while a wave of open-source models kept pace right behind them. For business leaders, the headlines are exciting and a little overwhelming. The real question is not which model won this month, it is what this pace of change means for the decisions you are making about AI right now.\n\nThree frontier releases anchored the last few weeks, each aimed at a slightly different strength. Understanding what each one is good at matters more than the leaderboard position, because the right model depends on the job you are giving it.\n\nThe July 2026 wave did not crown a single winner. It confirmed that several frontier models are now close in quality, so your advantage comes from how you use them, not which logo you pick.",
-                    "author": "Yuvraj Raulji",
-                    "date": "July 24, 2026",
-                    "word_count": 1753
+        const dataPath = path.join(__dirname, '..', 'data.json');
+        let data;
+        
+        try {
+            const rawData = fs.readFileSync(dataPath, 'utf8');
+            data = JSON.parse(rawData);
+            console.log(`📊 Loaded ${data.total_sources || 0} sources from data.json`);
+        } catch (error) {
+            console.error('Error reading data.json:', error);
+            return res.status(200).json({
+                response: '⚠️ **Data not available.**\n\nPlease run `python app.py` to scrape the latest data.',
+                sources: [],
+                metadata: {
+                    total_sources: 0,
+                    last_updated: 'Unknown',
+                    matches_found: 0,
+                    ai_generated: false,
+                    error: 'data_not_found'
                 }
-            ],
-            "total_sources": 1,
-            "last_updated": "2026-07-24T11:55:00.123938"
-        };
+            });
+        }
+
+        // Check if data has sources
+        if (!data.sources || data.sources.length === 0) {
+            return res.status(200).json({
+                response: '⚠️ **No sources available.**\n\nPlease run `python app.py` to scrape data.',
+                sources: [],
+                metadata: {
+                    total_sources: 0,
+                    last_updated: data.last_updated || 'Unknown',
+                    matches_found: 0,
+                    ai_generated: false,
+                    error: 'no_sources'
+                }
+            });
+        }
 
         if (!query) {
-            return res.status(200).json({ type: 'scraped', data: data });
+            return res.status(200).json({
+                type: 'scraped',
+                data: data,
+                metadata: {
+                    total_sources: data.total_sources || data.sources.length,
+                    last_updated: data.last_updated || 'Unknown'
+                }
+            });
         }
 
         // ============================================
-        // SEARCH & SCORE
+        // SEARCH & SCORE ACROSS ALL SOURCES
         // ============================================
         const queryLower = query.toLowerCase();
         const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
@@ -71,11 +105,11 @@ export default async function handler(req, res) {
 
                 if (score > 1) {
                     allResults.push({
-                        source_name: source.source_name,
-                        url: source.url,
-                        title: source.title,
-                        author: source.author,
-                        date: source.date,
+                        source_name: source.source_name || 'Unknown',
+                        url: source.url || '#',
+                        title: source.title || 'No Title',
+                        author: source.author || 'Unknown',
+                        date: source.date || 'Unknown',
                         content: paragraph,
                         score: score
                     });
@@ -91,10 +125,10 @@ export default async function handler(req, res) {
         // ============================================
         if (topResults.length === 0) {
             return res.status(200).json({
-                response: '🔍 **No matching content found.**\n\nTry asking about:\n- July 2026 AI models\n- GPT-5.6, Claude Sonnet 5, or Grok 4.5\n- AI strategy and industry trends',
+                response: '🔍 **No matching content found.**\n\nTry asking about:\n- AI tools and platforms\n- ChatGPT, Claude, Gemini, or Grok\n- AI strategy and industry trends',
                 sources: [],
                 metadata: {
-                    total_sources: data.total_sources || 0,
+                    total_sources: data.total_sources || data.sources.length,
                     matches_found: 0,
                     last_updated: data.last_updated || 'Unknown',
                     ai_generated: false
@@ -112,7 +146,7 @@ export default async function handler(req, res) {
         if (groqKey && topResults.length > 0) {
             try {
                 const context = topResults.map((r, i) => 
-                    `Source ${i+1}: ${r.content}`
+                    `Source ${i+1} (${r.source_name}): ${r.content}`
                 ).join('\n\n');
 
                 const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -126,7 +160,7 @@ export default async function handler(req, res) {
                         messages: [
                             {
                                 role: 'system',
-                                content: 'You are a senior marketing analyst. Answer based ONLY on the provided context. Be concise and structured.'
+                                content: 'You are a senior marketing analyst. Answer based ONLY on the provided context. Be concise and structured. Cite sources by name.'
                             },
                             {
                                 role: 'user',
@@ -149,12 +183,12 @@ export default async function handler(req, res) {
                         message: errorText
                     };
                     
-                    // Handle specific error codes
                     if (response.status === 429) {
                         return res.status(200).json({
-                            response: `⏳ **Rate Limit Exceeded**\n\nThe AI service is temporarily unavailable due to high demand. Please wait a moment and try again.\n\nIn the meantime, here are the search results:\n\n${topResults.map((r, i) => `**Source ${i+1}:** ${r.title}\n${r.content}`).join('\n\n')}`,
+                            response: `⏳ **Rate Limit Exceeded**\n\nThe AI service is temporarily unavailable. Please wait a moment and try again.\n\n**Search Results:**\n\n${topResults.map((r, i) => `**${r.source_name} - ${r.title}**\n${r.content.substring(0, 300)}...`).join('\n\n')}`,
                             sources: topResults.map(r => ({
                                 source: r.url,
+                                source_name: r.source_name,
                                 title: r.title,
                                 author: r.author,
                                 date: r.date,
@@ -162,7 +196,7 @@ export default async function handler(req, res) {
                                 chunk: r.content.substring(0, 300) + '...'
                             })),
                             metadata: {
-                                total_sources: data.total_sources || 0,
+                                total_sources: data.total_sources || data.sources.length,
                                 last_updated: data.last_updated || 'Unknown',
                                 matches_found: topResults.length,
                                 ai_generated: false,
@@ -187,17 +221,15 @@ export default async function handler(req, res) {
         if (aiAnswer) {
             responseText = `**🤖 AI-Generated Answer**\n\n${aiAnswer}\n\n---\n*Based on ${topResults.length} source(s)*`;
         } else if (aiError && aiError.status === 429) {
-            // Rate limit already handled above
             responseText = `⏳ **Rate Limit Exceeded**\n\nThe AI service is temporarily unavailable. Please wait a moment and try again.`;
         } else if (topResults.length > 0) {
             responseText = `**📊 Answer based on ${topResults.length} source(s):**\n\n`;
             for (let i = 0; i < topResults.length; i++) {
                 const r = topResults[i];
-                const domain = new URL(r.url).hostname.replace('www.', '');
                 responseText += `**Source ${i + 1}: ${r.title}**\n`;
+                responseText += `🏷️ Source: ${r.source_name}\n`;
                 responseText += `✍️ Author: ${r.author}\n`;
                 responseText += `📅 Date: ${r.date}\n`;
-                responseText += `📰 Source: ${domain}\n`;
                 responseText += `📊 Relevance: ${Math.min((r.score / 20) * 100, 100).toFixed(0)}%\n\n`;
                 responseText += `${r.content}\n\n---\n\n`;
             }
@@ -205,7 +237,7 @@ export default async function handler(req, res) {
             responseText = '🔍 **No matching content found.**';
         }
 
-        // Build sources with domain badges
+        // Build sources with domain badges and source names
         const sourcesWithBadges = topResults.map(r => {
             let domain = 'Unknown';
             try {
@@ -214,6 +246,7 @@ export default async function handler(req, res) {
             
             return {
                 source: r.url,
+                source_name: r.source_name,
                 title: r.title,
                 author: r.author,
                 date: r.date,
@@ -227,7 +260,7 @@ export default async function handler(req, res) {
             response: responseText,
             sources: sourcesWithBadges,
             metadata: {
-                total_sources: data.total_sources || 0,
+                total_sources: data.total_sources || data.sources.length,
                 last_updated: data.last_updated || 'Unknown',
                 matches_found: topResults.length,
                 ai_generated: !!aiAnswer,
