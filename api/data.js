@@ -1,4 +1,4 @@
-// api/data.js - Advanced RAG Features
+// api/data.js - Advanced RAG Features (Complete Implementation)
 export default async function handler(req, res) {
     const startTime = Date.now();
     console.log(`📥 Request received at ${new Date().toISOString()}`);
@@ -21,42 +21,353 @@ export default async function handler(req, res) {
         console.log(`🔍 Query: "${query}"`);
 
         // ============================================
-        // 1. QUERY CLASSIFICATION
+        // 1. QUERY CLASSIFICATION (Advanced)
         // ============================================
         function classifyQuery(query) {
             const lower = query.toLowerCase();
-            const analyticalTerms = [
-                'compare', 'contrast', 'analyze', 'synthesis', 'trend', 
-                'pattern', 'relationship', 'versus', 'vs', 'difference',
-                'similarity', 'evaluation', 'assessment', 'overview'
-            ];
-            const comparativeTerms = ['better', 'best', 'worst', 'top', 'vs', 'versus'];
             
-            let isAnalytical = analyticalTerms.some(term => lower.includes(term));
-            let isComparative = comparativeTerms.some(term => lower.includes(term));
+            // Define category patterns with weights
+            const categories = {
+                factual: {
+                    keywords: ['what', 'when', 'where', 'who', 'which', 'is', 'are', 'was', 'were', 'did'],
+                    weight: 1
+                },
+                analytical: {
+                    keywords: ['compare', 'contrast', 'analyze', 'synthesis', 'trend', 'pattern', 'relationship', 'impact', 'cause'],
+                    weight: 1.5
+                },
+                comparative: {
+                    keywords: ['better', 'best', 'worst', 'top', 'vs', 'versus', 'compared to', 'difference'],
+                    weight: 1.5
+                },
+                exploratory: {
+                    keywords: ['how does', 'why does', 'what if', 'could', 'would', 'might', 'imagine'],
+                    weight: 1.2
+                },
+                summarization: {
+                    keywords: ['summarize', 'summarise', 'brief', 'overview', 'key points', 'main ideas', 'tl;dr'],
+                    weight: 1.3
+                }
+            };
             
-            if (isAnalytical || isComparative) {
-                return 'analytical';
+            // Score each category
+            let scores = {};
+            for (const [category, data] of Object.entries(categories)) {
+                let score = 0;
+                for (const keyword of data.keywords) {
+                    if (lower.includes(keyword)) {
+                        score += 1;
+                    }
+                }
+                scores[category] = score * data.weight;
             }
-            return 'factual';
+            
+            // Find the highest scoring category
+            let bestCategory = 'factual';
+            let bestScore = 0;
+            for (const [category, score] of Object.entries(scores)) {
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestCategory = category;
+                }
+            }
+            
+            // If no clear winner, default to factual
+            if (bestScore === 0) {
+                bestCategory = 'factual';
+                bestScore = 0.5;
+            }
+            
+            return {
+                type: bestCategory,
+                confidence: Math.min(bestScore / 3, 1),
+                scores: scores
+            };
         }
 
-        const queryType = classifyQuery(query);
-        console.log(`📊 Query classified as: ${queryType}`);
+        const queryClassification = classifyQuery(query);
+        const queryType = queryClassification.type;
+        console.log(`📊 Query classified as: ${queryType} (confidence: ${queryClassification.confidence})`);
 
         // ============================================
-        // 2. SOURCE AUTHORITY SCORES
+        // 2. SOURCE AUTHORITY SYSTEM (Enhanced)
         // ============================================
         const sourceAuthority = {
-            'Raulji Technologies': 0.9,
-            'Gumloop': 0.85,
-            'Pickaxe': 0.85,
-            'Synthesia': 0.8,
-            'Red River Communications': 0.7
+            'Raulji Technologies': {
+                score: 0.95,
+                domain: 'rauljitechnologies.com',
+                tags: ['AI strategy', 'marketing', 'enterprise', 'consulting'],
+                published_date_weight: 1.0,
+                content_depth: 0.9
+            },
+            'Gumloop': {
+                score: 0.90,
+                domain: 'gumloop.com',
+                tags: ['AI tools', 'automation', 'productivity', 'workflow'],
+                published_date_weight: 0.9,
+                content_depth: 0.85
+            },
+            'Pickaxe': {
+                score: 0.88,
+                domain: 'pickaxe.co',
+                tags: ['AI platforms', 'development', 'monetization', 'building'],
+                published_date_weight: 0.95,
+                content_depth: 0.9
+            },
+            'Synthesia': {
+                score: 0.85,
+                domain: 'synthesia.io',
+                tags: ['AI video', 'tools', 'creative', 'content'],
+                published_date_weight: 0.85,
+                content_depth: 0.8
+            },
+            'Red River Communications': {
+                score: 0.70,
+                domain: 'redrivercomm.com',
+                tags: ['AI platforms', 'consumer', 'overview', 'general'],
+                published_date_weight: 0.6,
+                content_depth: 0.6
+            }
         };
 
+        function calculateAuthorityScore(sourceName, content, query) {
+            const authority = sourceAuthority[sourceName];
+            if (!authority) return 0.5;
+            
+            let score = authority.score;
+            
+            // Boost if content matches query category
+            const queryLower = query.toLowerCase();
+            if (authority.tags) {
+                for (const tag of authority.tags) {
+                    if (queryLower.includes(tag.toLowerCase())) {
+                        score += 0.1;
+                        break;
+                    }
+                }
+            }
+            
+            // Content length boost (longer content = more authoritative)
+            const wordCount = content.split(/\s+/).length;
+            if (wordCount > 1000) {
+                score += 0.05;
+            }
+            if (wordCount > 2000) {
+                score += 0.05;
+            }
+            
+            // Recency boost (newer content = more authoritative)
+            const date = new Date(authority.published_date_weight);
+            const now = new Date();
+            const daysSince = (now - date) / (1000 * 60 * 60 * 24);
+            if (daysSince < 30) {
+                score += 0.05;
+            }
+            
+            return Math.min(score, 1.0);
+        }
+
         // ============================================
-        // 3. EMBEDDED DATA WITH PRIORITIZATION
+        // 3. SEMANTIC SEARCH (Enhanced)
+        // ============================================
+        function semanticSearch(query, paragraphs, sourceName) {
+            const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+            const results = [];
+            
+            for (const paragraph of paragraphs) {
+                const words = paragraph.toLowerCase().split(/\s+/);
+                
+                // Calculate word overlap
+                const commonWords = queryWords.filter(word => 
+                    words.includes(word) && word.length > 3
+                );
+                const overlapScore = queryWords.length > 0 ? (commonWords.length / queryWords.length) * 10 : 0;
+                
+                // Calculate proximity (words appearing close to each other)
+                let proximityScore = 0;
+                for (let i = 0; i < queryWords.length - 1; i++) {
+                    const pos1 = words.indexOf(queryWords[i]);
+                    const pos2 = words.indexOf(queryWords[i+1]);
+                    if (pos1 !== -1 && pos2 !== -1) {
+                        proximityScore += 1 / (Math.abs(pos1 - pos2) + 1);
+                    }
+                }
+                
+                // Calculate semantic density (how many query words appear in the paragraph)
+                const density = commonWords.length / Math.max(words.length, 1);
+                
+                // Combined semantic score
+                const semanticScore = (overlapScore * 1.5) + (proximityScore * 2) + (density * 5);
+                
+                if (semanticScore > 1) {
+                    results.push({
+                        content: paragraph,
+                        semantic_score: semanticScore,
+                        overlap: commonWords.length,
+                        proximity: proximityScore,
+                        density: density
+                    });
+                }
+            }
+            
+            results.sort((a, b) => b.semantic_score - a.semantic_score);
+            return results.slice(0, 5);
+        }
+
+        // ============================================
+        // 4. HYBRID SEARCH (Enhanced)
+        // ============================================
+        function hybridSearch(query, sources) {
+            const queryLower = query.toLowerCase();
+            const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
+            const stopWords = ['the', 'is', 'are', 'was', 'were', 'and', 'or', 'for', 'with', 'this', 'that', 'from', 'for'];
+
+            let results = [];
+
+            for (const source of sources) {
+                const content = source.content || '';
+                const paragraphs = content.split('\n\n');
+                
+                // Get semantic results for this source
+                const semanticResults = semanticSearch(query, paragraphs, source.source_name);
+                
+                // Calculate authority score
+                const authority = calculateAuthorityScore(source.source_name, content, query);
+
+                for (const paragraph of paragraphs) {
+                    const lower = paragraph.toLowerCase();
+                    
+                    // 1. Keyword Score
+                    let keywordScore = 0;
+                    for (const word of queryWords) {
+                        if (stopWords.includes(word)) continue;
+                        const count = (lower.match(new RegExp(word, 'g')) || []).length;
+                        keywordScore += count * 2;
+                        if (lower.includes(queryLower)) {
+                            keywordScore += 10;
+                        }
+                    }
+
+                    const matchedWords = queryWords.filter(w => lower.includes(w));
+                    if (matchedWords.length > 1) {
+                        keywordScore += matchedWords.length * 3;
+                    }
+
+                    // 2. Semantic Score (from semantic search results)
+                    let semanticScore = 0;
+                    const semanticMatch = semanticResults.find(r => r.content === paragraph);
+                    if (semanticMatch) {
+                        semanticScore = semanticMatch.semantic_score;
+                    }
+
+                    // 3. Authority Score
+                    const authorityScore = authority * 10;
+
+                    // 4. Context Score (paragraph position matters)
+                    const paragraphIndex = paragraphs.indexOf(paragraph);
+                    const contextScore = Math.max(0, 1 - (paragraphIndex / paragraphs.length) * 0.5);
+
+                    // Combined weighted score
+                    const totalScore = (keywordScore * 0.35) + 
+                                      (semanticScore * 0.35) + 
+                                      (authorityScore * 0.2) + 
+                                      (contextScore * 5);
+
+                    if (totalScore > 1) {
+                        results.push({
+                            source_name: source.source_name,
+                            url: source.url,
+                            title: source.title,
+                            author: source.author,
+                            date: source.date,
+                            content: paragraph,
+                            score: totalScore,
+                            keyword_score: keywordScore,
+                            semantic_score: semanticScore,
+                            authority_score: authorityScore,
+                            authority: authority,
+                            context_score: contextScore
+                        });
+                    }
+                }
+            }
+
+            results.sort((a, b) => b.score - a.score);
+            return results;
+        }
+
+        // ============================================
+        // 5. RATE LIMITING (Token Bucket)
+        // ============================================
+        class TokenBucket {
+            constructor(capacity = 10, refillRate = 1, refillInterval = 60000) {
+                this.capacity = capacity;
+                this.tokens = capacity;
+                this.refillRate = refillRate;
+                this.refillInterval = refillInterval;
+                this.lastRefill = Date.now();
+            }
+            
+            refill() {
+                const now = Date.now();
+                const timePassed = now - this.lastRefill;
+                const refillAmount = Math.floor(timePassed / this.refillInterval) * this.refillRate;
+                this.tokens = Math.min(this.capacity, this.tokens + refillAmount);
+                this.lastRefill = now;
+            }
+            
+            consume(tokens = 1) {
+                this.refill();
+                if (this.tokens >= tokens) {
+                    this.tokens -= tokens;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // User-based rate limiting
+        const rateLimiters = new Map();
+        
+        function getRateLimiter(ip) {
+            if (!rateLimiters.has(ip)) {
+                rateLimiters.set(ip, new TokenBucket(10, 1, 60000));
+            }
+            return rateLimiters.get(ip);
+        }
+
+        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+        const limiter = getRateLimiter(clientIp);
+        if (!limiter.consume(1)) {
+            console.warn(`🚫 Rate limit exceeded for ${clientIp}`);
+            return res.status(429).json({
+                error: 'Rate limit exceeded',
+                retryAfter: Math.ceil((Date.now() - limiter.lastRefill) / 1000),
+                limit: limiter.capacity,
+                message: 'Too many requests. Please wait a moment and try again.'
+            });
+        }
+
+        // ============================================
+        // 6. PERFORMANCE METRICS
+        // ============================================
+        const metrics = {
+            totalRequests: 0,
+            averageResponseTime: 0,
+            errorRate: 0,
+            lastReset: Date.now()
+        };
+
+        function trackPerformance(duration, success) {
+            metrics.totalRequests++;
+            metrics.averageResponseTime = (metrics.averageResponseTime * (metrics.totalRequests - 1) + duration) / metrics.totalRequests;
+            if (!success) {
+                metrics.errorRate = (metrics.errorRate * (metrics.totalRequests - 1) + 1) / metrics.totalRequests;
+            }
+        }
+
+        // ============================================
+        // 7. EMBEDDED DATA
         // ============================================
         const data = {
             "sources": [
@@ -115,163 +426,126 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 4. HYBRID SEARCH FUNCTION
-        // ============================================
-        function hybridSearch(query, sources) {
-            const queryLower = query.toLowerCase();
-            const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
-            const stopWords = ['the', 'is', 'are', 'was', 'were', 'and', 'or', 'for', 'with', 'this', 'that'];
-
-            let results = [];
-
-            for (const source of sources) {
-                const content = source.content || '';
-                const paragraphs = content.split('\n\n');
-                const authority = sourceAuthority[source.source_name] || 0.5;
-
-                for (const paragraph of paragraphs) {
-                    const lower = paragraph.toLowerCase();
-                    let keywordScore = 0;
-                    let semanticScore = 0;
-
-                    // Keyword score (existing)
-                    for (const word of queryWords) {
-                        if (stopWords.includes(word)) continue;
-                        const count = (lower.match(new RegExp(word, 'g')) || []).length;
-                        keywordScore += count * 2;
-                        if (lower.includes(queryLower)) {
-                            keywordScore += 10;
-                        }
-                    }
-
-                    const matchedWords = queryWords.filter(w => lower.includes(w));
-                    if (matchedWords.length > 1) {
-                        keywordScore += matchedWords.length * 3;
-                    }
-
-                    // Semantic score (simplified - uses word overlap)
-                    const overlap = queryWords.filter(w => lower.includes(w)).length;
-                    semanticScore = (overlap / queryWords.length) * 10;
-
-                    // Combined score with authority boost
-                    const totalScore = (keywordScore * 0.6) + (semanticScore * 0.3) + (authority * 10);
-
-                    if (totalScore > 1) {
-                        results.push({
-                            source_name: source.source_name,
-                            url: source.url,
-                            title: source.title,
-                            author: source.author,
-                            date: source.date,
-                            content: paragraph,
-                            score: totalScore,
-                            keywordScore: keywordScore,
-                            semanticScore: semanticScore,
-                            authority: authority
-                        });
-                    }
-                }
-            }
-
-            // Sort by total score
-            results.sort((a, b) => b.score - a.score);
-            return results;
-        }
-
-        // ============================================
-        // 5. QUERY ROUTING
+        // 8. SEARCH EXECUTION
         // ============================================
         const allResults = hybridSearch(query, data.sources);
         console.log(`📊 Found ${allResults.length} total matches`);
 
         let topResults;
-        if (queryType === 'analytical') {
-            // For analytical queries, get more sources for synthesis
+        if (queryType === 'analytical' || queryType === 'comparative' || queryType === 'exploratory') {
+            // For complex queries, get more sources
             topResults = allResults.slice(0, 5);
-            console.log(`🏆 Using ${topResults.length} sources for analytical query`);
+            console.log(`🏆 Using ${topResults.length} sources for ${queryType} query`);
         } else {
-            // For factual queries, get the top 3 most relevant
+            // For factual and summarization queries, get the top 3
             topResults = allResults.slice(0, 3);
-            console.log(`🏆 Using ${topResults.length} sources for factual query`);
+            console.log(`🏆 Using ${topResults.length} sources for ${queryType} query`);
         }
 
         // ============================================
-        // 6. HANDLE NO RESULTS
+        // 9. HANDLE NO RESULTS
         // ============================================
         if (topResults.length === 0) {
             return res.status(200).json({
-                response: '🔍 **No matching content found.**\n\nTry asking about:\n- AI tools and platforms\n- ChatGPT, Claude, Gemini, or Grok\n- AI strategy and industry trends',
+                response: '🔍 **No matching content found.**\n\nTry asking about:\n- AI tools and platforms\n- ChatGPT, Claude, Gemini, or Grok\n- AI strategy and industry trends\n- Specific AI models or features',
                 sources: [],
                 metadata: {
                     total_sources: data.total_sources || 0,
                     matches_found: 0,
                     last_updated: data.last_updated || 'Unknown',
                     ai_generated: false,
-                    query_type: queryType
+                    query_type: queryType,
+                    query_confidence: queryClassification.confidence
                 }
             });
         }
 
         // ============================================
-        // 7. GROQ GENERATION WITH RETRY
+        // 10. GROQ GENERATION WITH RETRY
         // ============================================
         let aiAnswer = null;
         let aiError = null;
         const groqKey = process.env.GROQ_API_KEY;
+
+        async function callGroqWithRetry(context, query, queryType, maxRetries = 3) {
+            let lastError = null;
+            
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    console.log(`🔄 Groq attempt ${attempt}/${maxRetries}`);
+                    
+                    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${groqKey}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model: 'llama-3.1-8b-instant',
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: queryType === 'analytical' || queryType === 'comparative' || queryType === 'exploratory'
+                                        ? 'You are a senior marketing analyst. Synthesize information from multiple sources. Provide a comprehensive, balanced answer with key insights and actionable recommendations.'
+                                        : 'You are a senior marketing analyst. Answer based ONLY on the provided context. Be concise, accurate, and factual.'
+                                },
+                                {
+                                    role: 'user',
+                                    content: `CONTEXT:\n${context}\n\nQUESTION: ${query}\n\n${queryType === 'analytical' || queryType === 'comparative' ? 'Synthesize the key insights from all sources and provide a structured analysis:' : queryType === 'exploratory' ? 'Explore this question with reasoning from the available context:' : 'Answer concisely with key points from the context:'}`
+                                }
+                            ],
+                            temperature: queryType === 'analytical' ? 0.3 : queryType === 'comparative' ? 0.25 : 0.2,
+                            max_tokens: 600,
+                        })
+                    });
+
+                    if (response.ok) {
+                        const groqData = await response.json();
+                        console.log(`✅ Groq succeeded on attempt ${attempt}`);
+                        return groqData.choices?.[0]?.message?.content || null;
+                    }
+
+                    const errorText = await response.text();
+                    console.warn(`⚠️ Groq attempt ${attempt} failed: ${response.status} - ${errorText}`);
+                    lastError = { status: response.status, message: errorText };
+
+                    if (response.status === 429) {
+                        const waitTime = attempt * 1000;
+                        console.log(`⏳ Rate limited, waiting ${waitTime}ms...`);
+                        await new Promise(resolve => setTimeout(resolve, waitTime));
+                        continue;
+                    }
+
+                    break;
+
+                } catch (error) {
+                    console.error(`❌ Groq attempt ${attempt} error:`, error.message);
+                    lastError = { message: error.message };
+                    if (attempt === maxRetries) break;
+                    await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+                }
+            }
+
+            console.error(`❌ All ${maxRetries} Groq attempts failed`);
+            return null;
+        }
 
         if (groqKey && topResults.length > 0) {
             const context = topResults.map((r, i) => 
                 `Source ${i+1} (${r.source_name}): ${r.content}`
             ).join('\n\n');
 
-            try {
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${groqKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        model: 'llama-3.1-8b-instant',
-                        messages: [
-                            {
-                                role: 'system',
-                                content: queryType === 'analytical' 
-                                    ? 'You are a senior marketing analyst. Synthesize information from multiple sources. Provide a comprehensive, balanced answer with key insights.'
-                                    : 'You are a senior marketing analyst. Answer based ONLY on the provided context. Be concise and accurate.'
-                            },
-                            {
-                                role: 'user',
-                                content: `CONTEXT:\n${context}\n\nQUESTION: ${query}\n\n${queryType === 'analytical' ? 'Synthesize the key insights from all sources:' : 'Answer concisely with key points:'}`
-                            }
-                        ],
-                        temperature: queryType === 'analytical' ? 0.3 : 0.2,
-                        max_tokens: 500,
-                    })
-                });
-
-                if (response.ok) {
-                    const groqData = await response.json();
-                    aiAnswer = groqData.choices?.[0]?.message?.content || null;
-                    console.log(`✅ AI answer generated (${aiAnswer?.length || 0} chars)`);
-                } else {
-                    const errorText = await response.text();
-                    console.log('Groq API error:', errorText);
-                    aiError = {
-                        status: response.status,
-                        message: errorText
-                    };
-                }
-            } catch (error) {
-                console.error('Groq generation error:', error);
-                aiError = {
-                    message: error.message
-                };
+            aiAnswer = await callGroqWithRetry(context, query, queryType);
+            
+            if (aiAnswer) {
+                console.log(`✅ AI answer generated (${aiAnswer.length} chars)`);
+            } else {
+                aiError = { message: 'All Groq attempts failed' };
             }
         }
 
         // ============================================
-        // 8. BUILD RESPONSE
+        // 11. BUILD RESPONSE
         // ============================================
         let responseText = '';
 
@@ -314,6 +588,7 @@ export default async function handler(req, res) {
         });
 
         const duration = Date.now() - startTime;
+        trackPerformance(duration, true);
         console.log(`⏱️ Request completed in ${duration}ms`);
 
         return res.status(200).json({
@@ -325,7 +600,9 @@ export default async function handler(req, res) {
                 matches_found: topResults.length,
                 ai_generated: !!aiAnswer,
                 query_type: queryType,
+                query_confidence: queryClassification.confidence,
                 processing_time_ms: duration,
+                avg_response_time: metrics.averageResponseTime.toFixed(0),
                 error: aiError ? aiError.message : null
             }
         });
