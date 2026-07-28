@@ -1,5 +1,8 @@
-// api/data.js - Embedded Multi-Source Version
+// api/data.js - Advanced RAG Features
 export default async function handler(req, res) {
+    const startTime = Date.now();
+    console.log(`📥 Request received at ${new Date().toISOString()}`);
+
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -9,14 +12,51 @@ export default async function handler(req, res) {
     }
 
     if (req.method !== 'POST') {
+        console.warn(`⚠️ Method not allowed: ${req.method}`);
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
         const { query } = req.body;
+        console.log(`🔍 Query: "${query}"`);
 
         // ============================================
-        // EMBEDDED DATA - Full 5 sources
+        // 1. QUERY CLASSIFICATION
+        // ============================================
+        function classifyQuery(query) {
+            const lower = query.toLowerCase();
+            const analyticalTerms = [
+                'compare', 'contrast', 'analyze', 'synthesis', 'trend', 
+                'pattern', 'relationship', 'versus', 'vs', 'difference',
+                'similarity', 'evaluation', 'assessment', 'overview'
+            ];
+            const comparativeTerms = ['better', 'best', 'worst', 'top', 'vs', 'versus'];
+            
+            let isAnalytical = analyticalTerms.some(term => lower.includes(term));
+            let isComparative = comparativeTerms.some(term => lower.includes(term));
+            
+            if (isAnalytical || isComparative) {
+                return 'analytical';
+            }
+            return 'factual';
+        }
+
+        const queryType = classifyQuery(query);
+        console.log(`📊 Query classified as: ${queryType}`);
+
+        // ============================================
+        // 2. SOURCE AUTHORITY SCORES
+        // ============================================
+        const sourceAuthority = {
+            'Raulji Technologies': 0.9,
+            'Gumloop': 0.85,
+            'Pickaxe': 0.85,
+            'Synthesia': 0.8,
+            'Red River Communications': 0.7
+        };
+
+        // ============================================
+        // 3. EMBEDDED DATA WITH PRIORITIZATION
         // ============================================
         const data = {
             "sources": [
@@ -33,7 +73,7 @@ export default async function handler(req, res) {
                     "source_name": "Gumloop",
                     "url": "https://www.gumloop.com/blog/best-ai-apps",
                     "title": "15 best AI apps I can't live without in 2026",
-                    "content": "It all started with ChatGPT, then Claude, and then we had an explosion of AI apps for literally every use case you can think of.\n\nVideo editing, voice generation, coding, search, automation, presentations, SEO, you name it.\n\nTools promising to make us more productive.\n\nSome were simple \"ChatGPT wrappers\" while others were genuinely new products that used AI in ways that were not possible a few years ago.\n\nThe problem is that there are so many AI tools out there now that it's hard to know which ones are actually worth your time. I have personally tested over 70 of them, and most I used once and never opened again. But there are a handful that I genuinely cannot live without at this point.\n\nThese are the 15 AI apps that have stuck around in my daily and weekly workflow and continue to make ship things faster and better.\n\nAn AI app is any application that uses artificial intelligence, typically from large language models (LLMs), to help you get work done. These are tools that go beyond traditional software by being able to understand context, generate content, make decisions, and automate tasks that would normally require a human.",
+                    "content": "It all started with ChatGPT, then Claude, and then we had an explosion of AI apps for literally every use case you can think of.\n\nVideo editing, voice generation, coding, search, automation, presentations, SEO, you name it.\n\nTools promising to make us more productive.\n\nSome were simple 'ChatGPT wrappers' while others were genuinely new products that used AI in ways that were not possible a few years ago.\n\nThe problem is that there are so many AI tools out there now that it's hard to know which ones are actually worth your time. I have personally tested over 70 of them, and most I used once and never opened again. But there are a handful that I genuinely cannot live without at this point.\n\nThese are the 15 AI apps that have stuck around in my daily and weekly workflow and continue to make ship things faster and better.",
                     "author": "Unknown",
                     "date": "July 27, 2026",
                     "word_count": 6894
@@ -42,7 +82,7 @@ export default async function handler(req, res) {
                     "source_name": "Pickaxe",
                     "url": "https://pickaxe.co/post/top-ai-platforms",
                     "title": "Top AI Platforms in 2026: The 15 Best Platforms I've Actually Tested",
-                    "content": "I have tested more AI platforms than I can count over the past three years. Most of them blurred together. Some were genuinely great. A few changed how I work entirely.\n\nThis is my honest breakdown of the top AI platforms in 2026 — the 15 I actually spent real time with, built real things on, and can speak to from firsthand experience.\n\nThe AI platform market is now valued at $72.18 billion and is forecast to hit $119.57 billion by 2031. That kind of money attracts a lot of noise. Every startup with a wrapper around an API calls itself a \"platform.\" I wanted to cut through all of that and give you a list that is actually useful.\n\nHere is what I looked at: capabilities, ease of use, pricing, real-world performance, and who each platform is actually built for. I tried to be fair. I also tried to be honest about what disappointed me.",
+                    "content": "I have tested more AI platforms than I can count over the past three years. Most of them blurred together. Some were genuinely great. A few changed how I work entirely.\n\nThis is my honest breakdown of the top AI platforms in 2026 — the 15 I actually spent real time with, built real things on, and can speak to from firsthand experience.\n\nThe AI platform market is now valued at $72.18 billion and is forecast to hit $119.57 billion by 2031. That kind of money attracts a lot of noise. Every startup with a wrapper around an API calls itself a 'platform.' I wanted to cut through all of that and give you a list that is actually useful.",
                     "author": "Unknown",
                     "date": "July 27, 2026",
                     "word_count": 6534
@@ -75,55 +115,88 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // SEARCH & SCORE
+        // 4. HYBRID SEARCH FUNCTION
         // ============================================
-        const queryLower = query.toLowerCase();
-        const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
-        const stopWords = ['the', 'is', 'are', 'was', 'were', 'and', 'or', 'for', 'with', 'this', 'that'];
+        function hybridSearch(query, sources) {
+            const queryLower = query.toLowerCase();
+            const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
+            const stopWords = ['the', 'is', 'are', 'was', 'were', 'and', 'or', 'for', 'with', 'this', 'that'];
 
-        let allResults = [];
+            let results = [];
 
-        for (const source of data.sources) {
-            const content = source.content || '';
-            const paragraphs = content.split('\n\n');
+            for (const source of sources) {
+                const content = source.content || '';
+                const paragraphs = content.split('\n\n');
+                const authority = sourceAuthority[source.source_name] || 0.5;
 
-            for (const paragraph of paragraphs) {
-                const lower = paragraph.toLowerCase();
-                let score = 0;
+                for (const paragraph of paragraphs) {
+                    const lower = paragraph.toLowerCase();
+                    let keywordScore = 0;
+                    let semanticScore = 0;
 
-                for (const word of queryWords) {
-                    if (stopWords.includes(word)) continue;
-                    const count = (lower.match(new RegExp(word, 'g')) || []).length;
-                    score += count * 2;
-                    if (lower.includes(queryLower)) {
-                        score += 10;
+                    // Keyword score (existing)
+                    for (const word of queryWords) {
+                        if (stopWords.includes(word)) continue;
+                        const count = (lower.match(new RegExp(word, 'g')) || []).length;
+                        keywordScore += count * 2;
+                        if (lower.includes(queryLower)) {
+                            keywordScore += 10;
+                        }
+                    }
+
+                    const matchedWords = queryWords.filter(w => lower.includes(w));
+                    if (matchedWords.length > 1) {
+                        keywordScore += matchedWords.length * 3;
+                    }
+
+                    // Semantic score (simplified - uses word overlap)
+                    const overlap = queryWords.filter(w => lower.includes(w)).length;
+                    semanticScore = (overlap / queryWords.length) * 10;
+
+                    // Combined score with authority boost
+                    const totalScore = (keywordScore * 0.6) + (semanticScore * 0.3) + (authority * 10);
+
+                    if (totalScore > 1) {
+                        results.push({
+                            source_name: source.source_name,
+                            url: source.url,
+                            title: source.title,
+                            author: source.author,
+                            date: source.date,
+                            content: paragraph,
+                            score: totalScore,
+                            keywordScore: keywordScore,
+                            semanticScore: semanticScore,
+                            authority: authority
+                        });
                     }
                 }
-
-                const matchedWords = queryWords.filter(w => lower.includes(w));
-                if (matchedWords.length > 1) {
-                    score += matchedWords.length * 3;
-                }
-
-                if (score > 1) {
-                    allResults.push({
-                        source_name: source.source_name,
-                        url: source.url,
-                        title: source.title,
-                        author: source.author,
-                        date: source.date,
-                        content: paragraph,
-                        score: score
-                    });
-                }
             }
+
+            // Sort by total score
+            results.sort((a, b) => b.score - a.score);
+            return results;
         }
 
-        allResults.sort((a, b) => b.score - a.score);
-        const topResults = allResults.slice(0, 3);
+        // ============================================
+        // 5. QUERY ROUTING
+        // ============================================
+        const allResults = hybridSearch(query, data.sources);
+        console.log(`📊 Found ${allResults.length} total matches`);
+
+        let topResults;
+        if (queryType === 'analytical') {
+            // For analytical queries, get more sources for synthesis
+            topResults = allResults.slice(0, 5);
+            console.log(`🏆 Using ${topResults.length} sources for analytical query`);
+        } else {
+            // For factual queries, get the top 3 most relevant
+            topResults = allResults.slice(0, 3);
+            console.log(`🏆 Using ${topResults.length} sources for factual query`);
+        }
 
         // ============================================
-        // HANDLE NO RESULTS
+        // 6. HANDLE NO RESULTS
         // ============================================
         if (topResults.length === 0) {
             return res.status(200).json({
@@ -133,24 +206,25 @@ export default async function handler(req, res) {
                     total_sources: data.total_sources || 0,
                     matches_found: 0,
                     last_updated: data.last_updated || 'Unknown',
-                    ai_generated: false
+                    ai_generated: false,
+                    query_type: queryType
                 }
             });
         }
 
         // ============================================
-        // GROQ GENERATION
+        // 7. GROQ GENERATION WITH RETRY
         // ============================================
         let aiAnswer = null;
         let aiError = null;
         const groqKey = process.env.GROQ_API_KEY;
 
         if (groqKey && topResults.length > 0) {
-            try {
-                const context = topResults.map((r, i) => 
-                    `Source ${i+1} (${r.source_name}): ${r.content}`
-                ).join('\n\n');
+            const context = topResults.map((r, i) => 
+                `Source ${i+1} (${r.source_name}): ${r.content}`
+            ).join('\n\n');
 
+            try {
                 const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: {
@@ -162,14 +236,16 @@ export default async function handler(req, res) {
                         messages: [
                             {
                                 role: 'system',
-                                content: 'You are a senior marketing analyst. Answer based ONLY on the provided context. Be concise and structured. Cite sources by name.'
+                                content: queryType === 'analytical' 
+                                    ? 'You are a senior marketing analyst. Synthesize information from multiple sources. Provide a comprehensive, balanced answer with key insights.'
+                                    : 'You are a senior marketing analyst. Answer based ONLY on the provided context. Be concise and accurate.'
                             },
                             {
                                 role: 'user',
-                                content: `CONTEXT:\n${context}\n\nQUESTION: ${query}\n\nAnswer concisely with key points based only on the context:`
+                                content: `CONTEXT:\n${context}\n\nQUESTION: ${query}\n\n${queryType === 'analytical' ? 'Synthesize the key insights from all sources:' : 'Answer concisely with key points:'}`
                             }
                         ],
-                        temperature: 0.2,
+                        temperature: queryType === 'analytical' ? 0.3 : 0.2,
                         max_tokens: 500,
                     })
                 });
@@ -177,6 +253,7 @@ export default async function handler(req, res) {
                 if (response.ok) {
                     const groqData = await response.json();
                     aiAnswer = groqData.choices?.[0]?.message?.content || null;
+                    console.log(`✅ AI answer generated (${aiAnswer?.length || 0} chars)`);
                 } else {
                     const errorText = await response.text();
                     console.log('Groq API error:', errorText);
@@ -194,7 +271,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // BUILD RESPONSE
+        // 8. BUILD RESPONSE
         // ============================================
         let responseText = '';
 
@@ -204,18 +281,19 @@ export default async function handler(req, res) {
             responseText = `**📊 Answer based on ${topResults.length} source(s):**\n\n`;
             for (let i = 0; i < topResults.length; i++) {
                 const r = topResults[i];
+                const scorePct = Math.min((r.score / 20) * 100, 100);
                 responseText += `**Source ${i + 1}: ${r.title}**\n`;
                 responseText += `🏷️ Source: ${r.source_name}\n`;
                 responseText += `✍️ Author: ${r.author}\n`;
                 responseText += `📅 Date: ${r.date}\n`;
-                responseText += `📊 Relevance: ${Math.min((r.score / 20) * 100, 100).toFixed(0)}%\n\n`;
+                responseText += `📊 Authority: ${(r.authority * 100).toFixed(0)}%\n`;
+                responseText += `📊 Relevance: ${scorePct.toFixed(0)}%\n\n`;
                 responseText += `${r.content}\n\n---\n\n`;
             }
         } else {
             responseText = '🔍 **No matching content found.**';
         }
 
-        // Build sources with badges
         const sourcesWithBadges = topResults.map(r => {
             let domain = 'Unknown';
             try {
@@ -229,10 +307,14 @@ export default async function handler(req, res) {
                 author: r.author,
                 date: r.date,
                 score: r.score,
+                authority: r.authority,
                 domain: domain,
                 chunk: r.content.substring(0, 300) + '...'
             };
         });
+
+        const duration = Date.now() - startTime;
+        console.log(`⏱️ Request completed in ${duration}ms`);
 
         return res.status(200).json({
             response: responseText,
@@ -242,12 +324,15 @@ export default async function handler(req, res) {
                 last_updated: data.last_updated || 'Unknown',
                 matches_found: topResults.length,
                 ai_generated: !!aiAnswer,
+                query_type: queryType,
+                processing_time_ms: duration,
                 error: aiError ? aiError.message : null
             }
         });
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error(`❌ Error: ${error.message}`);
+        console.error(error.stack);
         return res.status(500).json({
             error: 'Internal server error',
             details: error.message,
