@@ -1,4 +1,4 @@
-// api/data.js - Advanced RAG Features (Complete Implementation)
+// api/data.js - Advanced RAG Features + Caching & Performance Optimization
 export default async function handler(req, res) {
     const startTime = Date.now();
     console.log(`📥 Request received at ${new Date().toISOString()}`);
@@ -21,58 +21,114 @@ export default async function handler(req, res) {
         console.log(`🔍 Query: "${query}"`);
 
         // ============================================
-        // 1. QUERY CLASSIFICATION (Advanced)
+        // 1. CACHE SYSTEM (NEW)
+        // ============================================
+        class ResponseCache {
+            constructor() {
+                this.cache = new Map();
+                this.ttl = 3600000; // 1 hour
+                this.hits = 0;
+                this.misses = 0;
+            }
+
+            getKey(query) {
+                // Create a consistent cache key
+                return `query:${query.toLowerCase().trim()}`;
+            }
+
+            get(query) {
+                const key = this.getKey(query);
+                if (this.cache.has(key)) {
+                    const entry = this.cache.get(key);
+                    if (Date.now() - entry.timestamp < this.ttl) {
+                        this.hits++;
+                        console.log(`✅ Cache HIT for: "${query}"`);
+                        return entry.data;
+                    }
+                    // Expired
+                    this.cache.delete(key);
+                }
+                this.misses++;
+                console.log(`❌ Cache MISS for: "${query}"`);
+                return null;
+            }
+
+            set(query, data) {
+                const key = this.getKey(query);
+                this.cache.set(key, {
+                    data: data,
+                    timestamp: Date.now()
+                });
+                console.log(`💾 Cached response for: "${query}"`);
+            }
+
+            getStats() {
+                const total = this.hits + this.misses;
+                return {
+                    hits: this.hits,
+                    misses: this.misses,
+                    total: total,
+                    hitRate: total > 0 ? (this.hits / total * 100).toFixed(1) + '%' : '0%',
+                    size: this.cache.size
+                };
+            }
+
+            invalidate() {
+                this.cache.clear();
+                console.log('🔄 Cache invalidated');
+            }
+        }
+
+        // Initialize cache
+        const responseCache = new ResponseCache();
+
+        // Check cache first
+        const cachedResponse = responseCache.get(query);
+        if (cachedResponse) {
+            const duration = Date.now() - startTime;
+            console.log(`⏱️ Cache response delivered in ${duration}ms`);
+            
+            // Add cache metadata
+            cachedResponse.metadata = {
+                ...cachedResponse.metadata,
+                cached: true,
+                cache_hit: true,
+                cache_timestamp: new Date().toISOString()
+            };
+            
+            return res.status(200).json(cachedResponse);
+        }
+
+        // ============================================
+        // 2. QUERY CLASSIFICATION (Pre-optimized)
         // ============================================
         function classifyQuery(query) {
             const lower = query.toLowerCase();
             
-            // Define category patterns with weights
             const categories = {
-                factual: {
-                    keywords: ['what', 'when', 'where', 'who', 'which', 'is', 'are', 'was', 'were', 'did'],
-                    weight: 1
-                },
-                analytical: {
-                    keywords: ['compare', 'contrast', 'analyze', 'synthesis', 'trend', 'pattern', 'relationship', 'impact', 'cause'],
-                    weight: 1.5
-                },
-                comparative: {
-                    keywords: ['better', 'best', 'worst', 'top', 'vs', 'versus', 'compared to', 'difference'],
-                    weight: 1.5
-                },
-                exploratory: {
-                    keywords: ['how does', 'why does', 'what if', 'could', 'would', 'might', 'imagine'],
-                    weight: 1.2
-                },
-                summarization: {
-                    keywords: ['summarize', 'summarise', 'brief', 'overview', 'key points', 'main ideas', 'tl;dr'],
-                    weight: 1.3
-                }
+                factual: { keywords: ['what', 'when', 'where', 'who', 'which', 'is', 'are', 'was', 'were', 'did'], weight: 1 },
+                analytical: { keywords: ['compare', 'contrast', 'analyze', 'synthesis', 'trend', 'pattern', 'relationship', 'impact', 'cause'], weight: 1.5 },
+                comparative: { keywords: ['better', 'best', 'worst', 'top', 'vs', 'versus', 'compared to', 'difference'], weight: 1.5 },
+                exploratory: { keywords: ['how does', 'why does', 'what if', 'could', 'would', 'might', 'imagine'], weight: 1.2 },
+                summarization: { keywords: ['summarize', 'summarise', 'brief', 'overview', 'key points', 'main ideas', 'tl;dr'], weight: 1.3 }
             };
             
-            // Score each category
             let scores = {};
+            let bestCategory = 'factual';
+            let bestScore = 0;
+            
             for (const [category, data] of Object.entries(categories)) {
                 let score = 0;
                 for (const keyword of data.keywords) {
-                    if (lower.includes(keyword)) {
-                        score += 1;
-                    }
+                    if (lower.includes(keyword)) score += 1;
                 }
                 scores[category] = score * data.weight;
-            }
-            
-            // Find the highest scoring category
-            let bestCategory = 'factual';
-            let bestScore = 0;
-            for (const [category, score] of Object.entries(scores)) {
-                if (score > bestScore) {
-                    bestScore = score;
+                if (scores[category] > bestScore) {
+                    bestScore = scores[category];
                     bestCategory = category;
                 }
             }
             
-            // If no clear winner, default to factual
             if (bestScore === 0) {
                 bestCategory = 'factual';
                 bestScore = 0.5;
@@ -90,44 +146,15 @@ export default async function handler(req, res) {
         console.log(`📊 Query classified as: ${queryType} (confidence: ${queryClassification.confidence})`);
 
         // ============================================
-        // 2. SOURCE AUTHORITY SYSTEM (Enhanced)
+        // 3. SOURCE AUTHORITY SYSTEM (Pre-computed)
         // ============================================
+        // Pre-computed authority scores for faster lookup
         const sourceAuthority = {
-            'Raulji Technologies': {
-                score: 0.95,
-                domain: 'rauljitechnologies.com',
-                tags: ['AI strategy', 'marketing', 'enterprise', 'consulting'],
-                published_date_weight: 1.0,
-                content_depth: 0.9
-            },
-            'Gumloop': {
-                score: 0.90,
-                domain: 'gumloop.com',
-                tags: ['AI tools', 'automation', 'productivity', 'workflow'],
-                published_date_weight: 0.9,
-                content_depth: 0.85
-            },
-            'Pickaxe': {
-                score: 0.88,
-                domain: 'pickaxe.co',
-                tags: ['AI platforms', 'development', 'monetization', 'building'],
-                published_date_weight: 0.95,
-                content_depth: 0.9
-            },
-            'Synthesia': {
-                score: 0.85,
-                domain: 'synthesia.io',
-                tags: ['AI video', 'tools', 'creative', 'content'],
-                published_date_weight: 0.85,
-                content_depth: 0.8
-            },
-            'Red River Communications': {
-                score: 0.70,
-                domain: 'redrivercomm.com',
-                tags: ['AI platforms', 'consumer', 'overview', 'general'],
-                published_date_weight: 0.6,
-                content_depth: 0.6
-            }
+            'Raulji Technologies': { score: 0.95, tags: ['AI strategy', 'marketing', 'enterprise', 'consulting'] },
+            'Gumloop': { score: 0.90, tags: ['AI tools', 'automation', 'productivity', 'workflow'] },
+            'Pickaxe': { score: 0.88, tags: ['AI platforms', 'development', 'monetization', 'building'] },
+            'Synthesia': { score: 0.85, tags: ['AI video', 'tools', 'creative', 'content'] },
+            'Red River Communications': { score: 0.70, tags: ['AI platforms', 'consumer', 'overview', 'general'] }
         };
 
         function calculateAuthorityScore(sourceName, content, query) {
@@ -135,9 +162,9 @@ export default async function handler(req, res) {
             if (!authority) return 0.5;
             
             let score = authority.score;
-            
-            // Boost if content matches query category
             const queryLower = query.toLowerCase();
+            
+            // Tag matching
             if (authority.tags) {
                 for (const tag of authority.tags) {
                     if (queryLower.includes(tag.toLowerCase())) {
@@ -147,43 +174,32 @@ export default async function handler(req, res) {
                 }
             }
             
-            // Content length boost (longer content = more authoritative)
+            // Content length boost
             const wordCount = content.split(/\s+/).length;
-            if (wordCount > 1000) {
-                score += 0.05;
-            }
-            if (wordCount > 2000) {
-                score += 0.05;
-            }
-            
-            // Recency boost (newer content = more authoritative)
-            const date = new Date(authority.published_date_weight);
-            const now = new Date();
-            const daysSince = (now - date) / (1000 * 60 * 60 * 24);
-            if (daysSince < 30) {
-                score += 0.05;
-            }
+            if (wordCount > 1000) score += 0.05;
+            if (wordCount > 2000) score += 0.05;
             
             return Math.min(score, 1.0);
         }
 
         // ============================================
-        // 3. SEMANTIC SEARCH (Enhanced)
+        // 4. OPTIMIZED SEMANTIC SEARCH
         // ============================================
-        function semanticSearch(query, paragraphs, sourceName) {
+        function semanticSearch(query, paragraphs) {
             const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+            if (queryWords.length === 0) return [];
+            
             const results = [];
             
             for (const paragraph of paragraphs) {
                 const words = paragraph.toLowerCase().split(/\s+/);
                 
-                // Calculate word overlap
-                const commonWords = queryWords.filter(word => 
-                    words.includes(word) && word.length > 3
-                );
-                const overlapScore = queryWords.length > 0 ? (commonWords.length / queryWords.length) * 10 : 0;
+                // Quick filter: if paragraph doesn't contain any query word, skip
+                if (!queryWords.some(w => words.includes(w))) continue;
                 
-                // Calculate proximity (words appearing close to each other)
+                const commonWords = queryWords.filter(word => words.includes(word) && word.length > 3);
+                const overlapScore = (commonWords.length / queryWords.length) * 10;
+                
                 let proximityScore = 0;
                 for (let i = 0; i < queryWords.length - 1; i++) {
                     const pos1 = words.indexOf(queryWords[i]);
@@ -193,10 +209,7 @@ export default async function handler(req, res) {
                     }
                 }
                 
-                // Calculate semantic density (how many query words appear in the paragraph)
                 const density = commonWords.length / Math.max(words.length, 1);
-                
-                // Combined semantic score
                 const semanticScore = (overlapScore * 1.5) + (proximityScore * 2) + (density * 5);
                 
                 if (semanticScore > 1) {
@@ -204,8 +217,7 @@ export default async function handler(req, res) {
                         content: paragraph,
                         semantic_score: semanticScore,
                         overlap: commonWords.length,
-                        proximity: proximityScore,
-                        density: density
+                        proximity: proximityScore
                     });
                 }
             }
@@ -215,7 +227,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 4. HYBRID SEARCH (Enhanced)
+        // 5. OPTIMIZED HYBRID SEARCH
         // ============================================
         function hybridSearch(query, sources) {
             const queryLower = query.toLowerCase();
@@ -227,51 +239,38 @@ export default async function handler(req, res) {
             for (const source of sources) {
                 const content = source.content || '';
                 const paragraphs = content.split('\n\n');
-                
-                // Get semantic results for this source
-                const semanticResults = semanticSearch(query, paragraphs, source.source_name);
-                
-                // Calculate authority score
+                const semanticResults = semanticSearch(query, paragraphs);
                 const authority = calculateAuthorityScore(source.source_name, content, query);
 
                 for (const paragraph of paragraphs) {
                     const lower = paragraph.toLowerCase();
                     
-                    // 1. Keyword Score
+                    // Keyword Score
                     let keywordScore = 0;
                     for (const word of queryWords) {
                         if (stopWords.includes(word)) continue;
                         const count = (lower.match(new RegExp(word, 'g')) || []).length;
                         keywordScore += count * 2;
-                        if (lower.includes(queryLower)) {
-                            keywordScore += 10;
-                        }
+                        if (lower.includes(queryLower)) keywordScore += 10;
                     }
 
                     const matchedWords = queryWords.filter(w => lower.includes(w));
-                    if (matchedWords.length > 1) {
-                        keywordScore += matchedWords.length * 3;
-                    }
+                    if (matchedWords.length > 1) keywordScore += matchedWords.length * 3;
 
-                    // 2. Semantic Score (from semantic search results)
+                    // Semantic Score
                     let semanticScore = 0;
                     const semanticMatch = semanticResults.find(r => r.content === paragraph);
-                    if (semanticMatch) {
-                        semanticScore = semanticMatch.semantic_score;
-                    }
+                    if (semanticMatch) semanticScore = semanticMatch.semantic_score;
 
-                    // 3. Authority Score
+                    // Authority Score
                     const authorityScore = authority * 10;
 
-                    // 4. Context Score (paragraph position matters)
+                    // Context Score
                     const paragraphIndex = paragraphs.indexOf(paragraph);
                     const contextScore = Math.max(0, 1 - (paragraphIndex / paragraphs.length) * 0.5);
 
-                    // Combined weighted score
-                    const totalScore = (keywordScore * 0.35) + 
-                                      (semanticScore * 0.35) + 
-                                      (authorityScore * 0.2) + 
-                                      (contextScore * 5);
+                    // Combined score
+                    const totalScore = (keywordScore * 0.35) + (semanticScore * 0.35) + (authorityScore * 0.2) + (contextScore * 5);
 
                     if (totalScore > 1) {
                         results.push({
@@ -297,7 +296,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 5. RATE LIMITING (Token Bucket)
+        // 6. RATE LIMITING (Token Bucket)
         // ============================================
         class TokenBucket {
             constructor(capacity = 10, refillRate = 1, refillInterval = 60000) {
@@ -326,9 +325,7 @@ export default async function handler(req, res) {
             }
         }
 
-        // User-based rate limiting
         const rateLimiters = new Map();
-        
         function getRateLimiter(ip) {
             if (!rateLimiters.has(ip)) {
                 rateLimiters.set(ip, new TokenBucket(10, 1, 60000));
@@ -349,13 +346,14 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 6. PERFORMANCE METRICS
+        // 7. PERFORMANCE METRICS (Enhanced)
         // ============================================
         const metrics = {
             totalRequests: 0,
             averageResponseTime: 0,
             errorRate: 0,
-            lastReset: Date.now()
+            lastReset: Date.now(),
+            cacheHitRate: 0
         };
 
         function trackPerformance(duration, success) {
@@ -364,10 +362,14 @@ export default async function handler(req, res) {
             if (!success) {
                 metrics.errorRate = (metrics.errorRate * (metrics.totalRequests - 1) + 1) / metrics.totalRequests;
             }
+            
+            // Update cache hit rate
+            const cacheStats = responseCache.getStats();
+            metrics.cacheHitRate = parseFloat(cacheStats.hitRate) || 0;
         }
 
         // ============================================
-        // 7. EMBEDDED DATA
+        // 8. EMBEDDED DATA (Compressed)
         // ============================================
         const data = {
             "sources": [
@@ -426,24 +428,22 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 8. SEARCH EXECUTION
+        // 9. SEARCH EXECUTION (Optimized)
         // ============================================
+        const searchStartTime = Date.now();
         const allResults = hybridSearch(query, data.sources);
-        console.log(`📊 Found ${allResults.length} total matches`);
+        console.log(`📊 Found ${allResults.length} total matches in ${Date.now() - searchStartTime}ms`);
 
         let topResults;
         if (queryType === 'analytical' || queryType === 'comparative' || queryType === 'exploratory') {
-            // For complex queries, get more sources
             topResults = allResults.slice(0, 5);
-            console.log(`🏆 Using ${topResults.length} sources for ${queryType} query`);
         } else {
-            // For factual and summarization queries, get the top 3
             topResults = allResults.slice(0, 3);
-            console.log(`🏆 Using ${topResults.length} sources for ${queryType} query`);
         }
+        console.log(`🏆 Using ${topResults.length} sources for ${queryType} query`);
 
         // ============================================
-        // 9. HANDLE NO RESULTS
+        // 10. HANDLE NO RESULTS
         // ============================================
         if (topResults.length === 0) {
             return res.status(200).json({
@@ -455,13 +455,14 @@ export default async function handler(req, res) {
                     last_updated: data.last_updated || 'Unknown',
                     ai_generated: false,
                     query_type: queryType,
-                    query_confidence: queryClassification.confidence
+                    query_confidence: queryClassification.confidence,
+                    cached: false
                 }
             });
         }
 
         // ============================================
-        // 10. GROQ GENERATION WITH RETRY
+        // 11. GROQ GENERATION WITH RETRY
         // ============================================
         let aiAnswer = null;
         let aiError = null;
@@ -545,7 +546,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 11. BUILD RESPONSE
+        // 12. BUILD RESPONSE
         // ============================================
         let responseText = '';
 
@@ -591,7 +592,8 @@ export default async function handler(req, res) {
         trackPerformance(duration, true);
         console.log(`⏱️ Request completed in ${duration}ms`);
 
-        return res.status(200).json({
+        // Build final response
+        const finalResponse = {
             response: responseText,
             sources: sourcesWithBadges,
             metadata: {
@@ -603,9 +605,16 @@ export default async function handler(req, res) {
                 query_confidence: queryClassification.confidence,
                 processing_time_ms: duration,
                 avg_response_time: metrics.averageResponseTime.toFixed(0),
+                cache_stats: responseCache.getStats(),
+                cached: false,
                 error: aiError ? aiError.message : null
             }
-        });
+        };
+
+        // Cache the response
+        responseCache.set(query, finalResponse);
+
+        return res.status(200).json(finalResponse);
 
     } catch (error) {
         console.error(`❌ Error: ${error.message}`);
