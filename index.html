@@ -94,7 +94,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Smooth theme transition */
         * {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
@@ -113,9 +112,6 @@
             position: relative;
         }
 
-        /* ============================================
-           SCROLLBAR STYLING
-           ============================================ */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
         ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
@@ -189,13 +185,8 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .theme-toggle:hover {
-            background: var(--hover-bg);
-        }
-
-        .theme-toggle i {
-            font-size: 0.9rem;
-        }
+        .theme-toggle:hover { background: var(--hover-bg); }
+        .theme-toggle i { font-size: 0.9rem; }
 
         .status-indicator {
             display: flex;
@@ -210,9 +201,7 @@
             border: 1px solid var(--border-color);
         }
 
-        [data-theme="dark"] .status-indicator {
-            color: #8B5CF6;
-        }
+        [data-theme="dark"] .status-indicator { color: #8B5CF6; }
 
         .status-dot {
             width: 6px;
@@ -241,12 +230,20 @@
             transition: background 0.2s;
         }
 
-        .header-link:hover {
-            background: var(--hover-bg);
-        }
+        .header-link:hover { background: var(--hover-bg); }
+        .header-link i { font-size: 0.85rem; }
 
-        .header-link i {
-            font-size: 0.85rem;
+        .mobile-sidebar-toggle {
+            display: none;
+            background: var(--badge-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            align-items: center;
+            gap: 4px;
         }
 
         /* ============================================
@@ -259,7 +256,7 @@
         }
 
         /* ============================================
-           SIDEBAR
+           DESKTOP SIDEBAR
            ============================================ */
         .sidebar {
             width: 260px;
@@ -365,7 +362,6 @@
         [data-theme="dark"] .badge-ai { background: #1E1B4B; color: #818CF8; }
 
         .badge-sources { background: var(--badge-bg); color: var(--badge-text); }
-
         .badge i { font-size: 0.55rem; }
 
         .how-it-works {
@@ -403,6 +399,50 @@
             left: 0;
             top: 2px;
         }
+
+        /* ============================================
+           MOBILE SIDEBAR (Hidden on Desktop)
+           ============================================ */
+        .sidebar-mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 100;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .sidebar-mobile-overlay.active { display: block; }
+
+        .sidebar-mobile {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            height: 100dvh;
+            background: var(--bg-secondary);
+            z-index: 101;
+            padding: 20px 16px;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar-mobile.active { left: 0; }
+
+        .sidebar-mobile .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            float: right;
+        }
+
+        .sidebar-mobile .sidebar-section { margin-bottom: 16px; }
 
         /* ============================================
            CHAT AREA
@@ -760,22 +800,22 @@
                 padding: 4px 10px;
             }
 
+            /* Show mobile toggle, hide desktop sidebar */
+            .mobile-sidebar-toggle {
+                display: flex;
+            }
+
             .sidebar {
                 display: none;
             }
 
-            /* Mobile Sidebar - accessible via swipe or button */
-            .mobile-sidebar-toggle {
-                display: flex;
-                background: var(--badge-bg);
-                border: 1px solid var(--border-color);
-                border-radius: 8px;
-                padding: 6px 10px;
-                cursor: pointer;
-                color: var(--text-secondary);
-                font-size: 0.75rem;
-                align-items: center;
-                gap: 4px;
+            /* Mobile sidebar overlay */
+            .sidebar-mobile-overlay {
+                display: none;
+            }
+
+            .sidebar-mobile-overlay.active {
+                display: block;
             }
 
             .chat-area {
@@ -788,7 +828,7 @@
             .input-row input {
                 font-size: 0.8rem;
                 padding: 8px 14px;
-                min-height: 44px; /* iOS tap target */
+                min-height: 44px;
             }
 
             .btn {
@@ -819,6 +859,10 @@
             .ai-accent { padding: 12px; }
             .ai-accent .feature-title { font-size: 0.8rem; }
             .ai-accent .feature-desc { font-size: 0.7rem; }
+
+            .desktop-only {
+                display: none !important;
+            }
         }
 
         @media (max-width: 420px) {
@@ -828,55 +872,20 @@
         }
 
         @media (min-width: 769px) {
-            .mobile-sidebar-toggle { display: none; }
-        }
-
-        @media (max-width: 768px) {
-            /* Mobile sidebar overlay */
-            .sidebar-mobile-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.4);
-                z-index: 100;
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
+            .mobile-sidebar-toggle {
+                display: none !important;
             }
-
-            .sidebar-mobile-overlay.active { display: block; }
-
+            .sidebar-mobile-overlay,
             .sidebar-mobile {
-                position: fixed;
-                top: 0;
-                left: -280px;
-                width: 280px;
-                height: 100%;
-                height: 100dvh;
-                background: var(--bg-secondary);
-                z-index: 101;
-                padding: 20px 16px;
-                overflow-y: auto;
-                transition: left 0.3s ease;
-                border-right: 1px solid var(--border-color);
+                display: none !important;
             }
-
-            .sidebar-mobile.active { left: 0; }
-
-            .sidebar-mobile .close-sidebar {
-                background: none;
-                border: none;
-                font-size: 1.2rem;
-                color: var(--text-secondary);
-                cursor: pointer;
-                padding: 8px;
-                float: right;
+            .desktop-only {
+                display: inline !important;
             }
-
-            .sidebar-mobile .sidebar-section { margin-bottom: 16px; }
         }
 
         /* ============================================
-           TOAST / NOTIFICATION
+           TOAST
            ============================================ */
         .toast {
             position: fixed;
@@ -949,7 +958,7 @@
                 </button>
                 <a href="/analytics.html" class="header-link" aria-label="Analytics">
                     <i class="fas fa-chart-line"></i>
-                    <span>Analytics</span>
+                    <span class="desktop-only">Analytics</span>
                 </a>
                 <a href="/privacy.html" class="header-link" aria-label="Privacy">
                     <i class="fas fa-shield-alt"></i>
@@ -962,7 +971,7 @@
 
         <div class="flex-main">
             <!-- ==========================================
-            SIDEBAR
+            DESKTOP SIDEBAR
             ========================================== -->
             <aside class="sidebar">
                 <div class="sidebar-section">
@@ -1008,7 +1017,7 @@
             </aside>
 
             <!-- ==========================================
-            MOBILE SIDEBAR OVERLAY
+            MOBILE SIDEBAR (Hidden on Desktop)
             ========================================== -->
             <div class="sidebar-mobile-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
             <div class="sidebar-mobile" id="sidebarMobile">
@@ -1151,9 +1160,7 @@
             setTheme(current === 'dark' ? 'light' : 'dark');
         }
 
-        // Initialize theme
         setTheme(getPreferredTheme());
-
         document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
         // ============================================
@@ -1229,7 +1236,7 @@
         updateTotalQueries();
 
         // ============================================
-        // CHAT HISTORY (localStorage)
+        // CHAT HISTORY
         // ============================================
         function loadChatHistory() {
             try {
@@ -1251,7 +1258,7 @@
         }
 
         // ============================================
-        // FEEDBACK SYSTEM
+        // FEEDBACK
         // ============================================
         function submitFeedback(messageId, isPositive) {
             const feedbackKey = `feedback_${messageId}`;
