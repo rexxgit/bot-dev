@@ -3,1221 +3,464 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Omni Brand Intelligence Bot</title>
+    <title>Analytics Dashboard - Omni Brand Bot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ============================================
-           RESET & BASE
-           ============================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: "Inter", sans-serif;
             background-color: #F8FAFC;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+            padding: 24px;
             color: #0F172A;
         }
 
-        .bot-container {
-            background-color: #FFFFFF;
-            border-radius: 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.02);
+        .dashboard-container {
             max-width: 1200px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            min-height: 85vh;
-            overflow: hidden;
+            margin: 0 auto;
         }
 
-        /* ============================================
-           HEADER
-           ============================================ */
-        .header {
-            padding: 24px 32px;
-            border-bottom: 1px solid #E9E9EF;
+        /* Header */
+        .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 32px;
             flex-wrap: wrap;
             gap: 16px;
         }
 
-        .logo-area {
+        .dashboard-title {
             display: flex;
             align-items: center;
-            gap: 14px;
-        }
-
-        /* Custom Robot SVG Icon - Clean, Modern, Non-Generic */
-        .robot-icon {
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-        }
-
-        .robot-icon svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .brand-name {
-            font-weight: 600;
-            font-size: 1.2rem;
-            letter-spacing: -0.02em;
-            color: #0F172A;
-        }
-
-        .status-area {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 0.85rem;
-            color: #64748B;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #EEF2FF;
-            padding: 6px 14px;
-            border-radius: 100px;
-            font-weight: 500;
-            color: #4338CA;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #22C55E;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse-dot 1.8s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-            0% { opacity: 0.3; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.3; transform: scale(0.8); }
-        }
-
-        /* ============================================
-           MAIN LAYOUT
-           ============================================ */
-        .flex-main {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        /* ============================================
-           SIDEBAR
-           ============================================ */
-        .sidebar {
-            width: 280px;
-            background: #F8FAFC;
-            padding: 28px 20px;
-            border-right: 1px solid #E9E9EF;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            flex-shrink: 0;
-        }
-
-        .sidebar-section {
-            display: flex;
-            flex-direction: column;
             gap: 12px;
         }
 
-        .sidebar-section-title {
-            font-size: 0.65rem;
+        .dashboard-title h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0F172A;
+        }
+
+        .dashboard-title .back-link {
+            color: #7C3AED;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .dashboard-title .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .last-updated {
+            font-size: 0.8rem;
+            color: #94A3B8;
+        }
+
+        /* Stats Grid */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #E9E9EF;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: #94A3B8;
             font-weight: 600;
         }
 
-        .ai-accent {
-            background: linear-gradient(135deg, #7C3AED, #6D28D9);
-            color: white;
-            padding: 16px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #0F172A;
+            margin: 4px 0 2px 0;
         }
 
-        .ai-accent .feature-title {
-            font-weight: 600;
+        .stat-card .stat-change {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .stat-change.positive { color: #059669; }
+        .stat-change.negative { color: #DC2626; }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #E9E9EF;
+        }
+
+        .chart-card h3 {
             font-size: 0.9rem;
+            font-weight: 600;
+            color: #0F172A;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .ai-accent .feature-desc {
-            font-size: 0.8rem;
-            opacity: 0.85;
-            margin-top: 6px;
-            line-height: 1.4;
+        .chart-card h3 i {
+            color: #7C3AED;
         }
 
-        .status-box {
-            background: white;
-            border-radius: 16px;
-            padding: 16px;
-            border: 1px solid #E9E9EF;
+        /* Bar Chart (simple) */
+        .bar-chart {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-        }
-
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-        }
-
-        .status-item-label {
-            color: #64748B;
-        }
-
-        .status-item-value {
-            font-weight: 500;
-            color: #0F172A;
-        }
-
-        .badge-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 4px;
-        }
-
-        .badge {
-            font-size: 0.7rem;
-            font-weight: 500;
-            padding: 4px 12px;
-            border-radius: 100px;
-            background: #F1F5F9;
-            color: #475569;
-            display: inline-flex;
-            align-items: center;
             gap: 6px;
         }
 
-        .badge-live {
-            background: #ECFDF5;
-            color: #065F46;
-        }
-
-        .badge-ai {
-            background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
-            color: #4338CA;
-        }
-
-        .badge-sources {
-            background: #F1F5F9;
-            color: #475569;
-        }
-
-        .badge i {
-            font-size: 0.65rem;
-        }
-
-        .how-it-works {
-            font-size: 0.8rem;
-            color: #475569;
-            line-height: 1.6;
-        }
-
-        .how-it-works ol {
-            list-style: none;
-            padding-left: 0;
-            counter-reset: step-counter;
-        }
-
-        .how-it-works li {
-            counter-increment: step-counter;
-            padding-left: 28px;
-            position: relative;
-            margin-bottom: 6px;
-        }
-
-        .how-it-works li::before {
-            content: counter(step-counter);
-            background: #E9E9EF;
-            color: #64748B;
-            font-size: 0.6rem;
-            font-weight: 600;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
+        .bar-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            position: absolute;
-            left: 0;
-            top: 2px;
-        }
-
-        /* ============================================
-           CHAT AREA
-           ============================================ */
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #FFFFFF;
-            padding: 24px 32px;
-            overflow: hidden;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            min-height: 300px;
-        }
-
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
-            color: #94A3B8;
-            gap: 16px;
-            padding: 40px 20px;
-        }
-
-        /* Larger robot icon in empty state */
-        .empty-robot {
-            width: 80px;
-            height: 80px;
-            opacity: 0.4;
-            margin-bottom: 8px;
-        }
-
-        .empty-robot svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .empty-state h3 {
-            font-weight: 500;
-            color: #475569;
-            font-size: 1.1rem;
-        }
-
-        .empty-state p {
-            font-size: 0.9rem;
-            max-width: 400px;
-            color: #94A3B8;
-        }
-
-        /* Messages */
-        .message {
-            display: flex;
             gap: 12px;
-            max-width: 85%;
-            animation: fadeInUp 0.3s ease-out;
         }
 
-        .message-user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .message-assistant {
-            align-self: flex-start;
-        }
-
-        .message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+        .bar-label {
+            font-size: 0.75rem;
+            color: #64748B;
+            width: 100px;
             flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            color: white;
+            text-align: right;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 20px;
+            background: #F1F5F9;
+            border-radius: 10px;
             overflow: hidden;
         }
 
-        .message-avatar svg {
-            width: 18px;
-            height: 18px;
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #7C3AED, #3B82F6);
+            transition: width 0.6s ease;
         }
 
-        .message-user .message-avatar {
-            background: linear-gradient(135deg, #3B82F6, #2563EB);
-        }
-
-        .message-assistant .message-avatar {
-            background: linear-gradient(135deg, #7C3AED, #6D28D9);
-        }
-
-        .message-bubble {
-            padding: 12px 18px;
-            border-radius: 16px;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            background: #F1F5F9;
+        .bar-value {
+            font-size: 0.75rem;
+            font-weight: 500;
             color: #0F172A;
-            word-break: break-word;
+            width: 40px;
+            flex-shrink: 0;
         }
 
-        .message-user .message-bubble {
-            background: linear-gradient(135deg, #3B82F6, #2563EB);
-            color: white;
-        }
-
-        .message-assistant .message-bubble {
-            background: #F8FAFC;
-            border: 1px solid #E9E9EF;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ============================================
-           INPUT AREA
-           ============================================ */
-        .input-area {
-            border-top: 1px solid #E9E9EF;
-            padding: 16px 0 8px 0;
+        /* Source usage */
+        .source-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .input-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .input-row input {
-            flex: 1;
-            border: 1px solid #E2E8F0;
-            border-radius: 100px;
-            padding: 12px 20px;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background: #FFFFFF;
-            font-family: "Inter", sans-serif;
-        }
-
-        .input-row input:focus {
-            border-color: #7C3AED;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-        }
-
-        .btn {
-            border: none;
-            border-radius: 100px;
-            padding: 12px 24px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: "Inter", sans-serif;
-        }
-
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #7C3AED, #6D28D9);
-            color: white;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #6D28D9, #5B21B6);
-            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.25);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .btn-secondary {
-            background: #F1F5F9;
-            color: #475569;
-        }
-
-        .btn-secondary:hover {
-            background: #E2E8F0;
-        }
-
-        .input-footer {
+        .source-item {
             display: flex;
             justify-content: space-between;
-            font-size: 0.7rem;
-            color: #94A3B8;
-            padding: 0 8px;
-        }
-
-        /* ============================================
-           SOURCE CARDS
-           ============================================ */
-        .source-card {
-            background: #FFFFFF;
-            border-radius: 12px;
-            padding: 14px 16px;
-            border-left: 4px solid #7C3AED;
-            margin-top: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            border: 1px solid #F1F5F9;
-            border-left-width: 4px;
-        }
-
-        .source-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
-        }
-
-        .source-title {
-            font-weight: 500;
+            align-items: center;
+            padding: 8px 12px;
+            background: #F8FAFC;
+            border-radius: 8px;
             font-size: 0.85rem;
+        }
+
+        .source-item .source-name {
+            font-weight: 500;
             color: #0F172A;
         }
 
-        .source-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            font-size: 0.7rem;
+        .source-item .source-count {
             color: #64748B;
         }
 
-        .source-badge {
-            background: #EEF2FF;
-            color: #4338CA;
+        /* Popular Questions */
+        .popular-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .popular-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #F1F5F9;
+            font-size: 0.85rem;
+        }
+
+        .popular-list li:last-child {
+            border-bottom: none;
+        }
+
+        .popular-list .question-text {
+            color: #0F172A;
+        }
+
+        .popular-list .question-count {
+            color: #94A3B8;
+            font-weight: 500;
+            font-size: 0.75rem;
+            background: #F1F5F9;
             padding: 2px 10px;
             border-radius: 100px;
-            font-weight: 500;
         }
 
-        .source-relevance {
-            font-weight: 500;
-        }
-
-        .source-relevance-high { color: #059669; }
-        .source-relevance-med { color: #D97706; }
-        .source-relevance-low { color: #DC2626; }
-
-        .source-link {
-            font-size: 0.75rem;
-            color: #7C3AED;
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .source-link:hover {
-            text-decoration: underline;
-        }
-
-        /* ============================================
-           FEEDBACK
-           ============================================ */
-        .feedback-container {
+        /* Feedback Ratio */
+        .feedback-ratio {
             display: flex;
-            gap: 8px;
-            margin-top: 12px;
+            gap: 16px;
             align-items: center;
-            border-top: 1px solid #E9E9EF;
-            padding-top: 10px;
+            margin-top: 12px;
         }
 
-        .feedback-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-            color: #94A3B8;
+        .feedback-ratio .thumbs-up {
+            color: #059669;
+            font-weight: 600;
         }
 
-        .feedback-btn:hover {
+        .feedback-ratio .thumbs-down {
+            color: #DC2626;
+            font-weight: 600;
+        }
+
+        .feedback-bar {
+            flex: 1;
+            height: 8px;
             background: #F1F5F9;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
         }
 
-        .feedback-btn.active {
-            background: #EEF2FF;
-            color: #4338CA;
+        .feedback-bar .up-fill {
+            background: #059669;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
         }
 
-        .feedback-copy {
-            margin-left: auto;
+        .feedback-bar .down-fill {
+            background: #DC2626;
+            height: 100%;
+            border-radius: 0 4px 4px 0;
         }
 
-        /* ============================================
-           RESPONSIVE
-           ============================================ */
+        /* Responsive */
         @media (max-width: 768px) {
-            .sidebar {
-                display: none;
+            .charts-grid {
+                grid-template-columns: 1fr;
             }
-            .chat-area {
-                padding: 16px;
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
-            .header {
-                padding: 16px;
-            }
-            .status-area {
-                gap: 12px;
-            }
-            .message {
-                max-width: 95%;
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
     </style>
 </head>
 <body>
-    <div class="bot-container">
-        <!-- ==========================================
-        HEADER
-        ========================================== -->
-        <header class="header">
-            <div class="logo-area">
-                <!-- Custom Robot SVG Icon -->
-                <div class="robot-icon" aria-label="Omni Brand Intelligence Bot logo">
-                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="40" height="40" rx="10" fill="url(#robotGrad)" />
-                        <defs>
-                            <linearGradient id="robotGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#7C3AED" />
-                                <stop offset="1" stop-color="#3B82F6" />
-                            </linearGradient>
-                        </defs>
-                        <!-- Robot Head -->
-                        <rect x="12" y="9" width="16" height="14" rx="4" fill="white" opacity="0.95" />
-                        <!-- Eyes -->
-                        <circle cx="17" cy="16" r="2" fill="#7C3AED" />
-                        <circle cx="23" cy="16" r="2" fill="#7C3AED" />
-                        <!-- Mouth -->
-                        <rect x="17" y="20" width="6" height="1.5" rx="0.75" fill="#7C3AED" />
-                        <!-- Antenna -->
-                        <rect x="19" y="5" width="2" height="4" rx="1" fill="white" opacity="0.9" />
-                        <circle cx="20" cy="4" r="2.5" fill="white" opacity="0.9" />
-                        <!-- Ears -->
-                        <rect x="10" y="13" width="2" height="6" rx="1" fill="white" opacity="0.9" />
-                        <rect x="28" y="13" width="2" height="6" rx="1" fill="white" opacity="0.9" />
-                        <!-- Body -->
-                        <rect x="14" y="23" width="12" height="8" rx="3" fill="white" opacity="0.85" />
-                        <!-- Arms -->
-                        <rect x="8" y="24" width="6" height="2.5" rx="1.25" fill="white" opacity="0.85" />
-                        <rect x="26" y="24" width="6" height="2.5" rx="1.25" fill="white" opacity="0.85" />
-                    </svg>
-                </div>
-                <span class="brand-name">Omni Brand Intelligence Bot</span>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="dashboard-title">
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Bot
+                </a>
+                <h1><i class="fas fa-chart-line" style="color:#7C3AED;"></i> Analytics Dashboard</h1>
             </div>
-            <div class="status-area">
-                <div class="status-indicator">
-                    <span class="status-dot"></span>
-                    <span>Live</span>
-                </div>
-                <span><i class="far fa-clock"></i> <span id="timestamp">Ready</span></span>
+            <div class="last-updated">
+                <i class="far fa-clock"></i> Last updated: <span id="last-updated">Just now</span>
             </div>
         </header>
 
-        <div class="flex-main">
-            <!-- ==========================================
-            SIDEBAR
-            ========================================== -->
-            <aside class="sidebar">
-                <div class="sidebar-section">
-                    <div class="ai-accent">
-                        <div class="feature-title">
-                            <i class="fas fa-bolt"></i> Multi-Source Scraping
-                        </div>
-                        <div class="feature-desc">
-                            5+ competitor websites analyzed in real-time
-                        </div>
-                    </div>
-                </div>
+        <!-- Stats Grid -->
+        <div class="stat-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Queries</div>
+                <div class="stat-value" id="total-queries">--</div>
+                <div class="stat-change positive">↑ 12% this week</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Avg Response Time</div>
+                <div class="stat-value" id="avg-response">--</div>
+                <div class="stat-change positive">✅ Fast</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Cache Hit Rate</div>
+                <div class="stat-value" id="cache-rate">--</div>
+                <div class="stat-change positive">⬆️ Improving</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sources</div>
+                <div class="stat-value" id="sources-count">5</div>
+                <div class="stat-change">📚 Active</div>
+            </div>
+        </div>
 
-                <div class="sidebar-section">
-                    <div class="status-box">
-                        <div class="status-item">
-                            <span class="status-item-label">Status</span>
-                            <span class="status-item-value" id="status-text">Ready</span>
-                        </div>
-                        <div class="badge-group">
-                            <span class="badge badge-live"><i class="fas fa-circle"></i> Live</span>
-                            <span class="badge badge-ai"><i class="fas fa-brain"></i> AI-Powered</span>
-                            <span class="badge badge-sources"><i class="fas fa-database"></i> 5+ Sources</span>
-                        </div>
-                    </div>
-                </div>
+        <!-- Charts -->
+        <div class="charts-grid">
+            <!-- Popular Questions -->
+            <div class="chart-card">
+                <h3><i class="fas fa-fire"></i> Popular Questions</h3>
+                <ul class="popular-list" id="popular-questions">
+                    <li><span class="question-text">Loading...</span></li>
+                </ul>
+            </div>
 
-                <div class="sidebar-section">
-                    <span class="sidebar-section-title">How it works</span>
-                    <div class="how-it-works">
-                        <ol>
-                            <li>You ask a question</li>
-                            <li>Searches 5+ scraped sources</li>
-                            <li>Finds relevant content</li>
-                            <li>Returns AI-generated answer with sources</li>
-                        </ol>
+            <!-- Feedback Ratio -->
+            <div class="chart-card">
+                <h3><i class="fas fa-thumbs-up"></i> Feedback</h3>
+                <div class="feedback-ratio">
+                    <span class="thumbs-up"><i class="fas fa-thumbs-up"></i> <span id="thumbs-up">--</span></span>
+                    <div class="feedback-bar">
+                        <div class="up-fill" id="feedback-up-bar" style="width: 85%;"></div>
+                        <div class="down-fill" id="feedback-down-bar" style="width: 15%;"></div>
                     </div>
+                    <span class="thumbs-down"><i class="fas fa-thumbs-down"></i> <span id="thumbs-down">--</span></span>
                 </div>
-            </aside>
+                <div style="text-align:center;margin-top:8px;font-size:0.8rem;color:#94A3B8;">
+                    <span id="feedback-ratio">--%</span> positive feedback
+                </div>
+            </div>
+        </div>
 
-            <!-- ==========================================
-            CHAT AREA
-            ========================================== -->
-            <main class="chat-area">
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Empty State -->
-                    <div class="empty-state" id="empty-state">
-                        <div class="empty-robot">
-                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="80" height="80" rx="16" fill="url(#emptyRobotGrad)" opacity="0.06" />
-                                <defs>
-                                    <linearGradient id="emptyRobotGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#7C3AED" />
-                                        <stop offset="1" stop-color="#3B82F6" />
-                                    </linearGradient>
-                                </defs>
-                                <!-- Robot Head -->
-                                <rect x="24" y="18" width="32" height="28" rx="8" fill="#7C3AED" opacity="0.15" />
-                                <!-- Eyes -->
-                                <circle cx="34" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
-                                <circle cx="46" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
-                                <!-- Mouth -->
-                                <rect x="34" y="40" width="12" height="3" rx="1.5" fill="#7C3AED" opacity="0.25" />
-                                <!-- Antenna -->
-                                <rect x="38" y="10" width="4" height="8" rx="2" fill="#7C3AED" opacity="0.15" />
-                                <circle cx="40" cy="8" r="5" fill="#7C3AED" opacity="0.15" />
-                                <!-- Ears -->
-                                <rect x="20" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
-                                <rect x="56" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
-                                <!-- Body -->
-                                <rect x="28" y="46" width="24" height="16" rx="6" fill="#7C3AED" opacity="0.12" />
-                                <!-- Arms -->
-                                <rect x="16" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
-                                <rect x="52" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
-                            </svg>
-                        </div>
-                        <h3>Ask a question</h3>
-                        <p>About AI tools, platforms, or industry trends. ChatGPT, Claude, Gemini, Grok, and more.</p>
-                        <p style="font-size:0.75rem; color:#CBD5E1; margin-top: 4px;">
-                            <i class="fas fa-bolt"></i> Powered by live web scraping + AI
-                        </p>
-                    </div>
+        <!-- Sources Used -->
+        <div class="chart-card" style="margin-bottom:32px;">
+            <h3><i class="fas fa-database"></i> Sources Used</h3>
+            <div class="source-list" id="source-usage">
+                <div class="source-item">
+                    <span class="source-name">Loading...</span>
+                    <span class="source-count">--</span>
                 </div>
+            </div>
+        </div>
 
-                <!-- ==========================================
-                INPUT AREA
-                ========================================== -->
-                <div class="input-area">
-                    <div class="input-row">
-                        <input
-                            type="text"
-                            id="message-input"
-                            placeholder="Ask a question..."
-                            aria-label="Ask a question"
-                        />
-                        <button class="btn btn-primary" id="send-btn">
-                            <i class="fas fa-paper-plane"></i> Send
-                        </button>
-                        <button class="btn btn-secondary" id="clear-btn">
-                            <i class="fas fa-undo-alt"></i> Clear
-                        </button>
-                    </div>
-                    <div class="input-footer">
-                        <span><i class="fas fa-shield-alt"></i> AI-generated responses with source attribution</span>
-                        <span id="conversation-count"><i class="far fa-comment-dots"></i> 0 conversations</span>
-                    </div>
-                </div>
-            </main>
+        <!-- Queries by Hour -->
+        <div class="chart-card">
+            <h3><i class="fas fa-clock"></i> Queries by Hour</h3>
+            <div class="bar-chart" id="hourly-chart">
+                <!-- Populated by JavaScript -->
+            </div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // JavaScript - All logic preserved
+        // ANALYTICS DASHBOARD
         // ============================================
-        const API_URL = '/api/data';
-        let isProcessing = false;
-        let messageIdCounter = 0;
+        const API_URL = '/api/analytics';
 
-        const chatMessages = document.getElementById('chat-messages');
-        const emptyState = document.getElementById('empty-state');
-        const messageInput = document.getElementById('message-input');
-        const sendBtn = document.getElementById('send-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const statusText = document.getElementById('status-text');
-        const timestampEl = document.getElementById('timestamp');
-        const conversationCountEl = document.getElementById('conversation-count');
-
-        // Chat History
-        function loadChatHistory() {
+        async function loadAnalytics() {
             try {
-                const history = localStorage.getItem('omniChatHistory');
-                return history ? JSON.parse(history) : [];
-            } catch (e) { return []; }
-        }
-
-        function saveChatHistory(messages) {
-            try {
-                localStorage.setItem('omniChatHistory', JSON.stringify(messages));
-                updateConversationCount();
-            } catch (e) {}
-        }
-
-        function updateConversationCount() {
-            const history = loadChatHistory();
-            conversationCountEl.innerHTML = `<i class="far fa-comment-dots"></i> ${history.length} conversations`;
-        }
-
-        // Feedback System
-        function submitFeedback(messageId, isPositive) {
-            const feedbackKey = `feedback_${messageId}`;
-            const existing = localStorage.getItem(feedbackKey);
-
-            if (existing) {
-                if (existing === String(isPositive)) {
-                    localStorage.removeItem(feedbackKey);
-                    updateFeedbackUI(messageId, null);
-                    return;
-                }
-            }
-
-            localStorage.setItem(feedbackKey, String(isPositive));
-            updateFeedbackUI(messageId, isPositive);
-            console.log(`📊 Feedback for ${messageId}: ${isPositive ? '👍' : '👎'}`);
-        }
-
-        function updateFeedbackUI(messageId, isPositive) {
-            const container = document.getElementById(`feedback-${messageId}`);
-            if (!container) return;
-
-            const thumbsUp = container.querySelector('.feedback-up');
-            const thumbsDown = container.querySelector('.feedback-down');
-
-            if (thumbsUp) thumbsUp.classList.toggle('active', isPositive === true);
-            if (thumbsDown) thumbsDown.classList.toggle('active', isPositive === false);
-        }
-
-        function getFeedback(messageId) {
-            const val = localStorage.getItem(`feedback_${messageId}`);
-            if (val === null) return null;
-            return val === 'true';
-        }
-
-        // UI Functions
-        function addMessageToUI(role, content, id) {
-            const container = chatMessages;
-            if (emptyState) emptyState.style.display = 'none';
-
-            const messageId = id || `msg-${Date.now()}-${++messageIdCounter}`;
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message message-${role}`;
-            messageDiv.dataset.messageId = messageId;
-
-            const avatar = document.createElement('div');
-            avatar.className = 'message-avatar';
-
-            if (role === 'user') {
-                avatar.innerHTML = `<i class="fas fa-user"></i>`;
-            } else {
-                avatar.innerHTML = `
-                    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="3" width="12" height="10" rx="3" fill="white" opacity="0.9"/>
-                        <circle cx="7" cy="8" r="1.5" fill="#7C3AED"/>
-                        <circle cx="11" cy="8" r="1.5" fill="#7C3AED"/>
-                        <rect x="6" y="11" width="6" height="1.5" rx="0.75" fill="#7C3AED"/>
-                        <rect x="8.25" y="1" width="1.5" height="2" rx="0.75" fill="white" opacity="0.9"/>
-                        <circle cx="9" cy="0.75" r="1.5" fill="white" opacity="0.9"/>
-                        <rect x="4.5" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
-                        <rect x="12" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
-                        <rect x="5.25" y="13" width="7.5" height="3" rx="1.5" fill="white" opacity="0.85"/>
-                        <rect x="3" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
-                        <rect x="12.75" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
-                    </svg>
-                `;
-            }
-
-            const bubble = document.createElement('div');
-            bubble.className = 'message-bubble';
-
-            if (role === 'assistant') {
-                bubble.innerHTML = content;
-
-                const feedbackContainer = document.createElement('div');
-                feedbackContainer.className = 'feedback-container';
-                feedbackContainer.id = `feedback-${messageId}`;
-
-                const upBtn = document.createElement('button');
-                upBtn.className = 'feedback-btn feedback-up';
-                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                upBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    submitFeedback(messageId, true);
-                };
-
-                const downBtn = document.createElement('button');
-                downBtn.className = 'feedback-btn feedback-down';
-                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                downBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    submitFeedback(messageId, false);
-                };
-
-                const existingFeedback = getFeedback(messageId);
-                if (existingFeedback !== null) {
-                    setTimeout(() => updateFeedbackUI(messageId, existingFeedback), 100);
-                }
-
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'feedback-btn feedback-copy';
-                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                copyBtn.title = 'Copy response';
-                copyBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const textToCopy = bubble.textContent || '';
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                        setTimeout(() => { copyBtn.innerHTML = '<i class="far fa-copy"></i>'; }, 2000);
-                    });
-                };
-
-                feedbackContainer.appendChild(upBtn);
-                feedbackContainer.appendChild(downBtn);
-                feedbackContainer.appendChild(copyBtn);
-                bubble.appendChild(feedbackContainer);
-
-            } else {
-                bubble.textContent = content;
-            }
-
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(bubble);
-            container.appendChild(messageDiv);
-
-            const history = loadChatHistory();
-            history.push({ role, content, id: messageId });
-            saveChatHistory(history);
-
-            return messageId;
-        }
-
-        function addMessage(role, content) {
-            return addMessageToUI(role, content);
-        }
-
-        function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Format Response
-        function formatResponse(data) {
-            let html = '';
-
-            if (data.response) {
-                html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
-            }
-
-            if (data.metadata && data.metadata.ai_generated) {
-                html += `
-                    <div style="margin-top: 0.5rem;">
-                        <span class="badge badge-ai" style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF);color:#4338CA;padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:500;">
-                            <i class="fas fa-brain"></i> AI-Generated
-                        </span>
-                    </div>
-                `;
-            }
-
-            if (data.sources && data.sources.length > 0) {
-                html += `
-                    <div class="mt-4">
-                        <h4 style="font-weight:500;font-size:0.9rem;color:#475569;margin-bottom:8px;">
-                            <i class="fas fa-book-open"></i> Sources
-                        </h4>
-                        <div style="display:flex;flex-direction:column;gap:8px;">
-                `;
-
-                data.sources.forEach((source, index) => {
-                    const score = source.score || 0;
-                    const maxScore = 20;
-                    const pct = Math.min((score / maxScore) * 100, 100);
-                    const relevanceClass = pct > 60 ? 'source-relevance-high' :
-                        pct > 30 ? 'source-relevance-med' : 'source-relevance-low';
-                    const relevanceText = pct > 60 ? 'High' : pct > 30 ? 'Medium' : 'Low';
-
-                    const domain = source.domain || 'Unknown';
-                    const sourceName = source.source_name || 'Unknown';
-
-                    html += `
-                        <div class="source-card">
-                            <div class="source-header">
-                                <div>
-                                    <div class="source-title">${source.title || 'Source ' + (index + 1)}</div>
-                                    <div class="source-meta">
-                                        <span><i class="fas fa-user"></i> ${source.author || 'Unknown'}</span>
-                                        <span><i class="fas fa-calendar-alt"></i> ${source.date || ''}</span>
-                                        <span class="source-badge"><i class="fas fa-tag"></i> ${sourceName}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="source-relevance ${relevanceClass}">${relevanceText} (${Math.round(pct)}%)</span>
-                                </div>
-                            </div>
-                            <p style="font-size:0.85rem;color:#475569;margin:4px 0 8px 0;line-height:1.5;">
-                                ${source.chunk ? source.chunk.substring(0, 200) + '...' : ''}
-                            </p>
-                            <a href="${source.source || '#'}" target="_blank" class="source-link">
-                                <i class="fas fa-external-link-alt"></i> View source
-                            </a>
-                        </div>
-                    `;
-                });
-
-                html += `
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (data.metadata) {
-                html += `
-                    <div style="margin-top:16px;padding-top:12px;border-top:1px solid #E9E9EF;display:flex;flex-wrap:wrap;gap:8px;font-size:0.7rem;color:#94A3B8;">
-                        <span><i class="fas fa-database"></i> ${data.metadata.total_sources || 0} sources</span>
-                        <span><i class="fas fa-check-circle"></i> ${data.metadata.matches_found || 0} matches</span>
-                        <span><i class="far fa-clock"></i> ${data.metadata.last_updated ? new Date(data.metadata.last_updated).toLocaleString() : 'N/A'}</span>
-                        ${data.metadata.ai_generated ? `<span><i class="fas fa-brain"></i> AI-Generated</span>` : ''}
-                        ${data.metadata.error ? `<span style="color:#DC2626;"><i class="fas fa-exclamation-triangle"></i> ${data.metadata.error}</span>` : ''}
-                    </div>
-                `;
-            }
-
-            return html || '<p style="color:#94A3B8;">No response available.</p>';
-        }
-
-        // Error Handling
-        function displayError(message, details = null) {
-            let html = `
-                <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:16px;color:#991B1B;">
-                    <strong><i class="fas fa-exclamation-circle"></i> Error</strong>
-                    <p style="margin-top:4px;">${message}</p>
-            `;
-            if (details) {
-                html += `<p style="font-size:0.75rem;color:#B91C1C;margin-top:8px;">${details}</p>`;
-            }
-            html += `
-                    <p style="font-size:0.8rem;color:#6B7280;margin-top:8px;">Please try again or check the logs.</p>
-                </div>
-            `;
-            return html;
-        }
-
-        function displayRateLimit() {
-            return `
-                <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:16px;color:#92400E;">
-                    <strong><i class="fas fa-hourglass-half"></i> Rate Limit Exceeded</strong>
-                    <p style="margin-top:4px;">You've made too many requests. Please wait a moment and try again.</p>
-                    <p style="font-size:0.75rem;color:#78350F;margin-top:8px;">The AI service has a rate limit of 30 requests per minute.</p>
-                </div>
-            `;
-        }
-
-        function displayNoResults() {
-            return `
-                <div style="background:#FEFCE8;border:1px solid #FDE68A;border-radius:12px;padding:16px;color:#854D0E;">
-                    <strong><i class="fas fa-search"></i> No Results Found</strong>
-                    <p style="margin-top:4px;">Try asking about AI tools, platforms, or industry trends.</p>
-                    <p style="font-size:0.75rem;color:#713F12;margin-top:8px;">Example: "What are the best AI tools for 2026?" or "Compare ChatGPT and Claude"</p>
-                </div>
-            `;
-        }
-
-        // Send Message
-        async function sendMessage() {
-            const message = messageInput.value.trim();
-            if (!message || isProcessing) return;
-
-            addMessage('user', message);
-            messageInput.value = '';
-            isProcessing = true;
-            sendBtn.disabled = true;
-            messageInput.disabled = true;
-            statusText.textContent = 'Processing...';
-
-            const loadingId = addMessage('assistant', '<i class="fas fa-spinner fa-spin"></i> Searching 5+ sources...');
-
-            try {
-                statusText.textContent = 'Searching...';
-                timestampEl.textContent = new Date().toLocaleTimeString();
-
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: message })
-                });
-
-                if (!response.ok) {
-                    let errorMsg = `Server error: ${response.status}`;
-                    try {
-                        const errorData = await response.json();
-                        errorMsg = errorData.error || errorMsg;
-                    } catch (e) {}
-                    throw new Error(errorMsg);
-                }
-
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Failed to fetch analytics');
                 const data = await response.json();
 
-                statusText.textContent = 'Ready';
-                timestampEl.textContent = new Date().toLocaleTimeString();
+                // Update stats
+                document.getElementById('total-queries').textContent = data.total_queries || 0;
+                document.getElementById('avg-response').textContent = data.avg_response_time ? `${data.avg_response_time}ms` : '--';
+                document.getElementById('cache-rate').textContent = data.cache_hit_rate ? `${data.cache_hit_rate}%` : '--';
+                document.getElementById('sources-count').textContent = Object.keys(data.sources_used || {}).length || 5;
+                document.getElementById('last-updated').textContent = new Date(data.last_updated).toLocaleString();
 
-                const messages = chatMessages.querySelectorAll('.message-assistant');
-                const lastMsg = messages[messages.length - 1];
-                if (lastMsg && lastMsg.dataset.messageId === loadingId) {
-                    lastMsg.remove();
+                // Feedback
+                if (data.feedback) {
+                    const total = data.feedback.thumbs_up + data.feedback.thumbs_down;
+                    document.getElementById('thumbs-up').textContent = data.feedback.thumbs_up;
+                    document.getElementById('thumbs-down').textContent = data.feedback.thumbs_down;
+                    document.getElementById('feedback-ratio').textContent = data.feedback.ratio || '--%';
+                    
+                    const upPct = total > 0 ? (data.feedback.thumbs_up / total * 100) : 50;
+                    document.getElementById('feedback-up-bar').style.width = `${upPct}%`;
+                    document.getElementById('feedback-down-bar').style.width = `${100 - upPct}%`;
                 }
 
-                const formattedHtml = formatResponse(data);
-                addMessage('assistant', formattedHtml);
-                updateConversationCount();
+                // Popular Questions
+                const popularList = document.getElementById('popular-questions');
+                if (data.popular_questions && data.popular_questions.length > 0) {
+                    popularList.innerHTML = data.popular_questions.map(q => `
+                        <li>
+                            <span class="question-text">${q.question}</span>
+                            <span class="question-count">${q.count} queries</span>
+                        </li>
+                    `).join('');
+                } else {
+                    popularList.innerHTML = '<li style="color:#94A3B8;text-align:center;padding:16px;">No popular questions yet</li>';
+                }
+
+                // Sources Used
+                const sourceList = document.getElementById('source-usage');
+                if (data.sources_used) {
+                    const entries = Object.entries(data.sources_used);
+                    const total = entries.reduce((sum, [_, count]) => sum + count, 0);
+                    sourceList.innerHTML = entries.map(([name, count]) => `
+                        <div class="source-item">
+                            <span class="source-name">${name}</span>
+                            <span class="source-count">${count} uses (${Math.round(count / total * 100)}%)</span>
+                        </div>
+                    `).join('');
+                }
+
+                // Hourly Chart
+                const hourlyChart = document.getElementById('hourly-chart');
+                if (data.queries_by_hour) {
+                    const max = Math.max(...Object.values(data.queries_by_hour));
+                    hourlyChart.innerHTML = Object.entries(data.queries_by_hour).map(([hour, count]) => `
+                        <div class="bar-item">
+                            <span class="bar-label">${hour}</span>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: ${max > 0 ? (count / max * 100) : 0}%;"></div>
+                            </div>
+                            <span class="bar-value">${count}</span>
+                        </div>
+                    `).join('');
+                }
 
             } catch (error) {
-                console.error('Error:', error);
-
-                statusText.textContent = 'Error';
-                timestampEl.textContent = new Date().toLocaleTimeString();
-
-                const messages = chatMessages.querySelectorAll('.message-assistant');
-                const lastMsg = messages[messages.length - 1];
-                if (lastMsg && lastMsg.dataset.messageId === loadingId) {
-                    lastMsg.remove();
-                }
-
-                const errorMsg = error.message;
-                let errorHtml;
-                if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate')) {
-                    errorHtml = displayRateLimit();
-                } else if (errorMsg.includes('401') || errorMsg.toLowerCase().includes('key')) {
-                    errorHtml = displayError('Authentication Error', 'Please check your API key configuration.');
-                } else if (errorMsg.includes('404')) {
-                    errorHtml = displayError('Resource Not Found', 'The requested data was not available.');
-                } else if (errorMsg.includes('No matching content')) {
-                    errorHtml = displayNoResults();
-                } else {
-                    errorHtml = displayError(errorMsg, 'Please try again or check the logs.');
-                }
-                addMessage('assistant', errorHtml);
+                console.error('Error loading analytics:', error);
+                document.getElementById('popular-questions').innerHTML = '<li style="color:#DC2626;text-align:center;padding:16px;">Error loading data</li>';
             }
-
-            isProcessing = false;
-            sendBtn.disabled = false;
-            messageInput.disabled = false;
-            messageInput.focus();
-            scrollToBottom();
         }
 
-        // Clear Chat
-        function clearChat() {
-            if (!confirm('Clear all conversations?')) return;
+        // Load analytics on page load
+        loadAnalytics();
 
-            localStorage.removeItem('omniChatHistory');
-            chatMessages.innerHTML = `
-                <div class="empty-state" id="empty-state">
-                    <div class="empty-robot">
-                        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="80" height="80" rx="16" fill="url(#emptyRobotGrad)" opacity="0.06" />
-                            <defs>
-                                <linearGradient id="emptyRobotGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#7C3AED" />
-                                    <stop offset="1" stop-color="#3B82F6" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="24" y="18" width="32" height="28" rx="8" fill="#7C3AED" opacity="0.15" />
-                            <circle cx="34" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
-                            <circle cx="46" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
-                            <rect x="34" y="40" width="12" height="3" rx="1.5" fill="#7C3AED" opacity="0.25" />
-                            <rect x="38" y="10" width="4" height="8" rx="2" fill="#7C3AED" opacity="0.15" />
-                            <circle cx="40" cy="8" r="5" fill="#7C3AED" opacity="0.15" />
-                            <rect x="20" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
-                            <rect x="56" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
-                            <rect x="28" y="46" width="24" height="16" rx="6" fill="#7C3AED" opacity="0.12" />
-                            <rect x="16" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
-                            <rect x="52" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
-                        </svg>
-                    </div>
-                    <h3>Ask a question</h3>
-                    <p>About AI tools, platforms, or industry trends. ChatGPT, Claude, Gemini, Grok, and more.</p>
-                    <p style="font-size:0.75rem; color:#CBD5E1; margin-top: 4px;">
-                        <i class="fas fa-bolt"></i> Powered by live web scraping + AI
-                    </p>
-                </div>
-            `;
-            statusText.textContent = 'Ready';
-            timestampEl.textContent = new Date().toLocaleTimeString();
-            updateConversationCount();
-        }
-
-        // Event Listeners
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        sendBtn.addEventListener('click', sendMessage);
-        clearBtn.addEventListener('click', clearChat);
-
-        // Init
-        const history = loadChatHistory();
-        if (history.length > 0) {
-            chatMessages.innerHTML = '';
-            history.forEach(msg => {
-                addMessageToUI(msg.role, msg.content, msg.id);
-            });
-            if (emptyState) emptyState.style.display = 'none';
-        }
-        updateConversationCount();
-        statusText.textContent = 'Ready';
-        timestampEl.textContent = new Date().toLocaleTimeString();
+        // Auto-refresh every 60 seconds
+        setInterval(loadAnalytics, 60000);
     </script>
 </body>
 </html>
