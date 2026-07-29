@@ -18,6 +18,14 @@
             "dest": "/api/analytics"
         },
         {
+            "src": "/api/privacy",
+            "dest": "/api/privacy"
+        },
+        {
+            "src": "/api/audit",
+            "dest": "/api/audit"
+        },
+        {
             "src": "/(.*)",
             "dest": "/index.html"
         }
