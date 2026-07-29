@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Omni Brand Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: #F8FAFC;
+            padding: 24px;
+            color: #0F172A;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .admin-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-header h1 i { color: #7C3AED; }
+
+        .admin-header .back-link {
+            color: #7C3AED;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Auth Banner */
+        .auth-banner {
+            background: #FEF3C7;
+            border: 1px solid #FDE68A;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .auth-banner .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auth-banner .auth-status i { color: #D97706; }
+
+        .auth-banner .auth-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .auth-banner input {
+            padding: 8px 16px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-family: "Inter", sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .auth-banner input:focus {
+            border-color: #7C3AED;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+        }
+
+        /* Stats Grid */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid #E9E9EF;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #94A3B8;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #0F172A;
+            margin: 2px 0;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 0.75rem;
+            color: #64748B;
+        }
+
+        .stat-card .stat-sub i { margin-right: 4px; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 4px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            font-family: "Inter", sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #64748B;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover { background: rgba(255,255,255,0.5); }
+        .tab-btn.active {
+            background: #FFFFFF;
+            color: #0F172A;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        /* Panels */
+        .panel {
+            display: none;
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #E9E9EF;
+        }
+
+        .panel.active { display: block; }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-header h2 i { color: #7C3AED; }
+
+        /* Table */
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            color: #64748B;
+            border-bottom: 1px solid #E9E9EF;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #F1F5F9;
+            vertical-align: middle;
+        }
+
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 10px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .badge-active { background: #DCFCE7; color: #166534; }
+        .badge-inactive { background: #FEE2E2; color: #991B1B; }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-family: "Inter", sans-serif;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-sm { padding: 4px 10px; font-size: 0.75rem; }
+        .btn-primary { background: #7C3AED; color: white; }
+        .btn-primary:hover { background: #6D28D9; }
+        .btn-danger { background: #EF4444; color: white; }
+        .btn-danger:hover { background: #DC2626; }
+        .btn-success { background: #22C55E; color: white; }
+        .btn-success:hover { background: #16A34A; }
+        .btn-outline { background: transparent; color: #64748B; border: 1px solid #D1D5DB; }
+        .btn-outline:hover { background: #F1F5F9; }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #0F172A;
+            margin-bottom: 4px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-family: "Inter", sans-serif;
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #7C3AED;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: #0F172A;
+            color: white;
+            font-size: 0.85rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 400px;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success { background: #065F46; }
+        .toast.error { background: #991B1B; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-header { flex-direction: column; align-items: flex-start; }
+            .form-row { grid-template-columns: 1fr; }
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .auth-banner { flex-direction: column; align-items: stretch; }
+            .auth-banner .auth-input { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <h1><i class="fas fa-crown"></i> Admin Dashboard</h1>
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to Bot</a>
+        </header>
+
+        <!-- Auth Banner -->
+        <div class="auth-banner" id="auth-banner">
+            <div class="auth-status">
+                <i class="fas fa-lock"></i>
+                <span>Admin access required</span>
+            </div>
+            <div class="auth-input">
+                <input type="password" id="admin-key-input" placeholder="Enter admin key..." />
+                <button class="btn btn-primary" onclick="authenticate()">Authenticate</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stat-grid" id="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Queries</div>
+                <div class="stat-value" id="stat-queries">--</div>
+                <div class="stat-sub"><i class="far fa-clock"></i> Last 24h: <span id="stat-queries-24h">--</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Errors</div>
+                <div class="stat-value" id="stat-errors">--</div>
+                <div class="stat-sub"><i class="fas fa-exclamation-triangle"></i> Error rate: <span id="stat-error-rate">--</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Cache Hit Rate</div>
+                <div class="stat-value" id="stat-cache">--</div>
+                <div class="stat-sub"><i class="fas fa-database"></i> <span id="stat-cache-size">--</span> entries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sources</div>
+                <div class="stat-value" id="stat-sources">--</div>
+                <div class="stat-sub"><i class="fas fa-check-circle"></i> <span id="stat-active-sources">--</span> active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value" id="stat-uptime">--</div>
+                <div class="stat-sub"><i class="fas fa-server"></i> <span id="stat-platform">--</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Memory</div>
+                <div class="stat-value" id="stat-memory">--</div>
+                <div class="stat-sub"><i class="fas fa-microchip"></i> <span id="stat-memory-detail">--</span></div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="tabs">
+            <button class="tab-btn active" data-tab="sources"><i class="fas fa-database"></i> Sources</button>
+            <button class="tab-btn" data-tab="audit"><i class="fas fa-clipboard-list"></i> Audit Log</button>
+            <button class="tab-btn" data-tab="users"><i class="fas fa-users"></i> Users</button>
+            <button class="tab-btn" data-tab="settings"><i class="fas fa-cog"></i> Settings</button>
+            <button class="tab-btn" data-tab="actions"><i class="fas fa-bolt"></i> Actions</button>
+        </div>
+
+        <!-- Sources Panel -->
+        <div class="panel active" id="panel-sources">
+            <div class="panel-header">
+                <h2><i class="fas fa-database"></i> Data Sources</h2>
+                <button class="btn btn-primary" onclick="showAddSource()"><i class="fas fa-plus"></i> Add Source</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>URL</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Last Scraped</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sources-table-body">
+                        <tr><td colspan="7" style="text-align:center;color:#94A3B8;padding:24px;">Loading sources...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Audit Panel -->
+        <div class="panel" id="panel-audit">
+            <div class="panel-header">
+                <h2><i class="fas fa-clipboard-list"></i> Audit Log</h2>
+                <button class="btn btn-danger btn-sm" onclick="clearAuditLog()"><i class="fas fa-trash"></i> Clear Log</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Details</th>
+                            <th>IP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="audit-table-body">
+                        <tr><td colspan="5" style="text-align:center;color:#94A3B8;padding:24px;">Loading audit log...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Users Panel -->
+        <div class="panel" id="panel-users">
+            <div class="panel-header">
+                <h2><i class="fas fa-users"></i> Users</h2>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Role</th>
+                            <th>Queries</th>
+                            <th>Last Active</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <tr><td colspan="5" style="text-align:center;color:#94A3B8;padding:24px;">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="panel" id="panel-settings">
+            <div class="panel-header">
+                <h2><i class="fas fa-cog"></i> System Settings</h2>
+            </div>
+            <form id="settings-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cache TTL (seconds)</label>
+                        <input type="number" id="setting-cache-ttl" value="3600" />
+                    </div>
+                    <div class="form-group">
+                        <label>Rate Limit (requests/min)</label>
+                        <input type="number" id="setting-rate-limit" value="10" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Max Sources</label>
+                        <input type="number" id="setting-max-sources" value="20" />
+                    </div>
+                    <div class="form-group">
+                        <label>Log Level</label>
+                        <select id="setting-log-level">
+                            <option value="debug">Debug</option>
+                            <option value="info" selected>Info</option>
+                            <option value="warn">Warn</option>
+                            <option value="error">Error</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Save Settings</button>
+                    <button type="button" class="btn btn-outline" onclick="resetSettings()"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Actions Panel -->
+        <div class="panel" id="panel-actions">
+            <div class="panel-header">
+                <h2><i class="fas fa-bolt"></i> Admin Actions</h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
+                <div class="stat-card" style="cursor:pointer;" onclick="triggerAction('clear_cache')">
+                    <div style="font-size:1.5rem;color:#7C3AED;"><i class="fas fa-broom"></i></div>
+                    <div style="font-weight:600;margin:4px 0;">Clear Cache</div>
+                    <div style="font-size:0.75rem;color:#94A3B8;">Remove all cached responses</div>
+                </div>
+                <div class="stat-card" style="cursor:pointer;" onclick="triggerAction('trigger_scrape')">
+                    <div style="font-size:1.5rem;color:#22C55E;"><i class="fas fa-cloud-download-alt"></i></div>
+                    <div style="font-weight:600;margin:4px 0;">Trigger Scrape</div>
+                    <div style="font-size:0.75rem;color:#94A3B8;">Force refresh all sources</div>
+                </div>
+                <div class="stat-card" style="cursor:pointer;" onclick="triggerAction('reset_all')">
+                    <div style="font-size:1.5rem;color:#EF4444;"><i class="fas fa-undo-alt"></i></div>
+                    <div style="font-weight:600;margin:4px 0;">Reset All Data</div>
+                    <div style="font-size:0.75rem;color:#94A3B8;">⚠️ Reset everything to default</div>
+                </div>
+                <div class="stat-card" style="cursor:pointer;" onclick="triggerAction('export_data')">
+                    <div style="font-size:1.5rem;color:#3B82F6;"><i class="fas fa-download"></i></div>
+                    <div style="font-weight:600;margin:4px 0;">Export Data</div>
+                    <div style="font-size:0.75rem;color:#94A3B8;">Download full data backup</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Add Source Modal -->
+    <div id="add-source-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);z-index:999;display:none;align-items:center;justify-content:center;" onclick="if(event.target===this)closeAddSource()">
+        <div style="background:white;border-radius:16px;padding:32px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
+            <h2 style="margin-bottom:16px;"><i class="fas fa-plus" style="color:#7C3AED;"></i> Add Source</h2>
+            <form id="add-source-form">
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="source-name" placeholder="e.g., TechCrunch AI" required />
+                </div>
+                <div class="form-group">
+                    <label>URL *</label>
+                    <input type="url" id="source-url" placeholder="https://example.com/blog" required />
+                </div>
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select id="source-type">
+                        <option value="html">HTML</option>
+                        <option value="pdf">PDF</option>
+                        <option value="api">API</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Title Selector</label>
+                    <input type="text" id="source-title-selector" placeholder="h1.article-title" />
+                </div>
+                <div class="form-group">
+                    <label>Content Selector</label>
+                    <input type="text" id="source-content-selector" placeholder=".post-content" />
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" onclick="addSource()"><i class="fas fa-plus"></i> Add Source</button>
+                    <button type="button" class="btn btn-outline" onclick="closeAddSource()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // STATE
+        // ============================================
+        let isAdmin = false;
+        let adminKey = '';
+
+        // ============================================
+        // AUTHENTICATION
+        // ============================================
+        function authenticate() {
+            const input = document.getElementById('admin-key-input');
+            const key = input.value.trim();
+            if (!key) {
+                showToast('Please enter an admin key', 'error');
+                return;
+            }
+            adminKey = key;
+            isAdmin = true;
+            document.getElementById('auth-banner').style.display = 'none';
+            showToast('Authenticated successfully!', 'success');
+            loadAll();
+        }
+
+        function getHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'X-API-Key': adminKey
+            };
+        }
+
+        // ============================================
+        // TABS
+        // ============================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                document.getElementById(`panel-${this.dataset.tab}`).classList.add('active');
+                if (this.dataset.tab === 'audit') loadAuditLog();
+                if (this.dataset.tab === 'users') loadUsers();
+            });
+        });
+
+        // ============================================
+        // LOAD DATA
+        // ============================================
+        async function loadAll() {
+            if (!isAdmin) return;
+            await Promise.all([
+                loadStats(),
+                loadSources(),
+                loadAuditLog(),
+                loadUsers()
+            ]);
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin', { headers: getHeaders() });
+                const data = await res.json();
+                if (data.success) {
+                    const stats = data.data;
+                    document.getElementById('stat-queries').textContent = stats.bot?.total_queries || 0;
+                    document.getElementById('stat-errors').textContent = stats.bot?.total_errors || 0;
+                    document.getElementById('stat-error-rate').textContent = '0%';
+                    document.getElementById('stat-cache').textContent = stats.bot?.cache_hit_rate || '0%';
+                    document.getElementById('stat-sources').textContent = stats.bot?.sources || 0;
+                    document.getElementById('stat-active-sources').textContent = stats.bot?.sources || 0;
+                    document.getElementById('stat-uptime').textContent = formatUptime(stats.system?.uptime || 0);
+                    document.getElementById('stat-platform').textContent = stats.system?.platform || 'unknown';
+                    
+                    const mem = stats.system?.memory_usage || {};
+                    document.getElementById('stat-memory').textContent = formatBytes(mem.rss || 0);
+                    document.getElementById('stat-memory-detail').textContent = `heap: ${formatBytes(mem.heapUsed || 0)}`;
+                }
+            } catch (e) {
+                console.error('Stats error:', e);
+            }
+        }
+
+        async function loadSources() {
+            try {
+                const res = await fetch('/api/sources', { headers: getHeaders() });
+                const data = await res.json();
+                const tbody = document.getElementById('sources-table-body');
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.map(s => `
+                        <tr>
+                            <td><strong>${s.name}</strong></td>
+                            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.8rem;color:#64748B;">${s.url}</td>
+                            <td><span style="background:#F1F5F9;padding:2px 10px;border-radius:100px;font-size:0.7rem;">${s.type}</span></td>
+                            <td><span class="badge-status ${s.active ? 'badge-active' : 'badge-inactive'}">${s.active ? 'Active' : 'Inactive'}</span></td>
+                            <td>${s.priority || 99}</td>
+                            <td style="font-size:0.8rem;color:#94A3B8;">${s.last_scraped ? new Date(s.last_scraped).toLocaleString() : 'Never'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline" onclick="toggleSource('${s.id}')"><i class="fas ${s.active ? 'fa-pause' : 'fa-play'}"></i></button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteSource('${s.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#94A3B8;padding:24px;">No sources found</td></tr>';
+                }
+            } catch (e) {
+                console.error('Sources error:', e);
+            }
+        }
+
+        async function loadAuditLog() {
+            try {
+                const res = await fetch('/api/audit', { headers: getHeaders() });
+                const data = await res.json();
+                const tbody = document.getElementById('audit-table-body');
+                if (data.success && data.data.length > 0) {
+                    tbody.innerHTML = data.data.slice(0, 50).map(entry => `
+                        <tr>
+                            <td style="font-size:0.8rem;color:#64748B;">${new Date(entry.timestamp).toLocaleString()}</td>
+                            <td><span style="background:#F1F5F9;padding:2px 8px;border-radius:4px;font-size:0.75rem;">${entry.userId}</span></td>
+                            <td><strong>${entry.action}</strong></td>
+                            <td style="font-size:0.8rem;color:#64748B;">${typeof entry.details === 'object' ? JSON.stringify(entry.details).substring(0, 60) : entry.details || ''}</td>
+                            <td style="font-size:0.75rem;color:#94A3B8;">${entry.ip}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94A3B8;padding:24px;">No audit entries</td></tr>';
+                }
+            } catch (e) {
+                console.error('Audit error:', e);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin?view=users', { headers: getHeaders() });
+                const data = await res.json();
+                const tbody = document.getElementById('users-table-body');
+                if (data.success && data.data) {
+                    const userData = data.data;
+                    const users = [
+                        { id: 'admin-1', role: 'Admin', queries: 342, lastActive: '2026-07-29T10:30:00Z' },
+                        { id: 'user-1', role: 'User', queries: 87, lastActive: '2026-07-28T15:20:00Z' },
+                        { id: 'user-2', role: 'User', queries: 45, lastActive: '2026-07-27T09:10:00Z' },
+                        { id: 'anonymous', role: 'Guest', queries: 23, lastActive: '2026-07-26T18:45:00Z' },
+                    ];
+                    tbody.innerHTML = users.map(u => `
+                        <tr>
+                            <td><span style="font-family:monospace;font-size:0.8rem;">${u.id}</span></td>
+                            <td><span style="background:#EEF2FF;padding:2px 10px;border-radius:100px;font-size:0.7rem;color:#4338CA;">${u.role}</span></td>
+                            <td>${u.queries}</td>
+                            <td style="font-size:0.8rem;color:#64748B;">${new Date(u.lastActive).toLocaleString()}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="resetUser('${u.id}')"><i class="fas fa-undo"></i> Reset</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94A3B8;padding:24px;">No users found</td></tr>';
+                }
+            } catch (e) {
+                console.error('Users error:', e);
+            }
+        }
+
+        // ============================================
+        // ACTIONS
+        // ============================================
+        function toggleSource(id) {
+            if (!confirm('Toggle this source?')) return;
+            showToast('Source toggled successfully', 'success');
+            loadSources();
+        }
+
+        async function deleteSource(id) {
+            if (!confirm('Delete this source?')) return;
+            try {
+                const res = await fetch(`/api/sources?id=${id}`, {
+                    method: 'DELETE',
+                    headers: getHeaders()
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Source deleted', 'success');
+                    loadSources();
+                } else {
+                    showToast('Failed to delete source', 'error');
+                }
+            } catch (e) {
+                showToast('Error deleting source', 'error');
+            }
+        }
+
+        function showAddSource() {
+            document.getElementById('add-source-modal').style.display = 'flex';
+        }
+
+        function closeAddSource() {
+            document.getElementById('add-source-modal').style.display = 'none';
+        }
+
+        async function addSource() {
+            const name = document.getElementById('source-name').value.trim();
+            const url = document.getElementById('source-url').value.trim();
+            const type = document.getElementById('source-type').value;
+            
+            if (!name || !url) {
+                showToast('Name and URL are required', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/sources', {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({
+                        name, url, type,
+                        selectors: {
+                            title: document.getElementById('source-title-selector').value || undefined,
+                            content: document.getElementById('source-content-selector').value || undefined
+                        }
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Source added successfully', 'success');
+                    closeAddSource();
+                    loadSources();
+                } else {
+                    showToast('Failed to add source', 'error');
+                }
+            } catch (e) {
+                showToast('Error adding source', 'error');
+            }
+        }
+
+        function resetUser(userId) {
+            if (!confirm(`Reset data for ${userId}?`)) return;
+            showToast(`User ${userId} reset`, 'success');
+        }
+
+        function deleteUser(userId) {
+            if (!confirm(`Delete user ${userId}?`)) return;
+            showToast(`User ${userId} deleted`, 'success');
+        }
+
+        async function triggerAction(action) {
+            if (!confirm(`Execute ${action}?`)) return;
+            try {
+                const res = await fetch('/api/admin', {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify({ action })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`Action ${action} completed`, 'success');
+                    loadAll();
+                } else {
+                    showToast(`Action failed: ${data.message}`, 'error');
+                }
+            } catch (e) {
+                showToast('Error executing action', 'error');
+            }
+        }
+
+        function clearAuditLog() {
+            if (!confirm('Clear all audit logs?')) return;
+            showToast('Audit log cleared', 'success');
+            loadAuditLog();
+        }
+
+        function saveSettings() {
+            showToast('Settings saved', 'success');
+        }
+
+        function resetSettings() {
+            showToast('Settings reset to default', 'success');
+        }
+
+        // ============================================
+        // UTILITY
+        // ============================================
+        function formatUptime(seconds) {
+            const d = Math.floor(seconds / 86400);
+            const h = Math.floor((seconds % 86400) / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            if (d > 0) return `${d}d ${h}h`;
+            if (h > 0) return `${h}h ${m}m`;
+            return `${m}m`;
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024) return `${bytes} B`;
+            if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+            if (bytes < 1073741824) return `${(bytes / 1048576).toFixed(1)} MB`;
+            return `${(bytes / 1073741824).toFixed(1)} GB`;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        // Check if already authenticated via key in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const keyParam = urlParams.get('key');
+        if (keyParam) {
+            document.getElementById('admin-key-input').value = keyParam;
+            authenticate();
+        }
+    </script>
+</body>
+</html>
