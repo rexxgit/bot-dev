@@ -2,8 +2,20 @@
     "version": 2,
     "routes": [
         {
+            "src": "/api/auth",
+            "dest": "/api/auth"
+        },
+        {
             "src": "/api/data",
             "dest": "/api/data"
+        },
+        {
+            "src": "/api/status",
+            "dest": "/api/status"
+        },
+        {
+            "src": "/api/analytics",
+            "dest": "/api/analytics"
         },
         {
             "src": "/(.*)",
