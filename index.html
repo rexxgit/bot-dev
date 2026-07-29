@@ -1,466 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Analytics Dashboard - Omni Brand Bot</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- ... head content remains the same ... -->
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: "Inter", sans-serif;
-            background-color: #F8FAFC;
-            padding: 24px;
-            color: #0F172A;
-        }
-
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .dashboard-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .dashboard-title h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #0F172A;
-        }
-
-        .dashboard-title .back-link {
+        /* ... existing styles ... */
+        
+        /* Add these new styles */
+        .analytics-link {
             color: #7C3AED;
             text-decoration: none;
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 0.9rem;
-        }
-
-        .dashboard-title .back-link:hover {
-            text-decoration: underline;
-        }
-
-        .last-updated {
-            font-size: 0.8rem;
-            color: #94A3B8;
-        }
-
-        /* Stats Grid */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: #FFFFFF;
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid #E9E9EF;
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stat-card .stat-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: #94A3B8;
-            font-weight: 600;
-        }
-
-        .stat-card .stat-value {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #0F172A;
-            margin: 4px 0 2px 0;
-        }
-
-        .stat-card .stat-change {
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .stat-change.positive { color: #059669; }
-        .stat-change.negative { color: #DC2626; }
-
-        /* Charts Section */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .chart-card {
-            background: #FFFFFF;
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid #E9E9EF;
-        }
-
-        .chart-card h3 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #0F172A;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .chart-card h3 i {
-            color: #7C3AED;
-        }
-
-        /* Bar Chart (simple) */
-        .bar-chart {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .bar-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .bar-label {
-            font-size: 0.75rem;
-            color: #64748B;
-            width: 100px;
-            flex-shrink: 0;
-            text-align: right;
-        }
-
-        .bar-track {
-            flex: 1;
-            height: 20px;
-            background: #F1F5F9;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #7C3AED, #3B82F6);
-            transition: width 0.6s ease;
-        }
-
-        .bar-value {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #0F172A;
-            width: 40px;
-            flex-shrink: 0;
-        }
-
-        /* Source usage */
-        .source-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .source-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: #F8FAFC;
+            padding: 6px 12px;
             border-radius: 8px;
-            font-size: 0.85rem;
+            transition: background 0.2s;
         }
-
-        .source-item .source-name {
-            font-weight: 500;
-            color: #0F172A;
-        }
-
-        .source-item .source-count {
-            color: #64748B;
-        }
-
-        /* Popular Questions */
-        .popular-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .popular-list li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 12px;
-            border-bottom: 1px solid #F1F5F9;
-            font-size: 0.85rem;
-        }
-
-        .popular-list li:last-child {
-            border-bottom: none;
-        }
-
-        .popular-list .question-text {
-            color: #0F172A;
-        }
-
-        .popular-list .question-count {
-            color: #94A3B8;
-            font-weight: 500;
-            font-size: 0.75rem;
-            background: #F1F5F9;
-            padding: 2px 10px;
-            border-radius: 100px;
-        }
-
-        /* Feedback Ratio */
-        .feedback-ratio {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            margin-top: 12px;
-        }
-
-        .feedback-ratio .thumbs-up {
-            color: #059669;
-            font-weight: 600;
-        }
-
-        .feedback-ratio .thumbs-down {
-            color: #DC2626;
-            font-weight: 600;
-        }
-
-        .feedback-bar {
-            flex: 1;
-            height: 8px;
-            background: #F1F5F9;
-            border-radius: 4px;
-            overflow: hidden;
-            display: flex;
-        }
-
-        .feedback-bar .up-fill {
-            background: #059669;
-            height: 100%;
-            border-radius: 4px 0 0 4px;
-        }
-
-        .feedback-bar .down-fill {
-            background: #DC2626;
-            height: 100%;
-            border-radius: 0 4px 4px 0;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-            .stat-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        .analytics-link:hover {
+            background: #EEF2FF;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- Header -->
-        <header class="dashboard-header">
-            <div class="dashboard-title">
-                <a href="/" class="back-link">
-                    <i class="fas fa-arrow-left"></i> Back to Bot
-                </a>
-                <h1><i class="fas fa-chart-line" style="color:#7C3AED;"></i> Analytics Dashboard</h1>
-            </div>
-            <div class="last-updated">
-                <i class="far fa-clock"></i> Last updated: <span id="last-updated">Just now</span>
-            </div>
-        </header>
-
-        <!-- Stats Grid -->
-        <div class="stat-grid" id="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Total Queries</div>
-                <div class="stat-value" id="total-queries">--</div>
-                <div class="stat-change positive">↑ 12% this week</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Avg Response Time</div>
-                <div class="stat-value" id="avg-response">--</div>
-                <div class="stat-change positive">✅ Fast</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Cache Hit Rate</div>
-                <div class="stat-value" id="cache-rate">--</div>
-                <div class="stat-change positive">⬆️ Improving</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Sources</div>
-                <div class="stat-value" id="sources-count">5</div>
-                <div class="stat-change">📚 Active</div>
-            </div>
-        </div>
-
-        <!-- Charts -->
-        <div class="charts-grid">
-            <!-- Popular Questions -->
-            <div class="chart-card">
-                <h3><i class="fas fa-fire"></i> Popular Questions</h3>
-                <ul class="popular-list" id="popular-questions">
-                    <li><span class="question-text">Loading...</span></li>
-                </ul>
-            </div>
-
-            <!-- Feedback Ratio -->
-            <div class="chart-card">
-                <h3><i class="fas fa-thumbs-up"></i> Feedback</h3>
-                <div class="feedback-ratio">
-                    <span class="thumbs-up"><i class="fas fa-thumbs-up"></i> <span id="thumbs-up">--</span></span>
-                    <div class="feedback-bar">
-                        <div class="up-fill" id="feedback-up-bar" style="width: 85%;"></div>
-                        <div class="down-fill" id="feedback-down-bar" style="width: 15%;"></div>
-                    </div>
-                    <span class="thumbs-down"><i class="fas fa-thumbs-down"></i> <span id="thumbs-down">--</span></span>
-                </div>
-                <div style="text-align:center;margin-top:8px;font-size:0.8rem;color:#94A3B8;">
-                    <span id="feedback-ratio">--%</span> positive feedback
-                </div>
-            </div>
-        </div>
-
-        <!-- Sources Used -->
-        <div class="chart-card" style="margin-bottom:32px;">
-            <h3><i class="fas fa-database"></i> Sources Used</h3>
-            <div class="source-list" id="source-usage">
-                <div class="source-item">
-                    <span class="source-name">Loading...</span>
-                    <span class="source-count">--</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Queries by Hour -->
-        <div class="chart-card">
-            <h3><i class="fas fa-clock"></i> Queries by Hour</h3>
-            <div class="bar-chart" id="hourly-chart">
-                <!-- Populated by JavaScript -->
-            </div>
-        </div>
-    </div>
-
+    <!-- ... body content ... -->
+    
     <script>
         // ============================================
-        // ANALYTICS DASHBOARD
+        // ANALYTICS TRACKING
         // ============================================
-        const API_URL = '/api/analytics';
-
-        async function loadAnalytics() {
+        function trackEvent(eventType, data) {
             try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Failed to fetch analytics');
-                const data = await response.json();
+                const events = JSON.parse(localStorage.getItem('botEvents') || '[]');
+                events.push({
+                    type: eventType,
+                    data: data,
+                    timestamp: new Date().toISOString()
+                });
+                if (events.length > 1000) events.splice(0, events.length - 1000);
+                localStorage.setItem('botEvents', JSON.stringify(events));
+            } catch (e) {}
+        }
 
-                // Update stats
-                document.getElementById('total-queries').textContent = data.total_queries || 0;
-                document.getElementById('avg-response').textContent = data.avg_response_time ? `${data.avg_response_time}ms` : '--';
-                document.getElementById('cache-rate').textContent = data.cache_hit_rate ? `${data.cache_hit_rate}%` : '--';
-                document.getElementById('sources-count').textContent = Object.keys(data.sources_used || {}).length || 5;
-                document.getElementById('last-updated').textContent = new Date(data.last_updated).toLocaleString();
-
-                // Feedback
-                if (data.feedback) {
-                    const total = data.feedback.thumbs_up + data.feedback.thumbs_down;
-                    document.getElementById('thumbs-up').textContent = data.feedback.thumbs_up;
-                    document.getElementById('thumbs-down').textContent = data.feedback.thumbs_down;
-                    document.getElementById('feedback-ratio').textContent = data.feedback.ratio || '--%';
-                    
-                    const upPct = total > 0 ? (data.feedback.thumbs_up / total * 100) : 50;
-                    document.getElementById('feedback-up-bar').style.width = `${upPct}%`;
-                    document.getElementById('feedback-down-bar').style.width = `${100 - upPct}%`;
-                }
-
-                // Popular Questions
-                const popularList = document.getElementById('popular-questions');
-                if (data.popular_questions && data.popular_questions.length > 0) {
-                    popularList.innerHTML = data.popular_questions.map(q => `
-                        <li>
-                            <span class="question-text">${q.question}</span>
-                            <span class="question-count">${q.count} queries</span>
-                        </li>
-                    `).join('');
-                } else {
-                    popularList.innerHTML = '<li style="color:#94A3B8;text-align:center;padding:16px;">No popular questions yet</li>';
-                }
-
-                // Sources Used
-                const sourceList = document.getElementById('source-usage');
-                if (data.sources_used) {
-                    const entries = Object.entries(data.sources_used);
-                    const total = entries.reduce((sum, [_, count]) => sum + count, 0);
-                    sourceList.innerHTML = entries.map(([name, count]) => `
-                        <div class="source-item">
-                            <span class="source-name">${name}</span>
-                            <span class="source-count">${count} uses (${Math.round(count / total * 100)}%)</span>
-                        </div>
-                    `).join('');
-                }
-
-                // Hourly Chart
-                const hourlyChart = document.getElementById('hourly-chart');
-                if (data.queries_by_hour) {
-                    const max = Math.max(...Object.values(data.queries_by_hour));
-                    hourlyChart.innerHTML = Object.entries(data.queries_by_hour).map(([hour, count]) => `
-                        <div class="bar-item">
-                            <span class="bar-label">${hour}</span>
-                            <div class="bar-track">
-                                <div class="bar-fill" style="width: ${max > 0 ? (count / max * 100) : 0}%;"></div>
-                            </div>
-                            <span class="bar-value">${count}</span>
-                        </div>
-                    `).join('');
-                }
-
-            } catch (error) {
-                console.error('Error loading analytics:', error);
-                document.getElementById('popular-questions').innerHTML = '<li style="color:#DC2626;text-align:center;padding:16px;">Error loading data</li>';
+        function getTotalQueries() {
+            try {
+                const events = JSON.parse(localStorage.getItem('botEvents') || '[]');
+                return events.filter(e => e.type === 'query').length;
+            } catch (e) {
+                return 0;
             }
         }
 
-        // Load analytics on page load
-        loadAnalytics();
+        function updateTotalQueries() {
+            const total = getTotalQueries();
+            const sidebarEl = document.getElementById('total-queries-sidebar');
+            if (sidebarEl) sidebarEl.textContent = total;
+        }
 
-        // Auto-refresh every 60 seconds
-        setInterval(loadAnalytics, 60000);
+        // ... rest of your existing JavaScript ...
+
+        // Update total queries in sendMessage()
+        // Add this line inside your sendMessage function after validating the message:
+        // trackEvent('query', { question: message, timestamp: Date.now() });
+        // updateTotalQueries();
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTotalQueries();
+            // ... other init code ...
+        });
     </script>
 </body>
 </html>
