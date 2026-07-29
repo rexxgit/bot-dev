@@ -4,258 +4,1051 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Omni Brand Intelligence Bot</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #F8FAFC;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #0F172A;
+        }
+
+        .bot-container {
+            background-color: #FFFFFF;
+            border-radius: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.02);
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 85vh;
+            overflow: hidden;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .header {
+            padding: 24px 32px;
+            border-bottom: 1px solid #E9E9EF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* Custom Robot SVG Icon - Clean, Modern, Non-Generic */
+        .robot-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        .robot-icon svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .brand-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: -0.02em;
+            color: #0F172A;
+        }
+
+        .status-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: #64748B;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #EEF2FF;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-weight: 500;
+            color: #4338CA;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22C55E;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        /* ============================================
+           MAIN LAYOUT
+           ============================================ */
+        .flex-main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .sidebar {
+            width: 280px;
+            background: #F8FAFC;
+            padding: 28px 20px;
+            border-right: 1px solid #E9E9EF;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #94A3B8;
+            font-weight: 600;
+        }
+
+        .ai-accent {
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
+        }
+
+        .ai-accent .feature-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-accent .feature-desc {
+            font-size: 0.8rem;
+            opacity: 0.85;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .status-box {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #E9E9EF;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .status-item-label {
+            color: #64748B;
+        }
+
+        .status-item-value {
+            font-weight: 500;
+            color: #0F172A;
+        }
+
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 100px;
+            background: #F1F5F9;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-live {
+            background: #ECFDF5;
+            color: #065F46;
+        }
+
+        .badge-ai {
+            background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+            color: #4338CA;
+        }
+
+        .badge-sources {
+            background: #F1F5F9;
+            color: #475569;
+        }
+
+        .badge i {
+            font-size: 0.65rem;
+        }
+
+        .how-it-works {
+            font-size: 0.8rem;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .how-it-works ol {
+            list-style: none;
+            padding-left: 0;
+            counter-reset: step-counter;
+        }
+
+        .how-it-works li {
+            counter-increment: step-counter;
+            padding-left: 28px;
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .how-it-works li::before {
+            content: counter(step-counter);
+            background: #E9E9EF;
+            color: #64748B;
+            font-size: 0.6rem;
+            font-weight: 600;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        /* ============================================
+           CHAT AREA
+           ============================================ */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #FFFFFF;
+            padding: 24px 32px;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 300px;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: #94A3B8;
+            gap: 16px;
+            padding: 40px 20px;
+        }
+
+        /* Larger robot icon in empty state */
+        .empty-robot {
+            width: 80px;
+            height: 80px;
+            opacity: 0.4;
+            margin-bottom: 8px;
+        }
+
+        .empty-robot svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .empty-state h3 {
+            font-weight: 500;
+            color: #475569;
+            font-size: 1.1rem;
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+            max-width: 400px;
+            color: #94A3B8;
+        }
+
+        /* Messages */
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .message-user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-assistant {
+            align-self: flex-start;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+            overflow: hidden;
+        }
+
+        .message-avatar svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .message-user .message-avatar {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+        }
+
+        .message-assistant .message-avatar {
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+        }
+
+        .message-bubble {
+            padding: 12px 18px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            background: #F1F5F9;
+            color: #0F172A;
+            word-break: break-word;
+        }
+
+        .message-user .message-bubble {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: white;
+        }
+
+        .message-assistant .message-bubble {
+            background: #F8FAFC;
+            border: 1px solid #E9E9EF;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+           INPUT AREA
+           ============================================ */
+        .input-area {
+            border-top: 1px solid #E9E9EF;
+            padding: 16px 0 8px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-row input {
+            flex: 1;
+            border: 1px solid #E2E8F0;
+            border-radius: 100px;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #FFFFFF;
+            font-family: "Inter", sans-serif;
+        }
+
+        .input-row input:focus {
+            border-color: #7C3AED;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .btn {
+            border: none;
+            border-radius: 100px;
+            padding: 12px 24px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: "Inter", sans-serif;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6D28D9, #5B21B6);
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.25);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: #F1F5F9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #E2E8F0;
+        }
+
+        .input-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #94A3B8;
+            padding: 0 8px;
+        }
+
+        /* ============================================
+           SOURCE CARDS
+           ============================================ */
         .source-card {
-            border-left: 4px solid #3b82f6;
-            transition: all 0.2s ease;
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 14px 16px;
+            border-left: 4px solid #7C3AED;
+            margin-top: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border: 1px solid #F1F5F9;
+            border-left-width: 4px;
         }
-        .source-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+        .source-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
         }
-        .relevance-high { background: #dcfce7; color: #166534; }
-        .relevance-medium { background: #fef3c7; color: #92400e; }
-        .relevance-low { background: #fee2e2; color: #991b1b; }
-        .loading-dots::after {
-            content: '...';
-            animation: dots 1.5s steps(4, end) infinite;
+
+        .source-title {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #0F172A;
         }
-        @keyframes dots {
-            0% { content: ''; }
-            25% { content: '.'; }
-            50% { content: '..'; }
-            75% { content: '...'; }
+
+        .source-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.7rem;
+            color: #64748B;
         }
-        .response-content {
-            line-height: 1.8;
+
+        .source-badge {
+            background: #EEF2FF;
+            color: #4338CA;
+            padding: 2px 10px;
+            border-radius: 100px;
+            font-weight: 500;
         }
-        .response-content strong {
-            color: #1e293b;
+
+        .source-relevance {
+            font-weight: 500;
         }
-        .meta-pill {
-            background: #f1f5f9;
-            padding: 0.2rem 0.75rem;
-            border-radius: 9999px;
+
+        .source-relevance-high { color: #059669; }
+        .source-relevance-med { color: #D97706; }
+        .source-relevance-low { color: #DC2626; }
+
+        .source-link {
             font-size: 0.75rem;
-            color: #475569;
-            display: inline-block;
-            margin: 0.15rem;
+            color: #7C3AED;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
-        .ai-badge {
-            background: #dbeafe;
-            color: #1d4ed8;
+
+        .source-link:hover {
+            text-decoration: underline;
         }
-        .domain-badge {
-            background: #f1f5f9;
-            color: #475569;
-            font-size: 0.65rem;
-            padding: 0.1rem 0.5rem;
-            border-radius: 9999px;
-            display: inline-block;
+
+        /* ============================================
+           FEEDBACK
+           ============================================ */
+        .feedback-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            align-items: center;
+            border-top: 1px solid #E9E9EF;
+            padding-top: 10px;
         }
-        .source-name-badge {
-            background: #e0e7ff;
-            color: #3730a3;
-            font-size: 0.65rem;
-            padding: 0.1rem 0.5rem;
-            border-radius: 9999px;
-            display: inline-block;
+
+        .feedback-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            color: #94A3B8;
         }
-        .status-badge {
-            font-size: 0.65rem;
-            padding: 0.15rem 0.6rem;
-            border-radius: 9999px;
-            display: inline-block;
+
+        .feedback-btn:hover {
+            background: #F1F5F9;
         }
-        .status-badge-green { background: #dcfce7; color: #166534; }
-        .status-badge-blue { background: #dbeafe; color: #1d4ed8; }
-        .status-badge-yellow { background: #fef3c7; color: #92400e; }
-        .status-badge-red { background: #fee2e2; color: #991b1b; }
+
+        .feedback-btn.active {
+            background: #EEF2FF;
+            color: #4338CA;
+        }
+
+        .feedback-copy {
+            margin-left: auto;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .chat-area {
+                padding: 16px;
+            }
+            .header {
+                padding: 16px;
+            }
+            .status-area {
+                gap: 12px;
+            }
+            .message {
+                max-width: 95%;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
-    <header class="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <span class="text-2xl">🤖</span>
-                <h1 class="text-xl font-bold text-gray-800">Omni Brand Intelligence Bot</h1>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-500">Multi-Source AI</span>
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            </div>
-        </div>
-    </header>
-
-    <div class="flex flex-1 max-w-7xl mx-auto w-full">
-        <aside class="w-64 bg-white border-r p-4 hidden md:block">
-            <div class="space-y-4">
-                <div class="bg-green-50 rounded-lg p-3 border border-green-200">
-                    <p class="text-sm text-green-700 font-medium">⚡ Multi-Source Scraping</p>
-                    <p class="text-xs text-green-600 mt-1">5+ competitor websites</p>
+<body>
+    <div class="bot-container">
+        <!-- ==========================================
+        HEADER
+        ========================================== -->
+        <header class="header">
+            <div class="logo-area">
+                <!-- Custom Robot SVG Icon -->
+                <div class="robot-icon" aria-label="Omni Brand Intelligence Bot logo">
+                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="40" height="40" rx="10" fill="url(#robotGrad)" />
+                        <defs>
+                            <linearGradient id="robotGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#7C3AED" />
+                                <stop offset="1" stop-color="#3B82F6" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Robot Head -->
+                        <rect x="12" y="9" width="16" height="14" rx="4" fill="white" opacity="0.95" />
+                        <!-- Eyes -->
+                        <circle cx="17" cy="16" r="2" fill="#7C3AED" />
+                        <circle cx="23" cy="16" r="2" fill="#7C3AED" />
+                        <!-- Mouth -->
+                        <rect x="17" y="20" width="6" height="1.5" rx="0.75" fill="#7C3AED" />
+                        <!-- Antenna -->
+                        <rect x="19" y="5" width="2" height="4" rx="1" fill="white" opacity="0.9" />
+                        <circle cx="20" cy="4" r="2.5" fill="white" opacity="0.9" />
+                        <!-- Ears -->
+                        <rect x="10" y="13" width="2" height="6" rx="1" fill="white" opacity="0.9" />
+                        <rect x="28" y="13" width="2" height="6" rx="1" fill="white" opacity="0.9" />
+                        <!-- Body -->
+                        <rect x="14" y="23" width="12" height="8" rx="3" fill="white" opacity="0.85" />
+                        <!-- Arms -->
+                        <rect x="8" y="24" width="6" height="2.5" rx="1.25" fill="white" opacity="0.85" />
+                        <rect x="26" y="24" width="6" height="2.5" rx="1.25" fill="white" opacity="0.85" />
+                    </svg>
                 </div>
+                <span class="brand-name">Omni Brand Intelligence Bot</span>
+            </div>
+            <div class="status-area">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>Live</span>
+                </div>
+                <span><i class="far fa-clock"></i> <span id="timestamp">Ready</span></span>
+            </div>
+        </header>
 
-                <div id="status-box" class="bg-gray-50 rounded-lg p-3">
-                    <p id="status" class="text-sm text-gray-600">Ready. Ask a question!</p>
-                    <p id="timestamp" class="text-xs text-gray-400 mt-1"></p>
-                    <div id="status-badges" class="flex flex-wrap gap-1 mt-2">
-                        <span class="status-badge status-badge-green">🟢 Live</span>
-                        <span class="status-badge status-badge-blue">🧠 AI-Powered</span>
-                        <span class="status-badge status-badge-blue">📚 5+ Sources</span>
+        <div class="flex-main">
+            <!-- ==========================================
+            SIDEBAR
+            ========================================== -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <div class="ai-accent">
+                        <div class="feature-title">
+                            <i class="fas fa-bolt"></i> Multi-Source Scraping
+                        </div>
+                        <div class="feature-desc">
+                            5+ competitor websites analyzed in real-time
+                        </div>
                     </div>
                 </div>
 
-                <div class="border-t pt-4">
-                    <p class="text-xs text-gray-500">How it works:</p>
-                    <ul class="text-xs text-gray-600 space-y-1 mt-1">
-                        <li>1. You ask a question</li>
-                        <li>2. Searches 5+ scraped sources</li>
-                        <li>3. Finds relevant content</li>
-                        <li>4. Returns AI-generated answer with sources</li>
-                    </ul>
-                </div>
-            </div>
-        </aside>
-
-        <div class="flex-1 flex flex-col h-[calc(100vh-80px)]">
-            <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <div class="flex items-center justify-center h-full text-gray-400">
-                    <div class="text-center">
-                        <p class="text-4xl mb-4">🤖</p>
-                        <p>Ask a question about AI tools, platforms, or industry trends.</p>
-                        <p>ChatGPT, Claude, Gemini, Grok, and more.</p>
-                        <p class="text-xs mt-4 text-gray-300">Powered by live web scraping + AI</p>
+                <div class="sidebar-section">
+                    <div class="status-box">
+                        <div class="status-item">
+                            <span class="status-item-label">Status</span>
+                            <span class="status-item-value" id="status-text">Ready</span>
+                        </div>
+                        <div class="badge-group">
+                            <span class="badge badge-live"><i class="fas fa-circle"></i> Live</span>
+                            <span class="badge badge-ai"><i class="fas fa-brain"></i> AI-Powered</span>
+                            <span class="badge badge-sources"><i class="fas fa-database"></i> 5+ Sources</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="border-t bg-white p-4">
-                <div class="flex gap-2">
-                    <input
-                        id="message-input"
-                        type="text"
-                        placeholder="Ask a question..."
-                        class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        onkeypress="if(event.key==='Enter') sendMessage()"
-                    />
-                    <button onclick="sendMessage()" id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition disabled:bg-blue-300">
-                        Send
-                    </button>
-                    <button onclick="clearChat()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-4 py-2 rounded-lg transition">
-                        Clear
-                    </button>
+                <div class="sidebar-section">
+                    <span class="sidebar-section-title">How it works</span>
+                    <div class="how-it-works">
+                        <ol>
+                            <li>You ask a question</li>
+                            <li>Searches 5+ scraped sources</li>
+                            <li>Finds relevant content</li>
+                            <li>Returns AI-generated answer with sources</li>
+                        </ol>
+                    </div>
                 </div>
-                <p class="text-xs text-gray-400 mt-2 text-center">AI-generated responses with source attribution</p>
-            </div>
+            </aside>
+
+            <!-- ==========================================
+            CHAT AREA
+            ========================================== -->
+            <main class="chat-area">
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Empty State -->
+                    <div class="empty-state" id="empty-state">
+                        <div class="empty-robot">
+                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="80" height="80" rx="16" fill="url(#emptyRobotGrad)" opacity="0.06" />
+                                <defs>
+                                    <linearGradient id="emptyRobotGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+                                        <stop stop-color="#7C3AED" />
+                                        <stop offset="1" stop-color="#3B82F6" />
+                                    </linearGradient>
+                                </defs>
+                                <!-- Robot Head -->
+                                <rect x="24" y="18" width="32" height="28" rx="8" fill="#7C3AED" opacity="0.15" />
+                                <!-- Eyes -->
+                                <circle cx="34" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
+                                <circle cx="46" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
+                                <!-- Mouth -->
+                                <rect x="34" y="40" width="12" height="3" rx="1.5" fill="#7C3AED" opacity="0.25" />
+                                <!-- Antenna -->
+                                <rect x="38" y="10" width="4" height="8" rx="2" fill="#7C3AED" opacity="0.15" />
+                                <circle cx="40" cy="8" r="5" fill="#7C3AED" opacity="0.15" />
+                                <!-- Ears -->
+                                <rect x="20" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
+                                <rect x="56" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
+                                <!-- Body -->
+                                <rect x="28" y="46" width="24" height="16" rx="6" fill="#7C3AED" opacity="0.12" />
+                                <!-- Arms -->
+                                <rect x="16" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
+                                <rect x="52" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
+                            </svg>
+                        </div>
+                        <h3>Ask a question</h3>
+                        <p>About AI tools, platforms, or industry trends. ChatGPT, Claude, Gemini, Grok, and more.</p>
+                        <p style="font-size:0.75rem; color:#CBD5E1; margin-top: 4px;">
+                            <i class="fas fa-bolt"></i> Powered by live web scraping + AI
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                INPUT AREA
+                ========================================== -->
+                <div class="input-area">
+                    <div class="input-row">
+                        <input
+                            type="text"
+                            id="message-input"
+                            placeholder="Ask a question..."
+                            aria-label="Ask a question"
+                        />
+                        <button class="btn btn-primary" id="send-btn">
+                            <i class="fas fa-paper-plane"></i> Send
+                        </button>
+                        <button class="btn btn-secondary" id="clear-btn">
+                            <i class="fas fa-undo-alt"></i> Clear
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <span><i class="fas fa-shield-alt"></i> AI-generated responses with source attribution</span>
+                        <span id="conversation-count"><i class="far fa-comment-dots"></i> 0 conversations</span>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
     <script>
+        // ============================================
+        // JavaScript - All logic preserved
+        // ============================================
         const API_URL = '/api/data';
         let isProcessing = false;
+        let messageIdCounter = 0;
 
-        // ================================================
-        // FORMAT RESPONSE - WITH SOURCE BADGES & NAMES
-        // ================================================
+        const chatMessages = document.getElementById('chat-messages');
+        const emptyState = document.getElementById('empty-state');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const statusText = document.getElementById('status-text');
+        const timestampEl = document.getElementById('timestamp');
+        const conversationCountEl = document.getElementById('conversation-count');
+
+        // Chat History
+        function loadChatHistory() {
+            try {
+                const history = localStorage.getItem('omniChatHistory');
+                return history ? JSON.parse(history) : [];
+            } catch (e) { return []; }
+        }
+
+        function saveChatHistory(messages) {
+            try {
+                localStorage.setItem('omniChatHistory', JSON.stringify(messages));
+                updateConversationCount();
+            } catch (e) {}
+        }
+
+        function updateConversationCount() {
+            const history = loadChatHistory();
+            conversationCountEl.innerHTML = `<i class="far fa-comment-dots"></i> ${history.length} conversations`;
+        }
+
+        // Feedback System
+        function submitFeedback(messageId, isPositive) {
+            const feedbackKey = `feedback_${messageId}`;
+            const existing = localStorage.getItem(feedbackKey);
+
+            if (existing) {
+                if (existing === String(isPositive)) {
+                    localStorage.removeItem(feedbackKey);
+                    updateFeedbackUI(messageId, null);
+                    return;
+                }
+            }
+
+            localStorage.setItem(feedbackKey, String(isPositive));
+            updateFeedbackUI(messageId, isPositive);
+            console.log(`📊 Feedback for ${messageId}: ${isPositive ? '👍' : '👎'}`);
+        }
+
+        function updateFeedbackUI(messageId, isPositive) {
+            const container = document.getElementById(`feedback-${messageId}`);
+            if (!container) return;
+
+            const thumbsUp = container.querySelector('.feedback-up');
+            const thumbsDown = container.querySelector('.feedback-down');
+
+            if (thumbsUp) thumbsUp.classList.toggle('active', isPositive === true);
+            if (thumbsDown) thumbsDown.classList.toggle('active', isPositive === false);
+        }
+
+        function getFeedback(messageId) {
+            const val = localStorage.getItem(`feedback_${messageId}`);
+            if (val === null) return null;
+            return val === 'true';
+        }
+
+        // UI Functions
+        function addMessageToUI(role, content, id) {
+            const container = chatMessages;
+            if (emptyState) emptyState.style.display = 'none';
+
+            const messageId = id || `msg-${Date.now()}-${++messageIdCounter}`;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${role}`;
+            messageDiv.dataset.messageId = messageId;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+
+            if (role === 'user') {
+                avatar.innerHTML = `<i class="fas fa-user"></i>`;
+            } else {
+                avatar.innerHTML = `
+                    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="12" height="10" rx="3" fill="white" opacity="0.9"/>
+                        <circle cx="7" cy="8" r="1.5" fill="#7C3AED"/>
+                        <circle cx="11" cy="8" r="1.5" fill="#7C3AED"/>
+                        <rect x="6" y="11" width="6" height="1.5" rx="0.75" fill="#7C3AED"/>
+                        <rect x="8.25" y="1" width="1.5" height="2" rx="0.75" fill="white" opacity="0.9"/>
+                        <circle cx="9" cy="0.75" r="1.5" fill="white" opacity="0.9"/>
+                        <rect x="4.5" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
+                        <rect x="12" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
+                        <rect x="5.25" y="13" width="7.5" height="3" rx="1.5" fill="white" opacity="0.85"/>
+                        <rect x="3" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
+                        <rect x="12.75" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
+                    </svg>
+                `;
+            }
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+
+            if (role === 'assistant') {
+                bubble.innerHTML = content;
+
+                const feedbackContainer = document.createElement('div');
+                feedbackContainer.className = 'feedback-container';
+                feedbackContainer.id = `feedback-${messageId}`;
+
+                const upBtn = document.createElement('button');
+                upBtn.className = 'feedback-btn feedback-up';
+                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                upBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    submitFeedback(messageId, true);
+                };
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'feedback-btn feedback-down';
+                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+                downBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    submitFeedback(messageId, false);
+                };
+
+                const existingFeedback = getFeedback(messageId);
+                if (existingFeedback !== null) {
+                    setTimeout(() => updateFeedbackUI(messageId, existingFeedback), 100);
+                }
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'feedback-btn feedback-copy';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.title = 'Copy response';
+                copyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const textToCopy = bubble.textContent || '';
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => { copyBtn.innerHTML = '<i class="far fa-copy"></i>'; }, 2000);
+                    });
+                };
+
+                feedbackContainer.appendChild(upBtn);
+                feedbackContainer.appendChild(downBtn);
+                feedbackContainer.appendChild(copyBtn);
+                bubble.appendChild(feedbackContainer);
+
+            } else {
+                bubble.textContent = content;
+            }
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(bubble);
+            container.appendChild(messageDiv);
+
+            const history = loadChatHistory();
+            history.push({ role, content, id: messageId });
+            saveChatHistory(history);
+
+            return messageId;
+        }
+
+        function addMessage(role, content) {
+            return addMessageToUI(role, content);
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Format Response
         function formatResponse(data) {
             let html = '';
-            
-            // Response content
+
             if (data.response) {
                 html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
             }
-            
-            // Show AI badge if generated
+
             if (data.metadata && data.metadata.ai_generated) {
                 html += `
                     <div style="margin-top: 0.5rem;">
-                        <span class="meta-pill ai-badge">🧠 AI-Generated</span>
+                        <span class="badge badge-ai" style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF);color:#4338CA;padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:500;">
+                            <i class="fas fa-brain"></i> AI-Generated
+                        </span>
                     </div>
                 `;
             }
-            
-            // Sources section with domain badges and source names
+
             if (data.sources && data.sources.length > 0) {
                 html += `
                     <div class="mt-4">
-                        <h3 class="font-semibold text-gray-700 mb-2">📚 Sources</h3>
-                        <div class="space-y-2">
+                        <h4 style="font-weight:500;font-size:0.9rem;color:#475569;margin-bottom:8px;">
+                            <i class="fas fa-book-open"></i> Sources
+                        </h4>
+                        <div style="display:flex;flex-direction:column;gap:8px;">
                 `;
-                
+
                 data.sources.forEach((source, index) => {
                     const score = source.score || 0;
                     const maxScore = 20;
                     const pct = Math.min((score / maxScore) * 100, 100);
-                    const relevanceClass = pct > 60 ? 'relevance-high' : 
-                                         pct > 30 ? 'relevance-medium' : 'relevance-low';
+                    const relevanceClass = pct > 60 ? 'source-relevance-high' :
+                        pct > 30 ? 'source-relevance-med' : 'source-relevance-low';
                     const relevanceText = pct > 60 ? 'High' : pct > 30 ? 'Medium' : 'Low';
-                    
+
                     const domain = source.domain || 'Unknown';
                     const sourceName = source.source_name || 'Unknown';
-                    
+
                     html += `
-                        <div class="source-card bg-white p-3 rounded-lg shadow-sm">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <span class="font-medium text-gray-800">${source.title || 'Source ' + (index + 1)}</span>
-                                    <span class="text-xs text-gray-500 ml-2">${source.author || 'Unknown'}</span>
-                                    <span class="text-xs text-gray-400 ml-2">${source.date || ''}</span>
-                                    <div class="mt-1">
-                                        <span class="source-name-badge">🏷️ ${sourceName}</span>
+                        <div class="source-card">
+                            <div class="source-header">
+                                <div>
+                                    <div class="source-title">${source.title || 'Source ' + (index + 1)}</div>
+                                    <div class="source-meta">
+                                        <span><i class="fas fa-user"></i> ${source.author || 'Unknown'}</span>
+                                        <span><i class="fas fa-calendar-alt"></i> ${source.date || ''}</span>
+                                        <span class="source-badge"><i class="fas fa-tag"></i> ${sourceName}</span>
                                     </div>
                                 </div>
-                                <div class="flex flex-col items-end gap-1">
-                                    <span class="text-xs px-2 py-1 rounded-full ${relevanceClass}">
-                                        ${relevanceText} (${Math.round(pct)}%)
-                                    </span>
-                                    <span class="domain-badge">📰 ${domain}</span>
+                                <div>
+                                    <span class="source-relevance ${relevanceClass}">${relevanceText} (${Math.round(pct)}%)</span>
                                 </div>
                             </div>
-                            <p class="text-sm text-gray-600 mt-1">${source.chunk ? source.chunk.substring(0, 200) + '...' : ''}</p>
-                            <a href="${source.source || '#'}" target="_blank" class="text-xs text-blue-500 hover:underline mt-1 inline-block">🔗 View source</a>
+                            <p style="font-size:0.85rem;color:#475569;margin:4px 0 8px 0;line-height:1.5;">
+                                ${source.chunk ? source.chunk.substring(0, 200) + '...' : ''}
+                            </p>
+                            <a href="${source.source || '#'}" target="_blank" class="source-link">
+                                <i class="fas fa-external-link-alt"></i> View source
+                            </a>
                         </div>
                     `;
                 });
-                
+
                 html += `
                         </div>
                     </div>
                 `;
             }
-            
-            // Metadata section with enhanced details
+
             if (data.metadata) {
                 html += `
-                    <div class="mt-4 pt-3 border-t border-gray-200">
-                        <div class="flex flex-wrap gap-2">
-                            <span class="meta-pill">📊 ${data.metadata.total_sources || 0} sources</span>
-                            <span class="meta-pill">🔄 ${data.metadata.matches_found || 0} matches</span>
-                            <span class="meta-pill">🕐 ${data.metadata.last_updated ? new Date(data.metadata.last_updated).toLocaleString() : 'N/A'}</span>
-                            ${data.metadata.ai_generated ? `<span class="meta-pill ai-badge">🧠 AI-Generated</span>` : ''}
-                            ${data.metadata.error ? `<span class="meta-pill" style="background: #fee2e2; color: #991b1b;">⚠️ ${data.metadata.error}</span>` : ''}
-                        </div>
+                    <div style="margin-top:16px;padding-top:12px;border-top:1px solid #E9E9EF;display:flex;flex-wrap:wrap;gap:8px;font-size:0.7rem;color:#94A3B8;">
+                        <span><i class="fas fa-database"></i> ${data.metadata.total_sources || 0} sources</span>
+                        <span><i class="fas fa-check-circle"></i> ${data.metadata.matches_found || 0} matches</span>
+                        <span><i class="far fa-clock"></i> ${data.metadata.last_updated ? new Date(data.metadata.last_updated).toLocaleString() : 'N/A'}</span>
+                        ${data.metadata.ai_generated ? `<span><i class="fas fa-brain"></i> AI-Generated</span>` : ''}
+                        ${data.metadata.error ? `<span style="color:#DC2626;"><i class="fas fa-exclamation-triangle"></i> ${data.metadata.error}</span>` : ''}
                     </div>
                 `;
             }
-            
-            return html || '<p class="text-gray-500">No response available.</p>';
+
+            return html || '<p style="color:#94A3B8;">No response available.</p>';
         }
 
-        // ================================================
-        // ERROR HANDLING DISPLAY
-        // ================================================
+        // Error Handling
         function displayError(message, details = null) {
             let html = `
-                <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-                    <strong>❌ Error</strong>
-                    <p class="mt-1">${message}</p>
+                <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:16px;color:#991B1B;">
+                    <strong><i class="fas fa-exclamation-circle"></i> Error</strong>
+                    <p style="margin-top:4px;">${message}</p>
             `;
             if (details) {
-                html += `<p class="text-xs text-red-500 mt-2">${details}</p>`;
+                html += `<p style="font-size:0.75rem;color:#B91C1C;margin-top:8px;">${details}</p>`;
             }
             html += `
-                    <p class="text-sm text-gray-500 mt-2">Please try again or check the logs.</p>
+                    <p style="font-size:0.8rem;color:#6B7280;margin-top:8px;">Please try again or check the logs.</p>
                 </div>
             `;
             return html;
@@ -263,49 +1056,45 @@
 
         function displayRateLimit() {
             return `
-                <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 text-orange-700">
-                    <strong>⏳ Rate Limit Exceeded</strong>
-                    <p class="mt-1">You've made too many requests. Please wait a moment and try again.</p>
-                    <p class="text-xs text-gray-500 mt-2">The AI service has a rate limit of 30 requests per minute.</p>
+                <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:16px;color:#92400E;">
+                    <strong><i class="fas fa-hourglass-half"></i> Rate Limit Exceeded</strong>
+                    <p style="margin-top:4px;">You've made too many requests. Please wait a moment and try again.</p>
+                    <p style="font-size:0.75rem;color:#78350F;margin-top:8px;">The AI service has a rate limit of 30 requests per minute.</p>
                 </div>
             `;
         }
 
         function displayNoResults() {
             return `
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
-                    <strong>🔍 No Results Found</strong>
-                    <p class="mt-1">Try asking about AI tools, platforms, or industry trends.</p>
-                    <p class="text-xs text-gray-500 mt-2">Example: "What are the best AI tools for 2026?" or "Compare ChatGPT and Claude"</p>
+                <div style="background:#FEFCE8;border:1px solid #FDE68A;border-radius:12px;padding:16px;color:#854D0E;">
+                    <strong><i class="fas fa-search"></i> No Results Found</strong>
+                    <p style="margin-top:4px;">Try asking about AI tools, platforms, or industry trends.</p>
+                    <p style="font-size:0.75rem;color:#713F12;margin-top:8px;">Example: "What are the best AI tools for 2026?" or "Compare ChatGPT and Claude"</p>
                 </div>
             `;
         }
 
-        // ================================================
-        // SEND MESSAGE
-        // ================================================
+        // Send Message
         async function sendMessage() {
-            const input = document.getElementById('message-input');
-            const message = input.value.trim();
+            const message = messageInput.value.trim();
             if (!message || isProcessing) return;
 
             addMessage('user', message);
-            input.value = '';
+            messageInput.value = '';
             isProcessing = true;
-            document.getElementById('send-btn').disabled = true;
-            input.disabled = true;
+            sendBtn.disabled = true;
+            messageInput.disabled = true;
+            statusText.textContent = 'Processing...';
 
-            addMessage('assistant', '🔄 Searching 5+ sources... <span class="loading-dots"></span>');
+            const loadingId = addMessage('assistant', '<i class="fas fa-spinner fa-spin"></i> Searching 5+ sources...');
 
             try {
-                document.getElementById('status').textContent = '🔄 Searching...';
-                document.getElementById('status').className = 'text-sm text-yellow-600';
+                statusText.textContent = 'Searching...';
+                timestampEl.textContent = new Date().toLocaleTimeString();
 
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ query: message })
                 });
 
@@ -320,119 +1109,115 @@
 
                 const data = await response.json();
 
-                document.getElementById('status').textContent = '✅ Complete!';
-                document.getElementById('status').className = 'text-sm text-green-600';
-                document.getElementById('timestamp').textContent = new Date().toLocaleTimeString();
+                statusText.textContent = 'Ready';
+                timestampEl.textContent = new Date().toLocaleTimeString();
 
-                const container = document.getElementById('chat-messages');
-                const messages = container.querySelectorAll('.flex.justify-start');
-                if (messages.length > 0) {
-                    const last = messages[messages.length - 1];
-                    const bubble = last.querySelector('div');
-                    if (bubble) {
-                        bubble.innerHTML = formatResponse(data);
-                        
-                        const copyBtn = document.createElement('button');
-                        copyBtn.className = 'text-xs text-gray-400 hover:text-gray-600 mt-2 transition block';
-                        copyBtn.innerHTML = '📋 Copy Response';
-                        copyBtn.onclick = () => {
-                            const textToCopy = data.response || '';
-                            navigator.clipboard.writeText(textToCopy).then(() => {
-                                copyBtn.innerHTML = '✅ Copied!';
-                                setTimeout(() => { copyBtn.innerHTML = '📋 Copy Response'; }, 2000);
-                            });
-                        };
-                        bubble.appendChild(copyBtn);
-                    }
+                const messages = chatMessages.querySelectorAll('.message-assistant');
+                const lastMsg = messages[messages.length - 1];
+                if (lastMsg && lastMsg.dataset.messageId === loadingId) {
+                    lastMsg.remove();
                 }
+
+                const formattedHtml = formatResponse(data);
+                addMessage('assistant', formattedHtml);
+                updateConversationCount();
 
             } catch (error) {
                 console.error('Error:', error);
-                
-                document.getElementById('status').textContent = '❌ Error: ' + error.message;
-                document.getElementById('status').className = 'text-sm text-red-600';
 
-                const container = document.getElementById('chat-messages');
-                const messages = container.querySelectorAll('.flex.justify-start');
-                if (messages.length > 0) {
-                    const last = messages[messages.length - 1];
-                    const bubble = last.querySelector('div');
-                    if (bubble) {
-                        const errorMsg = error.message;
-                        let errorHtml;
-                        if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate')) {
-                            errorHtml = displayRateLimit();
-                        } else if (errorMsg.includes('401') || errorMsg.toLowerCase().includes('key')) {
-                            errorHtml = displayError('Authentication Error', 'Please check your API key configuration.');
-                        } else if (errorMsg.includes('404')) {
-                            errorHtml = displayError('Resource Not Found', 'The requested data was not available.');
-                        } else if (errorMsg.includes('No matching content')) {
-                            errorHtml = displayNoResults();
-                        } else {
-                            errorHtml = displayError(errorMsg, 'Please try again or check the logs.');
-                        }
-                        bubble.innerHTML = errorHtml;
-                    }
+                statusText.textContent = 'Error';
+                timestampEl.textContent = new Date().toLocaleTimeString();
+
+                const messages = chatMessages.querySelectorAll('.message-assistant');
+                const lastMsg = messages[messages.length - 1];
+                if (lastMsg && lastMsg.dataset.messageId === loadingId) {
+                    lastMsg.remove();
                 }
+
+                const errorMsg = error.message;
+                let errorHtml;
+                if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate')) {
+                    errorHtml = displayRateLimit();
+                } else if (errorMsg.includes('401') || errorMsg.toLowerCase().includes('key')) {
+                    errorHtml = displayError('Authentication Error', 'Please check your API key configuration.');
+                } else if (errorMsg.includes('404')) {
+                    errorHtml = displayError('Resource Not Found', 'The requested data was not available.');
+                } else if (errorMsg.includes('No matching content')) {
+                    errorHtml = displayNoResults();
+                } else {
+                    errorHtml = displayError(errorMsg, 'Please try again or check the logs.');
+                }
+                addMessage('assistant', errorHtml);
             }
 
             isProcessing = false;
-            document.getElementById('send-btn').disabled = false;
-            input.disabled = false;
-            input.focus();
+            sendBtn.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
+            scrollToBottom();
         }
 
-        // ================================================
-        // UI FUNCTIONS
-        // ================================================
-        function addMessage(role, content) {
-            const container = document.getElementById('chat-messages');
-            
-            const emptyState = container.querySelector('.flex.items-center.justify-center.h-full');
-            if (emptyState) {
-                emptyState.remove();
-            }
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4`;
-            
-            const bubble = document.createElement('div');
-            bubble.className = `max-w-[85%] rounded-lg px-4 py-3 whitespace-pre-wrap ${
-                role === 'user' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-white border shadow-sm text-gray-800'
-            }`;
-            
-            if (role === 'assistant') {
-                bubble.innerHTML = content;
-            } else {
-                bubble.textContent = content;
-            }
-            
-            messageDiv.appendChild(bubble);
-            container.appendChild(messageDiv);
-            container.scrollTop = container.scrollHeight;
-            
-            return messageDiv;
-        }
-
+        // Clear Chat
         function clearChat() {
-            const container = document.getElementById('chat-messages');
-            container.innerHTML = `
-                <div class="flex items-center justify-center h-full text-gray-400">
-                    <div class="text-center">
-                        <p class="text-4xl mb-4">🤖</p>
-                        <p>Ask a question about AI tools, platforms, or industry trends.</p>
-                        <p>ChatGPT, Claude, Gemini, Grok, and more.</p>
-                        <p class="text-xs mt-4 text-gray-300">Powered by live web scraping + AI</p>
+            if (!confirm('Clear all conversations?')) return;
+
+            localStorage.removeItem('omniChatHistory');
+            chatMessages.innerHTML = `
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-robot">
+                        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="80" height="80" rx="16" fill="url(#emptyRobotGrad)" opacity="0.06" />
+                            <defs>
+                                <linearGradient id="emptyRobotGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#7C3AED" />
+                                    <stop offset="1" stop-color="#3B82F6" />
+                                </linearGradient>
+                            </defs>
+                            <rect x="24" y="18" width="32" height="28" rx="8" fill="#7C3AED" opacity="0.15" />
+                            <circle cx="34" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
+                            <circle cx="46" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
+                            <rect x="34" y="40" width="12" height="3" rx="1.5" fill="#7C3AED" opacity="0.25" />
+                            <rect x="38" y="10" width="4" height="8" rx="2" fill="#7C3AED" opacity="0.15" />
+                            <circle cx="40" cy="8" r="5" fill="#7C3AED" opacity="0.15" />
+                            <rect x="20" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
+                            <rect x="56" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
+                            <rect x="28" y="46" width="24" height="16" rx="6" fill="#7C3AED" opacity="0.12" />
+                            <rect x="16" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
+                            <rect x="52" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
+                        </svg>
                     </div>
+                    <h3>Ask a question</h3>
+                    <p>About AI tools, platforms, or industry trends. ChatGPT, Claude, Gemini, Grok, and more.</p>
+                    <p style="font-size:0.75rem; color:#CBD5E1; margin-top: 4px;">
+                        <i class="fas fa-bolt"></i> Powered by live web scraping + AI
+                    </p>
                 </div>
             `;
-            
-            document.getElementById('status').textContent = 'Ready. Ask a question!';
-            document.getElementById('status').className = 'text-sm text-gray-600';
-            document.getElementById('timestamp').textContent = '';
+            statusText.textContent = 'Ready';
+            timestampEl.textContent = new Date().toLocaleTimeString();
+            updateConversationCount();
         }
+
+        // Event Listeners
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+        clearBtn.addEventListener('click', clearChat);
+
+        // Init
+        const history = loadChatHistory();
+        if (history.length > 0) {
+            chatMessages.innerHTML = '';
+            history.forEach(msg => {
+                addMessageToUI(msg.role, msg.content, msg.id);
+            });
+            if (emptyState) emptyState.style.display = 'none';
+        }
+        updateConversationCount();
+        statusText.textContent = 'Ready';
+        timestampEl.textContent = new Date().toLocaleTimeString();
     </script>
 </body>
 </html>
