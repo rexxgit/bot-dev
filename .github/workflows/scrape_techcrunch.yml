@@ -1,0 +1,42 @@
+name: TechCrunch AI Scraper (Standalone)
+
+on:
+  schedule:
+    - cron: '0 10 * * *'  # Daily at 10 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 lxml
+      
+      - name: Run TechCrunch scraper
+        run: |
+          python techcrunch_scraper.py
+      
+      - name: Commit and push TechCrunch data
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add techcrunch_ai_articles.json
+          git diff --staged --quiet || git commit -m "Update TechCrunch AI data $(date -I)"
+          git push https://x-access-token:${BOT_TOKEN}@github.com/rexxgit/bot-dev.git HEAD:main
