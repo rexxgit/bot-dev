@@ -1,41 +1,50 @@
 {
-    "version": 2,
-    "routes": [
-        {
-            "src": "/api/admin",
-            "dest": "/api/admin"
-        },
-        {
-            "src": "/api/auth",
-            "dest": "/api/auth"
-        },
-        {
-            "src": "/api/data",
-            "dest": "/api/data"
-        },
-        {
-            "src": "/api/status",
-            "dest": "/api/status"
-        },
-        {
-            "src": "/api/analytics",
-            "dest": "/api/analytics"
-        },
-        {
-            "src": "/api/privacy",
-            "dest": "/api/privacy"
-        },
-        {
-            "src": "/api/audit",
-            "dest": "/api/audit"
-        },
-        {
-            "src": "/api/sources",
-            "dest": "/api/sources"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
-        }
-    ]
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/admin",
+      "dest": "/api/admin"
+    },
+    {
+      "src": "/api/auth",
+      "dest": "/api/auth"
+    },
+    {
+      "src": "/api/data",
+      "dest": "/api/data"
+    },
+    {
+      "src": "/api/status",
+      "dest": "/api/status"
+    },
+    {
+      "src": "/api/analytics",
+      "dest": "/api/analytics"
+    },
+    {
+      "src": "/api/privacy",
+      "dest": "/api/privacy"
+    },
+    {
+      "src": "/api/audit",
+      "dest": "/api/audit"
+    },
+    {
+      "src": "/api/sources",
+      "dest": "/api/sources"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 10,
+      "memory": 1024
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
