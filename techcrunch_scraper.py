@@ -23,6 +23,7 @@ BASE_URL = 'https://techcrunch.com/category/artificial-intelligence/'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 MAX_ARTICLES = 15
 MAX_PAGES = 3
+OUTPUT_FILE = 'techcrunch_ai_articles.json'  # Consistent filename
 
 # ================================================
 # TECHCRUNCH SCRAPER CLASS
@@ -343,10 +344,21 @@ class TechCrunchScraper:
     # 4. SAVE RESULTS
     # ================================================
     
-    def save_to_json(self, articles: List[Dict], output_file: str = 'techcrunch_data.json'):
+    def save_to_json(self, articles: List[Dict], output_file: str = OUTPUT_FILE):
         """Save scraped articles to JSON."""
         if not articles:
             print("❌ No articles to save")
+            # Create empty JSON file to avoid git errors
+            with open(output_file, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'source': 'TechCrunch AI',
+                    'source_url': BASE_URL,
+                    'total_articles': 0,
+                    'articles': [],
+                    'last_updated': datetime.now().isoformat(),
+                    'status': 'No articles found'
+                }, f, indent=2, ensure_ascii=False)
+            print(f"✅ Created empty {output_file} to maintain git workflow")
             return False
         
         combined = {
@@ -371,7 +383,7 @@ class TechCrunchScraper:
 if __name__ == "__main__":
     scraper = TechCrunchScraper()
     articles = scraper.run(max_articles=15, max_pages=3)
-    scraper.save_to_json(articles, 'techcrunch_ai_articles.json')
+    scraper.save_to_json(articles, OUTPUT_FILE)
     
     # Print summary
     if articles:
@@ -383,3 +395,5 @@ if __name__ == "__main__":
             print(f"      ✍️ {article['author']} | 📅 {article['date']} | 📊 {article['word_count']} words")
             print(f"      🔗 {article['url']}")
             print()
+    else:
+        print("\n⚠️ No articles were scraped. Check the website or your network connection.")
