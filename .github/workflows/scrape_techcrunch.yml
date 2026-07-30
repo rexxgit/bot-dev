@@ -2,8 +2,8 @@ name: TechCrunch AI Scraper
 
 on:
   schedule:
-    - cron: '0 10 * * *'  # Daily at 10 AM UTC
-  workflow_dispatch:  # Allows manual trigger
+    - cron: '0 10 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -11,7 +11,7 @@ permissions:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     
     steps:
       - name: Checkout repository
@@ -24,36 +24,32 @@ jobs:
         with:
           python-version: '3.10'
       
-      - name: Install dependencies
+      - name: Install dependencies from requirements.txt
         run: |
-          pip install requests beautifulsoup4 lxml
+          pip install -r requirements.txt
+          playwright install chromium
+          playwright install-deps
       
       - name: Create empty JSON file if not exists
         run: |
           if [ ! -f techcrunch_ai_articles.json ]; then
             echo '{"source":"TechCrunch AI","source_url":"https://techcrunch.com/category/artificial-intelligence/","total_articles":0,"articles":[],"last_updated":"'$(date -Iseconds)'","status":"Initial creation"}' > techcrunch_ai_articles.json
-            echo "Created initial JSON file"
           fi
       
       - name: Run TechCrunch scraper
         run: |
           python techcrunch_scraper.py
       
-      - name: Commit and push TechCrunch data
+      - name: Commit and push data
         env:
           BOT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Always add the file (will work even if newly created)
           git add techcrunch_ai_articles.json
-          
-          # Check if there are changes to commit
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
             git commit -m "Update TechCrunch AI data $(date -I)"
-            # Using your exact username and repository
             git push https://x-access-token:${BOT_TOKEN}@github.com/rexxgit/bot-dev.git HEAD:main
           fi
