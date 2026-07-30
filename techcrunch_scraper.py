@@ -1,6 +1,6 @@
 """
 TechCrunch AI Scraper - Playwright Dynamic Web Scraper
-Handles JavaScript-rendered content with Playwright's auto-waiting and selectors
+Handles JavaScript-rendered content with robust error handling
 """
 
 import os
@@ -31,7 +31,6 @@ OUTPUT_FILE = 'techcrunch_ai_articles.json'
 class TechCrunchPlaywrightScraper:
     """
     TechCrunch scraper using Playwright for JavaScript-rendered content.
-    Handles dynamic loading, pagination, and full article extraction.
     """
     
     def __init__(self, headless: bool = True):
@@ -79,11 +78,14 @@ class TechCrunchPlaywrightScraper:
     
     async def _close_browser(self):
         """Clean up browser resources."""
-        if self.browser:
-            await self.browser.close()
-        if self.playwright:
-            await self.playwright.stop()
-        print("🔚 Browser closed")
+        try:
+            if self.browser:
+                await self.browser.close()
+            if self.playwright:
+                await self.playwright.stop()
+            print("🔚 Browser closed")
+        except Exception:
+            pass
     
     # ================================================
     # 1. CATEGORY PAGE SCRAPING
@@ -92,29 +94,41 @@ class TechCrunchPlaywrightScraper:
     async def scrape_category_page(self, url: str) -> List[str]:
         """
         Scrape article URLs from a TechCrunch category page.
-        Uses Playwright's auto-waiting and multiple selector strategies.
+        Uses multiple strategies with robust error handling.
         """
         try:
             print(f"📄 Loading category page: {url}")
             
-            # Navigate with wait until network idle
-            await self.page.goto(url, wait_until='networkidle', timeout=30000)
+            # FIXED: Use 'domcontentloaded' instead of 'networkidle'
+            # This waits for HTML to load but doesn't wait for all network requests
+            try:
+                await self.page.goto(url, wait_until='domcontentloaded', timeout=30000)
+            except PlaywrightTimeoutError:
+                print("   ⏳ Initial load timeout, retrying with less strict wait...")
+                # Fallback: try again with 'commit' which is even faster
+                await self.page.goto(url, wait_until='commit', timeout=30000)
+            
+            # Wait a fixed amount for JavaScript to render content
+            await asyncio.sleep(3)
             
             # Scroll to trigger lazy loading
             await self._scroll_to_load()
             
-            # Wait for articles to appear with multiple strategies
+            # Wait for articles to appear
             article_urls = []
             
             # ============================================
             # STRATEGY 1: data-destinationlink (TechCrunch's actual attribute)
             # ============================================
             try:
-                # Wait for any article link to appear
-                await self.page.wait_for_selector(
-                    'a[data-destinationlink]', 
-                    timeout=10000
-                )
+                # Wait with shorter timeout for articles
+                try:
+                    await self.page.wait_for_selector(
+                        'a[data-destinationlink]', 
+                        timeout=8000
+                    )
+                except PlaywrightTimeoutError:
+                    print("   ⏳ No data-destinationlink found, trying other selectors...")
                 
                 # Get all links with data-destinationlink
                 links = await self.page.query_selector_all('a[data-destinationlink]')
@@ -126,8 +140,8 @@ class TechCrunchPlaywrightScraper:
                         if href not in article_urls:
                             article_urls.append(href)
                             print(f"   🔗 Found: {text[:50] if text else 'Unknown'}...")
-            except PlaywrightTimeoutError:
-                print("   ⏳ No data-destinationlink found, trying other selectors...")
+            except Exception as e:
+                print(f"   ⚠️ Strategy 1 error: {e}")
             
             # ============================================
             # STRATEGY 2: .loop-card__title-link
@@ -143,8 +157,8 @@ class TechCrunchPlaywrightScraper:
                             if href not in article_urls:
                                 article_urls.append(href)
                                 print(f"   🔗 Found: {text[:50] if text else 'Unknown'}...")
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"   ⚠️ Strategy 2 error: {e}")
             
             # ============================================
             # STRATEGY 3: .wp-block-post a (article blocks)
@@ -158,8 +172,8 @@ class TechCrunchPlaywrightScraper:
                             if '/202' in href and href not in article_urls:
                                 article_urls.append(href)
                                 print(f"   🔗 Found: {await link.text_content() or 'Unknown'}...")
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"   ⚠️ Strategy 3 error: {e}")
             
             # ============================================
             # STRATEGY 4: Any link with date pattern
@@ -173,8 +187,8 @@ class TechCrunchPlaywrightScraper:
                             if href not in article_urls:
                                 article_urls.append(href)
                                 print(f"   🔗 Found: {await link.text_content() or 'Unknown'}...")
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"   ⚠️ Strategy 4 error: {e}")
             
             # Remove duplicates and filter
             article_urls = list(dict.fromkeys(article_urls))
@@ -187,7 +201,7 @@ class TechCrunchPlaywrightScraper:
             return []
     
     async def _scroll_to_load(self):
-        """Scroll to load lazy-loaded content."""
+        """Scroll to load lazy-loaded content with error handling."""
         try:
             # Scroll down
             await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
@@ -249,31 +263,43 @@ class TechCrunchPlaywrightScraper:
             page_count += 1
             print(f"\n📑 Scraping page {page_count}: {current_url}")
             
-            # Navigate to page
-            await self.page.goto(current_url, wait_until='networkidle', timeout=30000)
-            await asyncio.sleep(2)  # Additional wait for stability
-            
-            # Get article URLs
-            page_urls = await self.scrape_category_page(current_url)
-            
-            # Add new URLs
-            new_urls = [url for url in page_urls if url not in all_urls]
-            all_urls.extend(new_urls)
-            print(f"   📝 Added {len(new_urls)} new articles (total: {len(all_urls)})")
-            
-            # Check if we have enough
-            if len(all_urls) >= MAX_ARTICLES:
-                print(f"   🎯 Reached target of {MAX_ARTICLES} articles")
-                break
-            
-            # Get next page URL
-            current_url = await self.get_next_page_url()
-            if current_url:
-                delay = random.uniform(1.5, 3.5)
-                print(f"   ⏳ Waiting {delay:.1f}s before next page...")
-                await asyncio.sleep(delay)
-            else:
-                print("   📌 No more pages available")
+            try:
+                # Navigate to page with timeout handling
+                try:
+                    await self.page.goto(current_url, wait_until='domcontentloaded', timeout=30000)
+                except PlaywrightTimeoutError:
+                    print("   ⏳ Navigation timeout, attempting to proceed...")
+                    # Try to stop page loading
+                    await self.page.evaluate("window.stop()")
+                    await asyncio.sleep(2)
+                
+                await asyncio.sleep(2)  # Additional wait for stability
+                
+                # Get article URLs
+                page_urls = await self.scrape_category_page(current_url)
+                
+                # Add new URLs
+                new_urls = [url for url in page_urls if url not in all_urls]
+                all_urls.extend(new_urls)
+                print(f"   📝 Added {len(new_urls)} new articles (total: {len(all_urls)})")
+                
+                # Check if we have enough
+                if len(all_urls) >= MAX_ARTICLES:
+                    print(f"   🎯 Reached target of {MAX_ARTICLES} articles")
+                    break
+                
+                # Get next page URL
+                current_url = await self.get_next_page_url()
+                if current_url:
+                    delay = random.uniform(1.5, 3.5)
+                    print(f"   ⏳ Waiting {delay:.1f}s before next page...")
+                    await asyncio.sleep(delay)
+                else:
+                    print("   📌 No more pages available")
+                    break
+                    
+            except Exception as e:
+                print(f"   ❌ Error on page {page_count}: {e}")
                 break
         
         # Trim to max articles
@@ -294,8 +320,13 @@ class TechCrunchPlaywrightScraper:
         try:
             print(f"   📄 Scraping article: {url}")
             
-            # Navigate with wait
-            await self.page.goto(url, wait_until='networkidle', timeout=30000)
+            try:
+                await self.page.goto(url, wait_until='domcontentloaded', timeout=30000)
+            except PlaywrightTimeoutError:
+                print("   ⏳ Article load timeout, attempting to proceed...")
+                await self.page.evaluate("window.stop()")
+                await asyncio.sleep(2)
+            
             await asyncio.sleep(1.5)  # Allow any additional JS execution
             
             # Scroll to load all content
@@ -408,7 +439,7 @@ class TechCrunchPlaywrightScraper:
                     body = await self.page.query_selector('body')
                     if body:
                         content = await body.text_content()
-                        # Clean up: remove extra whitespace, navigation, etc.
+                        # Clean up: remove extra whitespace
                         content = ' '.join(content.split())
                 except Exception:
                     pass
@@ -483,6 +514,9 @@ class TechCrunchPlaywrightScraper:
             print(f"\n✅ Scraped {len(articles)} articles successfully")
             return articles
             
+        except Exception as e:
+            print(f"❌ Scraper error: {e}")
+            return []
         finally:
             await self._close_browser()
     
