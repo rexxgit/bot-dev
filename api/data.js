@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         console.log(`🔍 Query: "${query}"`);
 
         // ============================================
-        // 1. CACHE SYSTEM (NEW)
+        // 1. CACHE SYSTEM
         // ============================================
         class ResponseCache {
             constructor() {
@@ -32,7 +32,6 @@ export default async function handler(req, res) {
             }
 
             getKey(query) {
-                // Create a consistent cache key
                 return `query:${query.toLowerCase().trim()}`;
             }
 
@@ -45,7 +44,6 @@ export default async function handler(req, res) {
                         console.log(`✅ Cache HIT for: "${query}"`);
                         return entry.data;
                     }
-                    // Expired
                     this.cache.delete(key);
                 }
                 this.misses++;
@@ -79,16 +77,13 @@ export default async function handler(req, res) {
             }
         }
 
-        // Initialize cache
         const responseCache = new ResponseCache();
 
-        // Check cache first
         const cachedResponse = responseCache.get(query);
         if (cachedResponse) {
             const duration = Date.now() - startTime;
             console.log(`⏱️ Cache response delivered in ${duration}ms`);
             
-            // Add cache metadata
             cachedResponse.metadata = {
                 ...cachedResponse.metadata,
                 cached: true,
@@ -100,7 +95,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 2. QUERY CLASSIFICATION (Pre-optimized)
+        // 2. QUERY CLASSIFICATION
         // ============================================
         function classifyQuery(query) {
             const lower = query.toLowerCase();
@@ -146,9 +141,8 @@ export default async function handler(req, res) {
         console.log(`📊 Query classified as: ${queryType} (confidence: ${queryClassification.confidence})`);
 
         // ============================================
-        // 3. SOURCE AUTHORITY SYSTEM (Pre-computed)
+        // 3. SOURCE AUTHORITY SYSTEM
         // ============================================
-        // Pre-computed authority scores for faster lookup
         const sourceAuthority = {
             'Raulji Technologies': { score: 0.95, tags: ['AI strategy', 'marketing', 'enterprise', 'consulting'] },
             'Gumloop': { score: 0.90, tags: ['AI tools', 'automation', 'productivity', 'workflow'] },
@@ -164,7 +158,6 @@ export default async function handler(req, res) {
             let score = authority.score;
             const queryLower = query.toLowerCase();
             
-            // Tag matching
             if (authority.tags) {
                 for (const tag of authority.tags) {
                     if (queryLower.includes(tag.toLowerCase())) {
@@ -174,7 +167,6 @@ export default async function handler(req, res) {
                 }
             }
             
-            // Content length boost
             const wordCount = content.split(/\s+/).length;
             if (wordCount > 1000) score += 0.05;
             if (wordCount > 2000) score += 0.05;
@@ -183,7 +175,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 4. OPTIMIZED SEMANTIC SEARCH
+        // 4. SEMANTIC SEARCH
         // ============================================
         function semanticSearch(query, paragraphs) {
             const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
@@ -194,7 +186,6 @@ export default async function handler(req, res) {
             for (const paragraph of paragraphs) {
                 const words = paragraph.toLowerCase().split(/\s+/);
                 
-                // Quick filter: if paragraph doesn't contain any query word, skip
                 if (!queryWords.some(w => words.includes(w))) continue;
                 
                 const commonWords = queryWords.filter(word => words.includes(word) && word.length > 3);
@@ -227,7 +218,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 5. OPTIMIZED HYBRID SEARCH
+        // 5. HYBRID SEARCH
         // ============================================
         function hybridSearch(query, sources) {
             const queryLower = query.toLowerCase();
@@ -245,7 +236,6 @@ export default async function handler(req, res) {
                 for (const paragraph of paragraphs) {
                     const lower = paragraph.toLowerCase();
                     
-                    // Keyword Score
                     let keywordScore = 0;
                     for (const word of queryWords) {
                         if (stopWords.includes(word)) continue;
@@ -257,19 +247,14 @@ export default async function handler(req, res) {
                     const matchedWords = queryWords.filter(w => lower.includes(w));
                     if (matchedWords.length > 1) keywordScore += matchedWords.length * 3;
 
-                    // Semantic Score
                     let semanticScore = 0;
                     const semanticMatch = semanticResults.find(r => r.content === paragraph);
                     if (semanticMatch) semanticScore = semanticMatch.semantic_score;
 
-                    // Authority Score
                     const authorityScore = authority * 10;
-
-                    // Context Score
                     const paragraphIndex = paragraphs.indexOf(paragraph);
                     const contextScore = Math.max(0, 1 - (paragraphIndex / paragraphs.length) * 0.5);
 
-                    // Combined score
                     const totalScore = (keywordScore * 0.35) + (semanticScore * 0.35) + (authorityScore * 0.2) + (contextScore * 5);
 
                     if (totalScore > 1) {
@@ -296,7 +281,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 6. RATE LIMITING (Token Bucket)
+        // 6. RATE LIMITING
         // ============================================
         class TokenBucket {
             constructor(capacity = 10, refillRate = 1, refillInterval = 60000) {
@@ -346,7 +331,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 7. PERFORMANCE METRICS (Enhanced)
+        // 7. PERFORMANCE METRICS
         // ============================================
         const metrics = {
             totalRequests: 0,
@@ -363,13 +348,12 @@ export default async function handler(req, res) {
                 metrics.errorRate = (metrics.errorRate * (metrics.totalRequests - 1) + 1) / metrics.totalRequests;
             }
             
-            // Update cache hit rate
             const cacheStats = responseCache.getStats();
             metrics.cacheHitRate = parseFloat(cacheStats.hitRate) || 0;
         }
 
         // ============================================
-        // 8. EMBEDDED DATA (Compressed)
+        // 8. EMBEDDED DATA
         // ============================================
         const data = {
             "sources": [
@@ -428,7 +412,7 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 9. SEARCH EXECUTION (Optimized)
+        // 9. SEARCH EXECUTION
         // ============================================
         const searchStartTime = Date.now();
         const allResults = hybridSearch(query, data.sources);
@@ -462,13 +446,13 @@ export default async function handler(req, res) {
         }
 
         // ============================================
-        // 11. GROQ GENERATION WITH RETRY
+        // 11. GROQ GENERATION WITH NEW SYSTEM PROMPT
         // ============================================
         let aiAnswer = null;
         let aiError = null;
         const groqKey = process.env.GROQ_API_KEY;
 
-        async function callGroqWithRetry(context, query, queryType, maxRetries = 3) {
+        async function callGroqWithRetry(context, query, maxRetries = 3) {
             let lastError = null;
             
             for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -486,16 +470,24 @@ export default async function handler(req, res) {
                             messages: [
                                 {
                                     role: 'system',
-                                    content: queryType === 'analytical' || queryType === 'comparative' || queryType === 'exploratory'
-                                        ? 'You are a senior marketing analyst. Synthesize information from multiple sources. Provide a comprehensive, balanced answer with key insights and actionable recommendations.'
-                                        : 'You are a senior marketing analyst. Answer based ONLY on the provided context. Be concise, accurate, and factual.'
+                                    content: `You are a marketing analyst. Answer the user's question using only the provided context.
+
+Rules:
+- Keep answers under 150 words.
+- Always cite the source name and date.
+- If the context doesn't contain the answer, say "I don't have that information."
+
+Format:
+- One sentence summary.
+- Bullet points for key facts.
+- Source citation at the end.`
                                 },
                                 {
                                     role: 'user',
-                                    content: `CONTEXT:\n${context}\n\nQUESTION: ${query}\n\n${queryType === 'analytical' || queryType === 'comparative' ? 'Synthesize the key insights from all sources and provide a structured analysis:' : queryType === 'exploratory' ? 'Explore this question with reasoning from the available context:' : 'Answer concisely with key points from the context:'}`
+                                    content: `CONTEXT:\n${context}\n\nQUESTION: ${query}\n\nAnswer concisely with key points from the context:`
                                 }
                             ],
-                            temperature: queryType === 'analytical' ? 0.3 : queryType === 'comparative' ? 0.25 : 0.2,
+                            temperature: 0.2,
                             max_tokens: 600,
                         })
                     });
@@ -536,7 +528,7 @@ export default async function handler(req, res) {
                 `Source ${i+1} (${r.source_name}): ${r.content}`
             ).join('\n\n');
 
-            aiAnswer = await callGroqWithRetry(context, query, queryType);
+            aiAnswer = await callGroqWithRetry(context, query);
             
             if (aiAnswer) {
                 console.log(`✅ AI answer generated (${aiAnswer.length} chars)`);
@@ -592,7 +584,6 @@ export default async function handler(req, res) {
         trackPerformance(duration, true);
         console.log(`⏱️ Request completed in ${duration}ms`);
 
-        // Build final response
         const finalResponse = {
             response: responseText,
             sources: sourcesWithBadges,
@@ -611,7 +602,6 @@ export default async function handler(req, res) {
             }
         };
 
-        // Cache the response
         responseCache.set(query, finalResponse);
 
         return res.status(200).json(finalResponse);
