@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build step needed - static site'",
+    "build": "mkdir -p public && cp index.html public/ && cp -r api public/ && cp -r data.json public/ || true",
     "start": "vercel start",
     "deploy": "vercel --prod",
     "test": "echo \"Error: no test specified\" && exit 1"
