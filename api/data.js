@@ -1,8 +1,8 @@
 // api/data.js - Complete API Endpoint with Embedded Data
-// This file contains both the data and the API handler
+// Optimized for Vercel deployment
 
 // ============================================
-// SECTION 1: DATA LAYER
+// DATA LAYER - All articles embedded
 // ============================================
 
 const techCrunchArticles = [
@@ -10,7 +10,7 @@ const techCrunchArticles = [
     title: "Microsoft is openly competing with OpenAI, Anthropic more than ever",
     author: "Unknown",
     date: "2026-07-29T17:21:06-07:00",
-    content: "Microsoft is in a unique position as AI overtakes the tech industry. It's one of the world's largest cloud providers and software-as-a-service companies, while also holding valuable stakes in the two biggest AI labs, OpenAI and Anthropic. Those incentives are starting to clash as Microsoft posts blockbuster financial results. The company just reported an extremely profitable quarter with $90 billion in revenue and net income of $35.8 billion. For the fiscal year, which ended June 30, Microsoft reported $331.8 billion in revenue with a net income of $133.7 billion for the year. And CEO Satya Nadella is not about to let the trajectory of Anthropic and OpenAI — which are expanding into applications and agentic infrastructure that could ultimately let them own customer relationships — derail that kind of cash. Nadella has been preaching to enterprises to use multiple models and to stop relying on the frontier AI labs for the agentic harness/app layer. Doing so is dangerous, he's been saying, because it requires companies to share too many of their internal secrets with model makers of dubious trustworthiness. He knows his customers. Enterprise IT fears both data leaks and being locked into a vendor. Now he has openly told Wall Street analysts during the company's quarterly conference call Wednesday that this is an opportunity for Microsoft to sell customers its own homegrown models, alongside agents, AI security and more, while promising lower costs. In other words, he's pitching Microsoft as an alternative to many of the upscale services that OpenAI and Anthropic are developing for their own growth.",
+    content: "Microsoft is in a unique position as AI overtakes the tech industry. It's one of the world's largest cloud providers and software-as-a-service companies, while also holding valuable stakes in the two biggest AI labs, OpenAI and Anthropic. Those incentives are starting to clash as Microsoft posts blockbuster financial results. The company just reported an extremely profitable quarter with $90 billion in revenue and net income of $35.8 billion. For the fiscal year, which ended June 30, Microsoft reported $331.8 billion in revenue with a net income of $133.7 billion for the year. And CEO Satya Nadella is not about to let the trajectory of Anthropic and OpenAI — which are expanding into applications and agentic infrastructure that could ultimately let them own customer relationships — derail that kind of cash. Nadella has been preaching to enterprises to use multiple models and to stop relying on the frontier AI labs for the agentic harness/app layer.",
     url: "https://techcrunch.com/2026/07/29/microsoft-is-openly-competing-with-openai-anthropic-more-than-ever/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -22,7 +22,7 @@ const techCrunchArticles = [
     title: "Mark Zuckerberg predicts that billions of people will have personal AI agents in five years",
     author: "Unknown",
     date: "2026-07-29T16:00:11-07:00",
-    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years. 'I think that it's extremely unlikely if you look out five years from now, for example — whatever period of time you want — that you don't have billions of people with a personal agent that understands your goals and that is just working on your behalf 24/7 to achieve your goals in whatever the domain is that you care about,' Zuckerberg said on Wednesday's quarterly earnings call with investors. He added that he could see people using these agents to help them with their finances, health, interpersonal relationships, and household management. 'As we move toward a future where we're all interacting with multiple agents, I think that WhatsApp and our other messaging surfaces are going to become increasingly important,' he said, noting that WhatsApp is already the leading platform where users interact with Meta AI.",
+    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years. 'I think that it's extremely unlikely if you look out five years from now, for example — whatever period of time you want — that you don't have billions of people with a personal agent that understands your goals and that is just working on your behalf 24/7 to achieve your goals in whatever the domain is that you care about,' Zuckerberg said on Wednesday's quarterly earnings call with investors.",
     url: "https://techcrunch.com/2026/07/29/mark-zuckerberg-predicts-that-billions-of-people-will-have-personal-ai-agents-in-five-years/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -34,7 +34,7 @@ const techCrunchArticles = [
     title: "Microsoft logs $3.2B from Anthropic investment, but OpenAI was a mixed bag",
     author: "Unknown",
     date: "2026-07-29T15:46:03-07:00",
-    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing. For the quarter, it recorded its investment in Anthropic as a $3.2 billion gain, boosting diluted earnings per share by 33 cents. (Microsoft reported diluted earnings per share of $4.81 for the quarter). Microsoft invested $5 billion in Anthropic in November 2025 as part of a circular agreement under which the AI lab also agreed to buy $30 billion worth of Azure services. Microsoft does not routinely update the value of its Anthropic investment each quarter. It does, however, discuss its OpenAI investment quarterly. Microsoft said investment did not fare nearly as well in the quarter, and marked it down about $600 million, reducing diluted EPS by about 7 cents per share. Microsoft owns about 27% of OpenAI.",
+    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing. For the quarter, it recorded its investment in Anthropic as a $3.2 billion gain, boosting diluted earnings per share by 33 cents. Microsoft invested $5 billion in Anthropic in November 2025 as part of a circular agreement under which the AI lab also agreed to buy $30 billion worth of Azure services.",
     url: "https://techcrunch.com/2026/07/29/microsoft-logs-3-2b-from-anthropic-investment-but-openai-was-a-mixed-bag/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -46,7 +46,7 @@ const techCrunchArticles = [
     title: "Zuckerberg says Meta's enterprise AI opportunity extends beyond agents",
     author: "Unknown",
     date: "2026-07-29T15:23:12-07:00",
-    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses, to help with customer service, support, and other daily operations. But the tech giant's enterprise AI ambitions are much more expansive, Meta CEO Mark Zuckerberg told investors on Wednesday's second-quarter earnings call. 'We see a large enterprise opportunity to sell to businesses, including APIs, business agents, potentially selling compute directly, and other services that we're building for large customers,' Zuckerberg said. These additions could potentially position the business to create new revenue streams beyond advertising, which drives the bulk of its business, and subscriptions, which contribute a smaller share.",
+    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses, to help with customer service, support, and other daily operations. But the tech giant's enterprise AI ambitions are much more expansive, Meta CEO Mark Zuckerberg told investors on Wednesday's second-quarter earnings call. 'We see a large enterprise opportunity to sell to businesses, including APIs, business agents, potentially selling compute directly, and other services that we're building for large customers,' Zuckerberg said.",
     url: "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -58,7 +58,7 @@ const techCrunchArticles = [
     title: "The Hugging Face break-in explained",
     author: "Unknown",
     date: "2026-07-29T12:44:49-07:00",
-    content: "Hugging Face on Monday published a technical timeline that walks readers through how an autonomous AI agent, built on OpenAI models and running inside one of OpenAI's own cybersecurity evaluations, broke into its systems over more than four days earlier this month. It's the first security incident about which OpenAI CEO Sam Altman 'felt very viscerally,' he has said. Little wonder given it feels, at least, like something has truly been unleashed here. In fact, Hugging Face's team prefaced its report by offering that 'everyone should be prepared as defenders,' before diving into the nitty-gritty of what went down for the benefit of security professionals everywhere.",
+    content: "Hugging Face on Monday published a technical timeline that walks readers through how an autonomous AI agent, built on OpenAI models and running inside one of OpenAI's own cybersecurity evaluations, broke into its systems over more than four days earlier this month. It's the first security incident about which OpenAI CEO Sam Altman 'felt very viscerally,' he has said.",
     url: "https://techcrunch.com/2026/07/29/the-hugging-face-ai-break-in-as-told-through-an-increasingly-committed-bear-metaphor/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -70,7 +70,7 @@ const techCrunchArticles = [
     title: "Claude Opus 5 became downright ruthless when tasked with running a vending machine",
     author: "Unknown",
     date: "2026-07-29T11:45:27-07:00",
-    content: "For a year now, the AI safety testing firm Andon Labs has given frontier models various real-world tasks to determine how well they do as agents running for long periods with no human supervision. On Wednesday, Andon published a new installment in how things are going in its Vending-Bench research, where the lab has frontier models run a simulated vending machine business for a simulated year. The mission is simple: Make more money than the other models. It benchmarks the results in areas like final cash balance, prices paid to suppliers, and refunds paid. Across these tests, it has watched various AI models — largely from Anthropic and OpenAI — lie, cheat, and collude their way to the top.",
+    content: "For a year now, the AI safety testing firm Andon Labs has given frontier models various real-world tasks to determine how well they do as agents running for long periods with no human supervision. On Wednesday, Andon published a new installment in how things are going in its Vending-Bench research, where the lab has frontier models run a simulated vending machine business for a simulated year. The mission is simple: Make more money than the other models.",
     url: "https://techcrunch.com/2026/07/29/claude-opus-5-became-downright-ruthless-when-tasked-with-running-a-vending-machine/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -82,7 +82,7 @@ const techCrunchArticles = [
     title: "Hint, a new AI startup co-founded by Martha Stewart, offers an AI assistant for homeowners",
     author: "Unknown",
     date: "2026-07-29T08:35:09-07:00",
-    content: "Martha Stewart is entering the AI software era in the most Martha Stewart way possible: She has joined the co-founding team at Hint, an app that leverages AI technology to manage the tasks surrounding home maintenance and management. With the Hint app, which launches today, homeowners can tackle challenges around maintenance schedules/tasks and energy management, learn about their soil and air quality, weigh insurance claims, and more. It can also serve as storage for various contracts, files, and invoices related to the home and its upkeep, which can be queried through the built-in AI assistant.",
+    content: "Martha Stewart is entering the AI software era in the most Martha Stewart way possible: She has joined the co-founding team at Hint, an app that leverages AI technology to manage the tasks surrounding home maintenance and management. With the Hint app, which launches today, homeowners can tackle challenges around maintenance schedules/tasks and energy management, learn about their soil and air quality, weigh insurance claims, and more.",
     url: "https://techcrunch.com/2026/07/29/hint-a-new-ai-startup-co-founded-by-martha-stewart-offers-an-ai-assistant-for-homeowners/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -94,7 +94,7 @@ const techCrunchArticles = [
     title: "TechCrunch Disrupt 2026",
     author: "Unknown",
     date: "2026-07-29T14:16:39-07:00",
-    content: "October 13 – 15, 2026 — San Francisco Innovation for Every Stage Disrupt is where you'll find innovation for every stage of your startup journey. Whether you're a budding founder with a revolutionary idea, a seasoned startup looking to scale, or an investor seeking the next big thing, Disrupt offers unparalleled resources, connections, and expert insights to propel your venture forward. Scale faster through funding, exposure, networking, and startup growth insights. Grow your portfolio by discovering breakout startups, emerging trends, and founders. Gain practical strategies, peer insights, and tools to scale operations effectively. Explore breakthrough ideas, emerging tech, and connections shaping the future.",
+    content: "October 13 – 15, 2026 — San Francisco Innovation for Every Stage Disrupt is where you'll find innovation for every stage of your startup journey. Whether you're a budding founder with a revolutionary idea, a seasoned startup looking to scale, or an investor seeking the next big thing, Disrupt offers unparalleled resources, connections, and expert insights to propel your venture forward.",
     url: "https://techcrunch.com/events/techcrunch-disrupt/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -106,7 +106,7 @@ const techCrunchArticles = [
     title: "Thinking Machines co-founder Lilian Weng left the company citing health reasons, then joined OpenAI",
     author: "Unknown",
     date: "2026-07-29T14:07:48-07:00",
-    content: "Lilian Weng, co-founder of Thinking Machines, announced this week that she would step down from her role, citing health issues. 'I don't feel I'm able to continue at the pace a startup requires,' she wrote in an internal Slack message, which she also shared on X. 'After thinking about it for several months, I ultimately have to admit that the amount of consistent stress and workload have pushed me beyond what my health can sustain physically.' On Wednesday, OpenAI told TechCrunch that Weng would be rejoining the company, where she previously served as the VP of AI Safety Research.",
+    content: "Lilian Weng, co-founder of Thinking Machines, announced this week that she would step down from her role, citing health issues. 'I don't feel I'm able to continue at the pace a startup requires,' she wrote in an internal Slack message, which she also shared on X. 'After thinking about it for several months, I ultimately have to admit that the amount of consistent stress and workload have pushed me beyond what my health can sustain physically.'",
     url: "https://techcrunch.com/2026/07/29/thinking-machines-co-founder-lilian-weng-left-the-company-citing-health-reasons-then-joined-openai/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -118,7 +118,7 @@ const techCrunchArticles = [
     title: "Discover what's next for AI, from the SaaS reckoning to the agent security gap, at TechCrunch Disrupt 2026",
     author: "Unknown",
     date: "2026-07-29T14:16:39-07:00",
-    content: "AI hasn't just changed how startups build; it's broken how they sell, secure their data and customers, and scale it more rapidly than ever before. At TechCrunch Disrupt 2026, the AI Stage is back to dig into the single hottest topic in the community for the past few years, presented by Google for Startups. This time around, we're exploring the business models AI is rewriting, the wealth of unsolved security gaps, and the entirely new job categories AI has created from scratch.",
+    content: "AI hasn't just changed how startups build; it's broken how they sell, secure their data and customers, and scale it more rapidly than ever before. At TechCrunch Disrupt 2026, the AI Stage is back to dig into the single hottest topic in the community for the past few years, presented by Google for Startups.",
     url: "https://techcrunch.com/2026/07/29/discover-whats-next-for-ai-from-the-saas-reckoning-to-the-agent-security-gap-at-techcrunch-disrupt-2026/",
     source_name: "TechCrunch AI",
     source_type: "blog",
@@ -133,7 +133,7 @@ const staticSources = [
     source_name: "Raulji Technologies",
     url: "https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/",
     title: "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
-    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business, and how to turn it into a competitive advantage. In July 2026, Anthropic's Claude Sonnet 5, OpenAI's GPT-5.6 and xAI's Grok 4.5 all launched within weeks of each other. For most businesses the winning move is not chasing whichever model leads the benchmarks this month, it is building on a flexible setup you can swap newer models into as they improve. The middle of 2026 has been one of the busiest stretches the AI industry has ever seen. In a matter of weeks, Anthropic shipped Claude Sonnet 5, OpenAI began rolling out its GPT-5.6 family, and xAI released Grok 4.5, while a wave of open-source models kept pace right behind them.",
+    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business, and how to turn it into a competitive advantage. In July 2026, Anthropic's Claude Sonnet 5, OpenAI's GPT-5.6 and xAI's Grok 4.5 all launched within weeks of each other. For most businesses the winning move is not chasing whichever model leads the benchmarks this month, it is building on a flexible setup you can swap newer models into as they improve.",
     author: "Raulji Technologies",
     date: "July 27, 2026",
     word_count: 1768,
@@ -145,7 +145,7 @@ const staticSources = [
     source_name: "Gumloop",
     url: "https://www.gumloop.com/blog/best-ai-apps",
     title: "15 best AI apps I can't live without in 2026",
-    content: "It all started with ChatGPT, then Claude, and then we had an explosion of AI apps for literally every use case you can think of. Video editing, voice generation, coding, search, automation, presentations, SEO, you name it. Tools promising to make us more productive. Some were simple 'ChatGPT wrappers' while others were genuinely new products that used AI in ways that were not possible a few years ago. The problem is that there are so many AI tools out there now that it's hard to know which ones are actually worth your time. I have personally tested over 70 of them, and most I used once and never opened again.",
+    content: "It all started with ChatGPT, then Claude, and then we had an explosion of AI apps for literally every use case you can think of. Video editing, voice generation, coding, search, automation, presentations, SEO, you name it. Tools promising to make us more productive. I have personally tested over 70 of them, and most I used once and never opened again.",
     author: "Gumloop",
     date: "July 27, 2026",
     word_count: 6894,
@@ -157,7 +157,7 @@ const staticSources = [
     source_name: "Pickaxe",
     url: "https://pickaxe.co/post/top-ai-platforms",
     title: "Top AI Platforms in 2026: The 15 Best Platforms I've Actually Tested",
-    content: "I have tested more AI platforms than I can count over the past three years. Most of them blurred together. Some were genuinely great. A few changed how I work entirely. This is my honest breakdown of the top AI platforms in 2026 — the 15 I actually spent real time with, built real things on, and can speak to from firsthand experience. The AI platform market is now valued at $72.18 billion and is forecast to hit $119.57 billion by 2031.",
+    content: "I have tested more AI platforms than I can count over the past three years. Most of them blurred together. Some were genuinely great. A few changed how I work entirely. This is my honest breakdown of the top AI platforms in 2026 — the 15 I actually spent real time with, built real things on, and can speak to from firsthand experience.",
     author: "Pickaxe",
     date: "July 27, 2026",
     word_count: 6534,
@@ -169,7 +169,7 @@ const staticSources = [
     source_name: "Synthesia",
     url: "https://www.synthesia.io/post/ai-tools",
     title: "The 12 Best AI Tools for 2026 (That People Actually Use)",
-    content: "Can you believe it's been over three years since ChatGPT landed in our internet browsers? In a short space of time, AI has become a staple part of daily work and personal life, and the number of AI tools available has grown massively. In the extensive list of AI tools, I've pulled the best ones to actually get work done, and that are genuinely useful in 2026. ChatGPT is an easy-to-use AI assistant that helps with writing, research analysis, brainstorming ideas, and problem-solving.",
+    content: "Can you believe it's been over three years since ChatGPT landed in our internet browsers? In a short space of time, AI has become a staple part of daily work and personal life, and the number of AI tools available has grown massively. In the extensive list of AI tools, I've pulled the best ones to actually get work done, and that are genuinely useful in 2026.",
     author: "Synthesia",
     date: "July 27, 2026",
     word_count: 2343,
@@ -181,7 +181,7 @@ const staticSources = [
     source_name: "Red River Communications",
     url: "https://redrivercomm.com/six-popular-ai-platforms-everyone-can-use",
     title: "Six Popular AI Platforms Everyone Can Use",
-    content: "Whether it's Fortune 500 companies or your friends and coworkers, just about everywhere you turn, people are talking about AI—the common phrasing for Artificial Intelligence. The recent boom in AI technology has moved markets and begun to change how we learn, think, work, shop, and play. Below, we explore six of the most popular and widely used AI apps and platforms and discuss their unique capabilities.",
+    content: "Whether it's Fortune 500 companies or your friends and coworkers, just about everywhere you turn, people are talking about AI—the common phrasing for Artificial Intelligence. The recent boom in AI technology has moved markets and begun to change how we learn, think, work, shop, and play.",
     author: "Red River Communications",
     date: "July 27, 2026",
     word_count: 953,
@@ -224,7 +224,6 @@ class TechCrunchRAG {
     };
   }
 
-  // Simple search function
   search(query) {
     const startTime = Date.now();
     this.metrics.totalRequests++;
@@ -259,10 +258,8 @@ class TechCrunchRAG {
       
       let score = 0;
       
-      // Title match (high weight)
       if (titleLower.includes(queryLower)) score += 10;
       
-      // Word matches
       const words = queryLower.split(/\s+/);
       for (const word of words) {
         if (word.length > 2) {
@@ -271,10 +268,7 @@ class TechCrunchRAG {
         }
       }
       
-      // Exact phrase match
       if (contentLower.includes(queryLower)) score += 5;
-      
-      // Source authority boost
       if (article.source_name === 'TechCrunch AI') score += 2;
       if (article.word_count > 1000) score += 1;
       
@@ -286,14 +280,13 @@ class TechCrunchRAG {
       }
     }
 
-    // Sort by score
     results.sort((a, b) => b.score - a.score);
     const topResults = results.slice(0, 5);
 
     // Build response
     let responseText = '';
     if (topResults.length === 0) {
-      responseText = '🔍 **No matching content found.**\n\nTry asking about:\n- Microsoft vs OpenAI/Anthropic\n- Meta AI and Zuckerberg predictions\n- AI security incidents (Hugging Face)\n- AI agent research\n- AI startups and investments\n- AI tools and platforms';
+      responseText = '🔍 **No matching content found.**\n\nTry asking about:\n- Microsoft vs OpenAI/Anthropic\n- Meta AI and Zuckerberg predictions\n- AI security incidents\n- AI agent research\n- AI startups and investments\n- AI tools and platforms';
     } else {
       responseText = `**📊 Found ${topResults.length} relevant sources:**\n\n`;
       for (let i = 0; i < topResults.length; i++) {
@@ -331,7 +324,6 @@ class TechCrunchRAG {
       }
     };
 
-    // Cache response
     this.cache.set(cacheKey, { data: response, timestamp: Date.now() });
 
     const duration = Date.now() - startTime;
@@ -394,27 +386,19 @@ class TechCrunchRAG {
 }
 
 // ============================================
-// API HANDLER
+// API HANDLER - Vercel Compatible
 // ============================================
 
 export default function handler(req, res) {
-  console.log('📥 API Request:', {
-    method: req.method,
-    url: req.url,
-    query: req.query
-  });
-
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle OPTIONS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only allow GET and POST
   if (req.method !== 'GET' && req.method !== 'POST') {
     return res.status(405).json({
       error: 'Method not allowed',
@@ -425,7 +409,6 @@ export default function handler(req, res) {
   try {
     const rag = new TechCrunchRAG();
 
-    // Get query parameters
     let query = null;
     let action = null;
     let source = null;
@@ -493,7 +476,6 @@ export default function handler(req, res) {
 
     // Search
     if (query) {
-      console.log(`🔍 Searching for: "${query}"`);
       const result = rag.search(query);
       return res.status(200).json(result);
     }
@@ -528,7 +510,7 @@ export default function handler(req, res) {
 }
 
 // ============================================
-// EXPORT DATA FOR OTHER FILES
+// EXPORTS
 // ============================================
 
 export { 
