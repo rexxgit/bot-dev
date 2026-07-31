@@ -1,8 +1,16 @@
-// api/data.js - Single File Solution
-// Default export is the handler function (what Vercel expects)
+// api/data.js - Complete API with Prompt Engineering Integration
+// Default export is the handler function
 
 // ============================================
-// DATA EMBEDDED DIRECTLY (No external imports)
+// IMPORT PROMPTS
+// ============================================
+
+import { systemPrompts, selectPrompt } from './prompts/system.js';
+import { getFewShotExamples } from './prompts/examples.js';
+import { selectTemplate } from './prompts/templates.js';
+
+// ============================================
+// DATA (All sources embedded)
 // ============================================
 
 const techCrunchSources = [
@@ -317,14 +325,60 @@ for (const source of allSources) {
 }
 
 // ============================================
-// SEARCH FUNCTION
+// CLASSIFY QUERY TYPE
+// ============================================
+
+function classifyQuery(query) {
+  const lower = query.toLowerCase();
+  
+  const categories = {
+    factual: { keywords: ['what', 'when', 'where', 'who', 'which', 'is', 'are', 'was', 'were', 'did'], weight: 1 },
+    analytical: { keywords: ['compare', 'contrast', 'analyze', 'synthesis', 'trend', 'pattern', 'relationship', 'impact', 'cause'], weight: 1.5 },
+    comparative: { keywords: ['better', 'best', 'worst', 'top', 'vs', 'versus', 'compared to', 'difference'], weight: 1.5 },
+    exploratory: { keywords: ['how does', 'why does', 'what if', 'could', 'would', 'might', 'imagine'], weight: 1.2 },
+    summarization: { keywords: ['summarize', 'summarise', 'brief', 'overview', 'key points', 'main ideas', 'tl;dr'], weight: 1.3 }
+  };
+  
+  let scores = {};
+  let bestCategory = 'factual';
+  let bestScore = 0;
+  
+  for (const [category, data] of Object.entries(categories)) {
+    let score = 0;
+    for (const keyword of data.keywords) {
+      if (lower.includes(keyword)) score += 1;
+    }
+    scores[category] = score * data.weight;
+    if (scores[category] > bestScore) {
+      bestScore = scores[category];
+      bestCategory = category;
+    }
+  }
+  
+  if (bestScore === 0) {
+    bestCategory = 'factual';
+    bestScore = 0.5;
+  }
+  
+  return {
+    type: bestCategory,
+    confidence: Math.min(bestScore / 3, 1),
+    scores: scores
+  };
+}
+
+// ============================================
+// SEARCH FUNCTION WITH PROMPT INTEGRATION
 // ============================================
 
 function searchSources(query) {
-  if (!query) return [];
+  if (!query) return { results: [], classification: null };
   
   const queryLower = query.toLowerCase().trim();
-  if (queryLower.length < 2) return [];
+  if (queryLower.length < 2) return { results: [], classification: null };
+  
+  // Classify the query
+  const classification = classifyQuery(query);
   
   const results = [];
   const words = queryLower.split(/\s+/).filter(w => w.length > 2);
@@ -376,11 +430,90 @@ function searchSources(query) {
   }
   
   results.sort((a, b) => b.score - a.score);
-  return results.slice(0, 5);
+  return {
+    results: results.slice(0, 5),
+    classification: classification
+  };
 }
 
 // ============================================
-// API HANDLER - DEFAULT EXPORT (FUNCTION)
+// GENERATE RESPONSE WITH PROMPTS
+// ============================================
+
+function generateResponse(query, searchResult) {
+  const { results, classification } = searchResult;
+  
+  if (results.length === 0) {
+    return {
+      response: "🔍 **No matching content found.**\n\nTry asking about:\n- AI tools and platforms\n- ChatGPT, Claude, Gemini, or Grok\n- AI strategy and industry trends\n- Specific AI models or features",
+      sources: [],
+      metadata: {
+        total_sources: uniqueSources.length,
+        matches_found: 0,
+        query_type: classification?.type || 'unknown',
+        ai_generated: true
+      }
+    };
+  }
+  
+  // Get the appropriate prompt for this query type
+  const queryType = classification?.type || 'factual';
+  const promptConfig = selectPrompt(queryType);
+  
+  // Get few-shot examples for this query type
+  const examples = getFewShotExamples(queryType);
+  
+  // Build the response using the template
+  let responseText = '';
+  
+  // Add system prompt context
+  responseText += `**📊 Answer based on ${results.length} source(s):**\n\n`;
+  
+  // Add few-shot example context if available
+  if (examples && examples.length > 0) {
+    const example = examples[0];
+    responseText += `*Example format:*\n`;
+    responseText += `Question: ${example.question}\n`;
+    responseText += `Answer: ${example.answer}\n\n`;
+  }
+  
+  // Add the actual results
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i];
+    const relevanceEmoji = r.relevance > 60 ? '🟢' : r.relevance > 30 ? '🟡' : '🔴';
+    const relevanceLabel = r.relevance > 60 ? 'High' : r.relevance > 30 ? 'Medium' : 'Low';
+    
+    responseText += `**Source ${i + 1}: ${r.title}**\n`;
+    responseText += `🏷️ Source: ${r.source_name}\n`;
+    responseText += `✍️ Author: ${r.author}\n`;
+    responseText += `📅 Date: ${r.date}\n`;
+    responseText += `📊 Relevance: ${relevanceEmoji} ${relevanceLabel} (${r.relevance}%)\n\n`;
+    responseText += `${r.chunk}\n\n`;
+    responseText += `🔗 ${r.source}\n\n---\n\n`;
+  }
+  
+  // Add query type information
+  responseText += `\n*Query Type: ${queryType} (Confidence: ${Math.round(classification?.confidence * 100 || 0)}%)*\n`;
+  responseText += `*Temperature: ${promptConfig.temperature}, Max Tokens: ${promptConfig.max_tokens}*\n`;
+  
+  return {
+    response: responseText,
+    sources: results,
+    metadata: {
+      total_sources: uniqueSources.length,
+      matches_found: results.length,
+      query_type: queryType,
+      query_confidence: classification?.confidence || 0,
+      prompt_temperature: promptConfig.temperature,
+      prompt_max_tokens: promptConfig.max_tokens,
+      last_updated: new Date().toISOString(),
+      ai_generated: true
+    }
+  };
+}
+
+// ============================================
+// API HANDLER - DEFAULT EXPORT
 // ============================================
 
 export default async function handler(req, res) {
@@ -427,7 +560,8 @@ export default async function handler(req, res) {
           venturebeat: ventureBeatSources.length,
           total: uniqueSources.length
         },
-        source_names: [...new Set(uniqueSources.map(s => s.source_name))]
+        source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+        prompt_types: Object.keys(systemPrompts)
       });
     }
 
@@ -463,28 +597,17 @@ export default async function handler(req, res) {
           venturebeat: ventureBeatSources.length,
           total: uniqueSources.length
         },
+        prompt_types: Object.keys(systemPrompts),
         last_updated: new Date().toISOString()
       });
     }
 
     // Search
     if (query) {
-      const results = searchSources(query);
+      const searchResult = searchSources(query);
+      const response = generateResponse(query, searchResult);
       
-      return res.status(200).json({
-        query: query,
-        total: results.length,
-        response: results.length > 0 
-          ? `Found ${results.length} relevant source${results.length > 1 ? 's' : ''}.`
-          : "No matching content found. Try asking about AI, Microsoft, OpenAI, Anthropic, Meta AI, or AI tools.",
-        sources: results,
-        metadata: {
-          total_sources: uniqueSources.length,
-          matches_found: results.length,
-          last_updated: new Date().toISOString(),
-          ai_generated: true
-        }
-      });
+      return res.status(200).json(response);
     }
 
     // Default response
@@ -500,6 +623,7 @@ export default async function handler(req, res) {
         total: uniqueSources.length
       },
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+      prompt_types: Object.keys(systemPrompts),
       endpoints: {
         search: 'GET/POST with ?query=your+question',
         health: 'GET?action=health',
