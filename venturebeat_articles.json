@@ -1,0 +1,143 @@
+{
+  "source": "VentureBeat AI",
+  "source_url": "https://venturebeat.com/category/ai/",
+  "total_articles": 9,
+  "articles": [
+    {
+      "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "44d92c0c",
+      "headings": [
+        "Thinking Machines debuts Inkling Small open source AI model nearing performance of predecessor at about 1/4 size"
+      ],
+      "timestamp": "2026-07-31T12:29:19.456515"
+    },
+    {
+      "title": "Credit: Michael O’Donnell Photography. Arcade.dev co-founder and CTO Sam Partee.",
+      "author": "Taryn Plumb",
+      "date": "Taryn Plumb",
+      "content": "Credit: Michael O’Donnell Photography. Arcade.dev co-founder and CTO Sam Partee.",
+      "url": "https://venturebeat.com/orchestration/enterprise-ai-agents-cant-talk-to-each-other-cant-be-trusted-with-permissions-and-cant-be-audited-5-startups-are-already-fixing-that",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 10,
+      "hash": "30f8e69e",
+      "headings": [
+        "Enterprise AI agents can't talk to each other, can't be trusted with permissions, and can't be audited — 5 startups are already fixing that"
+      ],
+      "timestamp": "2026-07-31T12:29:19.493304"
+    },
+    {
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/orchestration/nimble-claims-its-new-domain-specialized-web-search-agents-cut-token-costs-in-half-while-boosting-retrieval-accuracy",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "a4f69881",
+      "headings": [
+        "Nimble claims its new, domain-specialized Web Search Agents cut token costs in half while boosting retrieval accuracy"
+      ],
+      "timestamp": "2026-07-31T12:29:19.527402"
+    },
+    {
+      "title": "Credit: Michael O’Donnell Photography. Siobhán Mc Feeney at Transform 2026",
+      "author": "Taryn Plumb",
+      "date": "Taryn Plumb",
+      "content": "Credit: Michael O’Donnell Photography. Siobhán Mc Feeney at Transform 2026",
+      "url": "https://venturebeat.com/orchestration/target-svp-says-its-real-ai-moat-isnt-the-models-its-everything-built-around-them",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 10,
+      "hash": "7f8dc55f",
+      "headings": [
+        "Target SVP says its real AI moat isn't the models — it's everything built around them"
+      ],
+      "timestamp": "2026-07-31T12:29:19.561786"
+    },
+    {
+      "title": "Credit: VentureBeat made with Midjourney",
+      "author": "Michael Nuñez",
+      "date": "Michael Nuñez",
+      "content": "Credit: VentureBeat made with Midjourney The San Francisco-based manufacturer announced today the Hybrid BRC (Bright Robotic Cell), an expansion of its Bright Factory platform that lets human operators step inside a sensor-monitored robotic cell to perform prescribed assembly steps — without breaking the digital record that tracks every server from its first screw to its shipping label.",
+      "url": "https://venturebeat.com/infrastructure/bright-machines-says-its-new-hybrid-robot-cell-could-help-solve-a-major-ai-infrastructure-bottleneck",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 57,
+      "hash": "efd58cb6",
+      "headings": [
+        "Bright Machines says its new hybrid robot cell could help solve a major AI infrastructure bottleneck"
+      ],
+      "timestamp": "2026-07-31T12:29:19.600009"
+    },
+    {
+      "title": "Credit: Michael O’Donnell Photography",
+      "author": "Taryn Plumb",
+      "date": "Taryn Plumb",
+      "content": "Credit: Michael O’Donnell Photography",
+      "url": "https://venturebeat.com/orchestration/instacarts-cto-says-ai-made-the-company-stop-worrying-about-tech-debt",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 4,
+      "hash": "2352e881",
+      "headings": [
+        "Instacart's CTO says AI made the company stop worrying about tech debt"
+      ],
+      "timestamp": "2026-07-31T12:29:19.634158"
+    },
+    {
+      "title": "From left to right: Carl Franzen of VentureBeat interviews Rashed Haq, GM VP of Autonomous Vehicles, at VB Transform 2026 conference. Credit: Michael O'Donnell Photography",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "From left to right: Carl Franzen of VentureBeat interviews Rashed Haq, GM VP of Autonomous Vehicles, at VB Transform 2026 conference. Credit: Michael O'Donnell Photography",
+      "url": "https://venturebeat.com/orchestration/gm-redesigned-its-engineering-workflows-around-ai-agents-and-tripled-its-merged-pull-requests",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 25,
+      "hash": "67958797",
+      "headings": [
+        "GM redesigned its engineering workflows around AI agents — and tripled its merged pull requests"
+      ],
+      "timestamp": "2026-07-31T12:29:19.668593"
+    },
+    {
+      "title": "Credit: Michael O'Donnell Photography",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Credit: Michael O'Donnell Photography",
+      "url": "https://venturebeat.com/technology/runway-couldnt-fix-a-bug-in-its-ai-video-model-so-it-turned-the-bug-into-a-feature",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 4,
+      "hash": "d4aac8e4",
+      "headings": [
+        "Runway couldn't fix a bug in its AI video model, so it turned the bug into a feature"
+      ],
+      "timestamp": "2026-07-31T12:29:19.700556"
+    },
+    {
+      "title": "Credit: VentureBeat made with Midjourney",
+      "author": "Michael Nuñez",
+      "date": "Michael Nuñez",
+      "content": "Credit: VentureBeat made with Midjourney The Model Context Protocol, the open standard that has quietly become the connective tissue between AI agents and the world's software, is getting its largest update since Anthropic released it twenty months ago — a sweeping architectural revision that its maintainers and backers say finally makes agentic AI ready for massive enterprise production deployments.",
+      "url": "https://venturebeat.com/orchestration/mcp-just-got-its-biggest-update-ever-heres-what-changes-for-ai-agents",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 59,
+      "hash": "7cc59324",
+      "headings": [
+        "MCP just got its biggest update ever — here’s what changes for AI agents"
+      ],
+      "timestamp": "2026-07-31T12:29:19.737529"
+    }
+  ],
+  "last_updated": "2026-07-31T12:29:19.773459"
+}
