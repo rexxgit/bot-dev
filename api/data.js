@@ -1,8 +1,8 @@
-// api/data.data.js - Data Only (No exports that Vercel would try to run)
-// This file contains ALL your sources
+// api/data.js - Single File Solution
+// Default export is the handler function (what Vercel expects)
 
 // ============================================
-// SECTION 1: TECHCRUNCH SOURCES (8 articles)
+// DATA EMBEDDED DIRECTLY (No external imports)
 // ============================================
 
 const techCrunchSources = [
@@ -112,10 +112,6 @@ const techCrunchSources = [
   }
 ];
 
-// ============================================
-// SECTION 2: STATIC SOURCES (5 articles)
-// ============================================
-
 const staticSources = [
   {
     title: "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
@@ -184,16 +180,12 @@ const staticSources = [
   }
 ];
 
-// ============================================
-// SECTION 3: VENTUREBEAT SOURCES (9 articles)
-// ============================================
-
 const ventureBeatSources = [
   {
     title: "Thinking Machines debuts Inkling Small open source AI model nearing performance of predecessor at about 1/4 size",
     author: "Carl Franzen",
     date: "2026-07-31",
-    content: "Thinking Machines has debuted Inkling Small, an open source AI model that achieves near performance of its predecessor at approximately 1/4 the size. The new model demonstrates significant efficiency improvements while maintaining competitive performance metrics.",
+    content: "Thinking Machines has debuted Inkling Small, an open source AI model that achieves near performance of its predecessor at approximately 1/4 the size.",
     url: "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -206,7 +198,7 @@ const ventureBeatSources = [
     title: "Enterprise AI agents can't talk to each other, can't be trusted with permissions, and can't be audited — 5 startups are already fixing that",
     author: "Taryn Plumb",
     date: "2026-07-31",
-    content: "Enterprise AI agents face critical challenges including communication gaps, permission trust issues, and auditability concerns. Five startups are already developing solutions to address these fundamental problems.",
+    content: "Enterprise AI agents face critical challenges including communication gaps, permission trust issues, and auditability concerns. Five startups are already developing solutions.",
     url: "https://venturebeat.com/orchestration/enterprise-ai-agents-cant-talk-to-each-other-cant-be-trusted-with-permissions-and-cant-be-audited-5-startups-are-already-fixing-that",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -219,7 +211,7 @@ const ventureBeatSources = [
     title: "Nimble claims its new, domain-specialized Web Search Agents cut token costs in half while boosting retrieval accuracy",
     author: "Carl Franzen",
     date: "2026-07-31",
-    content: "Nimble's new domain-specialized Web Search Agents claim to cut token costs in half while significantly boosting retrieval accuracy. The innovation promises to make AI search more efficient and cost-effective.",
+    content: "Nimble's new domain-specialized Web Search Agents claim to cut token costs in half while significantly boosting retrieval accuracy.",
     url: "https://venturebeat.com/orchestration/nimble-claims-its-new-domain-specialized-web-search-agents-cut-token-costs-in-half-while-boosting-retrieval-accuracy",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -232,7 +224,7 @@ const ventureBeatSources = [
     title: "Target SVP says its real AI moat isn't the models — it's everything built around them",
     author: "Taryn Plumb",
     date: "2026-07-31",
-    content: "Target's SVP explains that the company's real competitive advantage in AI isn't the models themselves, but the entire ecosystem built around them including data infrastructure, integration, and operational processes.",
+    content: "Target's SVP explains that the company's real competitive advantage in AI isn't the models themselves, but the entire ecosystem built around them.",
     url: "https://venturebeat.com/orchestration/target-svp-says-its-real-ai-moat-isnt-the-models-its-everything-built-around-them",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -245,7 +237,7 @@ const ventureBeatSources = [
     title: "Bright Machines says its new hybrid robot cell could help solve a major AI infrastructure bottleneck",
     author: "Michael Nuñez",
     date: "2026-07-31",
-    content: "Bright Machines introduces the Hybrid BRC (Bright Robotic Cell), an expansion of its Bright Factory platform that lets human operators step inside a sensor-monitored robotic cell to perform prescribed assembly steps while maintaining a digital record.",
+    content: "Bright Machines introduces the Hybrid BRC (Bright Robotic Cell), an expansion of its Bright Factory platform that lets human operators step inside a sensor-monitored robotic cell.",
     url: "https://venturebeat.com/infrastructure/bright-machines-says-its-new-hybrid-robot-cell-could-help-solve-a-major-ai-infrastructure-bottleneck",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -284,7 +276,7 @@ const ventureBeatSources = [
     title: "Runway couldn't fix a bug in its AI video model, so it turned the bug into a feature",
     author: "Ben Dickson",
     date: "2026-07-31",
-    content: "Runway discovered a creative solution to a bug in its AI video model by turning the unexpected behavior into a new feature, demonstrating how AI development can embrace unpredictability.",
+    content: "Runway discovered a creative solution to a bug in its AI video model by turning the unexpected behavior into a new feature.",
     url: "https://venturebeat.com/technology/runway-couldnt-fix-a-bug-in-its-ai-video-model-so-it-turned-the-bug-into-a-feature",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -297,7 +289,7 @@ const ventureBeatSources = [
     title: "MCP just got its biggest update ever — here's what changes for AI agents",
     author: "Michael Nuñez",
     date: "2026-07-31",
-    content: "The Model Context Protocol (MCP), the open standard connecting AI agents to software, receives its largest update since Anthropic released it. The sweeping architectural revision aims to make agentic AI ready for massive enterprise production deployments.",
+    content: "The Model Context Protocol (MCP), the open standard connecting AI agents to software, receives its largest update since Anthropic released it.",
     url: "https://venturebeat.com/orchestration/mcp-just-got-its-biggest-update-ever-heres-what-changes-for-ai-agents",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -309,20 +301,14 @@ const ventureBeatSources = [
 ];
 
 // ============================================
-// SECTION 4: MERGE ALL SOURCES
+// MERGE ALL SOURCES
 // ============================================
 
-// Combine all sources
-const allSources = [
-  ...techCrunchSources,
-  ...staticSources,
-  ...ventureBeatSources
-];
+const allSources = [...techCrunchSources, ...staticSources, ...ventureBeatSources];
 
 // Remove duplicates by URL
 const uniqueSources = [];
 const seenUrls = new Set();
-
 for (const source of allSources) {
   if (!seenUrls.has(source.url)) {
     seenUrls.add(source.url);
@@ -330,41 +316,205 @@ for (const source of allSources) {
   }
 }
 
-// Remove duplicates by title (keep first occurrence)
-const seenTitles = new Set();
-const uniqueByTitle = [];
+// ============================================
+// SEARCH FUNCTION
+// ============================================
 
-for (const source of uniqueSources) {
-  const titleKey = source.title.toLowerCase().trim();
-  if (!seenTitles.has(titleKey)) {
-    seenTitles.add(titleKey);
-    uniqueByTitle.push(source);
+function searchSources(query) {
+  if (!query) return [];
+  
+  const queryLower = query.toLowerCase().trim();
+  if (queryLower.length < 2) return [];
+  
+  const results = [];
+  const words = queryLower.split(/\s+/).filter(w => w.length > 2);
+  
+  for (const source of uniqueSources) {
+    const content = (source.content || '').toLowerCase();
+    const title = (source.title || '').toLowerCase();
+    const sourceName = (source.source_name || '').toLowerCase();
+    
+    let score = 0;
+    
+    if (title.includes(queryLower)) score += 30;
+    if (sourceName.includes(queryLower)) score += 20;
+    
+    for (const word of words) {
+      const count = (content.match(new RegExp(word, 'g')) || []).length;
+      score += count * 3;
+    }
+    
+    if (content.includes(queryLower)) score += 15;
+    
+    if (score > 0) {
+      let chunk = '';
+      const sentences = content.split(/[.!?]+/);
+      for (const sentence of sentences) {
+        if (sentence.includes(queryLower) || words.some(w => sentence.includes(w))) {
+          chunk = sentence.trim();
+          break;
+        }
+      }
+      if (!chunk) {
+        chunk = (source.content || '').substring(0, 300);
+      }
+      
+      const relevance = Math.min(Math.round((score / 50) * 100), 100);
+      
+      results.push({
+        title: source.title || 'Untitled',
+        source: source.url || '#',
+        source_name: source.source_name || 'Unknown',
+        author: source.author || 'Unknown',
+        date: source.date || '',
+        chunk: chunk + '...',
+        relevance: relevance,
+        score: score,
+        domain: source.domain || 'unknown'
+      });
+    }
   }
+  
+  results.sort((a, b) => b.score - a.score);
+  return results.slice(0, 5);
 }
 
 // ============================================
-// SECTION 5: EXPORT DATA
+// API HANDLER - DEFAULT EXPORT (FUNCTION)
 // ============================================
 
-// This file exports data only - no functions
-// Vercel won't try to run this as an API endpoint
+export default async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-export const techCrunchData = {
-  source: "Multi-Source AI News",
-  source_url: "https://techcrunch.com/category/artificial-intelligence/",
-  total_sources: uniqueByTitle.length,
-  source_stats: {
-    techcrunch: techCrunchSources.length,
-    static: staticSources.length,
-    venturebeat: ventureBeatSources.length,
-    total: uniqueByTitle.length
-  },
-  last_updated: new Date().toISOString(),
-  articles: uniqueByTitle
-};
+  // OPTIONS preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-// Named exports for individual source sets
-export { techCrunchSources, staticSources, ventureBeatSources };
+  // Only GET and POST
+  if (req.method !== 'GET' && req.method !== 'POST') {
+    return res.status(405).json({ 
+      error: 'Method not allowed',
+      allowed: ['GET', 'POST']
+    });
+  }
 
-// Default export (data only)
-export default techCrunchData;
+  try {
+    // Get parameters
+    let query = null;
+    let action = null;
+
+    if (req.method === 'GET') {
+      query = req.query.query || null;
+      action = req.query.action || null;
+    } else {
+      query = req.body?.query || null;
+      action = req.body?.action || null;
+    }
+
+    // Health check
+    if (action === 'health' || action === 'ping') {
+      return res.status(200).json({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        total_sources: uniqueSources.length,
+        source_stats: {
+          techcrunch: techCrunchSources.length,
+          static: staticSources.length,
+          venturebeat: ventureBeatSources.length,
+          total: uniqueSources.length
+        },
+        source_names: [...new Set(uniqueSources.map(s => s.source_name))]
+      });
+    }
+
+    // Get all sources
+    if (action === 'all') {
+      return res.status(200).json({
+        total: uniqueSources.length,
+        source_stats: {
+          techcrunch: techCrunchSources.length,
+          static: staticSources.length,
+          venturebeat: ventureBeatSources.length,
+          total: uniqueSources.length
+        },
+        sources: uniqueSources.map(s => ({
+          title: s.title,
+          source_name: s.source_name,
+          author: s.author || 'Unknown',
+          date: s.date || '',
+          url: s.url,
+          word_count: s.word_count || 0,
+          domain: s.domain || 'unknown'
+        }))
+      });
+    }
+
+    // Get stats
+    if (action === 'stats') {
+      return res.status(200).json({
+        total_sources: uniqueSources.length,
+        source_stats: {
+          techcrunch: techCrunchSources.length,
+          static: staticSources.length,
+          venturebeat: ventureBeatSources.length,
+          total: uniqueSources.length
+        },
+        last_updated: new Date().toISOString()
+      });
+    }
+
+    // Search
+    if (query) {
+      const results = searchSources(query);
+      
+      return res.status(200).json({
+        query: query,
+        total: results.length,
+        response: results.length > 0 
+          ? `Found ${results.length} relevant source${results.length > 1 ? 's' : ''}.`
+          : "No matching content found. Try asking about AI, Microsoft, OpenAI, Anthropic, Meta AI, or AI tools.",
+        sources: results,
+        metadata: {
+          total_sources: uniqueSources.length,
+          matches_found: results.length,
+          last_updated: new Date().toISOString(),
+          ai_generated: true
+        }
+      });
+    }
+
+    // Default response
+    return res.status(200).json({
+      name: 'Omni Brand Intelligence Bot API',
+      version: '2.0.0',
+      status: 'running',
+      total_sources: uniqueSources.length,
+      source_stats: {
+        techcrunch: techCrunchSources.length,
+        static: staticSources.length,
+        venturebeat: ventureBeatSources.length,
+        total: uniqueSources.length
+      },
+      source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+      endpoints: {
+        search: 'GET/POST with ?query=your+question',
+        health: 'GET?action=health',
+        all: 'GET?action=all',
+        stats: 'GET?action=stats'
+      },
+      last_updated: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('API Error:', error.message);
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: error.message || 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
+  }
+}
