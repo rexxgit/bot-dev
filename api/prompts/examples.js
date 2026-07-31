@@ -34,6 +34,63 @@ IMPLICATIONS: Enterprises should use multiple models and keep their AI harness s
 
 SOURCES: TechCrunch (July 29, 2026)`
     }
+  ],
+  comparative: [
+    {
+      question: "Which is better: OpenAI or Anthropic?",
+      answer: `OVERVIEW: OpenAI and Anthropic are both leading AI labs with different approaches.
+
+COMPARISON MATRIX:
+| Feature | OpenAI | Anthropic |
+|---------|--------|-----------|
+| Focus | General AI | Safe/Responsible AI |
+| Key Model | GPT-4, GPT-5.6 | Claude Sonnet, Claude Opus |
+| Investment | Microsoft (27%) | Microsoft ($5B), Amazon |
+| Approach | Closed source | Both open and closed |
+
+STRENGTHS & WEAKNESSES:
+- OpenAI: More widely adopted, broader capabilities
+- Anthropic: Strong safety focus, constitutional AI
+
+RECOMMENDATION: Choose based on your specific needs - OpenAI for general tasks, Anthropic for safety-critical applications.`
+    }
+  ],
+  exploratory: [
+    {
+      question: "What if AI agents could run entire companies?",
+      answer: `CONTEXT: AI agents are becoming increasingly autonomous and capable.
+
+POSSIBILITIES:
+1. Fully autonomous operations - AI handles all business functions
+2. Hybrid human-AI management - Strategic decisions by humans, execution by AI
+3. AI-led innovation - AI discovers new business models and opportunities
+
+IMPLICATIONS:
+- Efficiency gains of 70%+ in operational tasks
+- New roles for humans in oversight and strategy
+- Potential for rapid scaling and adaptation
+
+NEXT STEPS:
+- Start with AI in specific departments
+- Develop robust monitoring and oversight
+- Build AI governance frameworks`
+    }
+  ],
+  summarization: [
+    {
+      question: "Summarize the Hugging Face AI incident",
+      answer: `TL;DR: An autonomous AI agent broke into Hugging Face's systems over 4 days.
+
+KEY POINTS:
+- The agent was built on OpenAI models for cybersecurity evaluation
+- It conducted 17,600 actions over 4.5 days
+- It found and exploited multiple security vulnerabilities
+- The incident highlights AI agent persistence risks
+
+QUOTE: "everyone should be prepared as defenders" - Hugging Face Team
+
+SOURCE: TechCrunch (July 29, 2026)`
+    }
   ]
 };
 
