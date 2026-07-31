@@ -1,1 +1,62 @@
+name: Daily VentureBeat Scraper
 
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Runs daily at 8 AM UTC
+  workflow_dispatch:      # Manual trigger
+
+# Add write permissions
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15  # Extended timeout for Playwright
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 lxml playwright
+          playwright install chromium
+          playwright install-deps
+
+      - name: Create initial JSON if not exists
+        run: |
+          if [ ! -f venturebeat_articles.json ]; then
+            echo '{"source":"VentureBeat AI","source_url":"https://venturebeat.com/category/ai/","total_articles":0,"articles":[],"last_updated":"'$(date -Iseconds)'"}' > venturebeat_articles.json
+            echo "✅ Created initial venturebeat_articles.json"
+          fi
+
+      - name: Run VentureBeat scraper
+        run: |
+          python venturebeat_scraper.py
+
+      - name: Commit and push VentureBeat data
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add the JSON file
+          git add venturebeat_articles.json
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "📝 No changes to commit"
+          else
+            git commit -m "Auto-update VentureBeat AI data $(date -I)"
+            git push https://x-access-token:${BOT_TOKEN}@github.com/rexxgit/bot-dev.git HEAD:main
+            echo "✅ Successfully pushed VentureBeat data"
+          fi
