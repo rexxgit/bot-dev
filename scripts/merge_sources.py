@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 # CONFIGURATION
 # ============================================
 
-OUTPUT_FILE = "api/data.generated.js"
+OUTPUT_FILE = "data.generated.js" 
 SOURCE_PATTERNS = ["*_articles.json"]  # Finds ALL *_articles.json files
 
 # ============================================
