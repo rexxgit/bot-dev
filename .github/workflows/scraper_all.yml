@@ -1,0 +1,45 @@
+name: Daily AI News Scraper
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape-all:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 lxml playwright feedparser
+          playwright install chromium
+          playwright install-deps
+
+      - name: Run all scrapers and merge
+        run: |
+          python scrape_all.py
+
+      - name: Commit and push
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add api/data.generated.js *_articles.json
+          git diff --staged --quiet || git commit -m "Auto-update AI news data $(date -I)"
+          git push https://x-access-token:${BOT_TOKEN}@github.com/rexxgit/bot-dev.git HEAD:main
