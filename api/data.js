@@ -1,5 +1,5 @@
-// api/data.js - Complete API with ALL DATA EMBEDDED
-// No imports needed - everything is here
+// api/data.js - Complete API with SMART CONTEXTUAL ANSWERS
+// Handles ANY question by finding relationships in available data
 
 // ============================================
 // IMPORT PROMPTS
@@ -336,6 +336,10 @@ const sourceStats = {
 };
 
 // ============================================
+// SMART CONTEXTUAL RESPONSE SYSTEM
+// ============================================
+
+// ============================================
 // CLASSIFY QUERY TYPE
 // ============================================
 
@@ -434,7 +438,8 @@ function searchSources(query) {
         chunk: chunk + '...',
         relevance: relevance,
         score: score,
-        domain: source.domain || 'unknown'
+        domain: source.domain || 'unknown',
+        fullContent: source.content || ''
       });
     }
   }
@@ -447,69 +452,173 @@ function searchSources(query) {
 }
 
 // ============================================
-// GENERATE RESPONSE
+// EXTRACT FACTS FROM RESULTS
+// ============================================
+
+function extractFacts(query, results) {
+  const facts = [];
+  const queryWords = query.toLowerCase().split(/\s+/);
+  
+  for (const result of results) {
+    const content = result.fullContent || result.chunk || '';
+    const sentences = content.split(/[.!?]+/);
+    
+    for (const sentence of sentences) {
+      const sentenceLower = sentence.toLowerCase();
+      const matchedWords = queryWords.filter(w => 
+        w.length > 3 && sentenceLower.includes(w)
+      );
+      
+      if (matchedWords.length >= 1) {
+        const relevance = matchedWords.length / queryWords.length;
+        facts.push({
+          text: sentence.trim(),
+          source: result.source_name,
+          title: result.title,
+          relevance: relevance,
+          url: result.source
+        });
+      }
+    }
+  }
+  
+  // Sort by relevance and get unique facts
+  facts.sort((a, b) => b.relevance - a.relevance);
+  const uniqueFacts = [];
+  const seenTexts = new Set();
+  
+  for (const fact of facts) {
+    const key = fact.text.substring(0, 50);
+    if (!seenTexts.has(key) && fact.text.length > 20) {
+      seenTexts.add(key);
+      uniqueFacts.push(fact);
+    }
+    if (uniqueFacts.length >= 5) break;
+  }
+  
+  return uniqueFacts;
+}
+
+// ============================================
+// GENERATE NO RESULTS RESPONSE
+// ============================================
+
+function generateNoResultsResponse(query) {
+  const topics = [
+    "Microsoft investment in Anthropic ($5B)",
+    "OpenAI vs Anthropic comparison",
+    "AI agent security risks",
+    "Enterprise AI adoption",
+    "AI model releases July 2026",
+    "Meta AI strategy",
+    "Hugging Face security incident",
+    "AI safety and ethics",
+    "AI tools and platforms",
+    "TechCrunch Disrupt 2026"
+  ];
+  
+  const queryWords = query.toLowerCase().split(/\s+/);
+  const related = topics.filter(topic => {
+    const topicWords = topic.toLowerCase().split(/\s+/);
+    return topicWords.some(tw => queryWords.some(qw => tw.includes(qw) || qw.includes(tw)));
+  });
+  
+  const suggestions = related.length > 0 ? related : topics.slice(0, 5);
+  
+  return `🔍 **I couldn't find specific information about "${query}" in my current data sources.**
+
+**📊 My Data Contains:**
+- TechCrunch AI articles: ${techCrunchSources.length}
+- VentureBeat AI articles: ${ventureBeatSources.length}
+- Static sources: ${staticSources.length}
+- **Total: ${uniqueSources.length} articles**
+
+**💡 Try asking about:**
+${suggestions.map(s => `- ${s}`).join('\n')}
+
+**📚 Available Sources:**
+${[...new Set(uniqueSources.map(s => `- ${s.source_name}`))].join('\n')}
+
+**🔧 To get better results:**
+- Be more specific (e.g., "Microsoft investment in Anthropic")
+- Ask about companies (Microsoft, OpenAI, Anthropic, Meta)
+- Ask about events (Hugging Face incident, Disrupt 2026)
+- Ask about AI models (GPT-5.6, Claude Opus 5, Grok 4.5)`;
+}
+
+// ============================================
+// BUILD CONTEXTUAL ANSWER
+// ============================================
+
+function buildContextualAnswer(query, results, classification) {
+  if (results.length === 0) {
+    return generateNoResultsResponse(query);
+  }
+  
+  // Extract facts from results
+  const facts = extractFacts(query, results);
+  const queryType = classification?.type || 'factual';
+  const promptConfig = selectPrompt(queryType);
+  
+  let answer = '';
+  
+  // Build the contextual answer
+  answer += `**📊 What I found about "${query}":**\n\n`;
+  
+  if (facts.length > 0) {
+    answer += `**Key Facts Extracted:**\n`;
+    for (let i = 0; i < Math.min(facts.length, 3); i++) {
+      const f = facts[i];
+      const relevanceEmoji = f.relevance > 0.5 ? '🟢' : '🟡';
+      answer += `${relevanceEmoji} ${f.text}\n`;
+      answer += `   *Source: ${f.source} - ${f.title}*\n\n`;
+    }
+  }
+  
+  // Add related articles
+  answer += `**📚 Related Articles:**\n\n`;
+  
+  for (let i = 0; i < Math.min(results.length, 5); i++) {
+    const r = results[i];
+    const relevanceEmoji = r.relevance > 60 ? '🟢' : r.relevance > 30 ? '🟡' : '🔴';
+    const relevanceLabel = r.relevance > 60 ? 'High' : r.relevance > 30 ? 'Medium' : 'Low';
+    
+    answer += `**${i + 1}. ${r.title}**\n`;
+    answer += `🏷️ ${r.source_name} | 📅 ${r.date} | 📊 ${relevanceEmoji} ${relevanceLabel} (${r.relevance}%)\n\n`;
+    answer += `${r.chunk}\n\n`;
+    answer += `🔗 ${r.source}\n\n---\n\n`;
+  }
+  
+  // Add metadata
+  answer += `\n*Query Type: ${queryType} (Confidence: ${Math.round(classification?.confidence * 100 || 0)}%)*\n`;
+  answer += `*Temperature: ${promptConfig.temperature}, Max Tokens: ${promptConfig.max_tokens}*\n`;
+  answer += `*Total Sources: ${uniqueSources.length}*\n`;
+  
+  return answer;
+}
+
+// ============================================
+// GENERATE RESPONSE - MAIN ENTRY
 // ============================================
 
 function generateResponse(query, searchResult) {
   const { results, classification } = searchResult;
   
-  if (results.length === 0) {
-    return {
-      response: "🔍 **No matching content found.**\n\nTry asking about:\n- AI tools and platforms\n- ChatGPT, Claude, Gemini, or Grok\n- AI strategy and industry trends\n- Specific AI models or features",
-      sources: [],
-      metadata: {
-        total_sources: uniqueSources.length,
-        matches_found: 0,
-        query_type: classification?.type || 'unknown',
-        ai_generated: true
-      }
-    };
-  }
-  
-  const queryType = classification?.type || 'factual';
-  const promptConfig = selectPrompt(queryType);
-  const examples = getFewShotExamples(queryType);
-  
-  let responseText = '';
-  
-  responseText += `**📊 Answer based on ${results.length} source(s):**\n\n`;
-  
-  if (examples && examples.length > 0) {
-    const example = examples[0];
-    responseText += `*Example format:*\n`;
-    responseText += `Question: ${example.question}\n`;
-    responseText += `Answer: ${example.answer}\n\n`;
-  }
-  
-  for (let i = 0; i < results.length; i++) {
-    const r = results[i];
-    const relevanceEmoji = r.relevance > 60 ? '🟢' : r.relevance > 30 ? '🟡' : '🔴';
-    const relevanceLabel = r.relevance > 60 ? 'High' : r.relevance > 30 ? 'Medium' : 'Low';
-    
-    responseText += `**Source ${i + 1}: ${r.title}**\n`;
-    responseText += `🏷️ Source: ${r.source_name}\n`;
-    responseText += `✍️ Author: ${r.author}\n`;
-    responseText += `📅 Date: ${r.date}\n`;
-    responseText += `📊 Relevance: ${relevanceEmoji} ${relevanceLabel} (${r.relevance}%)\n\n`;
-    responseText += `${r.chunk}\n\n`;
-    responseText += `🔗 ${r.source}\n\n---\n\n`;
-  }
-  
-  responseText += `\n*Query Type: ${queryType} (Confidence: ${Math.round(classification?.confidence * 100 || 0)}%)*\n`;
-  responseText += `*Temperature: ${promptConfig.temperature}, Max Tokens: ${promptConfig.max_tokens}*\n`;
+  // Use the smart contextual system
+  const response = buildContextualAnswer(query, results, classification);
   
   return {
-    response: responseText,
+    response: response,
     sources: results,
     metadata: {
       total_sources: uniqueSources.length,
       matches_found: results.length,
-      query_type: queryType,
+      query_type: classification?.type || 'unknown',
       query_confidence: classification?.confidence || 0,
-      prompt_temperature: promptConfig.temperature,
-      prompt_max_tokens: promptConfig.max_tokens,
-      last_updated: new Date().toISOString(),
-      ai_generated: true
+      ai_generated: true,
+      contextual: true,
+      facts_extracted: results.length > 0 ? 'yes' : 'no',
+      last_updated: new Date().toISOString()
     }
   };
 }
