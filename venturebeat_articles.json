@@ -4,19 +4,34 @@
   "total_articles": 9,
   "articles": [
     {
-      "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size",
+      "title": "Image credit: VentureBeat with ChatGPT",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Image credit: VentureBeat with ChatGPT",
+      "url": "https://venturebeat.com/orchestration/structured-ai-data-pipelines-score-10-9-points-below-free-form-code-dataflow-harness-closes-the-gap",
       "source_name": "VentureBeat",
       "source_type": "blog",
       "word_count": 5,
-      "hash": "44d92c0c",
+      "hash": "e0fc6ce4",
       "headings": [
-        "Thinking Machines debuts Inkling Small open source AI model nearing performance of predecessor at about 1/4 size"
+        "Structured AI data pipelines score 10.9 points below free-form code — DataFlow-Harness closes the gap"
       ],
-      "timestamp": "2026-07-31T12:29:19.456515"
+      "timestamp": "2026-08-01T09:53:17.463529"
+    },
+    {
+      "title": "From left: Carl Franzen of VentureBeat interviews Manasi Joshi, Waymo's Director of Engineering, Systems Intelligence and Machine Learning, at the VB Transform 2026 conference. Credit: Michael O'Donnell Photography",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "From left: Carl Franzen of VentureBeat interviews Manasi Joshi, Waymo's Director of Engineering, Systems Intelligence and Machine Learning, at the VB Transform 2026 conference. Credit: Michael O'Donnell Photography",
+      "url": "https://venturebeat.com/technology/at-waymo-an-ai-project-isnt-ready-until-its-evals-are-not-when-the-model-performs-well",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 28,
+      "hash": "a009bc9d",
+      "headings": [
+        "At Waymo, an AI project isn't ready until its evals are — not when the model performs well"
+      ],
+      "timestamp": "2026-08-01T09:53:17.516778"
     },
     {
       "title": "Credit: Michael O’Donnell Photography. Arcade.dev co-founder and CTO Sam Partee.",
@@ -31,7 +46,7 @@
       "headings": [
         "Enterprise AI agents can't talk to each other, can't be trusted with permissions, and can't be audited — 5 startups are already fixing that"
       ],
-      "timestamp": "2026-07-31T12:29:19.493304"
+      "timestamp": "2026-08-01T09:53:17.552872"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -46,7 +61,7 @@
       "headings": [
         "Nimble claims its new, domain-specialized Web Search Agents cut token costs in half while boosting retrieval accuracy"
       ],
-      "timestamp": "2026-07-31T12:29:19.527402"
+      "timestamp": "2026-08-01T09:53:17.589146"
     },
     {
       "title": "Credit: Michael O’Donnell Photography. Siobhán Mc Feeney at Transform 2026",
@@ -61,7 +76,7 @@
       "headings": [
         "Target SVP says its real AI moat isn't the models — it's everything built around them"
       ],
-      "timestamp": "2026-07-31T12:29:19.561786"
+      "timestamp": "2026-08-01T09:53:17.624890"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -76,7 +91,7 @@
       "headings": [
         "Bright Machines says its new hybrid robot cell could help solve a major AI infrastructure bottleneck"
       ],
-      "timestamp": "2026-07-31T12:29:19.600009"
+      "timestamp": "2026-08-01T09:53:17.662994"
     },
     {
       "title": "Credit: Michael O’Donnell Photography",
@@ -91,7 +106,7 @@
       "headings": [
         "Instacart's CTO says AI made the company stop worrying about tech debt"
       ],
-      "timestamp": "2026-07-31T12:29:19.634158"
+      "timestamp": "2026-08-01T09:53:17.697802"
     },
     {
       "title": "From left to right: Carl Franzen of VentureBeat interviews Rashed Haq, GM VP of Autonomous Vehicles, at VB Transform 2026 conference. Credit: Michael O'Donnell Photography",
@@ -106,7 +121,7 @@
       "headings": [
         "GM redesigned its engineering workflows around AI agents — and tripled its merged pull requests"
       ],
-      "timestamp": "2026-07-31T12:29:19.668593"
+      "timestamp": "2026-08-01T09:53:17.733057"
     },
     {
       "title": "Credit: Michael O'Donnell Photography",
@@ -121,23 +136,8 @@
       "headings": [
         "Runway couldn't fix a bug in its AI video model, so it turned the bug into a feature"
       ],
-      "timestamp": "2026-07-31T12:29:19.700556"
-    },
-    {
-      "title": "Credit: VentureBeat made with Midjourney",
-      "author": "Michael Nuñez",
-      "date": "Michael Nuñez",
-      "content": "Credit: VentureBeat made with Midjourney The Model Context Protocol, the open standard that has quietly become the connective tissue between AI agents and the world's software, is getting its largest update since Anthropic released it twenty months ago — a sweeping architectural revision that its maintainers and backers say finally makes agentic AI ready for massive enterprise production deployments.",
-      "url": "https://venturebeat.com/orchestration/mcp-just-got-its-biggest-update-ever-heres-what-changes-for-ai-agents",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 59,
-      "hash": "7cc59324",
-      "headings": [
-        "MCP just got its biggest update ever — here’s what changes for AI agents"
-      ],
-      "timestamp": "2026-07-31T12:29:19.737529"
+      "timestamp": "2026-08-01T09:53:17.765879"
     }
   ],
-  "last_updated": "2026-07-31T12:29:19.773459"
+  "last_updated": "2026-08-01T09:53:17.805567"
 }
