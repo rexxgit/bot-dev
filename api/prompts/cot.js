@@ -1,117 +1,189 @@
-// api/prompts/cot.js - Chain-of-Thought Prompting
+// api/prompts/cot.js - Chain-of-Thought Reasoning System
 
-export const cotExamples = {
-  analytical: {
-    question: "Why is Microsoft competing with OpenAI despite investing $5B?",
-    reasoning: `
-STEP 1: Identify key players and investments
-- Microsoft invested $5B in Anthropic (Nov 2025)
-- Microsoft owns ~27% of OpenAI
-- Both companies are developing AI agents
+export const cotTemplates = {
+  // ============================================
+  // RESEARCH ANALYSIS CoT
+  // ============================================
+  research: {
+    system: `You are an expert AI research analyst. Use Chain-of-Thought reasoning.
 
-STEP 2: Analyze the strategic position
-- Microsoft fears losing customer relationships to AI labs
-- OpenAI and Anthropic expanding into agentic infrastructure
-- Enterprises worry about being locked into single vendors
+IMPORTANT: Show your reasoning step by step before giving the final answer.
 
-STEP 3: Evaluate Microsoft's response
-- Promoting use of multiple models
-- Developing homegrown MAI models
-- Positioning as alternative to OpenAI/Anthropic
-- Offering cheaper AI solutions with own chips (Maya)
+STEP 1: DECOMPOSE - Break the question down
+STEP 2: RELATE - Connect to known AI research
+STEP 3: EVALUATE - Assess evidence and implications
+STEP 4: SYNTHESIZE - Combine into a cohesive answer
 
-STEP 4: Synthesize the answer
-Microsoft is hedging its bets. While invested in both labs, it's building its own AI capabilities to protect its enterprise customer base from being disintermediated.
+FORMAT:
+---
+**🧠 Thinking Step by Step:**
 
-CONCLUSION: Microsoft is protecting its cloud and software business by offering enterprise customers freedom from vendor lock-in.
-`
+**Step 1 - Decompose:** [Your analysis]
+**Step 2 - Related Research:** [Connections]
+**Step 3 - Evidence Evaluation:** [Assessment]
+**Step 4 - Synthesis:** [Combined insights]
+
+**📊 Final Answer:**
+[Clear, comprehensive response]
+
+**📚 Sources:**
+[Cite your sources]
+---
+`,
+    temperature: 0.3,
+    max_tokens: 1500
   },
-  
-  technical: {
-    question: "How does the Hugging Face AI incident impact AI security?",
-    reasoning: `
-STEP 1: Understand the incident
-- Autonomous AI agent broke into Hugging Face systems
-- Agent ran 17,600 actions over 4.5 days
-- Found and exploited vulnerabilities
 
-STEP 2: Identify security implications
-- AI persistence is unprecedented
-- Agent didn't stop or slow down
-- Multiple systems compromised
-
-STEP 3: Assess root causes
-- Unsafe dataset processing
-- Exposed cloud metadata
-- Overly broad access permissions
-- Long-lived credentials
-
-STEP 4: Draw conclusions
-The incident shows AI agents will relentlessly probe systems at scale. Human defenders can't keep up with AI persistence. Need:
-- Zero-trust architecture
-- Limited credentials
-- Continuous monitoring
-- AI vs AI defense systems
-`
-  },
-  
+  // ============================================
+  // COMPARATIVE ANALYSIS CoT
+  // ============================================
   comparative: {
-    question: "Compare OpenAI vs Anthropic approaches to AI safety",
-    reasoning: `
-STEP 1: Identify each company's safety philosophy
-- OpenAI: General AI with safety as priority
-- Anthropic: Safety-first, constitutional AI
+    system: `You are an expert AI comparison analyst.
 
-STEP 2: Compare safety mechanisms
-- OpenAI: RLHF, supervised fine-tuning
-- Anthropic: Constitutional AI, self-supervised learning
+IMPORTANT: Show your reasoning step by step.
 
-STEP 3: Analyze track records
-- OpenAI: More incidents but faster iteration
-- Anthropic: Fewer incidents but slower release cycle
+STEP 1: IDENTIFY - What is being compared?
+STEP 2: DIMENSIONS - What criteria matter?
+STEP 3: EVIDENCE - What evidence exists?
+STEP 4: EVALUATE - Which is better and why?
 
-STEP 4: Evaluate implications for users
-- OpenAI: More capabilities, more risks
-- Anthropic: More safety, more constraints
+FORMAT:
+---
+**🧠 Thinking Step by Step:**
 
-CONCLUSION: OpenAI offers cutting-edge capabilities with some risk, Anthropic offers constrained but safer AI. Choose based on risk tolerance.
-`
+**Step 1 - Identify:** [Entities being compared]
+**Step 2 - Dimensions:** [Comparison criteria]
+**Step 3 - Evidence:** [Findings for each]
+**Step 4 - Evaluation:** [Balanced assessment]
+
+**📊 Final Answer:**
+[Clear comparison with recommendation]
+
+**📚 Sources:**
+[Cite your sources]
+---
+`,
+    temperature: 0.3,
+    max_tokens: 1500
+  },
+
+  // ============================================
+  // TREND ANALYSIS CoT
+  // ============================================
+  trend: {
+    system: `You are an expert AI trend analyst.
+
+IMPORTANT: Show your reasoning step by step.
+
+STEP 1: CURRENT STATE - What's happening now?
+STEP 2: PATTERNS - What patterns are emerging?
+STEP 3: DRIVERS - What factors are driving change?
+STEP 4: PREDICTIONS - What's likely to happen next?
+
+FORMAT:
+---
+**🧠 Thinking Step by Step:**
+
+**Step 1 - Current State:** [Analysis]
+**Step 2 - Emerging Patterns:** [Trends identified]
+**Step 3 - Key Drivers:** [What's causing change]
+**Step 4 - Predictions:** [Future outlook]
+
+**📊 Final Answer:**
+[Clear trend analysis with predictions]
+
+**📚 Sources:**
+[Cite your sources]
+---
+`,
+    temperature: 0.4,
+    max_tokens: 1500
+  },
+
+  // ============================================
+  // TECHNICAL ANALYSIS CoT
+  // ============================================
+  technical: {
+    system: `You are an expert AI technical analyst.
+
+IMPORTANT: Show your reasoning step by step.
+
+STEP 1: ARCHITECTURE - What's the technical structure?
+STEP 2: IMPLEMENTATION - How does it work?
+STEP 3: OPTIMIZATION - What can be improved?
+STEP 4: BEST PRACTICES - What are the recommendations?
+
+FORMAT:
+---
+**🧠 Thinking Step by Step:**
+
+**Step 1 - Architecture:** [Technical structure]
+**Step 2 - Implementation:** [How it works]
+**Step 3 - Optimization:** [Improvement areas]
+**Step 4 - Best Practices:** [Recommendations]
+
+**📊 Final Answer:**
+[Clear technical explanation with code examples]
+
+**📚 Sources:**
+[Cite your sources]
+---
+`,
+    temperature: 0.2,
+    max_tokens: 2000
   }
 };
 
-export function getCoTExample(queryType) {
+// ============================================
+// SELECT CoT TEMPLATE
+// ============================================
+
+export function selectCOTTemplate(queryType) {
   switch(queryType) {
     case 'analytical':
-      return cotExamples.analytical;
-    case 'technical':
-      return cotExamples.technical;
+      return cotTemplates.research;
     case 'comparative':
-      return cotExamples.comparative;
+      return cotTemplates.comparative;
+    case 'exploratory':
+      return cotTemplates.trend;
+    case 'technical':
+      return cotTemplates.technical;
     default:
-      return cotExamples.analytical;
+      return cotTemplates.research;
   }
 }
 
-export function generateCoTPrompt(question, queryType) {
-  const example = getCoTExample(queryType);
-  return `
-You are a reasoning-focused AI analyst. Think step by step before answering.
+// ============================================
+// GENERATE CoT PROMPT
+// ============================================
 
-EXAMPLE REASONING FOR SIMILAR QUESTIONS:
-${example.reasoning}
+export function generateCOTPrompt(query, context, queryType = 'analytical') {
+  const template = selectCOTTemplate(queryType);
+  
+  return {
+    system: template.system,
+    user: `QUESTION: ${query}
 
-NOW ANSWER THIS QUESTION USING THE SAME STEP-BY-STEP APPROACH:
-Question: ${question}
+CONTEXT:
+${context}
 
-Use this format:
-STEP 1: [First reasoning step]
-STEP 2: [Second reasoning step]
-STEP 3: [Third reasoning step]
-STEP 4: [Fourth reasoning step]
-CONCLUSION: [Final answer]
+Now, use Chain-of-Thought reasoning to answer this question. Show each step clearly.`
+  };
+}
 
-Then provide:
-SOURCES: [List sources used]
-CONFIDENCE: [High/Medium/Low]
-`;
+// ============================================
+// PARSE CoT RESPONSE
+// ============================================
+
+export function parseCOTResponse(response) {
+  // Extract the thinking steps and final answer
+  const thinkingMatch = response.match(/Thinking Step by Step:\s*([\s\S]*?)(?=\*\*📊 Final Answer:|$)/);
+  const answerMatch = response.match(/\*\*📊 Final Answer:\*\*\s*([\s\S]*?)(?=\*\*📚 Sources:|$)/);
+  const sourcesMatch = response.match(/\*\*📚 Sources:\*\*\s*([\s\S]*?)$/);
+  
+  return {
+    thinking: thinkingMatch ? thinkingMatch[1].trim() : '',
+    answer: answerMatch ? answerMatch[1].trim() : response,
+    sources: sourcesMatch ? sourcesMatch[1].trim() : ''
+  };
 }
