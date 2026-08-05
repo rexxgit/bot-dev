@@ -1,22 +1,37 @@
 {
   "source": "VentureBeat AI",
   "source_url": "https://venturebeat.com/category/ai/",
-  "total_articles": 8,
+  "total_articles": 7,
   "articles": [
     {
-      "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/qwen3-8-max-arrives-with-a-bold-claim-it-outperforms-gpt-5-6-sol-max-and-fable-5-on-agentic-computer-use",
+      "title": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
+      "author": "Taryn Plumb",
+      "date": "Taryn Plumb",
+      "content": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
+      "url": "https://venturebeat.com/orchestration/ai-coding-agents-are-blowing-through-budgets-replit-kilo-code-and-symbotic-explain-how-theyre-managing-it",
       "source_name": "VentureBeat",
       "source_type": "blog",
-      "word_count": 5,
-      "hash": "fd8f692b",
+      "word_count": 29,
+      "hash": "b0950fe4",
       "headings": [
-        "Qwen3.8-Max arrives with a bold claim: it outperforms GPT-5.6 Sol Max and Fable 5 on agentic computer use"
+        "AI coding agents are blowing through budgets — Replit, Kilo Code, and Symbotic explain how they're managing it"
       ],
-      "timestamp": "2026-08-04T10:31:07.424542"
+      "timestamp": "2026-08-05T10:29:20.923208"
+    },
+    {
+      "title": "CleoPtolemy made with Midjourney",
+      "author": "Dattaraj Rao, Persistent Systems",
+      "date": "Dattaraj Rao, Persistent Systems",
+      "content": "CleoPtolemy made with Midjourney If you have built anything with retrieval-augmented generation (RAG) in the last two years, you have lived its central frustration: You chop your documents into chunks, embed them, retrieve the top few that look similar to the question, and hand them to the model. For “What was our Q3 refund policy?” This works beautifully. For “What are the recurring themes across two years of customer complaints?” it falls flat — because no single chunk contains the answer.",
+      "url": "https://venturebeat.com/orchestration/stop-graphing-everything-when-graphrag-actually-beats-vector-rag",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 81,
+      "hash": "f16567a2",
+      "headings": [
+        "Stop graphing everything: When GraphRAG actually beats vector RAG"
+      ],
+      "timestamp": "2026-08-05T10:29:20.974530"
     },
     {
       "title": "Image credit: VentureBeat with ChatGPT",
@@ -31,7 +46,7 @@
       "headings": [
         "Structured AI data pipelines score 10.9 points below free-form code — DataFlow-Harness closes the gap"
       ],
-      "timestamp": "2026-08-04T10:31:07.459177"
+      "timestamp": "2026-08-05T10:29:21.011622"
     },
     {
       "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
@@ -46,7 +61,7 @@
       "headings": [
         "Thinking Machines debuts Inkling Small open source AI model nearing performance of predecessor at about 1/4 size"
       ],
-      "timestamp": "2026-08-04T10:31:07.490078"
+      "timestamp": "2026-08-05T10:29:21.047128"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -61,7 +76,7 @@
       "headings": [
         "AI price wars: OpenAI cuts GPT-5.6 Luna prices by 80% as model competition shifts toward cost"
       ],
-      "timestamp": "2026-08-04T10:31:07.521654"
+      "timestamp": "2026-08-05T10:29:21.081620"
     },
     {
       "title": "From left: Carl Franzen of VentureBeat interviews Manasi Joshi, Waymo's Director of Engineering, Systems Intelligence and Machine Learning, at the VB Transform 2026 conference. Credit: Michael O'Donnell Photography",
@@ -76,7 +91,7 @@
       "headings": [
         "At Waymo, an AI project isn't ready until its evals are — not when the model performs well"
       ],
-      "timestamp": "2026-08-04T10:31:07.559595"
+      "timestamp": "2026-08-05T10:29:21.123367"
     },
     {
       "title": "Credit: Michael O’Donnell Photography. Arcade.dev co-founder and CTO Sam Partee.",
@@ -91,38 +106,8 @@
       "headings": [
         "Enterprise AI agents can't talk to each other, can't be trusted with permissions, and can't be audited — 5 startups are already fixing that"
       ],
-      "timestamp": "2026-08-04T10:31:07.591353"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/orchestration/nimble-claims-its-new-domain-specialized-web-search-agents-cut-token-costs-in-half-while-boosting-retrieval-accuracy",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "a4f69881",
-      "headings": [
-        "Nimble claims its new, domain-specialized Web Search Agents cut token costs in half while boosting retrieval accuracy"
-      ],
-      "timestamp": "2026-08-04T10:31:07.623402"
-    },
-    {
-      "title": "Credit: Michael O’Donnell Photography. Siobhán Mc Feeney at Transform 2026",
-      "author": "Taryn Plumb",
-      "date": "Taryn Plumb",
-      "content": "Credit: Michael O’Donnell Photography. Siobhán Mc Feeney at Transform 2026",
-      "url": "https://venturebeat.com/orchestration/target-svp-says-its-real-ai-moat-isnt-the-models-its-everything-built-around-them",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 10,
-      "hash": "7f8dc55f",
-      "headings": [
-        "Target SVP says its real AI moat isn't the models — it's everything built around them"
-      ],
-      "timestamp": "2026-08-04T10:31:07.656438"
+      "timestamp": "2026-08-05T10:29:21.158698"
     }
   ],
-  "last_updated": "2026-08-04T10:31:07.687411"
+  "last_updated": "2026-08-05T10:29:21.195289"
 }
