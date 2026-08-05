@@ -1,4 +1,4 @@
-// api/data.js - Complete API with SMART CONTEXTUAL ANSWERS + CoT
+// api/data.js - Complete API with SMART CONTEXTUAL ANSWERS + CoT + Expert Personas + Professional Formatting
 // Handles ANY question by finding relationships in available data
 
 // ============================================
@@ -8,7 +8,15 @@
 import { systemPrompts, selectPrompt } from './prompts/system.js';
 import { getFewShotExamples } from './prompts/examples.js';
 import { selectTemplate } from './prompts/templates.js';
-import { generateCOTPrompt } from './prompts/cot.js';  // NEW: Chain-of-Thought
+import { generateCOTPrompt } from './prompts/cot.js';
+import { selectPersona } from './prompts/personas.js';
+import { OutputFormatter } from './utils/formatter.js';
+
+// ============================================
+// INITIALIZE FORMATTER
+// ============================================
+
+const formatter = new OutputFormatter();
 
 // ============================================
 // ALL DATA EMBEDDED HERE
@@ -501,10 +509,10 @@ function extractFacts(query, results) {
 }
 
 // ============================================
-// GENERATE NO RESULTS RESPONSE
+// GENERATE SUGGESTIONS
 // ============================================
 
-function generateNoResultsResponse(query) {
+function generateSuggestions(query) {
   const topics = [
     "Microsoft investment in Anthropic ($5B)",
     "OpenAI vs Anthropic comparison",
@@ -524,27 +532,17 @@ function generateNoResultsResponse(query) {
     return topicWords.some(tw => queryWords.some(qw => tw.includes(qw) || qw.includes(tw)));
   });
   
-  const suggestions = related.length > 0 ? related : topics.slice(0, 5);
+  return related.length > 0 ? related : topics.slice(0, 5);
+}
+
+// ============================================
+// GENERATE NO RESULTS RESPONSE - FORMATTED
+// ============================================
+
+function generateNoResultsResponse(query) {
+  const suggestions = generateSuggestions(query);
   
-  return `🔍 **I couldn't find specific information about "${query}" in my current data sources.**
-
-**📊 My Data Contains:**
-- TechCrunch AI articles: ${techCrunchSources.length}
-- VentureBeat AI articles: ${ventureBeatSources.length}
-- Static sources: ${staticSources.length}
-- **Total: ${uniqueSources.length} articles**
-
-**💡 Try asking about:**
-${suggestions.map(s => `- ${s}`).join('\n')}
-
-**📚 Available Sources:**
-${[...new Set(uniqueSources.map(s => `- ${s.source_name}`))].join('\n')}
-
-**🔧 To get better results:**
-- Be more specific (e.g., "Microsoft investment in Anthropic")
-- Ask about companies (Microsoft, OpenAI, Anthropic, Meta)
-- Ask about events (Hugging Face incident, Disrupt 2026)
-- Ask about AI models (GPT-5.6, Claude Opus 5, Grok 4.5)`;
+  return formatter.formatNoResults(query, suggestions);
 }
 
 // ============================================
@@ -599,7 +597,7 @@ function buildContextualAnswer(query, results, classification) {
 }
 
 // ============================================
-// GENERATE RESPONSE - MAIN ENTRY WITH CoT
+// GENERATE RESPONSE - MAIN ENTRY WITH CoT + Personas + Formatting
 // ============================================
 
 function generateResponse(query, searchResult) {
@@ -638,14 +636,38 @@ function generateResponse(query, searchResult) {
 **📊 Source:** TechCrunch (July 29, 2026)
 **CONFIDENCE:** High ✅`,
       sources: []
+    },
+    "which one is better chatgpt or claude": {
+      response: `**🤖 ChatGPT vs Claude: Which is Better?**
+
+**Summary:** Both are excellent but serve different purposes.
+
+**📊 Quick Comparison:**
+
+| Feature | ChatGPT | Claude |
+|---------|---------|--------|
+| **Maker** | OpenAI | Anthropic |
+| **Focus** | General AI | Safety-first |
+| **Strengths** | Creative, broad | Analytical, safe |
+| **Context** | 128K tokens | 200K tokens |
+| **Cost** | Free/Paid | Free/Paid |
+
+**💡 Recommendation:**
+- **ChatGPT for:** Creative writing, brainstorming, general tasks
+- **Claude for:** Analysis, coding, long documents, safety
+
+**📚 Sources:** TechCrunch, Gumloop (2026)
+**CONFIDENCE:** Medium ✅`,
+      sources: []
     }
   };
   
   const lowerQuery = query.toLowerCase().trim();
   for (const [key, value] of Object.entries(directAnswers)) {
     if (lowerQuery.includes(key) || key.includes(lowerQuery)) {
+      const formattedResponse = formatter.formatDirectAnswer(value.response);
       return {
-        response: value.response,
+        response: formattedResponse,
         sources: [],
         metadata: {
           total_sources: uniqueSources.length,
@@ -663,8 +685,9 @@ function generateResponse(query, searchResult) {
   // NO RESULTS FOUND
   // ============================================
   if (results.length === 0) {
+    const noResultsResponse = generateNoResultsResponse(query);
     return {
-      response: generateNoResultsResponse(query),
+      response: noResultsResponse,
       sources: [],
       metadata: {
         total_sources: uniqueSources.length,
@@ -674,6 +697,16 @@ function generateResponse(query, searchResult) {
       }
     };
   }
+  
+  // ============================================
+  // SELECT PERSONA
+  // ============================================
+  const persona = selectPersona(queryType, query);
+  
+  // ============================================
+  // EXTRACT FACTS
+  // ============================================
+  const facts = extractFacts(query, results);
   
   // ============================================
   // BUILD CONTEXT FOR CoT
@@ -700,7 +733,6 @@ function generateResponse(query, searchResult) {
     responseText += `**Step 3 - Evidence Evaluation:**\n`;
     
     // Extract facts from results
-    const facts = extractFacts(query, results);
     if (facts.length > 0) {
       for (const fact of facts) {
         responseText += `- ${fact.text.substring(0, 200)}...\n`;
@@ -718,7 +750,6 @@ function generateResponse(query, searchResult) {
     responseText += `**📊 Final Answer:**\n\n`;
     
     if (facts.length > 0) {
-      // Show the best facts
       for (let i = 0; i < Math.min(facts.length, 3); i++) {
         const f = facts[i];
         responseText += `✅ ${f.text}\n`;
@@ -737,14 +768,23 @@ function generateResponse(query, searchResult) {
       responseText += `   🔗 ${r.source}\n\n`;
     }
     
+    // Format the CoT response with the formatter
+    const formattedResponse = formatter.formatResponse({
+      query: query,
+      results: results,
+      facts: facts,
+      classification: classification
+    }, persona);
+    
     return {
-      response: responseText,
+      response: formattedResponse,
       sources: results,
       metadata: {
         total_sources: uniqueSources.length,
         matches_found: results.length,
         query_type: queryType,
         query_confidence: classification?.confidence || 0,
+        persona: persona.id,
         chain_of_thought: true,
         facts_extracted: facts.length,
         last_updated: new Date().toISOString(),
@@ -754,17 +794,26 @@ function generateResponse(query, searchResult) {
   }
   
   // ============================================
-  // STANDARD RESPONSE (Factual/Summarization)
+  // STANDARD RESPONSE (Factual/Summarization) - FORMATTED
   // ============================================
+  const formattedResponse = formatter.formatResponse({
+    query: query,
+    results: results,
+    facts: facts,
+    classification: classification
+  }, persona);
+  
   return {
-    response: buildContextualAnswer(query, results, classification),
+    response: formattedResponse,
     sources: results,
     metadata: {
       total_sources: uniqueSources.length,
       matches_found: results.length,
       query_type: queryType,
       query_confidence: classification?.confidence || 0,
+      persona: persona.id,
       chain_of_thought: false,
+      facts_extracted: facts.length,
       last_updated: new Date().toISOString(),
       ai_generated: true
     }
@@ -812,7 +861,8 @@ export default async function handler(req, res) {
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
         source_names: [...new Set(uniqueSources.map(s => s.source_name))],
-        prompt_types: Object.keys(systemPrompts)
+        prompt_types: Object.keys(systemPrompts),
+        personas: ['research_analyst', 'strategy_consultant', 'technical_architect', 'trend_forecaster']
       });
     }
 
@@ -839,6 +889,7 @@ export default async function handler(req, res) {
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
         prompt_types: Object.keys(systemPrompts),
+        personas: ['research_analyst', 'strategy_consultant', 'technical_architect', 'trend_forecaster'],
         last_updated: new Date().toISOString()
       });
     }
@@ -854,12 +905,13 @@ export default async function handler(req, res) {
     // Default response
     return res.status(200).json({
       name: 'Omni Brand Intelligence Bot API',
-      version: '2.0.0',
+      version: '3.0.0',
       status: 'running',
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
       prompt_types: Object.keys(systemPrompts),
+      personas: ['research_analyst', 'strategy_consultant', 'technical_architect', 'trend_forecaster'],
       endpoints: {
         search: 'GET/POST with ?query=your+question',
         health: 'GET?action=health',
