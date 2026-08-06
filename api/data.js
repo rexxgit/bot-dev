@@ -1,5 +1,5 @@
-// api/data.js - Complete Self-Contained API with ALL features embedded
-// No external imports needed - everything is here
+// api/data.js - Complete Self-Contained API with Intelligent Chunking + Hybrid Search
+// Day 5: Semantic Chunking, Context-Aware Chunking, Hybrid Retrieval
 
 // ============================================
 // ALL DATA EMBEDDED HERE
@@ -328,6 +328,250 @@ const sourceStats = {
 };
 
 // ============================================
+// INTELLIGENT CHUNKING SYSTEM
+// ============================================
+
+// ============================================
+// SEMANTIC CHUNKER
+// ============================================
+
+function semanticChunk(text, options = {}) {
+  const chunkSize = options.chunkSize || 800;
+  const overlap = options.overlap || 100;
+  const minChunkSize = options.minChunkSize || 150;
+  
+  if (!text || text.length < minChunkSize) {
+    return [{ text: text || '', size: text?.length || 0, sentences: 1 }];
+  }
+
+  // Split into sentences
+  const sentences = splitIntoSentences(text);
+  
+  // Build chunks
+  const chunks = [];
+  let currentChunk = [];
+  let currentSize = 0;
+
+  for (const sentence of sentences) {
+    const sentenceSize = sentence.length;
+
+    if (currentSize + sentenceSize > chunkSize && currentChunk.length > 0) {
+      chunks.push(currentChunk.join(' '));
+      
+      // Overlap
+      const overlapSentences = getOverlap(currentChunk, overlap);
+      currentChunk = overlapSentences;
+      currentSize = overlapSentences.reduce((sum, s) => sum + s.length, 0);
+    }
+
+    currentChunk.push(sentence);
+    currentSize += sentenceSize;
+  }
+
+  if (currentChunk.length > 0) {
+    chunks.push(currentChunk.join(' '));
+  }
+
+  return chunks.map((chunk, index) => ({
+    id: `chunk-${index}`,
+    text: chunk,
+    sentenceCount: chunk.split(/[.!?]+/).length,
+    charCount: chunk.length,
+    preview: chunk.substring(0, 200) + '...'
+  }));
+}
+
+function splitIntoSentences(text) {
+  // Protect abbreviations
+  const protectedText = text.replace(/\b(Mr|Mrs|Dr|Prof|Sr|Jr|vs|e g|i e|etc|Inc|Corp|Co|Ltd|St|Ave|Blvd)\./g, (m) => m.replace(/\./g, '___DOT___'));
+  const sentences = protectedText.match(/[^.!?]+[.!?]+/g) || [protectedText];
+  return sentences.map(s => s.replace(/___DOT___/g, '.')).map(s => s.trim()).filter(s => s.length > 10);
+}
+
+function getOverlap(sentences, overlapSize) {
+  const overlap = [];
+  let size = 0;
+  for (let i = sentences.length - 1; i >= 0; i--) {
+    if (size + sentences[i].length > overlapSize) break;
+    overlap.unshift(sentences[i]);
+    size += sentences[i].length;
+  }
+  return overlap;
+}
+
+// ============================================
+// CONTEXT-AWARE CHUNKER
+// ============================================
+
+function contextAwareChunk(text, options = {}) {
+  const maxChunkSize = options.maxChunkSize || 1000;
+  
+  if (!text || text.length < 100) {
+    return [{ text: text || '', topic: 'general', entities: [] }];
+  }
+
+  // Identify topics
+  const topics = identifyTopics(text);
+  
+  // Identify entities
+  const entities = extractEntities(text);
+  
+  // Build chunks
+  const chunks = [];
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  let currentChunk = '';
+  let currentTopic = topics.length > 0 ? topics[0] : 'general';
+  let currentEntities = [];
+
+  for (const sentence of sentences) {
+    const sentenceTopics = identifyTopics(sentence);
+    const sentenceEntities = extractEntities(sentence);
+    
+    if (currentChunk.length + sentence.length > maxChunkSize && currentChunk.length > 50) {
+      chunks.push({
+        text: currentChunk.trim(),
+        topic: currentTopic,
+        entities: [...currentEntities]
+      });
+      currentChunk = '';
+      currentEntities = [];
+    }
+    
+    currentChunk += sentence + ' ';
+    if (sentenceTopics.length > 0) {
+      currentTopic = sentenceTopics[0];
+    }
+    currentEntities = [...currentEntities, ...sentenceEntities];
+  }
+
+  if (currentChunk.trim()) {
+    chunks.push({
+      text: currentChunk.trim(),
+      topic: currentTopic,
+      entities: [...new Set(currentEntities)]
+    });
+  }
+
+  return chunks;
+}
+
+function identifyTopics(text) {
+  const topics = [];
+  const topicKeywords = {
+    'microsoft': ['microsoft', 'azure', 'nadella', 'windows'],
+    'openai': ['openai', 'chatgpt', 'gpt', 'altman'],
+    'anthropic': ['anthropic', 'claude', 'amodei', 'constitutional'],
+    'meta': ['meta', 'zuckerberg', 'facebook', 'whatsapp'],
+    'ai_agents': ['agent', 'autonomous', 'tool'],
+    'ai_safety': ['safety', 'alignment', 'security'],
+    'enterprise': ['enterprise', 'business', 'corporate'],
+    'investment': ['investment', 'funding', 'billion']
+  };
+
+  const lower = text.toLowerCase();
+  for (const [topic, keywords] of Object.entries(topicKeywords)) {
+    for (const keyword of keywords) {
+      if (lower.includes(keyword)) {
+        if (!topics.includes(topic)) topics.push(topic);
+        break;
+      }
+    }
+  }
+  return topics.length > 0 ? topics : ['general'];
+}
+
+function extractEntities(text) {
+  const entities = [];
+  const patterns = {
+    company: /(Microsoft|OpenAI|Anthropic|Meta|Google|Amazon|Apple|Tesla|NVIDIA|AMD|Intel|IBM|Oracle|Salesforce|Adobe|Cisco|Dell|HP|Samsung|Sony|XAI|Grok|Claude|ChatGPT)/g,
+    person: /(Satya Nadella|Sam Altman|Mark Zuckerberg|Dario Amodei|Elon Musk|Bill Gates|Tim Cook|Jeff Bezos|Sundar Pichai|Satya|Nadella|Altman|Zuckerberg|Amodei|Musk|Gates|Cook|Bezos|Pichai)/g,
+    model: /(GPT-5\.6|GPT-4|Claude Sonnet|Claude Opus|Grok 4\.5|Grok 3|LLaMA|Gemini|Gemma|Mistral|Mixtral)/g
+  };
+
+  for (const [type, pattern] of Object.entries(patterns)) {
+    const matches = text.match(pattern) || [];
+    for (const match of matches) {
+      if (!entities.includes(match)) {
+        entities.push(match);
+      }
+    }
+  }
+  return entities;
+}
+
+// ============================================
+// HYBRID SEARCH RETRIEVAL
+// ============================================
+
+function hybridSearch(query, sources) {
+  // 1. Chunk all sources
+  const allChunks = [];
+  for (const source of sources) {
+    const content = source.content || '';
+    const chunks = semanticChunk(content, { chunkSize: 800, overlap: 100 });
+    for (const chunk of chunks) {
+      allChunks.push({
+        ...chunk,
+        source: source,
+        sourceName: source.source_name || 'Unknown',
+        sourceUrl: source.url || '#',
+        sourceDate: source.date || '',
+        sourceAuthor: source.author || 'Unknown'
+      });
+    }
+  }
+
+  // 2. Semantic search
+  const queryLower = query.toLowerCase();
+  const queryWords = queryLower.split(/\s+/).filter(w => w.length > 2);
+
+  const scoredChunks = allChunks.map(chunk => {
+    const chunkLower = chunk.text.toLowerCase();
+    let score = 0;
+
+    // Exact phrase match
+    if (chunkLower.includes(queryLower)) score += 10;
+
+    // Word matches
+    for (const word of queryWords) {
+      const count = (chunkLower.match(new RegExp(word, 'g')) || []).length;
+      score += count * 2;
+    }
+
+    // Semantic similarity (word overlap)
+    const chunkWords = chunkLower.split(/\s+/);
+    const commonWords = queryWords.filter(w => chunkWords.includes(w));
+    const overlapScore = commonWords.length / Math.max(queryWords.length, 1);
+    score += overlapScore * 10;
+
+    // Density
+    const density = commonWords.length / Math.max(chunkWords.length, 1);
+    score += density * 5;
+
+    return { ...chunk, score };
+  });
+
+  scoredChunks.sort((a, b) => b.score - a.score);
+  const topChunks = scoredChunks.slice(0, 10);
+
+  // 3. Format results
+  return topChunks.map(chunk => ({
+    title: chunk.source?.title || 'Untitled',
+    source: chunk.sourceUrl || '#',
+    source_name: chunk.sourceName || 'Unknown',
+    author: chunk.source?.author || 'Unknown',
+    date: chunk.source?.date || '',
+    chunk: chunk.text.substring(0, 500) + '...',
+    relevance: Math.min(Math.round((chunk.score / 50) * 100), 100),
+    score: chunk.score,
+    domain: chunk.source?.domain || 'unknown',
+    fullContent: chunk.source?.content || '',
+    chunkId: chunk.id,
+    sentenceCount: chunk.sentenceCount
+  }));
+}
+
+// ============================================
 // CLASSIFY QUERY TYPE
 // ============================================
 
@@ -371,7 +615,7 @@ function classifyQuery(query) {
 }
 
 // ============================================
-// SEARCH FUNCTION
+// SEARCH FUNCTION - ENHANCED WITH CHUNKING
 // ============================================
 
 function searchSources(query) {
@@ -382,59 +626,11 @@ function searchSources(query) {
   
   const classification = classifyQuery(query);
   
-  const results = [];
-  const words = queryLower.split(/\s+/).filter(w => w.length > 2);
+  // Use hybrid search with chunking
+  const hybridResults = hybridSearch(query, uniqueSources);
   
-  for (const source of uniqueSources) {
-    const content = (source.content || '').toLowerCase();
-    const title = (source.title || '').toLowerCase();
-    const sourceName = (source.source_name || '').toLowerCase();
-    
-    let score = 0;
-    
-    if (title.includes(queryLower)) score += 30;
-    if (sourceName.includes(queryLower)) score += 20;
-    
-    for (const word of words) {
-      const count = (content.match(new RegExp(word, 'g')) || []).length;
-      score += count * 3;
-    }
-    
-    if (content.includes(queryLower)) score += 15;
-    
-    if (score > 0) {
-      let chunk = '';
-      const sentences = content.split(/[.!?]+/);
-      for (const sentence of sentences) {
-        if (sentence.includes(queryLower) || words.some(w => sentence.includes(w))) {
-          chunk = sentence.trim();
-          break;
-        }
-      }
-      if (!chunk) {
-        chunk = (source.content || '').substring(0, 300);
-      }
-      
-      const relevance = Math.min(Math.round((score / 50) * 100), 100);
-      
-      results.push({
-        title: source.title || 'Untitled',
-        source: source.url || '#',
-        source_name: source.source_name || 'Unknown',
-        author: source.author || 'Unknown',
-        date: source.date || '',
-        chunk: chunk + '...',
-        relevance: relevance,
-        score: score,
-        domain: source.domain || 'unknown',
-        fullContent: source.content || ''
-      });
-    }
-  }
-  
-  results.sort((a, b) => b.score - a.score);
   return {
-    results: results.slice(0, 5),
+    results: hybridResults.slice(0, 5),
     classification: classification
   };
 }
@@ -665,6 +861,30 @@ function generateResponse(query, searchResult) {
 - **Choose ChatGPT for:** General tasks, creative writing, broad capabilities
 - **Choose Claude for:** Safety-critical applications, analysis, longer context`,
       sources: []
+    },
+    "best ai models for marketing 2026": {
+      response: `**📊 Best AI Models for Marketing Managers in 2026**
+
+**🎯 Top Models for Marketing:**
+
+| Model | Best For | Key Strength |
+|-------|----------|--------------|
+| **GPT-5.6** | Content creation, copywriting | Natural language, creativity |
+| **Claude Sonnet 5** | Analysis, strategy | Safety, long context |
+| **Grok 4.5** | Real-time insights | Speed, integration |
+
+**💡 Marketing Use Cases:**
+1. **Content Marketing:** GPT-5.6 for blogs, social posts
+2. **Campaign Analysis:** Claude Sonnet 5 for data insights
+3. **Customer Research:** Grok 4.5 for real-time trends
+
+**📌 Recommendation:**
+- **For content creation:** GPT-5.6
+- **For strategy/analysis:** Claude Sonnet 5
+- **For real-time marketing:** Grok 4.5
+
+**📚 Sources:** TechCrunch, Raulji Technologies (July 2026)`,
+      sources: []
     }
   };
   
@@ -716,6 +936,7 @@ function generateResponse(query, searchResult) {
       query_type: queryType,
       query_confidence: classification?.confidence || 0,
       chain_of_thought: false,
+      chunking_enabled: true,
       last_updated: new Date().toISOString(),
       ai_generated: true
     }
@@ -762,7 +983,8 @@ export default async function handler(req, res) {
         timestamp: new Date().toISOString(),
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
-        source_names: [...new Set(uniqueSources.map(s => s.source_name))]
+        source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+        chunking_enabled: true
       });
     }
 
@@ -788,6 +1010,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
+        chunking_enabled: true,
         last_updated: new Date().toISOString()
       });
     }
@@ -803,8 +1026,9 @@ export default async function handler(req, res) {
     // Default response
     return res.status(200).json({
       name: 'Omni Brand Intelligence Bot API',
-      version: '3.0.0',
+      version: '3.1.0',
       status: 'running',
+      features: ['intelligent_chunking', 'hybrid_search', 'context_aware'],
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
