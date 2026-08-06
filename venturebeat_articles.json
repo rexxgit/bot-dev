@@ -4,19 +4,49 @@
   "total_articles": 7,
   "articles": [
     {
-      "title": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
-      "author": "Taryn Plumb",
-      "date": "Taryn Plumb",
-      "content": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
-      "url": "https://venturebeat.com/orchestration/ai-coding-agents-are-blowing-through-budgets-replit-kilo-code-and-symbotic-explain-how-theyre-managing-it",
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/orchestration/meta-enters-the-ai-coding-wars-with-muse-spark-1-2-and-muse-code-with-persistent-async-background-agents",
       "source_name": "VentureBeat",
       "source_type": "blog",
-      "word_count": 29,
-      "hash": "b0950fe4",
+      "word_count": 6,
+      "hash": "caaeb5e8",
       "headings": [
-        "AI coding agents are blowing through budgets — Replit, Kilo Code, and Symbotic explain how they're managing it"
+        "Meta enters the AI coding wars with Muse Spark 1.2 and Muse Code with persistent async background agents"
       ],
-      "timestamp": "2026-08-05T10:29:20.923208"
+      "timestamp": "2026-08-06T10:34:43.974338"
+    },
+    {
+      "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/qwen3-8-max-arrives-with-a-bold-claim-it-outperforms-gpt-5-6-sol-max-and-fable-5-on-agentic-computer-use",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "fd8f692b",
+      "headings": [
+        "Qwen3.8-Max arrives with a bold claim: it outperforms GPT-5.6 Sol Max and Fable 5 on agentic computer use"
+      ],
+      "timestamp": "2026-08-06T10:34:44.006283"
+    },
+    {
+      "title": "Arnab Bose. Credit: Michael O'Donnell Photography",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Arnab Bose. Credit: Michael O'Donnell Photography",
+      "url": "https://venturebeat.com/orchestration/asanas-ai-agents-share-memory-across-your-company-but-not-your-secrets",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "434fd6f9",
+      "headings": [
+        "Asana's AI agents share memory across your company — but not your secrets"
+      ],
+      "timestamp": "2026-08-06T10:34:44.032441"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -31,7 +61,7 @@
       "headings": [
         "Stop graphing everything: When GraphRAG actually beats vector RAG"
       ],
-      "timestamp": "2026-08-05T10:29:20.974530"
+      "timestamp": "2026-08-06T10:34:44.067371"
     },
     {
       "title": "Image credit: VentureBeat with ChatGPT",
@@ -46,7 +76,7 @@
       "headings": [
         "Structured AI data pipelines score 10.9 points below free-form code — DataFlow-Harness closes the gap"
       ],
-      "timestamp": "2026-08-05T10:29:21.011622"
+      "timestamp": "2026-08-06T10:34:44.093294"
     },
     {
       "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
@@ -61,7 +91,7 @@
       "headings": [
         "Thinking Machines debuts Inkling Small open source AI model nearing performance of predecessor at about 1/4 size"
       ],
-      "timestamp": "2026-08-05T10:29:21.047128"
+      "timestamp": "2026-08-06T10:34:44.117039"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -76,38 +106,8 @@
       "headings": [
         "AI price wars: OpenAI cuts GPT-5.6 Luna prices by 80% as model competition shifts toward cost"
       ],
-      "timestamp": "2026-08-05T10:29:21.081620"
-    },
-    {
-      "title": "From left: Carl Franzen of VentureBeat interviews Manasi Joshi, Waymo's Director of Engineering, Systems Intelligence and Machine Learning, at the VB Transform 2026 conference. Credit: Michael O'Donnell Photography",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "From left: Carl Franzen of VentureBeat interviews Manasi Joshi, Waymo's Director of Engineering, Systems Intelligence and Machine Learning, at the VB Transform 2026 conference. Credit: Michael O'Donnell Photography",
-      "url": "https://venturebeat.com/technology/at-waymo-an-ai-project-isnt-ready-until-its-evals-are-not-when-the-model-performs-well",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 28,
-      "hash": "a009bc9d",
-      "headings": [
-        "At Waymo, an AI project isn't ready until its evals are — not when the model performs well"
-      ],
-      "timestamp": "2026-08-05T10:29:21.123367"
-    },
-    {
-      "title": "Credit: Michael O’Donnell Photography. Arcade.dev co-founder and CTO Sam Partee.",
-      "author": "Taryn Plumb",
-      "date": "Taryn Plumb",
-      "content": "Credit: Michael O’Donnell Photography. Arcade.dev co-founder and CTO Sam Partee.",
-      "url": "https://venturebeat.com/orchestration/enterprise-ai-agents-cant-talk-to-each-other-cant-be-trusted-with-permissions-and-cant-be-audited-5-startups-are-already-fixing-that",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 10,
-      "hash": "30f8e69e",
-      "headings": [
-        "Enterprise AI agents can't talk to each other, can't be trusted with permissions, and can't be audited — 5 startups are already fixing that"
-      ],
-      "timestamp": "2026-08-05T10:29:21.158698"
+      "timestamp": "2026-08-06T10:34:44.140905"
     }
   ],
-  "last_updated": "2026-08-05T10:29:21.195289"
+  "last_updated": "2026-08-06T10:34:44.167270"
 }
