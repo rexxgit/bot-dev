@@ -5,7 +5,7 @@
 // GROK API INTEGRATION
 // ============================================
 
-import { createGrokInstance } from './grok/index.js';
+import { createGrokInstance } from '../lib/grok/index.js';
 
 // ============================================
 // ALL DATA EMBEDDED HERE

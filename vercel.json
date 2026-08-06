@@ -1,17 +1,19 @@
 {
   "version": 2,
+  "functions": {
+    "api/data.js": {
+      "maxDuration": 10,
+      "memory": 1024
+    }
+  },
   "routes": [
     {
       "src": "/api/data",
       "dest": "/api/data"
     },
     {
-      "src": "/api/utils",
-      "dest": "/api/utils"
-    },
-    {
       "src": "/api/(.*)",
-      "dest": "/api/utils"
+      "dest": "/api/data"
     },
     {
       "src": "/(.*)",
