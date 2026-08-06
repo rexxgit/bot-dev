@@ -1,5 +1,11 @@
-// api/data.js - Complete Self-Contained API with Intelligent Chunking + Hybrid Search
-// Day 5: Semantic Chunking, Context-Aware Chunking, Hybrid Retrieval
+// api/data.js - Complete API with Intelligent Chunking + Hybrid Search + Grok Integration
+// Day 5+6: Semantic Chunking, Context-Aware Chunking, Hybrid Retrieval, Grok AI
+
+// ============================================
+// GROK API INTEGRATION
+// ============================================
+
+import { createGrokInstance } from './grok/index.js';
 
 // ============================================
 // ALL DATA EMBEDDED HERE
@@ -684,6 +690,46 @@ function extractFacts(query, results) {
 }
 
 // ============================================
+// GROK API RESPONSE GENERATION
+// ============================================
+
+async function generateGrokResponse(query, results, classification) {
+  const grok = createGrokInstance(process.env.GROQ_API_KEY);
+  
+  // Build context from results
+  const context = results.map((r, i) => 
+    `Source ${i+1}: ${r.title}\n${r.chunk || r.fullContent?.substring(0, 500) || ''}`
+  ).join('\n\n');
+  
+  const queryType = classification?.type || 'factual';
+  
+  try {
+    const grokResult = await grok.generateResponse(query, context, queryType);
+    
+    if (grokResult.success) {
+      return {
+        response: grokResult.response,
+        sources: results,
+        metadata: {
+          total_sources: uniqueSources.length,
+          matches_found: results.length,
+          query_type: queryType,
+          query_confidence: classification?.confidence || 0,
+          ai_generated: true,
+          model: 'grok-enhanced',
+          usage: grokResult.metadata?.usage || null,
+          last_updated: new Date().toISOString()
+        }
+      };
+    }
+  } catch (error) {
+    console.warn('Grok API fallback to template:', error.message);
+  }
+  
+  return null;
+}
+
+// ============================================
 // GENERATE NO RESULTS RESPONSE
 // ============================================
 
@@ -731,34 +777,7 @@ ${[...new Set(uniqueSources.map(s => `- ${s.source_name}`))].join('\n')}
 }
 
 // ============================================
-// GENERATE SUGGESTIONS (for no results)
-// ============================================
-
-function generateSuggestions(query) {
-  const topics = [
-    "Microsoft investment in Anthropic ($5B)",
-    "OpenAI vs Anthropic comparison",
-    "AI agent security risks",
-    "Enterprise AI adoption",
-    "AI model releases July 2026",
-    "Meta AI strategy",
-    "Hugging Face security incident",
-    "AI safety and ethics",
-    "AI tools and platforms",
-    "TechCrunch Disrupt 2026"
-  ];
-  
-  const queryWords = query.toLowerCase().split(/\s+/);
-  const related = topics.filter(topic => {
-    const topicWords = topic.toLowerCase().split(/\s+/);
-    return topicWords.some(tw => queryWords.some(qw => tw.includes(qw) || qw.includes(tw)));
-  });
-  
-  return related.length > 0 ? related : topics.slice(0, 5);
-}
-
-// ============================================
-// BUILD CONTEXTUAL ANSWER
+// BUILD CONTEXTUAL ANSWER (FALLBACK)
 // ============================================
 
 function buildContextualAnswer(query, results, classification) {
@@ -803,10 +822,10 @@ function buildContextualAnswer(query, results, classification) {
 }
 
 // ============================================
-// GENERATE RESPONSE - MAIN ENTRY
+// GENERATE RESPONSE - MAIN ENTRY WITH GROK
 // ============================================
 
-function generateResponse(query, searchResult) {
+async function generateResponse(query, searchResult) {
   const { results, classification } = searchResult;
   const queryType = classification?.type || 'factual';
   
@@ -923,7 +942,16 @@ function generateResponse(query, searchResult) {
   }
   
   // ============================================
-  // BUILD CONTEXTUAL ANSWER (Default)
+  // TRY GROK API FIRST (for better responses)
+  // ============================================
+  const grokResponse = await generateGrokResponse(query, results, classification);
+  
+  if (grokResponse) {
+    return grokResponse;
+  }
+  
+  // ============================================
+  // FALLBACK TO CONTEXTUAL ANSWER
   // ============================================
   const responseText = buildContextualAnswer(query, results, classification);
   
@@ -937,6 +965,7 @@ function generateResponse(query, searchResult) {
       query_confidence: classification?.confidence || 0,
       chain_of_thought: false,
       chunking_enabled: true,
+      fallback: true,
       last_updated: new Date().toISOString(),
       ai_generated: true
     }
@@ -984,7 +1013,8 @@ export default async function handler(req, res) {
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
         source_names: [...new Set(uniqueSources.map(s => s.source_name))],
-        chunking_enabled: true
+        chunking_enabled: true,
+        grok_enabled: !!process.env.GROQ_API_KEY
       });
     }
 
@@ -1011,6 +1041,7 @@ export default async function handler(req, res) {
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
         chunking_enabled: true,
+        grok_enabled: !!process.env.GROQ_API_KEY,
         last_updated: new Date().toISOString()
       });
     }
@@ -1018,7 +1049,7 @@ export default async function handler(req, res) {
     // Search
     if (query) {
       const searchResult = searchSources(query);
-      const response = generateResponse(query, searchResult);
+      const response = await generateResponse(query, searchResult);
       
       return res.status(200).json(response);
     }
@@ -1026,9 +1057,9 @@ export default async function handler(req, res) {
     // Default response
     return res.status(200).json({
       name: 'Omni Brand Intelligence Bot API',
-      version: '3.1.0',
+      version: '3.2.0',
       status: 'running',
-      features: ['intelligent_chunking', 'hybrid_search', 'context_aware'],
+      features: ['intelligent_chunking', 'hybrid_search', 'context_aware', 'grok_ai'],
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
