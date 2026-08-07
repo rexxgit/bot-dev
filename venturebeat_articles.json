@@ -1,22 +1,37 @@
 {
   "source": "VentureBeat AI",
   "source_url": "https://venturebeat.com/category/ai/",
-  "total_articles": 7,
+  "total_articles": 6,
   "articles": [
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
       "author": "Carl Franzen",
       "date": "Carl Franzen",
       "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/orchestration/meta-enters-the-ai-coding-wars-with-muse-spark-1-2-and-muse-code-with-persistent-async-background-agents",
+      "url": "https://venturebeat.com/technology/no-cloud-no-gpus-no-problem-liquid-ais-new-model-lfm2-5-2-6b-brings-powerful-ai-agents-to-devices-as-small-as-a-raspberry-pi",
       "source_name": "VentureBeat",
       "source_type": "blog",
       "word_count": 6,
-      "hash": "caaeb5e8",
+      "hash": "98796c6f",
       "headings": [
-        "Meta enters the AI coding wars with Muse Spark 1.2 and Muse Code with persistent async background agents"
+        "No cloud, no GPUs, no problem: Liquid AI's new model LFM2.5-2.6B brings powerful AI agents to devices as small as a Raspberry Pi"
       ],
-      "timestamp": "2026-08-06T10:34:43.974338"
+      "timestamp": "2026-08-07T08:50:49.647439"
+    },
+    {
+      "title": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
+      "author": "Taryn Plumb",
+      "date": "Taryn Plumb",
+      "content": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
+      "url": "https://venturebeat.com/orchestration/ai-coding-agents-are-blowing-through-budgets-replit-kilo-code-and-symbotic-explain-how-theyre-managing-it",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 29,
+      "hash": "b0950fe4",
+      "headings": [
+        "AI coding agents are blowing through budgets — Replit, Kilo Code, and Symbotic explain how they're managing it"
+      ],
+      "timestamp": "2026-08-07T08:50:49.692832"
     },
     {
       "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
@@ -31,7 +46,7 @@
       "headings": [
         "Qwen3.8-Max arrives with a bold claim: it outperforms GPT-5.6 Sol Max and Fable 5 on agentic computer use"
       ],
-      "timestamp": "2026-08-06T10:34:44.006283"
+      "timestamp": "2026-08-07T08:50:49.731481"
     },
     {
       "title": "Arnab Bose. Credit: Michael O'Donnell Photography",
@@ -46,7 +61,7 @@
       "headings": [
         "Asana's AI agents share memory across your company — but not your secrets"
       ],
-      "timestamp": "2026-08-06T10:34:44.032441"
+      "timestamp": "2026-08-07T08:50:49.763736"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -61,7 +76,7 @@
       "headings": [
         "Stop graphing everything: When GraphRAG actually beats vector RAG"
       ],
-      "timestamp": "2026-08-06T10:34:44.067371"
+      "timestamp": "2026-08-07T08:50:49.808054"
     },
     {
       "title": "Image credit: VentureBeat with ChatGPT",
@@ -76,38 +91,8 @@
       "headings": [
         "Structured AI data pipelines score 10.9 points below free-form code — DataFlow-Harness closes the gap"
       ],
-      "timestamp": "2026-08-06T10:34:44.093294"
-    },
-    {
-      "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 5,
-      "hash": "44d92c0c",
-      "headings": [
-        "Thinking Machines debuts Inkling Small open source AI model nearing performance of predecessor at about 1/4 size"
-      ],
-      "timestamp": "2026-08-06T10:34:44.117039"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/ai-price-wars-openai-cuts-gpt-5-6-luna-prices-by-80-as-model-competition-shifts-toward-cost",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "dbf682bd",
-      "headings": [
-        "AI price wars: OpenAI cuts GPT-5.6 Luna prices by 80% as model competition shifts toward cost"
-      ],
-      "timestamp": "2026-08-06T10:34:44.140905"
+      "timestamp": "2026-08-07T08:50:49.839973"
     }
   ],
-  "last_updated": "2026-08-06T10:34:44.167270"
+  "last_updated": "2026-08-07T08:50:49.871886"
 }
