@@ -1,13 +1,27 @@
-// api/data.js - Complete API with Semantic Response Generation + Grok Optimization
+// api/data.js - Complete API with ALL imports from lib/
 
 // ============================================
 // IMPORTS - All from lib/ (NOT counted as functions)
 // ============================================
 
+// Chunking
+import { semanticChunk, contextAwareChunk, hybridSearch } from '../lib/chunking/semantic.js';
+
+// Prompts
+import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
+import { getFewShotExamples } from '../lib/prompts/examples.js';
+import { selectTemplate } from '../lib/prompts/templates.js';
+import { generateCOTPrompt } from '../lib/prompts/cot.js';
+import { selectPersona } from '../lib/prompts/personas.js';
+
+// Response
 import { intentDetector } from '../lib/response/intent.js';
 import { confidenceScorer } from '../lib/response/confidence.js';
 import { responseFormatter } from '../lib/response/formatter.js';
 import { responseCache } from '../lib/response/cache.js';
+
+// Grok
+import { createGrokInstance } from '../lib/grok/index.js';
 import { buildGrokRequest } from '../lib/grok/prompts.js';
 
 // ============================================
