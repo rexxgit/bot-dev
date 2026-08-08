@@ -1,19 +1,28 @@
 // api/data.js - Complete API with Semantic Response Generation + Grok Optimization
-// Day 6: Intent Detection, Confidence Scoring, Dynamic Formatting, Response Cache
 
 // ============================================
-// IMPORTS
+// IMPORTS - All from lib/ (NOT counted as functions)
 // ============================================
 
-import { intentDetector } from './response/intent.js';
-import { confidenceScorer } from './response/confidence.js';
-import { responseFormatter } from './response/formatter.js';
-import { responseCache } from './response/cache.js';
+import { intentDetector } from '../lib/response/intent.js';
+import { confidenceScorer } from '../lib/response/confidence.js';
+import { responseFormatter } from '../lib/response/formatter.js';
+import { responseCache } from '../lib/response/cache.js';
 import { buildGrokRequest } from '../lib/grok/prompts.js';
 
 // ============================================
 // ALL DATA EMBEDDED HERE
 // ============================================
+
+// ... rest of your data.js (all data arrays, search functions, etc.) ...
+
+// ============================================
+// API HANDLER - DEFAULT EXPORT
+// ============================================
+
+export default async function handler(req, res) {
+  // ... your handler code ...
+}
 
 const techCrunchSources = [
   {
