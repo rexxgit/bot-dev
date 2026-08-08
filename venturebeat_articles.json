@@ -4,19 +4,49 @@
   "total_articles": 6,
   "articles": [
     {
+      "title": "Image credit: VentureBeat with Nano Banana Pro",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Image credit: VentureBeat with Nano Banana Pro",
+      "url": "https://venturebeat.com/orchestration/four-ai-agents-coordinating-in-real-time-outperformed-claude-opus-4-8-on-enterprise-coding-tasks",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 7,
+      "hash": "d37214a2",
+      "headings": [
+        "Four AI agents coordinating in real time outperformed Claude Opus 4.8 on enterprise coding tasks"
+      ],
+      "timestamp": "2026-08-08T08:32:36.128878"
+    },
+    {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
       "author": "Carl Franzen",
       "date": "Carl Franzen",
       "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/no-cloud-no-gpus-no-problem-liquid-ais-new-model-lfm2-5-2-6b-brings-powerful-ai-agents-to-devices-as-small-as-a-raspberry-pi",
+      "url": "https://venturebeat.com/orchestration/meta-enters-the-ai-coding-wars-with-muse-spark-1-2-and-muse-code-with-persistent-async-background-agents",
       "source_name": "VentureBeat",
       "source_type": "blog",
       "word_count": 6,
-      "hash": "98796c6f",
+      "hash": "caaeb5e8",
       "headings": [
-        "No cloud, no GPUs, no problem: Liquid AI's new model LFM2.5-2.6B brings powerful AI agents to devices as small as a Raspberry Pi"
+        "Meta enters the AI coding wars with Muse Spark 1.2 and Muse Code with persistent async background agents"
       ],
-      "timestamp": "2026-08-07T08:50:49.647439"
+      "timestamp": "2026-08-08T08:32:36.164302"
+    },
+    {
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/ai-startup-hark-unveils-first-product-an-affordable-fast-computer-use-agent-hark-handoff",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "88fd3afa",
+      "headings": [
+        "AI startup Hark unveils first product: an affordable, fast computer use agent Hark Handoff"
+      ],
+      "timestamp": "2026-08-08T08:32:36.196416"
     },
     {
       "title": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
@@ -31,7 +61,7 @@
       "headings": [
         "AI coding agents are blowing through budgets — Replit, Kilo Code, and Symbotic explain how they're managing it"
       ],
-      "timestamp": "2026-08-07T08:50:49.692832"
+      "timestamp": "2026-08-08T08:32:36.239418"
     },
     {
       "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
@@ -46,7 +76,7 @@
       "headings": [
         "Qwen3.8-Max arrives with a bold claim: it outperforms GPT-5.6 Sol Max and Fable 5 on agentic computer use"
       ],
-      "timestamp": "2026-08-07T08:50:49.731481"
+      "timestamp": "2026-08-08T08:32:36.276671"
     },
     {
       "title": "Arnab Bose. Credit: Michael O'Donnell Photography",
@@ -61,38 +91,8 @@
       "headings": [
         "Asana's AI agents share memory across your company — but not your secrets"
       ],
-      "timestamp": "2026-08-07T08:50:49.763736"
-    },
-    {
-      "title": "CleoPtolemy made with Midjourney",
-      "author": "Dattaraj Rao, Persistent Systems",
-      "date": "Dattaraj Rao, Persistent Systems",
-      "content": "CleoPtolemy made with Midjourney If you have built anything with retrieval-augmented generation (RAG) in the last two years, you have lived its central frustration: You chop your documents into chunks, embed them, retrieve the top few that look similar to the question, and hand them to the model. For “What was our Q3 refund policy?” This works beautifully. For “What are the recurring themes across two years of customer complaints?” it falls flat — because no single chunk contains the answer.",
-      "url": "https://venturebeat.com/orchestration/stop-graphing-everything-when-graphrag-actually-beats-vector-rag",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 81,
-      "hash": "f16567a2",
-      "headings": [
-        "Stop graphing everything: When GraphRAG actually beats vector RAG"
-      ],
-      "timestamp": "2026-08-07T08:50:49.808054"
-    },
-    {
-      "title": "Image credit: VentureBeat with ChatGPT",
-      "author": "Ben Dickson",
-      "date": "Ben Dickson",
-      "content": "Image credit: VentureBeat with ChatGPT",
-      "url": "https://venturebeat.com/orchestration/structured-ai-data-pipelines-score-10-9-points-below-free-form-code-dataflow-harness-closes-the-gap",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 5,
-      "hash": "e0fc6ce4",
-      "headings": [
-        "Structured AI data pipelines score 10.9 points below free-form code — DataFlow-Harness closes the gap"
-      ],
-      "timestamp": "2026-08-07T08:50:49.839973"
+      "timestamp": "2026-08-08T08:32:36.308348"
     }
   ],
-  "last_updated": "2026-08-07T08:50:49.871886"
+  "last_updated": "2026-08-08T08:32:36.349341"
 }
