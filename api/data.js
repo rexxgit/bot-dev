@@ -1,5 +1,15 @@
-// api/data.js - COMPLETE SELF-CONTAINED with Safe Grok Integration
-// Grok is optional - if API key is missing, falls back to templates
+// api/data.js - Complete API with Semantic Response Generation + Grok Optimization
+// Day 6: Intent Detection, Confidence Scoring, Dynamic Formatting, Response Cache
+
+// ============================================
+// IMPORTS
+// ============================================
+
+import { intentDetector } from './response/intent.js';
+import { confidenceScorer } from './response/confidence.js';
+import { responseFormatter } from './response/formatter.js';
+import { responseCache } from './response/cache.js';
+import { buildGrokRequest } from '../lib/grok/prompts.js';
 
 // ============================================
 // ALL DATA EMBEDDED HERE
@@ -514,99 +524,49 @@ ${suggestions.map(s => `- ${s}`).join('\n')}
 ${[...new Set(uniqueSources.map(s => `- ${s.source_name}`))].join('\n')}`;
 }
 
-function buildContextualAnswer(query, results, classification) {
-  if (results.length === 0) {
-    return generateNoResultsResponse(query);
-  }
+function generateSuggestions(query) {
+  const topics = [
+    "Microsoft investment in Anthropic ($5B)",
+    "OpenAI vs Anthropic comparison",
+    "AI agent security risks",
+    "Enterprise AI adoption",
+    "AI model releases July 2026",
+    "Meta AI strategy",
+    "Hugging Face security incident",
+    "AI safety and ethics",
+    "AI tools and platforms",
+    "TechCrunch Disrupt 2026"
+  ];
   
-  const facts = extractFacts(query, results);
-  const queryType = classification?.type || 'factual';
+  const queryWords = query.toLowerCase().split(/\s+/);
+  const related = topics.filter(topic => {
+    const topicWords = topic.toLowerCase().split(/\s+/);
+    return topicWords.some(tw => queryWords.some(qw => tw.includes(qw) || qw.includes(tw)));
+  });
   
-  let answer = `**📊 What I found about "${query}":**\n\n`;
-  
-  if (facts.length > 0) {
-    answer += `**Key Facts Extracted:**\n`;
-    for (let i = 0; i < Math.min(facts.length, 3); i++) {
-      const f = facts[i];
-      const relevanceEmoji = f.relevance > 0.5 ? '🟢' : '🟡';
-      answer += `${relevanceEmoji} ${f.text}\n   *Source: ${f.source} - ${f.title}*\n\n`;
-    }
-  }
-  
-  answer += `**📚 Related Articles:**\n\n`;
-  
-  for (let i = 0; i < Math.min(results.length, 5); i++) {
-    const r = results[i];
-    const relevanceEmoji = r.relevance > 60 ? '🟢' : r.relevance > 30 ? '🟡' : '🔴';
-    const relevanceLabel = r.relevance > 60 ? 'High' : r.relevance > 30 ? 'Medium' : 'Low';
-    
-    answer += `**${i + 1}. ${r.title}**\n🏷️ ${r.source_name} | 📅 ${r.date} | 📊 ${relevanceEmoji} ${relevanceLabel} (${r.relevance}%)\n\n${r.chunk}\n\n🔗 ${r.source}\n\n---\n\n`;
-  }
-  
-  answer += `\n*Query Type: ${queryType} (Confidence: ${Math.round(classification?.confidence * 100 || 0)}%)*\n`;
-  answer += `*Total Sources: ${uniqueSources.length}*\n`;
-  
-  return answer;
+  return related.length > 0 ? related : topics.slice(0, 5);
 }
 
 // ============================================
-// SAFE GROK CALL (Wrapped in try/catch)
-// ============================================
-
-async function callGrok(query, context, queryType) {
-  try {
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey) {
-      console.log('GROQ_API_KEY not set, skipping Grok');
-      return null;
-    }
-
-    const systemPrompts = {
-      factual: `You are an AI research analyst. Provide clear, factual answers based on the context. Cite specific sources.`,
-      analytical: `You are an AI strategy consultant. Provide deep analysis with insights. Use Chain-of-Thought reasoning.`,
-      comparative: `You are an AI comparison expert. Provide balanced comparisons with a matrix format.`
-    };
-
-    const system = systemPrompts[queryType] || systemPrompts.factual;
-
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: `QUESTION: ${query}\n\nCONTEXT:\n${context}\n\nProvide a comprehensive, professional response.` }
-        ],
-        temperature: 0.3,
-        max_tokens: 1500
-      })
-    });
-
-    if (!response.ok) {
-      console.error(`Grok API error: ${response.status}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.choices[0].message.content;
-
-  } catch (error) {
-    console.error('Grok call failed:', error.message);
-    return null;
-  }
-}
-
-// ============================================
-// GENERATE RESPONSE - MAIN ENTRY WITH GROK
+// GENERATE RESPONSE - MAIN ENTRY
 // ============================================
 
 async function generateResponse(query, searchResult) {
   const { results, classification } = searchResult;
   const queryType = classification?.type || 'factual';
+  
+  // ============================================
+  // CHECK CACHE
+  // ============================================
+  const cached = responseCache.get(query);
+  if (cached) {
+    return cached;
+  }
+  
+  // ============================================
+  // DETECT INTENT
+  // ============================================
+  const intentInfo = intentDetector.detectIntent(query);
   
   // ============================================
   // DIRECT ANSWERS (Highest Priority)
@@ -689,8 +649,9 @@ async function generateResponse(query, searchResult) {
   const lowerQuery = query.toLowerCase().trim();
   for (const [key, value] of Object.entries(directAnswers)) {
     if (lowerQuery.includes(key) || key.includes(lowerQuery)) {
-      return {
-        response: value.response,
+      const formatted = responseFormatter.formatDirectAnswer(value.response);
+      const response = {
+        response: formatted,
         sources: [],
         metadata: {
           total_sources: uniqueSources.length,
@@ -701,6 +662,8 @@ async function generateResponse(query, searchResult) {
           last_updated: new Date().toISOString()
         }
       };
+      responseCache.set(query, response);
+      return response;
     }
   }
   
@@ -708,8 +671,10 @@ async function generateResponse(query, searchResult) {
   // NO RESULTS FOUND
   // ============================================
   if (results.length === 0) {
-    return {
-      response: generateNoResultsResponse(query),
+    const suggestions = generateSuggestions(query);
+    const formatted = responseFormatter.formatNoResults(query, suggestions);
+    const response = {
+      response: formatted,
       sources: [],
       metadata: {
         total_sources: uniqueSources.length,
@@ -718,6 +683,8 @@ async function generateResponse(query, searchResult) {
         ai_generated: true
       }
     };
+    responseCache.set(query, response);
+    return response;
   }
   
   // ============================================
@@ -728,45 +695,103 @@ async function generateResponse(query, searchResult) {
   ).join('\n\n');
   
   // ============================================
-  // TRY GROK (with fallback)
+  // CALCULATE CONFIDENCE
   // ============================================
+  const confidence = confidenceScorer.calculateConfidence(results, results, classification);
+  
+  // ============================================
+  // EXTRACT FACTS
+  // ============================================
+  const facts = extractFacts(query, results);
+  
+  // ============================================
+  // TRY GROK WITH OPTIMIZED PROMPTS
+  // ============================================
+  let grokResponse = null;
   try {
-    const grokResponse = await callGrok(query, context, queryType);
-    if (grokResponse) {
-      return {
-        response: grokResponse,
-        sources: results,
-        metadata: {
-          total_sources: uniqueSources.length,
-          matches_found: results.length,
-          query_type: queryType,
-          query_confidence: classification?.confidence || 0,
-          ai_generated: true,
-          model: 'grok',
-          last_updated: new Date().toISOString()
-        }
-      };
+    const apiKey = process.env.GROQ_API_KEY;
+    if (apiKey) {
+      const grokRequest = buildGrokRequest(query, context, intentInfo.primary);
+      
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: grokRequest.messages,
+          temperature: grokRequest.temperature,
+          max_tokens: grokRequest.maxTokens
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        grokResponse = data.choices[0].message.content;
+      }
     }
   } catch (error) {
-    console.warn('Grok failed, using fallback:', error.message);
+    console.warn('Grok failed:', error.message);
   }
   
   // ============================================
-  // FALLBACK TO TEMPLATE
+  // BUILD FINAL RESPONSE
   // ============================================
-  return {
-    response: buildContextualAnswer(query, results, classification),
-    sources: results,
-    metadata: {
-      total_sources: uniqueSources.length,
-      matches_found: results.length,
-      query_type: queryType,
-      query_confidence: classification?.confidence || 0,
-      ai_generated: true,
-      fallback: true,
-      last_updated: new Date().toISOString()
-    }
-  };
+  let finalResponse;
+  
+  if (grokResponse) {
+    finalResponse = {
+      response: grokResponse,
+      sources: results,
+      metadata: {
+        total_sources: uniqueSources.length,
+        matches_found: results.length,
+        query_type: queryType,
+        query_confidence: classification?.confidence || 0,
+        intent: intentInfo.primary,
+        intent_confidence: Math.round(intentInfo.confidence * 100),
+        confidence: confidence,
+        ai_generated: true,
+        model: 'grok',
+        last_updated: new Date().toISOString()
+      }
+    };
+  } else {
+    const formattedResponse = responseFormatter.formatResponse({
+      query: query,
+      results: results,
+      facts: facts,
+      classification: classification,
+      confidence: confidence,
+      intent: intentInfo
+    });
+    
+    finalResponse = {
+      response: formattedResponse,
+      sources: results,
+      metadata: {
+        total_sources: uniqueSources.length,
+        matches_found: results.length,
+        query_type: queryType,
+        query_confidence: classification?.confidence || 0,
+        intent: intentInfo.primary,
+        intent_confidence: Math.round(intentInfo.confidence * 100),
+        confidence: confidence,
+        ai_generated: true,
+        fallback: true,
+        last_updated: new Date().toISOString()
+      }
+    };
+  }
+  
+  // ============================================
+  // CACHE RESPONSE
+  // ============================================
+  responseCache.set(query, finalResponse);
+  
+  return finalResponse;
 }
 
 // ============================================
@@ -812,7 +837,9 @@ export default async function handler(req, res) {
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
         source_names: [...new Set(uniqueSources.map(s => s.source_name))],
-        grok_available: !!process.env.GROQ_API_KEY
+        grok_available: !!process.env.GROQ_API_KEY,
+        cache_stats: responseCache.getStats(),
+        features: ['intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching']
       });
     }
 
@@ -843,7 +870,20 @@ export default async function handler(req, res) {
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
         grok_available: !!process.env.GROQ_API_KEY,
+        cache_stats: responseCache.getStats(),
         last_updated: new Date().toISOString()
+      });
+    }
+
+    // ============================================
+    // ROUTE: CACHE CLEAR
+    // ============================================
+    if (action === 'clear-cache') {
+      responseCache.clear();
+      return res.status(200).json({
+        status: 'ok',
+        message: 'Cache cleared',
+        cache_stats: responseCache.getStats()
       });
     }
 
@@ -946,18 +986,20 @@ export default async function handler(req, res) {
     // ============================================
     return res.status(200).json({
       name: 'Omni Brand Intelligence Bot API',
-      version: '3.0.0',
+      version: '3.2.0',
       status: 'running',
-      features: ['intelligent_search', 'hybrid_retrieval', 'grok_ai_optional'],
+      features: ['intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'grok_ai'],
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
       grok_available: !!process.env.GROQ_API_KEY,
+      cache_stats: responseCache.getStats(),
       endpoints: {
         search: 'GET/POST with ?query=your+question',
         health: 'GET?action=health',
         all: 'GET?action=all',
-        stats: 'GET?action=stats'
+        stats: 'GET?action=stats',
+        clear_cache: 'GET?action=clear-cache'
       },
       last_updated: new Date().toISOString()
     });
