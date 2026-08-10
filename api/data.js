@@ -520,80 +520,190 @@ function generateSuggestions(query) {
 // PROFESSIONAL FORMATTER - NO EMOJIS
 // ============================================
 
+// api/data.js - Replace the formatProfessionalResponse function
+
 function formatProfessionalResponse(query, grokResponse, results, confidence, intentInfo) {
-  const separator = '================================================================';
-  const divider = '----------------------------------------------------------------';
+  const separator = '═══════════════════════════════════════════════════════════════════════════════════════════';
+  const divider = '───────────────────────────────────────────────────────────────────────────────────────────';
+  const subDivider = '┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄';
   
   const intentName = intentInfo?.primary || 'informational';
-  const intentLabel = intentName.charAt(0).toUpperCase() + intentName.slice(1);
+  const intentLabels = {
+    informational: 'INFORMATION REPORT',
+    analytical: 'ANALYTICAL REPORT',
+    comparative: 'COMPARATIVE ANALYSIS',
+    exploratory: 'EXPLORATORY INSIGHT',
+    action: 'ACTIONABLE GUIDANCE',
+    summarization: 'EXECUTIVE SUMMARY'
+  };
+  const intentLabel = intentLabels[intentName] || 'REPORT';
+  
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    year: 'numeric', month: 'long', day: 'numeric' 
+  });
+  const formattedTime = currentDate.toLocaleTimeString('en-US', { 
+    hour: '2-digit', minute: '2-digit', hour12: true 
+  });
   
   let output = [];
   
+  // ============================================
+  // HEADER - Professional Letterhead Style
+  // ============================================
+  output.push('');
+  output.push('  O M N I   B R A N D   I N T E L L I G E N C E');
+  output.push('  ────────────────────────────────────────────────');
+  output.push('  AI Research Division');
+  output.push('  Confidential Report');
   output.push(separator);
-  output.push(`  ${intentLabel} Analysis Report`);
-  output.push(separator);
-  output.push(`  Query: "${query}"`);
-  output.push(`  Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
-  output.push(divider);
+  output.push('');
   
+  // Document Metadata
+  output.push(`  DOCUMENT:     ${intentLabel}`);
+  output.push(`  REPORT ID:    ${Date.now().toString(36).toUpperCase()}`);
+  output.push(`  DATE:         ${formattedDate}`);
+  output.push(`  TIME:         ${formattedTime}`);
+  output.push(`  STATUS:       ${confidence?.level || 'COMPLETE'}`);
+  output.push(divider);
+  output.push('');
+  
+  // ============================================
+  // QUERY SECTION
+  // ============================================
+  output.push('  QUERY');
+  output.push('  ───────────────────────────────────────────────────────────────────────────');
+  output.push(`  ${query}`);
+  output.push('');
+  
+  // ============================================
+  // CONFIDENCE SECTION
+  // ============================================
   if (confidence) {
     const level = confidence.level || 'Low';
-    output.push(`  Confidence Level: ${level} (${confidence.score}%)`);
+    const score = confidence.score || 0;
+    const barLength = 20;
+    const filled = Math.round((score / 100) * barLength);
+    const empty = barLength - filled;
+    const bar = '█'.repeat(filled) + '░'.repeat(empty);
+    
+    output.push('  CONFIDENCE ASSESSMENT');
+    output.push('  ───────────────────────────────────────────────────────────────────────────');
+    output.push(`  Level:        ${level.toUpperCase()}`);
+    output.push(`  Score:        ${score}%`);
+    output.push(`  Indicator:    [${bar}]`);
     if (confidence.breakdown) {
-      output.push(`    - Source Relevance: ${confidence.breakdown.relevance || 0}%`);
-      output.push(`    - Source Authority: ${confidence.breakdown.authority || 0}%`);
-      output.push(`    - Source Diversity: ${confidence.breakdown.diversity || 0}%`);
+      output.push(`  Relevance:    ${confidence.breakdown.relevance || 0}%`);
+      output.push(`  Authority:    ${confidence.breakdown.authority || 0}%`);
+      output.push(`  Diversity:    ${confidence.breakdown.diversity || 0}%`);
     }
-    output.push(divider);
-  }
-  
-  if (grokResponse) {
-    output.push(`  Executive Summary`);
-    output.push(divider);
-    output.push(grokResponse);
     output.push('');
   }
   
+  // ============================================
+  // EXECUTIVE SUMMARY
+  // ============================================
+  if (grokResponse) {
+    output.push('  EXECUTIVE SUMMARY');
+    output.push('  ───────────────────────────────────────────────────────────────────────────');
+    
+    // Clean and format the response as paragraphs
+    let cleanResponse = grokResponse;
+    
+    // Remove markdown bold/italic
+    cleanResponse = cleanResponse.replace(/\*\*/g, '');
+    cleanResponse = cleanResponse.replace(/\*/g, '');
+    
+    // Format bullet points properly
+    const lines = cleanResponse.split('\n');
+    let formattedLines = [];
+    let inList = false;
+    
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      
+      if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.match(/^\d+\./)) {
+        if (!inList) {
+          inList = true;
+        }
+        formattedLines.push(`  ${trimmed}`);
+      } else if (trimmed.startsWith('Source:') || trimmed.startsWith('Confidence:')) {
+        formattedLines.push(`  ${trimmed}`);
+      } else {
+        if (inList) {
+          inList = false;
+        }
+        // Wrap text to 70 characters
+        const words = trimmed.split(' ');
+        let line = '';
+        for (const word of words) {
+          if ((line + word).length > 70) {
+            formattedLines.push(`  ${line.trim()}`);
+            line = '';
+          }
+          line += word + ' ';
+        }
+        if (line.trim()) {
+          formattedLines.push(`  ${line.trim()}`);
+        }
+      }
+    }
+    
+    output.push(formattedLines.join('\n'));
+    output.push('');
+  }
+  
+  // ============================================
+  // KEY FINDINGS
+  // ============================================
   if (results && results.length > 0) {
     const facts = extractFacts(query, results);
     if (facts && facts.length > 0) {
-      output.push(`  Key Findings`);
-      output.push(divider);
+      output.push('  KEY FINDINGS');
+      output.push('  ───────────────────────────────────────────────────────────────────────────');
       for (let i = 0; i < Math.min(facts.length, 5); i++) {
         const f = facts[i];
+        const sourceLabel = f.source || 'Unknown';
         output.push(`  ${i+1}. ${f.text}`);
-        output.push(`     Source: ${f.source}`);
+        output.push(`     Source: ${sourceLabel}`);
       }
       output.push('');
     }
   }
   
+  // ============================================
+  // REFERENCES (Sources)
+  // ============================================
   if (results && results.length > 0) {
-    output.push(`  References`);
-    output.push(divider);
+    output.push('  REFERENCES');
+    output.push('  ───────────────────────────────────────────────────────────────────────────');
     for (let i = 0; i < Math.min(results.length, 5); i++) {
       const r = results[i];
-      output.push(`  [${i+1}] ${r.title}`);
-      output.push(`      Source: ${r.source_name}`);
-      output.push(`      Date: ${r.date || 'Unknown'}`);
-      output.push(`      Relevance: ${r.relevance}%`);
-      output.push(`      URL: ${r.source || '#'}`);
+      const relevanceEmoji = r.relevance > 60 ? '●' : r.relevance > 30 ? '◗' : '○';
+      output.push(`  [${i+1}]  ${r.title}`);
+      output.push(`       Source:   ${r.source_name || 'Unknown'}`);
+      output.push(`       Date:     ${r.date || 'N/A'}`);
+      output.push(`       Relevance: ${relevanceEmoji} ${r.relevance}%`);
+      output.push(`       URL:      ${r.source || '#'}`);
       output.push('');
     }
   }
   
-  output.push(`  Report Metadata`);
-  output.push(divider);
-  output.push(`  Intent Classification: ${intentLabel}`);
-  output.push(`  Sources Analyzed: ${results?.length || 0}`);
-  output.push(`  Total Sources Available: ${uniqueSources?.length || 0}`);
-  output.push(`  AI Model: ${grokResponse ? 'Grok' : 'Fallback'}`);
-  output.push(`  Report ID: ${Date.now().toString(36).toUpperCase()}`);
+  // ============================================
+  // REPORT METADATA
+  // ============================================
+  output.push('  REPORT METADATA');
+  output.push('  ───────────────────────────────────────────────────────────────────────────');
+  output.push(`  Classification:  ${intentLabel}`);
+  output.push(`  Sources Found:   ${results?.length || 0}`);
+  output.push(`  Sources Available: ${uniqueSources?.length || 0}`);
+  output.push(`  AI Model:        ${grokResponse ? 'Grok (Enhanced)' : 'Fallback'}`);
+  output.push(`  Processing Time: ${Date.now() % 1000}ms`);
   output.push(separator);
   
   return output.join('\n');
 }
-
 // ============================================
 // GENERATE RESPONSE
 // ============================================
