@@ -1,4 +1,4 @@
-// api/data.js - Complete API with Professional PDF-Style Formatting + Grok
+// api/data.js - Professional Clean Output (No Emojis)
 
 // ============================================
 // IMPORTS - All from lib/
@@ -475,18 +475,20 @@ function generateNoResultsResponse(query) {
   
   const suggestions = related.length > 0 ? related : topics.slice(0, 5);
   
-  return `🔍 **I couldn't find specific information about "${query}" in my current data sources.**
+  return `NO RESULTS FOUND
 
-**📊 My Data Contains:**
+Query: "${query}"
+
+Data Available:
 - TechCrunch AI articles: ${techCrunchSources.length}
 - VentureBeat AI articles: ${ventureBeatSources.length}
 - Static sources: ${staticSources.length}
-- **Total: ${uniqueSources.length} articles**
+- Total: ${uniqueSources.length} articles
 
-**💡 Try asking about:**
+Try asking about:
 ${suggestions.map(s => `- ${s}`).join('\n')}
 
-**📚 Available Sources:**
+Available Sources:
 ${[...new Set(uniqueSources.map(s => `- ${s.source_name}`))].join('\n')}`;
 }
 
@@ -514,117 +516,78 @@ function generateSuggestions(query) {
 }
 
 // ============================================
-// PROFESSIONAL PDF-STYLE FORMATTER - FIXED
+// PROFESSIONAL CLEAN FORMATTER - NO EMOJIS
 // ============================================
 
 function formatProfessionalResponse(query, grokResponse, results, confidence, intentInfo) {
-  const separator = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
-  const divider = '────────────────────────────────────────';
-  
-  const intentEmojis = {
-    informational: '📖',
-    comparative: '⚖️',
-    analytical: '🔬',
-    exploratory: '🔭',
-    action: '🎯',
-    summarization: '📋'
-  };
+  const separator = '================================================================';
+  const divider = '----------------------------------------------------------------';
   
   const intentName = intentInfo?.primary || 'informational';
-  const icon = intentEmojis[intentName] || '📊';
   const intentLabel = intentName.charAt(0).toUpperCase() + intentName.slice(1);
   
   let output = [];
   
-  // ============================================
-  // HEADER - Professional Document Style
-  // ============================================
+  // HEADER
   output.push(separator);
-  output.push(`  ${icon}  ${intentLabel} Analysis Report`);
+  output.push(`  ${intentLabel} Analysis Report`);
   output.push(separator);
-  output.push(`  📋  Query: "${query}"`);
-  output.push(`  📅  Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
+  output.push(`  Query: "${query}"`);
+  output.push(`  Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
   output.push(divider);
   
-  // ============================================
-  // CONFIDENCE SECTION
-  // ============================================
+  // CONFIDENCE
   if (confidence) {
-    const emoji = confidence.level === 'High' ? '🟢' : confidence.level === 'Medium' ? '🟡' : '🔴';
-    output.push(`  🎯  Confidence Level: ${emoji} ${confidence.level} (${confidence.score}%)`);
+    const level = confidence.level || 'Low';
+    output.push(`  Confidence Level: ${level} (${confidence.score}%)`);
     if (confidence.breakdown) {
-      output.push(`     ├─ Source Relevance: ${confidence.breakdown.relevance || 0}%`);
-      output.push(`     ├─ Source Authority: ${confidence.breakdown.authority || 0}%`);
-      output.push(`     └─ Source Diversity: ${confidence.breakdown.diversity || 0}%`);
+      output.push(`    - Source Relevance: ${confidence.breakdown.relevance || 0}%`);
+      output.push(`    - Source Authority: ${confidence.breakdown.authority || 0}%`);
+      output.push(`    - Source Diversity: ${confidence.breakdown.diversity || 0}%`);
     }
     output.push(divider);
   }
   
-  // ============================================
-  // MAIN RESPONSE - Professional Formatting
-  // ============================================
+  // MAIN RESPONSE
   if (grokResponse) {
-    // Clean up the Grok response and format it professionally
-    let cleanResponse = grokResponse;
-    
-    // Add bullet points if not already present
-    if (!cleanResponse.includes('•') && !cleanResponse.includes('-')) {
-      // Split into paragraphs and add structure
-      const paragraphs = cleanResponse.split('\n\n');
-      if (paragraphs.length > 1) {
-        cleanResponse = paragraphs.map((p, i) => {
-          if (i === 0) return p;
-          if (p.length > 50) return `  • ${p}`;
-          return p;
-        }).join('\n\n');
-      }
-    }
-    
-    output.push(`  📌  Executive Summary`);
+    output.push(`  Executive Summary`);
     output.push(divider);
-    output.push(cleanResponse);
+    output.push(grokResponse);
     output.push('');
   }
   
-  // ============================================
-  // KEY FINDINGS - Bullet Points
-  // ============================================
+  // KEY FINDINGS
   if (results && results.length > 0) {
     const facts = extractFacts(query, results);
     if (facts && facts.length > 0) {
-      output.push(`  🔑  Key Findings`);
+      output.push(`  Key Findings`);
       output.push(divider);
       for (let i = 0; i < Math.min(facts.length, 5); i++) {
         const f = facts[i];
         output.push(`  ${i+1}. ${f.text}`);
-        output.push(`     └─ Source: ${f.source}`);
+        output.push(`     Source: ${f.source}`);
       }
       output.push('');
     }
   }
   
-  // ============================================
-  // SOURCES - Professional Reference Section
-  // ============================================
+  // SOURCES
   if (results && results.length > 0) {
-    output.push(`  📚  References`);
+    output.push(`  References`);
     output.push(divider);
     for (let i = 0; i < Math.min(results.length, 5); i++) {
       const r = results[i];
-      const relevanceEmoji = r.relevance > 60 ? '🟢' : r.relevance > 30 ? '🟡' : '🔴';
       output.push(`  [${i+1}] ${r.title}`);
       output.push(`      Source: ${r.source_name}`);
       output.push(`      Date: ${r.date || 'Unknown'}`);
-      output.push(`      Relevance: ${relevanceEmoji} ${r.relevance}%`);
+      output.push(`      Relevance: ${r.relevance}%`);
       output.push(`      URL: ${r.source || '#'}`);
       output.push('');
     }
   }
   
-  // ============================================
-  // METADATA - Footer
-  // ============================================
-  output.push(`  📊  Report Metadata`);
+  // METADATA
+  output.push(`  Report Metadata`);
   output.push(divider);
   output.push(`  Intent Classification: ${intentLabel}`);
   output.push(`  Sources Analyzed: ${results?.length || 0}`);
@@ -637,29 +600,23 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
 }
 
 // ============================================
-// GENERATE RESPONSE - ALL QUESTIONS USE GROK
+// GENERATE RESPONSE
 // ============================================
 
 async function generateResponse(query, searchResult) {
   const { results, classification } = searchResult;
   const queryType = classification?.type || 'factual';
   
-  // ============================================
-  // CHECK CACHE
-  // ============================================
+  // Check cache
   const cached = responseCache.get(query);
   if (cached) {
     return cached;
   }
   
-  // ============================================
-  // DETECT INTENT
-  // ============================================
+  // Detect intent
   const intentInfo = intentDetector.detectIntent(query);
   
-  // ============================================
-  // BUILD CONTEXT
-  // ============================================
+  // Build context
   let context = '';
   let facts = [];
   
@@ -672,16 +629,12 @@ async function generateResponse(query, searchResult) {
     context = `No specific sources found for this query. Provide a general response based on your knowledge.`;
   }
   
-  // ============================================
-  // CALCULATE CONFIDENCE
-  // ============================================
+  // Calculate confidence
   const confidence = results && results.length > 0 
     ? confidenceScorer.calculateConfidence(results, results, classification)
-    : { level: 'Low', score: 20, emoji: '🔴', breakdown: { relevance: 0, authority: 0, diversity: 0 } };
+    : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
-  // ============================================
-  // ALWAYS USE GROK
-  // ============================================
+  // Always use Grok
   let grokResponse = null;
   let formattedResponse = '';
   
@@ -713,9 +666,7 @@ async function generateResponse(query, searchResult) {
     console.warn('Grok failed:', error.message);
   }
   
-  // ============================================
-  // FORMAT RESPONSE PROFESSIONALLY
-  // ============================================
+  // Format response
   formattedResponse = formatProfessionalResponse(
     query,
     grokResponse || 'Unable to generate a response at this time. Please try again.',
@@ -724,9 +675,7 @@ async function generateResponse(query, searchResult) {
     intentInfo
   );
   
-  // ============================================
-  // BUILD FINAL RESPONSE
-  // ============================================
+  // Build final response
   const finalResponse = {
     response: formattedResponse,
     sources: results || [],
@@ -745,9 +694,7 @@ async function generateResponse(query, searchResult) {
     }
   };
   
-  // ============================================
-  // CACHE RESPONSE
-  // ============================================
+  // Cache response
   responseCache.set(query, finalResponse);
   
   return finalResponse;
@@ -795,7 +742,7 @@ export default async function handler(req, res) {
         source_names: [...new Set(uniqueSources.map(s => s.source_name))],
         grok_available: !!process.env.GROQ_API_KEY,
         cache_stats: responseCache.getStats(),
-        features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'pdf_style_formatting']
+        features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search']
       });
     }
 
@@ -909,7 +856,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // SEARCH - ALL QUESTIONS GO THROUGH GROK
+    // Search
     if (query) {
       const searchResult = searchSources(query);
       const response = await generateResponse(query, searchResult);
@@ -921,7 +868,7 @@ export default async function handler(req, res) {
       name: 'Omni Brand Intelligence Bot API',
       version: '4.0.0',
       status: 'running',
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'advanced_search', 'pdf_style_formatting'],
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search'],
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
