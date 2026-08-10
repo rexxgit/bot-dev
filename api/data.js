@@ -1,10 +1,10 @@
-// api/data.js - Complete Clean Version
+// api/data.js - Complete API with Humanized Copywriting Output
 
 // ============================================
 // IMPORTS - All from lib/
 // ============================================
 
-import { semanticChunk, contextAwareChunk } from '../lib/chunking/semantic.js';
+import { semanticChunk } from '../lib/chunking/semantic.js';
 import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
 import { getFewShotExamples } from '../lib/prompts/examples.js';
 import { selectTemplate } from '../lib/prompts/templates.js';
@@ -27,7 +27,7 @@ const techCrunchSources = [
     title: "Microsoft is openly competing with OpenAI, Anthropic more than ever",
     author: "Unknown",
     date: "2026-07-29T17:21:06-07:00",
-    content: "Microsoft is in a unique position as AI overtakes the tech industry. It's one of the world's largest cloud providers and software-as-a-service companies, while also holding valuable stakes in the two biggest AI labs, OpenAI and Anthropic. Those incentives are starting to clash as Microsoft posts blockbuster financial results.",
+    content: "Microsoft is in a unique position as AI overtakes the tech industry. It's one of the world's largest cloud providers and software-as-a-service companies, while also holding valuable stakes in the two biggest AI labs, OpenAI and Anthropic. Those incentives are starting to clash as Microsoft posts blockbuster financial results. The company just reported an extremely profitable quarter with $90 billion in revenue and net income of $35.8 billion.",
     url: "https://techcrunch.com/2026/07/29/microsoft-is-openly-competing-with-openai-anthropic-more-than-ever/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -40,7 +40,7 @@ const techCrunchSources = [
     title: "Mark Zuckerberg predicts that billions of people will have personal AI agents in five years",
     author: "Unknown",
     date: "2026-07-29T16:00:11-07:00",
-    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years.",
+    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years. 'I think that it's extremely unlikely if you look out five years from now, for example — whatever period of time you want — that you don't have billions of people with a personal agent that understands your goals and that is just working on your behalf 24/7 to achieve your goals in whatever the domain is that you care about,' Zuckerberg said.",
     url: "https://techcrunch.com/2026/07/29/mark-zuckerberg-predicts-that-billions-of-people-will-have-personal-ai-agents-in-five-years/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -53,7 +53,7 @@ const techCrunchSources = [
     title: "Microsoft logs $3.2B from Anthropic investment, but OpenAI was a mixed bag",
     author: "Unknown",
     date: "2026-07-29T15:46:03-07:00",
-    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing.",
+    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing. For the quarter, it recorded its investment in Anthropic as a $3.2 billion gain.",
     url: "https://techcrunch.com/2026/07/29/microsoft-logs-3-2b-from-anthropic-investment-but-openai-was-a-mixed-bag/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -66,7 +66,7 @@ const techCrunchSources = [
     title: "Zuckerberg says Meta's enterprise AI opportunity extends beyond agents",
     author: "Unknown",
     date: "2026-07-29T15:23:12-07:00",
-    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses, to help with customer service, support, and other daily operations.",
+    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses, to help with customer service, support, and other daily operations. But the tech giant's enterprise AI ambitions are much more expansive, Meta CEO Mark Zuckerberg told investors on Wednesday's second-quarter earnings call.",
     url: "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -134,7 +134,7 @@ const staticSources = [
     title: "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
     author: "Raulji Technologies",
     date: "July 27, 2026",
-    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business.",
+    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business, and how to turn it into a competitive advantage.",
     url: "https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/",
     source_name: "Raulji Technologies",
     source_type: "blog",
@@ -517,193 +517,186 @@ function generateSuggestions(query) {
 }
 
 // ============================================
-// PROFESSIONAL FORMATTER - NO EMOJIS
+// HUMANIZED COPYWRITING SYSTEM
 // ============================================
 
-// api/data.js - Replace the formatProfessionalResponse function
-
-function formatProfessionalResponse(query, grokResponse, results, confidence, intentInfo) {
-  const separator = '═══════════════════════════════════════════════════════════════════════════════════════════';
-  const divider = '───────────────────────────────────────────────────────────────────────────────────────────';
-  const subDivider = '┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄';
-  
-  const intentName = intentInfo?.primary || 'informational';
-  const intentLabels = {
-    informational: 'INFORMATION REPORT',
-    analytical: 'ANALYTICAL REPORT',
-    comparative: 'COMPARATIVE ANALYSIS',
-    exploratory: 'EXPLORATORY INSIGHT',
-    action: 'ACTIONABLE GUIDANCE',
-    summarization: 'EXECUTIVE SUMMARY'
-  };
-  const intentLabel = intentLabels[intentName] || 'REPORT';
-  
-  const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString('en-US', { 
-    year: 'numeric', month: 'long', day: 'numeric' 
-  });
-  const formattedTime = currentDate.toLocaleTimeString('en-US', { 
-    hour: '2-digit', minute: '2-digit', hour12: true 
-  });
+function humanizeResponse(query, grokResponse, results, confidence, intentInfo) {
+  const facts = results && results.length > 0 ? extractFacts(query, results) : [];
+  const sourceData = results && results.length > 0 ? results : [];
   
   let output = [];
   
-  // ============================================
-  // HEADER - Professional Letterhead Style
-  // ============================================
-  output.push('');
-  output.push('  O M N I   B R A N D   I N T E L L I G E N C E');
-  output.push('  ────────────────────────────────────────────────');
-  output.push('  AI Research Division');
-  output.push('  Confidential Report');
-  output.push(separator);
-  output.push('');
-  
-  // Document Metadata
-  output.push(`  DOCUMENT:     ${intentLabel}`);
-  output.push(`  REPORT ID:    ${Date.now().toString(36).toUpperCase()}`);
-  output.push(`  DATE:         ${formattedDate}`);
-  output.push(`  TIME:         ${formattedTime}`);
-  output.push(`  STATUS:       ${confidence?.level || 'COMPLETE'}`);
-  output.push(divider);
-  output.push('');
-  
-  // ============================================
-  // QUERY SECTION
-  // ============================================
-  output.push('  QUERY');
-  output.push('  ───────────────────────────────────────────────────────────────────────────');
-  output.push(`  ${query}`);
-  output.push('');
-  
-  // ============================================
-  // CONFIDENCE SECTION
-  // ============================================
-  if (confidence) {
-    const level = confidence.level || 'Low';
-    const score = confidence.score || 0;
-    const barLength = 20;
-    const filled = Math.round((score / 100) * barLength);
-    const empty = barLength - filled;
-    const bar = '█'.repeat(filled) + '░'.repeat(empty);
-    
-    output.push('  CONFIDENCE ASSESSMENT');
-    output.push('  ───────────────────────────────────────────────────────────────────────────');
-    output.push(`  Level:        ${level.toUpperCase()}`);
-    output.push(`  Score:        ${score}%`);
-    output.push(`  Indicator:    [${bar}]`);
-    if (confidence.breakdown) {
-      output.push(`  Relevance:    ${confidence.breakdown.relevance || 0}%`);
-      output.push(`  Authority:    ${confidence.breakdown.authority || 0}%`);
-      output.push(`  Diversity:    ${confidence.breakdown.diversity || 0}%`);
-    }
-    output.push('');
-  }
+  const intentName = intentInfo?.primary || 'informational';
+  const isAnalytical = ['analytical', 'comparative', 'exploratory'].includes(intentName);
+  const isFactual = intentName === 'informational' || intentName === 'summarization';
   
   // ============================================
   // EXECUTIVE SUMMARY
   // ============================================
   if (grokResponse) {
-    output.push('  EXECUTIVE SUMMARY');
-    output.push('  ───────────────────────────────────────────────────────────────────────────');
+    let summary = grokResponse;
+    summary = summary.replace(/\*\*/g, '');
+    summary = summary.replace(/\*/g, '');
+    summary = summary.replace(/^Summary:|^Executive Summary:|^Overview:/i, '');
     
-    // Clean and format the response as paragraphs
-    let cleanResponse = grokResponse;
+    const paragraphs = summary.split('\n\n');
+    let leadParagraph = paragraphs[0] || summary;
     
-    // Remove markdown bold/italic
-    cleanResponse = cleanResponse.replace(/\*\*/g, '');
-    cleanResponse = cleanResponse.replace(/\*/g, '');
-    
-    // Format bullet points properly
-    const lines = cleanResponse.split('\n');
-    let formattedLines = [];
-    let inList = false;
-    
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) continue;
-      
-      if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.match(/^\d+\./)) {
-        if (!inList) {
-          inList = true;
-        }
-        formattedLines.push(`  ${trimmed}`);
-      } else if (trimmed.startsWith('Source:') || trimmed.startsWith('Confidence:')) {
-        formattedLines.push(`  ${trimmed}`);
-      } else {
-        if (inList) {
-          inList = false;
-        }
-        // Wrap text to 70 characters
-        const words = trimmed.split(' ');
-        let line = '';
-        for (const word of words) {
-          if ((line + word).length > 70) {
-            formattedLines.push(`  ${line.trim()}`);
-            line = '';
-          }
-          line += word + ' ';
-        }
-        if (line.trim()) {
-          formattedLines.push(`  ${line.trim()}`);
-        }
-      }
+    if (leadParagraph.length < 100 && paragraphs.length > 1) {
+      leadParagraph = leadParagraph + ' ' + paragraphs[1];
     }
     
-    output.push(formattedLines.join('\n'));
+    const leadSentences = leadParagraph.split('. ');
+    if (leadSentences.length > 3) {
+      leadParagraph = leadSentences.slice(0, 3).join('. ') + '.';
+    }
+    
+    if (isAnalytical) {
+      output.push('**The bottom line:** ' + leadParagraph);
+    } else if (isFactual) {
+      output.push('**Here\'s the straight answer:** ' + leadParagraph);
+    } else {
+      output.push('**Key takeaway:** ' + leadParagraph);
+    }
     output.push('');
   }
   
   // ============================================
-  // KEY FINDINGS
+  // KEY DETAILS
   // ============================================
-  if (results && results.length > 0) {
-    const facts = extractFacts(query, results);
-    if (facts && facts.length > 0) {
-      output.push('  KEY FINDINGS');
-      output.push('  ───────────────────────────────────────────────────────────────────────────');
-      for (let i = 0; i < Math.min(facts.length, 5); i++) {
-        const f = facts[i];
-        const sourceLabel = f.source || 'Unknown';
-        output.push(`  ${i+1}. ${f.text}`);
-        output.push(`     Source: ${sourceLabel}`);
+  if (facts && facts.length > 0) {
+    const mainFacts = facts.slice(0, 3);
+    
+    if (mainFacts.length === 1) {
+      output.push('**The critical detail:** ' + mainFacts[0].text);
+      output.push('');
+    } else if (mainFacts.length > 1) {
+      output.push('**What you need to know:**');
+      for (let i = 0; i < mainFacts.length; i++) {
+        const f = mainFacts[i];
+        let factText = f.text;
+        if (!factText.endsWith('.') && !factText.endsWith('!') && !factText.endsWith('?')) {
+          factText += '.';
+        }
+        output.push('  • ' + factText);
       }
       output.push('');
     }
   }
   
   // ============================================
-  // REFERENCES (Sources)
+  // CONTEXT & ANALYSIS
   // ============================================
-  if (results && results.length > 0) {
-    output.push('  REFERENCES');
-    output.push('  ───────────────────────────────────────────────────────────────────────────');
-    for (let i = 0; i < Math.min(results.length, 5); i++) {
-      const r = results[i];
-      const relevanceEmoji = r.relevance > 60 ? '●' : r.relevance > 30 ? '◗' : '○';
-      output.push(`  [${i+1}]  ${r.title}`);
-      output.push(`       Source:   ${r.source_name || 'Unknown'}`);
-      output.push(`       Date:     ${r.date || 'N/A'}`);
-      output.push(`       Relevance: ${relevanceEmoji} ${r.relevance}%`);
-      output.push(`       URL:      ${r.source || '#'}`);
+  if (grokResponse) {
+    let analysis = grokResponse;
+    analysis = analysis.replace(/\*\*/g, '');
+    analysis = analysis.replace(/\*/g, '');
+    
+    const analysisParagraphs = analysis.split('\n\n');
+    let remainingContent = '';
+    if (analysisParagraphs.length > 1) {
+      remainingContent = analysisParagraphs.slice(1).join('\n\n');
+    } else {
+      remainingContent = analysis;
+    }
+    
+    let humanizedAnalysis = remainingContent;
+    humanizedAnalysis = humanizedAnalysis.replace(/^Analysis:|^Context:|^Details:/i, '');
+    
+    const sentences = humanizedAnalysis.split('. ');
+    if (sentences.length > 2) {
+      let variedSentences = [];
+      for (let i = 0; i < sentences.length; i++) {
+        let s = sentences[i].trim();
+        if (!s) continue;
+        if (!s.endsWith('.') && !s.endsWith('!') && !s.endsWith('?')) {
+          s += '.';
+        }
+        variedSentences.push('  ' + s);
+      }
+      humanizedAnalysis = variedSentences.join(' ');
+    }
+    
+    humanizedAnalysis = humanizedAnalysis.replace(/\s+/g, ' ');
+    
+    if (humanizedAnalysis.length > 50) {
+      const hasWhyItMatters = humanizedAnalysis.toLowerCase().includes('why') || 
+                             humanizedAnalysis.toLowerCase().includes('implication');
+      
+      if (!hasWhyItMatters && isAnalytical) {
+        output.push('**Why this matters:** ' + humanizedAnalysis);
+      } else {
+        output.push('**Here\'s the context:** ' + humanizedAnalysis);
+      }
       output.push('');
     }
   }
   
   // ============================================
-  // REPORT METADATA
+  // QUICK REFERENCE
   // ============================================
-  output.push('  REPORT METADATA');
-  output.push('  ───────────────────────────────────────────────────────────────────────────');
-  output.push(`  Classification:  ${intentLabel}`);
-  output.push(`  Sources Found:   ${results?.length || 0}`);
-  output.push(`  Sources Available: ${uniqueSources?.length || 0}`);
-  output.push(`  AI Model:        ${grokResponse ? 'Grok (Enhanced)' : 'Fallback'}`);
-  output.push(`  Processing Time: ${Date.now() % 1000}ms`);
-  output.push(separator);
+  if (sourceData && sourceData.length > 0) {
+    output.push('**Quick reference:**');
+    for (let i = 0; i < Math.min(sourceData.length, 3); i++) {
+      const s = sourceData[i];
+      const relevanceText = s.relevance > 60 ? 'high confidence' : s.relevance > 30 ? 'moderate relevance' : 'supporting reference';
+      output.push('  • ' + s.source_name + ' (' + relevanceText + ')');
+    }
+    output.push('');
+  }
   
-  return output.join('\n');
+  // ============================================
+  // CONFIDENCE ASSESSMENT
+  // ============================================
+  if (confidence) {
+    const score = confidence.score || 0;
+    let confidenceText = '';
+    
+    if (score >= 80) {
+      confidenceText = 'high confidence—the sources are consistent and authoritative.';
+    } else if (score >= 50) {
+      confidenceText = 'moderate confidence—the data is solid but not overwhelming.';
+    } else {
+      confidenceText = 'limited confidence—the evidence is suggestive but not conclusive.';
+    }
+    
+    output.push('**Confidence assessment:** ' + confidenceText);
+    output.push('');
+  }
+  
+  // ============================================
+  // SOURCES
+  // ============================================
+  if (sourceData && sourceData.length > 0) {
+    output.push('**Sources:**');
+    for (let i = 0; i < Math.min(sourceData.length, 4); i++) {
+      const s = sourceData[i];
+      output.push('  • ' + (s.source_name || 'Unknown'));
+      if (s.date) {
+        output.push('    ' + s.date);
+      }
+      if (s.source) {
+        output.push('    ' + s.source);
+      }
+    }
+    output.push('');
+  }
+  
+  // ============================================
+  // CONFIDENCE LEVEL
+  // ============================================
+  if (confidence) {
+    const level = confidence.level || 'Low';
+    const score = confidence.score || 0;
+    output.push('**Confidence Level:** ' + level + ' (' + score + '%)');
+  }
+  
+  let finalOutput = output.join('\n');
+  finalOutput = finalOutput.replace(/\n{3,}/g, '\n\n');
+  
+  return finalOutput;
 }
+
 // ============================================
 // GENERATE RESPONSE
 // ============================================
@@ -726,15 +719,14 @@ async function generateResponse(query, searchResult) {
       `Source ${i+1}: ${r.title}\n${r.chunk || r.fullContent?.substring(0, 500) || ''}`
     ).join('\n\n');
   } else {
-    context = 'No specific sources found. Provide a general response.';
+    context = 'No specific sources found. Provide a general response based on your knowledge.';
   }
   
- const confidence = results && results.length > 0 
-  ? confidenceScorer.calculateConfidence(results, results, classification)
-  : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
+  const confidence = results && results.length > 0 
+    ? confidenceScorer.calculateConfidence(results, results, classification)
+    : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
   let grokResponse = null;
-  let formattedResponse = '';
   
   try {
     const apiKey = process.env.GROQ_API_KEY;
@@ -765,7 +757,7 @@ async function generateResponse(query, searchResult) {
     grokResponse = null;
   }
   
-  formattedResponse = formatProfessionalResponse(
+  const humanizedResponse = humanizeResponse(
     query,
     grokResponse || 'Unable to generate a response at this time.',
     results || [],
@@ -774,7 +766,7 @@ async function generateResponse(query, searchResult) {
   );
   
   const finalResponse = {
-    response: formattedResponse,
+    response: humanizedResponse,
     sources: results || [],
     metadata: {
       total_sources: uniqueSources.length,
@@ -786,6 +778,7 @@ async function generateResponse(query, searchResult) {
       confidence: confidence,
       ai_generated: true,
       model: grokResponse ? 'grok' : 'fallback',
+      humanized: true,
       last_updated: new Date().toISOString()
     }
   };
@@ -834,7 +827,8 @@ export default async function handler(req, res) {
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
       grok_available: !!process.env.GROQ_API_KEY,
-      cache_stats: responseCache.getStats()
+      cache_stats: responseCache.getStats(),
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'humanized_output']
     });
   }
 
@@ -860,6 +854,7 @@ export default async function handler(req, res) {
       source_stats: sourceStats,
       grok_available: !!process.env.GROQ_API_KEY,
       cache_stats: responseCache.getStats(),
+      features: ['humanized_output'],
       last_updated: new Date().toISOString()
     });
   }
@@ -873,70 +868,6 @@ export default async function handler(req, res) {
     });
   }
 
-  if (action === 'admin') {
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Admin API',
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  if (action === 'audit') {
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Audit API',
-      logs: [],
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  if (action === 'auth') {
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Auth API',
-      authenticated: false,
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  if (action === 'evaluate') {
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Evaluate API',
-      evaluation: 'pending',
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  if (action === 'privacy') {
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Privacy Policy',
-      data: 'No personal data is stored. All conversations are anonymous.',
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  if (action === 'sources') {
-    const sourceNames = [...new Set(uniqueSources.map(s => s.source_name))];
-    return res.status(200).json({
-      status: 'ok',
-      sources: sourceNames,
-      count: sourceNames.length,
-      total_articles: uniqueSources.length,
-      timestamp: new Date().toISOString()
-    });
-  }
-
-  if (action === 'trigger') {
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Trigger API - Scraper triggered',
-      triggered: true,
-      timestamp: new Date().toISOString()
-    });
-  }
-
   if (query) {
     const searchResult = searchSources(query);
     const response = await generateResponse(query, searchResult);
@@ -945,9 +876,9 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     name: 'Omni Brand Intelligence Bot API',
-    version: '4.0.0',
+    version: '4.1.0',
     status: 'running',
-    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search'],
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'humanized_output'],
     total_sources: uniqueSources.length,
     source_stats: sourceStats,
     source_names: [...new Set(uniqueSources.map(s => s.source_name))],
