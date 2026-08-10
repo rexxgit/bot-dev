@@ -1,30 +1,20 @@
-// api/data.js - Complete Self-Contained API
-// Uses lib/ for all helper functions
+// api/data.js - Complete API with Fixed Try/Catch
 
 // ============================================
-// IMPORTS FROM lib/
+// IMPORTS - All from lib/
 // ============================================
 
-// Chunking
 import { semanticChunk, contextAwareChunk } from '../lib/chunking/semantic.js';
-
-// Prompts
 import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
 import { getFewShotExamples } from '../lib/prompts/examples.js';
 import { selectTemplate } from '../lib/prompts/templates.js';
 import { generateCOTPrompt } from '../lib/prompts/cot.js';
 import { selectPersona } from '../lib/prompts/personas.js';
-
-// Response
 import { intentDetector } from '../lib/response/intent.js';
 import { confidenceScorer } from '../lib/response/confidence.js';
 import { responseFormatter } from '../lib/response/formatter.js';
 import { responseCache } from '../lib/response/cache.js';
-
-// Search
 import { advancedSearch } from '../lib/search/hybrid.js';
-
-// Grok
 import { createGrokInstance } from '../lib/grok/index.js';
 import { buildGrokRequest } from '../lib/grok/prompts.js';
 
@@ -539,7 +529,6 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
   
   let output = [];
   
-  // HEADER
   output.push(separator);
   output.push(`  ${intentLabel} Analysis Report`);
   output.push(separator);
@@ -547,7 +536,6 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
   output.push(`  Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
   output.push(divider);
   
-  // CONFIDENCE
   if (confidence) {
     const level = confidence.level || 'Low';
     output.push(`  Confidence Level: ${level} (${confidence.score}%)`);
@@ -559,7 +547,6 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
     output.push(divider);
   }
   
-  // MAIN RESPONSE
   if (grokResponse) {
     output.push(`  Executive Summary`);
     output.push(divider);
@@ -567,7 +554,6 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
     output.push('');
   }
   
-  // KEY FINDINGS
   if (results && results.length > 0) {
     const facts = extractFacts(query, results);
     if (facts && facts.length > 0) {
@@ -582,7 +568,6 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
     }
   }
   
-  // SOURCES
   if (results && results.length > 0) {
     output.push(`  References`);
     output.push(divider);
@@ -597,7 +582,6 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
     }
   }
   
-  // METADATA
   output.push(`  Report Metadata`);
   output.push(divider);
   output.push(`  Intent Classification: ${intentLabel}`);
@@ -611,41 +595,34 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
 }
 
 // ============================================
-// GENERATE RESPONSE - ALL QUESTIONS USE GROK
+// GENERATE RESPONSE
 // ============================================
 
 async function generateResponse(query, searchResult) {
   const { results, classification } = searchResult;
   const queryType = classification?.type || 'factual';
   
-  // Check cache
   const cached = responseCache.get(query);
   if (cached) {
     return cached;
   }
   
-  // Detect intent
   const intentInfo = intentDetector.detectIntent(query);
   
-  // Build context
   let context = '';
-  let facts = [];
   
   if (results && results.length > 0) {
     context = results.map((r, i) => 
       `Source ${i+1}: ${r.title}\n${r.chunk || r.fullContent?.substring(0, 500) || ''}`
     ).join('\n\n');
-    facts = extractFacts(query, results);
   } else {
-    context = `No specific sources found for this query. Provide a general response based on your knowledge.`;
+    context = 'No specific sources found. Provide a general response.';
   }
   
-  // Calculate confidence
   const confidence = results && results.length > 0 
     ? confidenceScorer.calculateConfidence(results, results, classification)
     : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
-  // Always use Grok
   let grokResponse = null;
   let formattedResponse = '';
   
@@ -677,16 +654,14 @@ async function generateResponse(query, searchResult) {
     console.warn('Grok failed:', error.message);
   }
   
-  // Format response
   formattedResponse = formatProfessionalResponse(
     query,
-    grokResponse || 'Unable to generate a response at this time. Please try again.',
+    grokResponse || 'Unable to generate a response at this time.',
     results || [],
     confidence,
     intentInfo
   );
   
-  // Build final response
   const finalResponse = {
     response: formattedResponse,
     sources: results || [],
@@ -700,19 +675,17 @@ async function generateResponse(query, searchResult) {
       confidence: confidence,
       ai_generated: true,
       model: grokResponse ? 'grok' : 'fallback',
-      search_method: 'advanced_hybrid',
       last_updated: new Date().toISOString()
     }
   };
   
-  // Cache response
   responseCache.set(query, finalResponse);
   
   return finalResponse;
 }
 
 // ============================================
-// API HANDLER - DEFAULT EXPORT
+// API HANDLER
 // ============================================
 
 export default async function handler(req, res) {
@@ -743,7 +716,6 @@ export default async function handler(req, res) {
       action = req.body?.action || null;
     }
 
-    // Health check
     if (action === 'health' || action === 'ping') {
       return res.status(200).json({
         status: 'ok',
@@ -752,12 +724,10 @@ export default async function handler(req, res) {
         source_stats: sourceStats,
         source_names: [...new Set(uniqueSources.map(s => s.source_name))],
         grok_available: !!process.env.GROQ_API_KEY,
-        cache_stats: responseCache.getStats(),
-        features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search']
+        cache_stats: responseCache.getStats()
       });
     }
 
-    // All sources
     if (action === 'all') {
       return res.status(200).json({
         total: uniqueSources.length,
@@ -774,19 +744,17 @@ export default async function handler(req, res) {
       });
     }
 
-    // Stats
     if (action === 'stats') {
       return res.status(200).json({
         total_sources: uniqueSources.length,
         source_stats: sourceStats,
         grok_available: !!process.env.GROQ_API_KEY,
         cache_stats: responseCache.getStats(),
-        search_method: 'advanced_hybrid',
         last_updated: new Date().toISOString()
       });
     }
 
-    // Clear cache    if (action === 'clear-cache') {
+    if (action === 'clear-cache') {
       responseCache.clear();
       return res.status(200).json({
         status: 'ok',
@@ -795,7 +763,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Admin
     if (action === 'admin') {
       return res.status(200).json({
         status: 'ok',
@@ -804,7 +771,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Audit
     if (action === 'audit') {
       return res.status(200).json({
         status: 'ok',
@@ -814,7 +780,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Auth
     if (action === 'auth') {
       return res.status(200).json({
         status: 'ok',
@@ -824,7 +789,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Evaluate
     if (action === 'evaluate') {
       return res.status(200).json({
         status: 'ok',
@@ -834,7 +798,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Privacy
     if (action === 'privacy') {
       return res.status(200).json({
         status: 'ok',
@@ -844,7 +807,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Sources list
     if (action === 'sources') {
       const sourceNames = [...new Set(uniqueSources.map(s => s.source_name))];
       return res.status(200).json({
@@ -856,7 +818,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Trigger
     if (action === 'trigger') {
       return res.status(200).json({
         status: 'ok',
@@ -866,14 +827,12 @@ export default async function handler(req, res) {
       });
     }
 
-    // Search
     if (query) {
       const searchResult = searchSources(query);
       const response = await generateResponse(query, searchResult);
       return res.status(200).json(response);
     }
 
-    // Default
     return res.status(200).json({
       name: 'Omni Brand Intelligence Bot API',
       version: '4.0.0',
@@ -884,7 +843,6 @@ export default async function handler(req, res) {
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
       grok_available: !!process.env.GROQ_API_KEY,
       cache_stats: responseCache.getStats(),
-      search_method: 'advanced_hybrid',
       endpoints: {
         search: 'GET/POST with ?query=your+question',
         health: 'GET?action=health',
