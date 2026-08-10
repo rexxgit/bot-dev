@@ -1,9 +1,4 @@
-// api/data.js - Complete API with Advanced Search & Retrieval (Day 7)
-// Features: Vector Embeddings, Query Expansion, Re-ranking, Hybrid Search
-
-// ============================================
-// IMPORTS - All from lib/ (NOT counted as functions)
-// ============================================
+// api/data.js - UPDATE ALL IMPORTS TO POINT TO lib/
 
 // Chunking
 import { semanticChunk, contextAwareChunk } from '../lib/chunking/semantic.js';
@@ -21,13 +16,12 @@ import { confidenceScorer } from '../lib/response/confidence.js';
 import { responseFormatter } from '../lib/response/formatter.js';
 import { responseCache } from '../lib/response/cache.js';
 
+// Search
+import { advancedSearch } from '../lib/search/hybrid.js';
+
 // Grok
 import { createGrokInstance } from '../lib/grok/index.js';
 import { buildGrokRequest } from '../lib/grok/prompts.js';
-
-// Advanced Search (Day 7)
-import { advancedSearch } from '../lib/search/hybrid.js';
-
 // ============================================
 // ALL DATA EMBEDDED HERE
 // ============================================
