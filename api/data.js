@@ -619,9 +619,9 @@ async function generateResponse(query, searchResult) {
     context = 'No specific sources found. Provide a general response.';
   }
   
-  const confidence = results && results.length > 0 
-    ? confidenceScorer.calculateConfidence(results, results, classification)
-    : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
+ const confidence = results && results.length > 0 
+  ? confidenceScorer.calculateConfidence(results, results, classification)
+  : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
   let grokResponse = null;
   let formattedResponse = '';
