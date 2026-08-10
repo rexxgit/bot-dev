@@ -1,27 +1,22 @@
-// api/data.js - UPDATE ALL IMPORTS TO POINT TO lib/
+// api/data.js - Complete API with Grok for ALL Questions + Professional Formatting
 
-// Chunking
-import { semanticChunk, contextAwareChunk } from '../lib/chunking/semantic.js';
+// ============================================
+// IMPORTS - All from lib/
+// ============================================
 
-// Prompts
 import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
 import { getFewShotExamples } from '../lib/prompts/examples.js';
 import { selectTemplate } from '../lib/prompts/templates.js';
 import { generateCOTPrompt } from '../lib/prompts/cot.js';
 import { selectPersona } from '../lib/prompts/personas.js';
-
-// Response
 import { intentDetector } from '../lib/response/intent.js';
 import { confidenceScorer } from '../lib/response/confidence.js';
 import { responseFormatter } from '../lib/response/formatter.js';
 import { responseCache } from '../lib/response/cache.js';
-
-// Search
 import { advancedSearch } from '../lib/search/hybrid.js';
-
-// Grok
 import { createGrokInstance } from '../lib/grok/index.js';
 import { buildGrokRequest } from '../lib/grok/prompts.js';
+
 // ============================================
 // ALL DATA EMBEDDED HERE
 // ============================================
@@ -327,7 +322,6 @@ const ventureBeatSources = [
 
 const allSources = [...techCrunchSources, ...staticSources, ...ventureBeatSources];
 
-// Remove duplicates by URL
 const uniqueSources = [];
 const seenUrls = new Set();
 for (const source of allSources) {
@@ -337,10 +331,6 @@ for (const source of allSources) {
   }
 }
 
-// ============================================
-// SOURCE STATS
-// ============================================
-
 const sourceStats = {
   techcrunch: techCrunchSources.length,
   static: staticSources.length,
@@ -349,7 +339,7 @@ const sourceStats = {
 };
 
 // ============================================
-// SEARCH FUNCTIONS - ENHANCED (Day 7)
+// SEARCH FUNCTIONS
 // ============================================
 
 function classifyQuery(query) {
@@ -391,10 +381,6 @@ function classifyQuery(query) {
   };
 }
 
-// ============================================
-// SEARCH SOURCES - USING ADVANCED HYBRID SEARCH (Day 7)
-// ============================================
-
 function searchSources(query) {
   if (!query) return { results: [], classification: null };
   
@@ -402,11 +388,8 @@ function searchSources(query) {
   if (queryLower.length < 2) return { results: [], classification: null };
   
   const classification = classifyQuery(query);
-  
-  // Use advanced hybrid search from Day 7
   const searchResults = advancedSearch.search(query, uniqueSources);
   
-  // Format results for response
   const results = searchResults.slice(0, 5).map(item => ({
     title: item.source?.title || 'Untitled',
     source: item.source?.url || '#',
@@ -426,10 +409,6 @@ function searchSources(query) {
     classification: classification
   };
 }
-
-// ============================================
-// EXTRACT FACTS FROM RESULTS
-// ============================================
 
 function extractFacts(query, results) {
   const facts = [];
@@ -474,10 +453,6 @@ function extractFacts(query, results) {
   return uniqueFacts;
 }
 
-// ============================================
-// GENERATE NO RESULTS RESPONSE
-// ============================================
-
 function generateNoResultsResponse(query) {
   const topics = [
     "Microsoft investment in Anthropic ($5B)",
@@ -515,10 +490,6 @@ ${suggestions.map(s => `- ${s}`).join('\n')}
 ${[...new Set(uniqueSources.map(s => `- ${s.source_name}`))].join('\n')}`;
 }
 
-// ============================================
-// GENERATE SUGGESTIONS
-// ============================================
-
 function generateSuggestions(query) {
   const topics = [
     "Microsoft investment in Anthropic ($5B)",
@@ -543,7 +514,80 @@ function generateSuggestions(query) {
 }
 
 // ============================================
-// GENERATE RESPONSE - MAIN ENTRY
+// FORMATTER FUNCTIONS - Professional Output
+// ============================================
+
+function formatProfessionalResponse(query, grokResponse, results, confidence, intentInfo) {
+  const separator = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+  const divider = '────────────────────────────────────────';
+  
+  const intentEmojis = {
+    informational: '📖',
+    comparative: '⚖️',
+    analytical: '🔬',
+    exploratory: '🔭',
+    action: '🎯',
+    summarization: '📋'
+  };
+  
+  const intentName = intentInfo?.primary || 'informational';
+  const icon = intentEmojis[intentName] || '📊';
+  const intentLabel = intentName.charAt(0).toUpperCase() + intentName.slice(1);
+  
+  let output = [];
+  
+  // HEADER
+  output.push(separator);
+  output.push(`${icon}  ${intentLabel} Analysis`);
+  output.push(separator);
+  output.push(`📋  Query: "${query}"`);
+  output.push(divider);
+  
+  // CONFIDENCE (if available)
+  if (confidence) {
+    const emoji = confidence.level === 'High' ? '🟢' : confidence.level === 'Medium' ? '🟡' : '🔴';
+    output.push(`🎯  CONFIDENCE: ${emoji} ${confidence.level} (${confidence.score}%)`);
+    output.push(divider);
+  }
+  
+  // MAIN RESPONSE
+  if (grokResponse) {
+    output.push('📌  RESPONSE');
+    output.push(divider);
+    output.push(grokResponse);
+    output.push('');
+  }
+  
+  // SOURCES (if results exist)
+  if (results && results.length > 0) {
+    output.push('📚  SOURCES');
+    output.push(divider);
+    for (let i = 0; i < Math.min(results.length, 5); i++) {
+      const r = results[i];
+      const relevanceEmoji = r.relevance > 60 ? '🟢' : r.relevance > 30 ? '🟡' : '🔴';
+      output.push(`  ${i+1}. ${r.title}`);
+      output.push(`     📌 Source: ${r.source_name}`);
+      output.push(`     📅 Date: ${r.date}`);
+      output.push(`     📊 Relevance: ${relevanceEmoji} ${r.relevance}%`);
+      output.push(`     🔗 ${r.source}`);
+      output.push('');
+    }
+  }
+  
+  // METADATA
+  output.push('📊  METADATA');
+  output.push(divider);
+  output.push(`  Intent: ${intentLabel}`);
+  output.push(`  Matches Found: ${results?.length || 0}`);
+  output.push(`  Total Sources: ${uniqueSources.length}`);
+  output.push(`  Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
+  output.push(separator);
+  
+  return output.join('\n');
+}
+
+// ============================================
+// GENERATE RESPONSE - ALL QUESTIONS USE GROK
 // ============================================
 
 async function generateResponse(query, searchResult) {
@@ -564,145 +608,34 @@ async function generateResponse(query, searchResult) {
   const intentInfo = intentDetector.detectIntent(query);
   
   // ============================================
-  // DIRECT ANSWERS (Highest Priority)
+  // BUILD CONTEXT (Always build, even if no results)
   // ============================================
-  const directAnswers = {
-    "how much did microsoft invest in anthropic": {
-      response: `**💰 Microsoft's Investment in Anthropic**
-
-**FACT:** Microsoft invested **$5 Billion** in Anthropic in November 2025.
-
-**💡 Key Details:**
-- Investment: $5B (November 2025)
-- Azure Commitment: $30B
-- Q4 2026 Gain: $3.2B
-- Microsoft owns ~27% of OpenAI
-
-**📊 Source:** TechCrunch (July 29, 2026)
-**CONFIDENCE:** High ✅`,
-      sources: []
-    },
-    "what did zuckerberg say about ai agents": {
-      response: `**🗣️ Zuckerberg's AI Agent Prediction**
-
-**FACT:** Mark Zuckerberg predicts **billions of people** will have personal AI agents in five years.
-
-**💡 Key Points:**
-- "Billions of people with a personal agent"
-- Agents help with: finances, health, relationships
-- WhatsApp will be key for AI interactions
-
-**📊 Source:** TechCrunch (July 29, 2026)
-**CONFIDENCE:** High ✅`,
-      sources: []
-    },
-    "which one is better chatgpt or claude": {
-      response: `**🤖 ChatGPT vs Claude: Comparison**
-
-**📊 Key Differences:**
-
-| Feature | ChatGPT (OpenAI) | Claude (Anthropic) |
-|---------|------------------|-------------------|
-| **Developer** | OpenAI | Anthropic |
-| **Key Models** | GPT-4, GPT-5.6 | Claude Sonnet, Claude Opus |
-| **Focus** | General AI | Safe/Responsible AI |
-| **Investment** | Microsoft (27%) | Microsoft ($5B), Amazon |
-| **Approach** | Closed source | Both open and closed |
-| **Strengths** | Broad capabilities | Safety-focused |
-
-**💡 Recommendation:**
-- **Choose ChatGPT for:** General tasks, creative writing, broad capabilities
-- **Choose Claude for:** Safety-critical applications, analysis, longer context`,
-      sources: []
-    },
-    "best ai models for marketing 2026": {
-      response: `**📊 Best AI Models for Marketing Managers in 2026**
-
-**🎯 Top Models for Marketing:**
-
-| Model | Best For | Key Strength |
-|-------|----------|--------------|
-| **GPT-5.6** | Content creation, copywriting | Natural language, creativity |
-| **Claude Sonnet 5** | Analysis, strategy | Safety, long context |
-| **Grok 4.5** | Real-time insights | Speed, integration |
-
-**💡 Marketing Use Cases:**
-1. **Content Marketing:** GPT-5.6 for blogs, social posts
-2. **Campaign Analysis:** Claude Sonnet 5 for data insights
-3. **Customer Research:** Grok 4.5 for real-time trends
-
-**📌 Recommendation:**
-- **For content creation:** GPT-5.6
-- **For strategy/analysis:** Claude Sonnet 5
-- **For real-time marketing:** Grok 4.5
-
-**📚 Sources:** TechCrunch, Raulji Technologies (July 2026)`,
-      sources: []
-    }
-  };
+  let context = '';
+  let facts = [];
   
-  const lowerQuery = query.toLowerCase().trim();
-  for (const [key, value] of Object.entries(directAnswers)) {
-    if (lowerQuery.includes(key) || key.includes(lowerQuery)) {
-      const formatted = responseFormatter.formatDirectAnswer(value.response);
-      const response = {
-        response: formatted,
-        sources: [],
-        metadata: {
-          total_sources: uniqueSources.length,
-          matches_found: 0,
-          query_type: 'direct_answer',
-          ai_generated: true,
-          direct_answer: true,
-          last_updated: new Date().toISOString()
-        }
-      };
-      responseCache.set(query, response);
-      return response;
-    }
+  if (results && results.length > 0) {
+    context = results.map((r, i) => 
+      `Source ${i+1}: ${r.title}\n${r.chunk || r.fullContent?.substring(0, 500) || ''}`
+    ).join('\n\n');
+    facts = extractFacts(query, results);
+  } else {
+    // If no results, provide context from general knowledge
+    context = `No specific sources found for this query. Provide a general response based on your knowledge.`;
   }
   
   // ============================================
-  // NO RESULTS FOUND
+  // CALCULATE CONFIDENCE (if results exist)
   // ============================================
-  if (results.length === 0) {
-    const suggestions = generateSuggestions(query);
-    const formatted = responseFormatter.formatNoResults(query, suggestions);
-    const response = {
-      response: formatted,
-      sources: [],
-      metadata: {
-        total_sources: uniqueSources.length,
-        matches_found: 0,
-        query_type: queryType,
-        ai_generated: true
-      }
-    };
-    responseCache.set(query, response);
-    return response;
-  }
+  const confidence = results && results.length > 0 
+    ? confidenceScorer.calculateConfidence(results, results, classification)
+    : { level: 'Low', score: 20, emoji: '🔴', breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
   // ============================================
-  // BUILD CONTEXT
-  // ============================================
-  const context = results.map((r, i) => 
-    `Source ${i+1}: ${r.title}\n${r.chunk || r.fullContent?.substring(0, 500) || ''}`
-  ).join('\n\n');
-  
-  // ============================================
-  // CALCULATE CONFIDENCE
-  // ============================================
-  const confidence = confidenceScorer.calculateConfidence(results, results, classification);
-  
-  // ============================================
-  // EXTRACT FACTS
-  // ============================================
-  const facts = extractFacts(query, results);
-  
-  // ============================================
-  // TRY GROK WITH OPTIMIZED PROMPTS
+  // ALWAYS USE GROK
   // ============================================
   let grokResponse = null;
+  let formattedResponse = '';
+  
   try {
     const apiKey = process.env.GROQ_API_KEY;
     if (apiKey) {
@@ -732,56 +665,36 @@ async function generateResponse(query, searchResult) {
   }
   
   // ============================================
+  // FORMAT RESPONSE PROFESSIONALLY
+  // ============================================
+  formattedResponse = formatProfessionalResponse(
+    query,
+    grokResponse || 'Unable to generate a response at this time. Please try again.',
+    results || [],
+    confidence,
+    intentInfo
+  );
+  
+  // ============================================
   // BUILD FINAL RESPONSE
   // ============================================
-  let finalResponse;
-  
-  if (grokResponse) {
-    finalResponse = {
-      response: grokResponse,
-      sources: results,
-      metadata: {
-        total_sources: uniqueSources.length,
-        matches_found: results.length,
-        query_type: queryType,
-        query_confidence: classification?.confidence || 0,
-        intent: intentInfo.primary,
-        intent_confidence: Math.round(intentInfo.confidence * 100),
-        confidence: confidence,
-        ai_generated: true,
-        model: 'grok',
-        search_method: 'advanced_hybrid',
-        last_updated: new Date().toISOString()
-      }
-    };
-  } else {
-    const formattedResponse = responseFormatter.formatResponse({
-      query: query,
-      results: results,
-      facts: facts,
-      classification: classification,
+  const finalResponse = {
+    response: formattedResponse,
+    sources: results || [],
+    metadata: {
+      total_sources: uniqueSources.length,
+      matches_found: results?.length || 0,
+      query_type: queryType,
+      query_confidence: classification?.confidence || 0,
+      intent: intentInfo.primary,
+      intent_confidence: Math.round(intentInfo.confidence * 100),
       confidence: confidence,
-      intent: intentInfo
-    });
-    
-    finalResponse = {
-      response: formattedResponse,
-      sources: results,
-      metadata: {
-        total_sources: uniqueSources.length,
-        matches_found: results.length,
-        query_type: queryType,
-        query_confidence: classification?.confidence || 0,
-        intent: intentInfo.primary,
-        intent_confidence: Math.round(intentInfo.confidence * 100),
-        confidence: confidence,
-        ai_generated: true,
-        fallback: true,
-        search_method: 'advanced_hybrid',
-        last_updated: new Date().toISOString()
-      }
-    };
-  }
+      ai_generated: true,
+      model: grokResponse ? 'grok' : 'fallback',
+      search_method: 'advanced_hybrid',
+      last_updated: new Date().toISOString()
+    }
+  };
   
   // ============================================
   // CACHE RESPONSE
@@ -796,7 +709,6 @@ async function generateResponse(query, searchResult) {
 // ============================================
 
 export default async function handler(req, res) {
-  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -824,9 +736,7 @@ export default async function handler(req, res) {
       action = req.body?.action || null;
     }
 
-    // ============================================
-    // ROUTE: HEALTH
-    // ============================================
+    // Health check
     if (action === 'health' || action === 'ping') {
       return res.status(200).json({
         status: 'ok',
@@ -836,13 +746,11 @@ export default async function handler(req, res) {
         source_names: [...new Set(uniqueSources.map(s => s.source_name))],
         grok_available: !!process.env.GROQ_API_KEY,
         cache_stats: responseCache.getStats(),
-        features: ['intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'advanced_search']
+        features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search']
       });
     }
 
-    // ============================================
-    // ROUTE: ALL SOURCES
-    // ============================================
+    // All sources
     if (action === 'all') {
       return res.status(200).json({
         total: uniqueSources.length,
@@ -859,9 +767,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: STATS
-    // ============================================
+    // Stats
     if (action === 'stats') {
       return res.status(200).json({
         total_sources: uniqueSources.length,
@@ -873,9 +779,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: CACHE CLEAR
-    // ============================================
+    // Clear cache
     if (action === 'clear-cache') {
       responseCache.clear();
       return res.status(200).json({
@@ -885,9 +789,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: ADMIN
-    // ============================================
+    // Admin
     if (action === 'admin') {
       return res.status(200).json({
         status: 'ok',
@@ -896,9 +798,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: AUDIT
-    // ============================================
+    // Audit
     if (action === 'audit') {
       return res.status(200).json({
         status: 'ok',
@@ -908,9 +808,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: AUTH
-    // ============================================
+    // Auth
     if (action === 'auth') {
       return res.status(200).json({
         status: 'ok',
@@ -920,9 +818,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: EVALUATE
-    // ============================================
+    // Evaluate
     if (action === 'evaluate') {
       return res.status(200).json({
         status: 'ok',
@@ -932,9 +828,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: PRIVACY
-    // ============================================
+    // Privacy
     if (action === 'privacy') {
       return res.status(200).json({
         status: 'ok',
@@ -944,9 +838,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: SOURCES
-    // ============================================
+    // Sources list
     if (action === 'sources') {
       const sourceNames = [...new Set(uniqueSources.map(s => s.source_name))];
       return res.status(200).json({
@@ -958,9 +850,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: TRIGGER
-    // ============================================
+    // Trigger
     if (action === 'trigger') {
       return res.status(200).json({
         status: 'ok',
@@ -970,23 +860,19 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================
-    // ROUTE: SEARCH (main)
-    // ============================================
+    // SEARCH - ALL QUESTIONS GO THROUGH GROK
     if (query) {
       const searchResult = searchSources(query);
       const response = await generateResponse(query, searchResult);
       return res.status(200).json(response);
     }
 
-    // ============================================
-    // DEFAULT
-    // ============================================
+    // Default
     return res.status(200).json({
       name: 'Omni Brand Intelligence Bot API',
-      version: '3.3.0',
+      version: '4.0.0',
       status: 'running',
-      features: ['intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'grok_ai', 'advanced_search'],
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'advanced_search'],
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
