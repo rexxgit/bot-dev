@@ -1,4 +1,4 @@
-// api/data.js - Complete API with Grok for ALL Questions + Professional Formatting
+// api/data.js - Complete API with Professional PDF-Style Formatting + Grok
 
 // ============================================
 // IMPORTS - All from lib/
@@ -514,7 +514,7 @@ function generateSuggestions(query) {
 }
 
 // ============================================
-// FORMATTER FUNCTIONS - Professional Output
+// PROFESSIONAL PDF-STYLE FORMATTER - FIXED
 // ============================================
 
 function formatProfessionalResponse(query, grokResponse, results, confidence, intentInfo) {
@@ -536,51 +536,101 @@ function formatProfessionalResponse(query, grokResponse, results, confidence, in
   
   let output = [];
   
-  // HEADER
+  // ============================================
+  // HEADER - Professional Document Style
+  // ============================================
   output.push(separator);
-  output.push(`${icon}  ${intentLabel} Analysis`);
+  output.push(`  ${icon}  ${intentLabel} Analysis Report`);
   output.push(separator);
-  output.push(`📋  Query: "${query}"`);
+  output.push(`  📋  Query: "${query}"`);
+  output.push(`  📅  Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
   output.push(divider);
   
-  // CONFIDENCE (if available)
+  // ============================================
+  // CONFIDENCE SECTION
+  // ============================================
   if (confidence) {
     const emoji = confidence.level === 'High' ? '🟢' : confidence.level === 'Medium' ? '🟡' : '🔴';
-    output.push(`🎯  CONFIDENCE: ${emoji} ${confidence.level} (${confidence.score}%)`);
+    output.push(`  🎯  Confidence Level: ${emoji} ${confidence.level} (${confidence.score}%)`);
+    if (confidence.breakdown) {
+      output.push(`     ├─ Source Relevance: ${confidence.breakdown.relevance || 0}%`);
+      output.push(`     ├─ Source Authority: ${confidence.breakdown.authority || 0}%`);
+      output.push(`     └─ Source Diversity: ${confidence.breakdown.diversity || 0}%`);
+    }
     output.push(divider);
   }
   
-  // MAIN RESPONSE
+  // ============================================
+  // MAIN RESPONSE - Professional Formatting
+  // ============================================
   if (grokResponse) {
-    output.push('📌  RESPONSE');
+    // Clean up the Grok response and format it professionally
+    let cleanResponse = grokResponse;
+    
+    // Add bullet points if not already present
+    if (!cleanResponse.includes('•') && !cleanResponse.includes('-')) {
+      // Split into paragraphs and add structure
+      const paragraphs = cleanResponse.split('\n\n');
+      if (paragraphs.length > 1) {
+        cleanResponse = paragraphs.map((p, i) => {
+          if (i === 0) return p;
+          if (p.length > 50) return `  • ${p}`;
+          return p;
+        }).join('\n\n');
+      }
+    }
+    
+    output.push(`  📌  Executive Summary`);
     output.push(divider);
-    output.push(grokResponse);
+    output.push(cleanResponse);
     output.push('');
   }
   
-  // SOURCES (if results exist)
+  // ============================================
+  // KEY FINDINGS - Bullet Points
+  // ============================================
   if (results && results.length > 0) {
-    output.push('📚  SOURCES');
-    output.push(divider);
-    for (let i = 0; i < Math.min(results.length, 5); i++) {
-      const r = results[i];
-      const relevanceEmoji = r.relevance > 60 ? '🟢' : r.relevance > 30 ? '🟡' : '🔴';
-      output.push(`  ${i+1}. ${r.title}`);
-      output.push(`     📌 Source: ${r.source_name}`);
-      output.push(`     📅 Date: ${r.date}`);
-      output.push(`     📊 Relevance: ${relevanceEmoji} ${r.relevance}%`);
-      output.push(`     🔗 ${r.source}`);
+    const facts = extractFacts(query, results);
+    if (facts && facts.length > 0) {
+      output.push(`  🔑  Key Findings`);
+      output.push(divider);
+      for (let i = 0; i < Math.min(facts.length, 5); i++) {
+        const f = facts[i];
+        output.push(`  ${i+1}. ${f.text}`);
+        output.push(`     └─ Source: ${f.source}`);
+      }
       output.push('');
     }
   }
   
-  // METADATA
-  output.push('📊  METADATA');
+  // ============================================
+  // SOURCES - Professional Reference Section
+  // ============================================
+  if (results && results.length > 0) {
+    output.push(`  📚  References`);
+    output.push(divider);
+    for (let i = 0; i < Math.min(results.length, 5); i++) {
+      const r = results[i];
+      const relevanceEmoji = r.relevance > 60 ? '🟢' : r.relevance > 30 ? '🟡' : '🔴';
+      output.push(`  [${i+1}] ${r.title}`);
+      output.push(`      Source: ${r.source_name}`);
+      output.push(`      Date: ${r.date || 'Unknown'}`);
+      output.push(`      Relevance: ${relevanceEmoji} ${r.relevance}%`);
+      output.push(`      URL: ${r.source || '#'}`);
+      output.push('');
+    }
+  }
+  
+  // ============================================
+  // METADATA - Footer
+  // ============================================
+  output.push(`  📊  Report Metadata`);
   output.push(divider);
-  output.push(`  Intent: ${intentLabel}`);
-  output.push(`  Matches Found: ${results?.length || 0}`);
-  output.push(`  Total Sources: ${uniqueSources.length}`);
-  output.push(`  Generated: ${new Date().toISOString().replace('T', ' ').substring(0, 19)}`);
+  output.push(`  Intent Classification: ${intentLabel}`);
+  output.push(`  Sources Analyzed: ${results?.length || 0}`);
+  output.push(`  Total Sources Available: ${uniqueSources?.length || 0}`);
+  output.push(`  AI Model: ${grokResponse ? 'Grok' : 'Fallback'}`);
+  output.push(`  Report ID: ${Date.now().toString(36).toUpperCase()}`);
   output.push(separator);
   
   return output.join('\n');
@@ -608,7 +658,7 @@ async function generateResponse(query, searchResult) {
   const intentInfo = intentDetector.detectIntent(query);
   
   // ============================================
-  // BUILD CONTEXT (Always build, even if no results)
+  // BUILD CONTEXT
   // ============================================
   let context = '';
   let facts = [];
@@ -619,12 +669,11 @@ async function generateResponse(query, searchResult) {
     ).join('\n\n');
     facts = extractFacts(query, results);
   } else {
-    // If no results, provide context from general knowledge
     context = `No specific sources found for this query. Provide a general response based on your knowledge.`;
   }
   
   // ============================================
-  // CALCULATE CONFIDENCE (if results exist)
+  // CALCULATE CONFIDENCE
   // ============================================
   const confidence = results && results.length > 0 
     ? confidenceScorer.calculateConfidence(results, results, classification)
@@ -746,7 +795,7 @@ export default async function handler(req, res) {
         source_names: [...new Set(uniqueSources.map(s => s.source_name))],
         grok_available: !!process.env.GROQ_API_KEY,
         cache_stats: responseCache.getStats(),
-        features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search']
+        features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'pdf_style_formatting']
       });
     }
 
@@ -872,7 +921,7 @@ export default async function handler(req, res) {
       name: 'Omni Brand Intelligence Bot API',
       version: '4.0.0',
       status: 'running',
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'advanced_search'],
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'advanced_search', 'pdf_style_formatting'],
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
