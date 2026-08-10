@@ -1,11 +1,12 @@
-// api/data.js - Complete API with ALL imports from lib/
+// api/data.js - Complete API with Advanced Search & Retrieval (Day 7)
+// Features: Vector Embeddings, Query Expansion, Re-ranking, Hybrid Search
 
 // ============================================
 // IMPORTS - All from lib/ (NOT counted as functions)
 // ============================================
 
 // Chunking
-import { semanticChunk, contextAwareChunk, hybridSearch } from '../lib/chunking/semantic.js';
+import { semanticChunk, contextAwareChunk } from '../lib/chunking/semantic.js';
 
 // Prompts
 import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
@@ -24,19 +25,12 @@ import { responseCache } from '../lib/response/cache.js';
 import { createGrokInstance } from '../lib/grok/index.js';
 import { buildGrokRequest } from '../lib/grok/prompts.js';
 
+// Advanced Search (Day 7)
+import { advancedSearch } from '../lib/search/hybrid.js';
+
 // ============================================
 // ALL DATA EMBEDDED HERE
 // ============================================
-
-// ... rest of your data.js (all data arrays, search functions, etc.) ...
-
-// ============================================
-// API HANDLER - DEFAULT EXPORT
-// ============================================
-
-export default async function handler(req, res) {
-  // ... your handler code ...
-}
 
 const techCrunchSources = [
   {
@@ -361,7 +355,7 @@ const sourceStats = {
 };
 
 // ============================================
-// SEARCH FUNCTIONS
+// SEARCH FUNCTIONS - ENHANCED (Day 7)
 // ============================================
 
 function classifyQuery(query) {
@@ -403,6 +397,10 @@ function classifyQuery(query) {
   };
 }
 
+// ============================================
+// SEARCH SOURCES - USING ADVANCED HYBRID SEARCH (Day 7)
+// ============================================
+
 function searchSources(query) {
   if (!query) return { results: [], classification: null };
   
@@ -410,62 +408,34 @@ function searchSources(query) {
   if (queryLower.length < 2) return { results: [], classification: null };
   
   const classification = classifyQuery(query);
-  const words = queryLower.split(/\s+/).filter(w => w.length > 2);
-  const results = [];
   
-  for (const source of uniqueSources) {
-    const content = (source.content || '').toLowerCase();
-    const title = (source.title || '').toLowerCase();
-    const sourceName = (source.source_name || '').toLowerCase();
-    
-    let score = 0;
-    
-    if (title.includes(queryLower)) score += 30;
-    if (sourceName.includes(queryLower)) score += 20;
-    
-    for (const word of words) {
-      const count = (content.match(new RegExp(word, 'g')) || []).length;
-      score += count * 3;
-    }
-    
-    if (content.includes(queryLower)) score += 15;
-    
-    if (score > 0) {
-      let chunk = '';
-      const sentences = content.split(/[.!?]+/);
-      for (const sentence of sentences) {
-        if (sentence.includes(queryLower) || words.some(w => sentence.includes(w))) {
-          chunk = sentence.trim();
-          break;
-        }
-      }
-      if (!chunk) {
-        chunk = (source.content || '').substring(0, 300);
-      }
-      
-      const relevance = Math.min(Math.round((score / 50) * 100), 100);
-      
-      results.push({
-        title: source.title || 'Untitled',
-        source: source.url || '#',
-        source_name: source.source_name || 'Unknown',
-        author: source.author || 'Unknown',
-        date: source.date || '',
-        chunk: chunk + '...',
-        relevance: relevance,
-        score: score,
-        domain: source.domain || 'unknown',
-        fullContent: source.content || ''
-      });
-    }
-  }
+  // Use advanced hybrid search from Day 7
+  const searchResults = advancedSearch.search(query, uniqueSources);
   
-  results.sort((a, b) => b.score - a.score);
+  // Format results for response
+  const results = searchResults.slice(0, 5).map(item => ({
+    title: item.source?.title || 'Untitled',
+    source: item.source?.url || '#',
+    source_name: item.source?.source_name || 'Unknown',
+    author: item.source?.author || 'Unknown',
+    date: item.source?.date || '',
+    chunk: (item.bestChunk || item.source?.content || '').substring(0, 500) + '...',
+    relevance: Math.min(Math.round((item.hybridScore || 0) * 100), 100),
+    score: item.hybridScore || 0,
+    domain: item.source?.domain || 'unknown',
+    fullContent: item.source?.content || '',
+    methodCount: item.methodCount || 1
+  }));
+  
   return {
-    results: results.slice(0, 5),
+    results: results,
     classification: classification
   };
 }
+
+// ============================================
+// EXTRACT FACTS FROM RESULTS
+// ============================================
 
 function extractFacts(query, results) {
   const facts = [];
@@ -510,6 +480,10 @@ function extractFacts(query, results) {
   return uniqueFacts;
 }
 
+// ============================================
+// GENERATE NO RESULTS RESPONSE
+// ============================================
+
 function generateNoResultsResponse(query) {
   const topics = [
     "Microsoft investment in Anthropic ($5B)",
@@ -546,6 +520,10 @@ ${suggestions.map(s => `- ${s}`).join('\n')}
 **📚 Available Sources:**
 ${[...new Set(uniqueSources.map(s => `- ${s.source_name}`))].join('\n')}`;
 }
+
+// ============================================
+// GENERATE SUGGESTIONS
+// ============================================
 
 function generateSuggestions(query) {
   const topics = [
@@ -778,6 +756,7 @@ async function generateResponse(query, searchResult) {
         confidence: confidence,
         ai_generated: true,
         model: 'grok',
+        search_method: 'advanced_hybrid',
         last_updated: new Date().toISOString()
       }
     };
@@ -804,6 +783,7 @@ async function generateResponse(query, searchResult) {
         confidence: confidence,
         ai_generated: true,
         fallback: true,
+        search_method: 'advanced_hybrid',
         last_updated: new Date().toISOString()
       }
     };
@@ -862,7 +842,7 @@ export default async function handler(req, res) {
         source_names: [...new Set(uniqueSources.map(s => s.source_name))],
         grok_available: !!process.env.GROQ_API_KEY,
         cache_stats: responseCache.getStats(),
-        features: ['intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching']
+        features: ['intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'advanced_search']
       });
     }
 
@@ -894,6 +874,7 @@ export default async function handler(req, res) {
         source_stats: sourceStats,
         grok_available: !!process.env.GROQ_API_KEY,
         cache_stats: responseCache.getStats(),
+        search_method: 'advanced_hybrid',
         last_updated: new Date().toISOString()
       });
     }
@@ -1009,14 +990,15 @@ export default async function handler(req, res) {
     // ============================================
     return res.status(200).json({
       name: 'Omni Brand Intelligence Bot API',
-      version: '3.2.0',
+      version: '3.3.0',
       status: 'running',
-      features: ['intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'grok_ai'],
+      features: ['intent_detection', 'confidence_scoring', 'dynamic_formatting', 'response_caching', 'grok_ai', 'advanced_search'],
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
       grok_available: !!process.env.GROQ_API_KEY,
       cache_stats: responseCache.getStats(),
+      search_method: 'advanced_hybrid',
       endpoints: {
         search: 'GET/POST with ?query=your+question',
         health: 'GET?action=health',
