@@ -1,4 +1,4 @@
-// api/data.js - Complete API with Fixed Try/Catch
+// api/data.js - Complete Clean Version
 
 // ============================================
 // IMPORTS - All from lib/
@@ -27,7 +27,7 @@ const techCrunchSources = [
     title: "Microsoft is openly competing with OpenAI, Anthropic more than ever",
     author: "Unknown",
     date: "2026-07-29T17:21:06-07:00",
-    content: "Microsoft is in a unique position as AI overtakes the tech industry. It's one of the world's largest cloud providers and software-as-a-service companies, while also holding valuable stakes in the two biggest AI labs, OpenAI and Anthropic. Those incentives are starting to clash as Microsoft posts blockbuster financial results. The company just reported an extremely profitable quarter with $90 billion in revenue and net income of $35.8 billion.",
+    content: "Microsoft is in a unique position as AI overtakes the tech industry. It's one of the world's largest cloud providers and software-as-a-service companies, while also holding valuable stakes in the two biggest AI labs, OpenAI and Anthropic. Those incentives are starting to clash as Microsoft posts blockbuster financial results.",
     url: "https://techcrunch.com/2026/07/29/microsoft-is-openly-competing-with-openai-anthropic-more-than-ever/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -40,7 +40,7 @@ const techCrunchSources = [
     title: "Mark Zuckerberg predicts that billions of people will have personal AI agents in five years",
     author: "Unknown",
     date: "2026-07-29T16:00:11-07:00",
-    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years. 'I think that it's extremely unlikely if you look out five years from now, for example — whatever period of time you want — that you don't have billions of people with a personal agent that understands your goals and that is just working on your behalf 24/7 to achieve your goals in whatever the domain is that you care about,' Zuckerberg said.",
+    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years.",
     url: "https://techcrunch.com/2026/07/29/mark-zuckerberg-predicts-that-billions-of-people-will-have-personal-ai-agents-in-five-years/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -53,7 +53,7 @@ const techCrunchSources = [
     title: "Microsoft logs $3.2B from Anthropic investment, but OpenAI was a mixed bag",
     author: "Unknown",
     date: "2026-07-29T15:46:03-07:00",
-    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing. For the quarter, it recorded its investment in Anthropic as a $3.2 billion gain.",
+    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing.",
     url: "https://techcrunch.com/2026/07/29/microsoft-logs-3-2b-from-anthropic-investment-but-openai-was-a-mixed-bag/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -66,7 +66,7 @@ const techCrunchSources = [
     title: "Zuckerberg says Meta's enterprise AI opportunity extends beyond agents",
     author: "Unknown",
     date: "2026-07-29T15:23:12-07:00",
-    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses, to help with customer service, support, and other daily operations. But the tech giant's enterprise AI ambitions are much more expansive, Meta CEO Mark Zuckerberg told investors on Wednesday's second-quarter earnings call.",
+    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses, to help with customer service, support, and other daily operations.",
     url: "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -134,7 +134,7 @@ const staticSources = [
     title: "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
     author: "Raulji Technologies",
     date: "July 27, 2026",
-    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business, and how to turn it into a competitive advantage.",
+    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business.",
     url: "https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/",
     source_name: "Raulji Technologies",
     source_type: "blog",
@@ -652,6 +652,7 @@ async function generateResponse(query, searchResult) {
     }
   } catch (error) {
     console.warn('Grok failed:', error.message);
+    grokResponse = null;
   }
   
   formattedResponse = formatProfessionalResponse(
@@ -704,161 +705,151 @@ export default async function handler(req, res) {
     });
   }
 
-  try {
-    let query = null;
-    let action = null;
+  let query = null;
+  let action = null;
 
-    if (req.method === 'GET') {
-      query = req.query.query || null;
-      action = req.query.action || null;
-    } else {
-      query = req.body?.query || null;
-      action = req.body?.action || null;
-    }
+  if (req.method === 'GET') {
+    query = req.query.query || null;
+    action = req.query.action || null;
+  } else {
+    query = req.body?.query || null;
+    action = req.body?.action || null;
+  }
 
-    if (action === 'health' || action === 'ping') {
-      return res.status(200).json({
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        total_sources: uniqueSources.length,
-        source_stats: sourceStats,
-        source_names: [...new Set(uniqueSources.map(s => s.source_name))],
-        grok_available: !!process.env.GROQ_API_KEY,
-        cache_stats: responseCache.getStats()
-      });
-    }
-
-    if (action === 'all') {
-      return res.status(200).json({
-        total: uniqueSources.length,
-        source_stats: sourceStats,
-        sources: uniqueSources.map(s => ({
-          title: s.title,
-          source_name: s.source_name,
-          author: s.author || 'Unknown',
-          date: s.date || '',
-          url: s.url,
-          word_count: s.word_count || 0,
-          domain: s.domain || 'unknown'
-        }))
-      });
-    }
-
-    if (action === 'stats') {
-      return res.status(200).json({
-        total_sources: uniqueSources.length,
-        source_stats: sourceStats,
-        grok_available: !!process.env.GROQ_API_KEY,
-        cache_stats: responseCache.getStats(),
-        last_updated: new Date().toISOString()
-      });
-    }
-
-    if (action === 'clear-cache') {
-      responseCache.clear();
-      return res.status(200).json({
-        status: 'ok',
-        message: 'Cache cleared',
-        cache_stats: responseCache.getStats()
-      });
-    }
-
-    if (action === 'admin') {
-      return res.status(200).json({
-        status: 'ok',
-        message: 'Admin API',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    if (action === 'audit') {
-      return res.status(200).json({
-        status: 'ok',
-        message: 'Audit API',
-        logs: [],
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    if (action === 'auth') {
-      return res.status(200).json({
-        status: 'ok',
-        message: 'Auth API',
-        authenticated: false,
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    if (action === 'evaluate') {
-      return res.status(200).json({
-        status: 'ok',
-        message: 'Evaluate API',
-        evaluation: 'pending',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    if (action === 'privacy') {
-      return res.status(200).json({
-        status: 'ok',
-        message: 'Privacy Policy',
-        data: 'No personal data is stored. All conversations are anonymous.',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    if (action === 'sources') {
-      const sourceNames = [...new Set(uniqueSources.map(s => s.source_name))];
-      return res.status(200).json({
-        status: 'ok',
-        sources: sourceNames,
-        count: sourceNames.length,
-        total_articles: uniqueSources.length,
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    if (action === 'trigger') {
-      return res.status(200).json({
-        status: 'ok',
-        message: 'Trigger API - Scraper triggered',
-        triggered: true,
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    if (query) {
-      const searchResult = searchSources(query);
-      const response = await generateResponse(query, searchResult);
-      return res.status(200).json(response);
-    }
-
+  if (action === 'health' || action === 'ping') {
     return res.status(200).json({
-      name: 'Omni Brand Intelligence Bot API',
-      version: '4.0.0',
-      status: 'running',
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search'],
+      status: 'ok',
+      timestamp: new Date().toISOString(),
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
       grok_available: !!process.env.GROQ_API_KEY,
+      cache_stats: responseCache.getStats()
+    });
+  }
+
+  if (action === 'all') {
+    return res.status(200).json({
+      total: uniqueSources.length,
+      source_stats: sourceStats,
+      sources: uniqueSources.map(s => ({
+        title: s.title,
+        source_name: s.source_name,
+        author: s.author || 'Unknown',
+        date: s.date || '',
+        url: s.url,
+        word_count: s.word_count || 0,
+        domain: s.domain || 'unknown'
+      }))
+    });
+  }
+
+  if (action === 'stats') {
+    return res.status(200).json({
+      total_sources: uniqueSources.length,
+      source_stats: sourceStats,
+      grok_available: !!process.env.GROQ_API_KEY,
       cache_stats: responseCache.getStats(),
-      endpoints: {
-        search: 'GET/POST with ?query=your+question',
-        health: 'GET?action=health',
-        all: 'GET?action=all',
-        stats: 'GET?action=stats',
-        clear_cache: 'GET?action=clear-cache'
-      },
       last_updated: new Date().toISOString()
     });
+  }
 
-  } catch (error) {
-    console.error('API Error:', error.message);
-    return res.status(500).json({
-      error: 'Internal server error',
-      message: error.message || 'Unknown error',
+  if (action === 'clear-cache') {
+    responseCache.clear();
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Cache cleared',
+      cache_stats: responseCache.getStats()
+    });
+  }
+
+  if (action === 'admin') {
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Admin API',
       timestamp: new Date().toISOString()
     });
   }
+
+  if (action === 'audit') {
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Audit API',
+      logs: [],
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (action === 'auth') {
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Auth API',
+      authenticated: false,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (action === 'evaluate') {
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Evaluate API',
+      evaluation: 'pending',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (action === 'privacy') {
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Privacy Policy',
+      data: 'No personal data is stored. All conversations are anonymous.',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (action === 'sources') {
+    const sourceNames = [...new Set(uniqueSources.map(s => s.source_name))];
+    return res.status(200).json({
+      status: 'ok',
+      sources: sourceNames,
+      count: sourceNames.length,
+      total_articles: uniqueSources.length,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (action === 'trigger') {
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Trigger API - Scraper triggered',
+      triggered: true,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (query) {
+    const searchResult = searchSources(query);
+    const response = await generateResponse(query, searchResult);
+    return res.status(200).json(response);
+  }
+
+  return res.status(200).json({
+    name: 'Omni Brand Intelligence Bot API',
+    version: '4.0.0',
+    status: 'running',
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search'],
+    total_sources: uniqueSources.length,
+    source_stats: sourceStats,
+    source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+    grok_available: !!process.env.GROQ_API_KEY,
+    cache_stats: responseCache.getStats(),
+    endpoints: {
+      search: 'GET/POST with ?query=your+question',
+      health: 'GET?action=health',
+      all: 'GET?action=all',
+      stats: 'GET?action=stats',
+      clear_cache: 'GET?action=clear-cache'
+    },
+    last_updated: new Date().toISOString()
+  });
 }
