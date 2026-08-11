@@ -1,8 +1,23 @@
 {
   "source": "VentureBeat AI",
   "source_url": "https://venturebeat.com/category/ai/",
-  "total_articles": 6,
+  "total_articles": 8,
   "articles": [
+    {
+      "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/openai-launches-gpt-5-6-cyber-with-reduced-refusals-95-completion-on-advanced-cybersecurity-tasks",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "75f09a8e",
+      "headings": [
+        "OpenAI launches GPT-5.6 Cyber with reduced refusals, 95% completion on advanced cybersecurity tasks"
+      ],
+      "timestamp": "2026-08-11T08:46:57.520521"
+    },
     {
       "title": "Image credit: VentureBeat with Nano Banana Pro",
       "author": "Ben Dickson",
@@ -16,7 +31,52 @@
       "headings": [
         "Four AI agents coordinating in real time outperformed Claude Opus 4.8 on enterprise coding tasks"
       ],
-      "timestamp": "2026-08-10T09:12:31.870615"
+      "timestamp": "2026-08-11T08:46:57.558496"
+    },
+    {
+      "title": "Credit: Michael O'Donnell Photography",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Credit: Michael O'Donnell Photography",
+      "url": "https://venturebeat.com/orchestration/stanford-is-running-37-000-ai-agents-as-a-virtual-biotech-and-one-of-its-drug-designs-got-independently-confirmed-by-merck",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 4,
+      "hash": "7d1af4cc",
+      "headings": [
+        "Stanford is running 37,000 AI agents as a virtual biotech — and one of its drug designs got independently confirmed by Merck"
+      ],
+      "timestamp": "2026-08-11T08:46:57.592041"
+    },
+    {
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/no-cloud-no-gpus-no-problem-liquid-ais-new-model-lfm2-5-2-6b-brings-powerful-ai-agents-to-devices-as-small-as-a-raspberry-pi",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "98796c6f",
+      "headings": [
+        "No cloud, no GPUs, no problem: Liquid AI's new model LFM2.5-2.6B brings powerful AI agents to devices as small as a Raspberry Pi"
+      ],
+      "timestamp": "2026-08-11T08:46:57.623592"
+    },
+    {
+      "title": "Credit: Made by VentureBeat with Gemini",
+      "author": "Laurie Voss",
+      "date": "Laurie Voss",
+      "content": "Credit: Made by VentureBeat with Gemini",
+      "url": "https://venturebeat.com/orchestration/qwen-3-8-max-and-claude-opus-5-show-why-raw-benchmark-scores-dont-predict-the-bill",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "fbeb43e4",
+      "headings": [
+        "Qwen 3.8-Max and Claude Opus 5 show why raw benchmark scores don't predict the bill"
+      ],
+      "timestamp": "2026-08-11T08:46:57.656583"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -31,7 +91,7 @@
       "headings": [
         "Meta enters the AI coding wars with Muse Spark 1.2 and Muse Code with persistent async background agents"
       ],
-      "timestamp": "2026-08-10T09:12:31.903895"
+      "timestamp": "2026-08-11T08:46:57.688861"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -46,7 +106,7 @@
       "headings": [
         "AI startup Hark unveils first product: an affordable, fast computer use agent Hark Handoff"
       ],
-      "timestamp": "2026-08-10T09:12:31.933311"
+      "timestamp": "2026-08-11T08:46:57.718656"
     },
     {
       "title": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
@@ -61,38 +121,8 @@
       "headings": [
         "AI coding agents are blowing through budgets — Replit, Kilo Code, and Symbotic explain how they're managing it"
       ],
-      "timestamp": "2026-08-10T09:12:31.987934"
-    },
-    {
-      "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/qwen3-8-max-arrives-with-a-bold-claim-it-outperforms-gpt-5-6-sol-max-and-fable-5-on-agentic-computer-use",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 5,
-      "hash": "fd8f692b",
-      "headings": [
-        "Qwen3.8-Max arrives with a bold claim: it outperforms GPT-5.6 Sol Max and Fable 5 on agentic computer use"
-      ],
-      "timestamp": "2026-08-10T09:12:32.020235"
-    },
-    {
-      "title": "Arnab Bose. Credit: Michael O'Donnell Photography",
-      "author": "Ben Dickson",
-      "date": "Ben Dickson",
-      "content": "Arnab Bose. Credit: Michael O'Donnell Photography",
-      "url": "https://venturebeat.com/orchestration/asanas-ai-agents-share-memory-across-your-company-but-not-your-secrets",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "434fd6f9",
-      "headings": [
-        "Asana's AI agents share memory across your company — but not your secrets"
-      ],
-      "timestamp": "2026-08-10T09:12:32.048932"
+      "timestamp": "2026-08-11T08:46:57.760078"
     }
   ],
-  "last_updated": "2026-08-10T09:12:32.090309"
+  "last_updated": "2026-08-11T08:46:57.797148"
 }
