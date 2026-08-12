@@ -4,6 +4,36 @@
   "total_articles": 8,
   "articles": [
     {
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/orchestration/spacexais-grok-bot-turns-agents-into-persistent-digital-coworkers-that-can-operate-your-apps-for-120-per-month",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "7e475c3c",
+      "headings": [
+        "SpaceXAI's Grok Bot turns agents into persistent digital coworkers that can operate your apps for $120-per-month"
+      ],
+      "timestamp": "2026-08-12T09:07:10.594417"
+    },
+    {
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/ltx-2-5-can-generate-a-10-second-ai-video-from-an-image-in-just-6-8-seconds-on-nvidia-superchips-and-its-open-weights",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "2ddc846f",
+      "headings": [
+        "LTX-2.5 can generate a 10-second AI video from an image in just 6.8 seconds on Nvidia superchips — and it's open weights"
+      ],
+      "timestamp": "2026-08-12T09:07:10.629963"
+    },
+    {
       "title": "Credit: VentureBeat made with ChatGPT-Images-2.0",
       "author": "Carl Franzen",
       "date": "Carl Franzen",
@@ -14,9 +44,54 @@
       "word_count": 5,
       "hash": "75f09a8e",
       "headings": [
-        "OpenAI launches GPT-5.6 Cyber with reduced refusals, 95% completion on advanced cybersecurity tasks"
+        "OpenAI launches GPT-5.6-Cyber with reduced refusals, 95% completion on advanced cybersecurity tasks"
       ],
-      "timestamp": "2026-08-11T08:46:57.520521"
+      "timestamp": "2026-08-12T09:07:10.671663"
+    },
+    {
+      "title": "Credit: Michael O'Donnell Photography",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Credit: Michael O'Donnell Photography",
+      "url": "https://venturebeat.com/orchestration/brex-assumes-its-ai-agents-could-do-anything-so-it-watches-the-network-not-the-code",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 4,
+      "hash": "59bbd29b",
+      "headings": [
+        "Brex assumes its AI agents could do anything — so it watches the network, not the code"
+      ],
+      "timestamp": "2026-08-12T09:07:10.711759"
+    },
+    {
+      "title": "Man holding blue M laptop",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Man holding blue M laptop",
+      "url": "https://venturebeat.com/technology/meta-returns-to-open-source-with-muse-glimmer-an-apache-2-0-licensed-30b-parameter-ai-model-optimized-for-agents-available-now",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "71de8eb8",
+      "headings": [
+        "Meta returns to open source with Muse Glimmer, an Apache 2.0 licensed 30B parameter AI model optimized for agents — available now"
+      ],
+      "timestamp": "2026-08-12T09:07:10.744748"
+    },
+    {
+      "title": "CleoPtolemy made with Midjourney",
+      "author": "Nixal Patel",
+      "date": "Nixal Patel",
+      "content": "CleoPtolemy made with Midjourney Content filters can block unsafe output. They cannot tell you whether an agent was authorized to issue that refund, touch that production system, or commit the company to an external action. Those are different problems, and most enterprises are only solving the first one.",
+      "url": "https://venturebeat.com/technology/your-agent-didnt-hallucinate-it-exceeded-its-authority",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 48,
+      "hash": "93402afc",
+      "headings": [
+        "Your agent didn’t hallucinate; it exceeded its authority"
+      ],
+      "timestamp": "2026-08-12T09:07:10.780744"
     },
     {
       "title": "Image credit: VentureBeat with Nano Banana Pro",
@@ -31,7 +106,7 @@
       "headings": [
         "Four AI agents coordinating in real time outperformed Claude Opus 4.8 on enterprise coding tasks"
       ],
-      "timestamp": "2026-08-11T08:46:57.558496"
+      "timestamp": "2026-08-12T09:07:10.815210"
     },
     {
       "title": "Credit: Michael O'Donnell Photography",
@@ -46,83 +121,8 @@
       "headings": [
         "Stanford is running 37,000 AI agents as a virtual biotech — and one of its drug designs got independently confirmed by Merck"
       ],
-      "timestamp": "2026-08-11T08:46:57.592041"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/no-cloud-no-gpus-no-problem-liquid-ais-new-model-lfm2-5-2-6b-brings-powerful-ai-agents-to-devices-as-small-as-a-raspberry-pi",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "98796c6f",
-      "headings": [
-        "No cloud, no GPUs, no problem: Liquid AI's new model LFM2.5-2.6B brings powerful AI agents to devices as small as a Raspberry Pi"
-      ],
-      "timestamp": "2026-08-11T08:46:57.623592"
-    },
-    {
-      "title": "Credit: Made by VentureBeat with Gemini",
-      "author": "Laurie Voss",
-      "date": "Laurie Voss",
-      "content": "Credit: Made by VentureBeat with Gemini",
-      "url": "https://venturebeat.com/orchestration/qwen-3-8-max-and-claude-opus-5-show-why-raw-benchmark-scores-dont-predict-the-bill",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "fbeb43e4",
-      "headings": [
-        "Qwen 3.8-Max and Claude Opus 5 show why raw benchmark scores don't predict the bill"
-      ],
-      "timestamp": "2026-08-11T08:46:57.656583"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/orchestration/meta-enters-the-ai-coding-wars-with-muse-spark-1-2-and-muse-code-with-persistent-async-background-agents",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "caaeb5e8",
-      "headings": [
-        "Meta enters the AI coding wars with Muse Spark 1.2 and Muse Code with persistent async background agents"
-      ],
-      "timestamp": "2026-08-11T08:46:57.688861"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/ai-startup-hark-unveils-first-product-an-affordable-fast-computer-use-agent-hark-handoff",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "88fd3afa",
-      "headings": [
-        "AI startup Hark unveils first product: an affordable, fast computer use agent Hark Handoff"
-      ],
-      "timestamp": "2026-08-11T08:46:57.718656"
-    },
-    {
-      "title": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
-      "author": "Taryn Plumb",
-      "date": "Taryn Plumb",
-      "content": "Credit: Michael O’Donnell Photography. Emilie Schario, co-founder of Kilo Code; Jared Go, distinguished engineer for AI and and cloud at Symbotic; Amol Jain, head of product engineering at Replit.",
-      "url": "https://venturebeat.com/orchestration/ai-coding-agents-are-blowing-through-budgets-replit-kilo-code-and-symbotic-explain-how-theyre-managing-it",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 29,
-      "hash": "b0950fe4",
-      "headings": [
-        "AI coding agents are blowing through budgets — Replit, Kilo Code, and Symbotic explain how they're managing it"
-      ],
-      "timestamp": "2026-08-11T08:46:57.760078"
+      "timestamp": "2026-08-12T09:07:10.849759"
     }
   ],
-  "last_updated": "2026-08-11T08:46:57.797148"
+  "last_updated": "2026-08-12T09:07:10.887991"
 }
