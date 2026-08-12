@@ -1,4 +1,4 @@
-// api/data.js - Complete API with Semantic Enhancement + Quality Scoring (Day 8)
+// api/data.js - Complete API with Clean Professional Formatting (Day 8)
 
 // ============================================
 // IMPORTS - All from lib/
@@ -517,7 +517,7 @@ function generateSuggestions(query) {
 }
 
 // ============================================
-// SEMANTIC ENHANCEMENT SYSTEM (Day 8)
+// SEMANTIC ENHANCEMENT SYSTEM
 // ============================================
 
 function extractEntities(text) {
@@ -557,7 +557,7 @@ function enhanceSemanticContext(query, grokResponse, results) {
       if (relevantSource) {
         const contextChunk = relevantSource.chunk || relevantSource.fullContent?.substring(0, 300) || '';
         if (contextChunk) {
-          enhancedResponse += `\n\n**About ${entity}:** ${contextChunk}`;
+          enhancedResponse += `\n\nAbout ${entity}: ${contextChunk}`;
           break;
         }
       }
@@ -601,167 +601,165 @@ function scoreResponseQuality(response, sources, confidence) {
 }
 
 // ============================================
-// HUMANIZED COPYWRITING SYSTEM
+// CLEAN PROFESSIONAL FORMATTING - NO STARS, NO MESS
 // ============================================
 
-function humanizeResponse(query, grokResponse, results, confidence, intentInfo) {
-  const facts = results && results.length > 0 ? extractFacts(query, results) : [];
-  const sourceData = results && results.length > 0 ? results : [];
+function formatCleanOutput(query, response, sources, confidence, intentInfo, qualityScore) {
+  const separator = '═══════════════════════════════════════════════════════════════════════════════════════════';
+  const divider = '───────────────────────────────────────────────────────────────────────────────────────────';
+  
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    year: 'numeric', month: 'long', day: 'numeric' 
+  });
+  const formattedTime = currentDate.toLocaleTimeString('en-US', { 
+    hour: '2-digit', minute: '2-digit', hour12: true 
+  });
   
   let output = [];
   
-  const intentName = intentInfo?.primary || 'informational';
-  const isAnalytical = ['analytical', 'comparative', 'exploratory'].includes(intentName);
-  const isFactual = intentName === 'informational' || intentName === 'summarization';
+  // Header
+  output.push('');
+  output.push('  O M N I   B R A N D   I N T E L L I G E N C E');
+  output.push('  ────────────────────────────────────────────────');
+  output.push('  AI Research Division');
+  output.push('  Confidential Report');
+  output.push(separator);
+  output.push('');
+  output.push(`  Document:     Analysis Report`);
+  output.push(`  Report ID:    ${Date.now().toString(36).toUpperCase()}`);
+  output.push(`  Date:         ${formattedDate}`);
+  output.push(`  Time:         ${formattedTime}`);
+  output.push(`  Status:       ${confidence?.level || 'Complete'}`);
+  output.push(divider);
+  output.push('');
   
-  if (grokResponse) {
-    let summary = grokResponse;
-    summary = summary.replace(/\*\*/g, '');
-    summary = summary.replace(/\*/g, '');
-    summary = summary.replace(/^Summary:|^Executive Summary:|^Overview:/i, '');
-    
-    const paragraphs = summary.split('\n\n');
-    let leadParagraph = paragraphs[0] || summary;
-    
-    if (leadParagraph.length < 100 && paragraphs.length > 1) {
-      leadParagraph = leadParagraph + ' ' + paragraphs[1];
-    }
-    
-    const leadSentences = leadParagraph.split('. ');
-    if (leadSentences.length > 3) {
-      leadParagraph = leadSentences.slice(0, 3).join('. ') + '.';
-    }
-    
-    if (isAnalytical) {
-      output.push('**The bottom line:** ' + leadParagraph);
-    } else if (isFactual) {
-      output.push('**Here\'s the straight answer:** ' + leadParagraph);
-    } else {
-      output.push('**Key takeaway:** ' + leadParagraph);
-    }
-    output.push('');
-  }
+  // Query
+  output.push('  Query');
+  output.push('  ───────────────────────────────────────────────────────────────────────────');
+  output.push(`  ${query}`);
+  output.push('');
   
-  if (facts && facts.length > 0) {
-    const mainFacts = facts.slice(0, 3);
-    
-    if (mainFacts.length === 1) {
-      output.push('**The critical detail:** ' + mainFacts[0].text);
-      output.push('');
-    } else if (mainFacts.length > 1) {
-      output.push('**What you need to know:**');
-      for (let i = 0; i < mainFacts.length; i++) {
-        const f = mainFacts[i];
-        let factText = f.text;
-        if (!factText.endsWith('.') && !factText.endsWith('!') && !factText.endsWith('?')) {
-          factText += '.';
-        }
-        output.push('  • ' + factText);
-      }
-      output.push('');
-    }
-  }
-  
-  if (grokResponse) {
-    let analysis = grokResponse;
-    analysis = analysis.replace(/\*\*/g, '');
-    analysis = analysis.replace(/\*/g, '');
-    
-    const analysisParagraphs = analysis.split('\n\n');
-    let remainingContent = '';
-    if (analysisParagraphs.length > 1) {
-      remainingContent = analysisParagraphs.slice(1).join('\n\n');
-    } else {
-      remainingContent = analysis;
-    }
-    
-    let humanizedAnalysis = remainingContent;
-    humanizedAnalysis = humanizedAnalysis.replace(/^Analysis:|^Context:|^Details:/i, '');
-    
-    const sentences = humanizedAnalysis.split('. ');
-    if (sentences.length > 2) {
-      let variedSentences = [];
-      for (let i = 0; i < sentences.length; i++) {
-        let s = sentences[i].trim();
-        if (!s) continue;
-        if (!s.endsWith('.') && !s.endsWith('!') && !s.endsWith('?')) {
-          s += '.';
-        }
-        variedSentences.push('  ' + s);
-      }
-      humanizedAnalysis = variedSentences.join(' ');
-    }
-    
-    humanizedAnalysis = humanizedAnalysis.replace(/\s+/g, ' ');
-    
-    if (humanizedAnalysis.length > 50) {
-      const hasWhyItMatters = humanizedAnalysis.toLowerCase().includes('why') || 
-                             humanizedAnalysis.toLowerCase().includes('implication');
-      
-      if (!hasWhyItMatters && isAnalytical) {
-        output.push('**Why this matters:** ' + humanizedAnalysis);
-      } else {
-        output.push('**Here\'s the context:** ' + humanizedAnalysis);
-      }
-      output.push('');
-    }
-  }
-  
-  if (sourceData && sourceData.length > 0) {
-    output.push('**Quick reference:**');
-    for (let i = 0; i < Math.min(sourceData.length, 3); i++) {
-      const s = sourceData[i];
-      const relevanceText = s.relevance > 60 ? 'high confidence' : s.relevance > 30 ? 'moderate relevance' : 'supporting reference';
-      output.push('  • ' + s.source_name + ' (' + relevanceText + ')');
-    }
-    output.push('');
-  }
-  
-  if (confidence) {
-    const score = confidence.score || 0;
-    let confidenceText = '';
-    
-    if (score >= 80) {
-      confidenceText = 'high confidence—the sources are consistent and authoritative.';
-    } else if (score >= 50) {
-      confidenceText = 'moderate confidence—the data is solid but not overwhelming.';
-    } else {
-      confidenceText = 'limited confidence—the evidence is suggestive but not conclusive.';
-    }
-    
-    output.push('**Confidence assessment:** ' + confidenceText);
-    output.push('');
-  }
-  
-  if (sourceData && sourceData.length > 0) {
-    output.push('**Sources:**');
-    for (let i = 0; i < Math.min(sourceData.length, 4); i++) {
-      const s = sourceData[i];
-      output.push('  • ' + (s.source_name || 'Unknown'));
-      if (s.date) {
-        output.push('    ' + s.date);
-      }
-      if (s.source) {
-        output.push('    ' + s.source);
-      }
-    }
-    output.push('');
-  }
-  
+  // Confidence
   if (confidence) {
     const level = confidence.level || 'Low';
     const score = confidence.score || 0;
-    output.push('**Confidence Level:** ' + level + ' (' + score + '%)');
+    const barLength = 20;
+    const filled = Math.round((score / 100) * barLength);
+    const empty = barLength - filled;
+    const bar = '█'.repeat(filled) + '░'.repeat(empty);
+    
+    output.push('  Confidence Assessment');
+    output.push('  ───────────────────────────────────────────────────────────────────────────');
+    output.push(`  Level:        ${level.toUpperCase()}`);
+    output.push(`  Score:        ${score}%`);
+    output.push(`  Indicator:    [${bar}]`);
+    output.push('');
   }
   
-  let finalOutput = output.join('\n');
-  finalOutput = finalOutput.replace(/\n{3,}/g, '\n\n');
+  // Response
+  if (response) {
+    output.push('  Response');
+    output.push('  ───────────────────────────────────────────────────────────────────────────');
+    
+    // Clean the response - remove markdown, clean formatting
+    let cleanResponse = response;
+    cleanResponse = cleanResponse.replace(/\*\*/g, '');
+    cleanResponse = cleanResponse.replace(/\*/g, '');
+    cleanResponse = cleanResponse.replace(/Summary:|Executive Summary:|Overview:/gi, '');
+    cleanResponse = cleanResponse.replace(/Key Facts:|What you need to know:/gi, '');
+    cleanResponse = cleanResponse.replace(/•/g, '  -');
+    
+    // Split into paragraphs and format
+    const paragraphs = cleanResponse.split('\n\n');
+    let formattedParagraphs = [];
+    
+    for (const para of paragraphs) {
+      if (para.trim()) {
+        // Wrap text to 70 characters
+        const words = para.trim().split(' ');
+        let line = '';
+        let wrappedLines = [];
+        for (const word of words) {
+          if ((line + word).length > 70) {
+            wrappedLines.push(`  ${line.trim()}`);
+            line = '';
+          }
+          line += word + ' ';
+        }
+        if (line.trim()) {
+          wrappedLines.push(`  ${line.trim()}`);
+        }
+        formattedParagraphs.push(wrappedLines.join('\n'));
+      }
+    }
+    
+    output.push(formattedParagraphs.join('\n\n'));
+    output.push('');
+  }
   
-  return finalOutput;
+  // Key Facts (Bullet Points)
+  const facts = extractFacts(query, sources || []);
+  if (facts && facts.length > 0) {
+    output.push('  Key Facts');
+    output.push('  ───────────────────────────────────────────────────────────────────────────');
+    for (let i = 0; i < Math.min(facts.length, 4); i++) {
+      const f = facts[i];
+      let factText = f.text;
+      if (!factText.endsWith('.') && !factText.endsWith('!') && !factText.endsWith('?')) {
+        factText += '.';
+      }
+      output.push(`  ${i+1}. ${factText}`);
+      output.push(`     Source: ${f.source}`);
+      output.push('');
+    }
+  }
+  
+  // Sources
+  if (sources && sources.length > 0) {
+    output.push('  Sources');
+    output.push('  ───────────────────────────────────────────────────────────────────────────');
+    for (let i = 0; i < Math.min(sources.length, 4); i++) {
+      const s = sources[i];
+      output.push(`  [${i+1}]  ${s.title || 'Untitled'}`);
+      output.push(`       Source:   ${s.source_name || 'Unknown'}`);
+      if (s.date) {
+        output.push(`       Date:     ${s.date}`);
+      }
+      if (s.source) {
+        output.push(`       URL:      ${s.source}`);
+      }
+      output.push('');
+    }
+  }
+  
+  // Quality Score
+  if (qualityScore) {
+    output.push('  Quality Score');
+    output.push('  ───────────────────────────────────────────────────────────────────────────');
+    output.push(`  Overall:      ${qualityScore.level} (${qualityScore.score}%)`);
+    if (qualityScore.breakdown) {
+      output.push(`  Completeness: ${qualityScore.breakdown.completeness || 0}%`);
+      output.push(`  Sources:      ${qualityScore.breakdown.sources || 0}%`);
+      output.push(`  Confidence:   ${qualityScore.breakdown.confidence || 0}%`);
+      output.push(`  Entities:     ${qualityScore.breakdown.entities || 0}%`);
+    }
+    output.push('');
+  }
+  
+  // Footer
+  output.push('  Report Metadata');
+  output.push('  ───────────────────────────────────────────────────────────────────────────');
+  output.push(`  Sources Analyzed: ${sources?.length || 0}`);
+  output.push(`  Total Sources Available: ${uniqueSources?.length || 0}`);
+  output.push(`  AI Model:        ${response ? 'Grok (Enhanced)' : 'Fallback'}`);
+  output.push(separator);
+  
+  return output.join('\n');
 }
 
 // ============================================
-// GENERATE RESPONSE - ENHANCED (Day 8)
+// GENERATE RESPONSE - ENHANCED WITH CLEAN FORMATTING
 // ============================================
 
 async function generateResponse(query, searchResult) {
@@ -828,16 +826,18 @@ async function generateResponse(query, searchResult) {
     confidence
   );
   
-  const humanizedResponse = humanizeResponse(
+  // Use clean formatting instead of humanized
+  const cleanFormattedOutput = formatCleanOutput(
     query,
     enhancedResponse || 'Unable to generate a response at this time.',
     results || [],
     confidence,
-    intentInfo
+    intentInfo,
+    qualityScore
   );
   
   const finalResponse = {
-    response: humanizedResponse,
+    response: cleanFormattedOutput,
     sources: results || [],
     metadata: {
       total_sources: uniqueSources.length,
@@ -850,7 +850,7 @@ async function generateResponse(query, searchResult) {
       quality_score: qualityScore,
       ai_generated: true,
       model: grokResponse ? 'grok' : 'fallback',
-      humanized: true,
+      formatted: true,
       enhanced: true,
       last_updated: new Date().toISOString()
     }
@@ -900,7 +900,7 @@ export default async function handler(req, res) {
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
       grok_available: !!process.env.GROQ_API_KEY,
       cache_stats: responseCache.getStats(),
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'humanized_output', 'semantic_enhancement', 'quality_scoring']
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'clean_formatting', 'semantic_enhancement', 'quality_scoring']
     });
   }
 
@@ -926,7 +926,7 @@ export default async function handler(req, res) {
       source_stats: sourceStats,
       grok_available: !!process.env.GROQ_API_KEY,
       cache_stats: responseCache.getStats(),
-      features: ['humanized_output', 'semantic_enhancement', 'quality_scoring'],
+      features: ['clean_formatting', 'semantic_enhancement', 'quality_scoring'],
       last_updated: new Date().toISOString()
     });
   }
@@ -948,9 +948,9 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     name: 'Omni Brand Intelligence Bot API',
-    version: '4.2.0',
+    version: '4.3.0',
     status: 'running',
-    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'humanized_output', 'semantic_enhancement', 'quality_scoring'],
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'clean_formatting', 'semantic_enhancement', 'quality_scoring'],
     total_sources: uniqueSources.length,
     source_stats: sourceStats,
     source_names: [...new Set(uniqueSources.map(s => s.source_name))],
