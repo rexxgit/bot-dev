@@ -1,4 +1,4 @@
-// api/data.js - Complete API with Humanized Copywriting Output
+// api/data.js - Complete API with Semantic Enhancement + Quality Scoring (Day 8)
 
 // ============================================
 // IMPORTS - All from lib/
@@ -517,6 +517,90 @@ function generateSuggestions(query) {
 }
 
 // ============================================
+// SEMANTIC ENHANCEMENT SYSTEM (Day 8)
+// ============================================
+
+function extractEntities(text) {
+  const entities = [];
+  const patterns = {
+    company: /(Microsoft|OpenAI|Anthropic|Meta|Google|Amazon|Apple|Tesla|NVIDIA|AMD|Intel|IBM|Oracle|Salesforce|Adobe|Cisco|Dell|HP|Samsung|Sony|XAI|Grok|Claude|ChatGPT)/g,
+    person: /(Satya Nadella|Sam Altman|Mark Zuckerberg|Dario Amodei|Elon Musk|Bill Gates|Tim Cook|Jeff Bezos|Sundar Pichai|Satya|Nadella|Altman|Zuckerberg|Amodei|Musk|Gates|Cook|Bezos|Pichai)/g,
+    model: /(GPT-5\.6|GPT-4|Claude Sonnet|Claude Opus|Grok 4\.5|Grok 3|LLaMA|Gemini|Gemma|Mistral|Mixtral)/g,
+    topic: /(AI|artificial intelligence|machine learning|deep learning|neural network|agent|automation|safety|security|investment|enterprise|startup)/gi
+  };
+  
+  for (const [type, pattern] of Object.entries(patterns)) {
+    const matches = text.match(pattern) || [];
+    for (const match of matches) {
+      if (!entities.includes(match)) {
+        entities.push(match);
+      }
+    }
+  }
+  
+  return [...new Set(entities)];
+}
+
+function enhanceSemanticContext(query, grokResponse, results) {
+  if (!grokResponse || !results || results.length === 0) {
+    return grokResponse;
+  }
+
+  const entities = extractEntities(query);
+  let enhancedResponse = grokResponse;
+  
+  for (const entity of entities) {
+    if (!enhancedResponse.toLowerCase().includes(entity.toLowerCase())) {
+      const relevantSource = results.find(r => 
+        (r.fullContent || r.content || '').toLowerCase().includes(entity.toLowerCase())
+      );
+      if (relevantSource) {
+        const contextChunk = relevantSource.chunk || relevantSource.fullContent?.substring(0, 300) || '';
+        if (contextChunk) {
+          enhancedResponse += `\n\n**About ${entity}:** ${contextChunk}`;
+          break;
+        }
+      }
+    }
+  }
+  
+  return enhancedResponse;
+}
+
+function scoreResponseQuality(response, sources, confidence) {
+  let score = 0;
+  
+  const wordCount = (response || '').split(' ').length;
+  if (wordCount > 200) score += 30;
+  else if (wordCount > 100) score += 20;
+  else if (wordCount > 50) score += 10;
+  
+  if (sources && sources.length >= 3) score += 25;
+  else if (sources && sources.length >= 2) score += 15;
+  else if (sources && sources.length >= 1) score += 8;
+  
+  if (confidence && confidence.score >= 80) score += 25;
+  else if (confidence && confidence.score >= 50) score += 15;
+  else if (confidence && confidence.score >= 30) score += 10;
+  
+  const entities = extractEntities(response || '');
+  if (entities.length >= 3) score += 20;
+  else if (entities.length >= 2) score += 15;
+  else if (entities.length >= 1) score += 10;
+  
+  return {
+    score: Math.min(score, 100),
+    level: score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Fair' : 'Needs Improvement',
+    breakdown: {
+      completeness: Math.min((wordCount > 200 ? 30 : wordCount > 100 ? 20 : 10), 30),
+      sources: Math.min((sources && sources.length >= 3 ? 25 : sources && sources.length >= 2 ? 15 : 8), 25),
+      confidence: Math.min((confidence && confidence.score >= 80 ? 25 : confidence && confidence.score >= 50 ? 15 : 10), 25),
+      entities: Math.min((entities.length >= 3 ? 20 : entities.length >= 2 ? 15 : 10), 20)
+    }
+  };
+}
+
+// ============================================
 // HUMANIZED COPYWRITING SYSTEM
 // ============================================
 
@@ -530,9 +614,6 @@ function humanizeResponse(query, grokResponse, results, confidence, intentInfo) 
   const isAnalytical = ['analytical', 'comparative', 'exploratory'].includes(intentName);
   const isFactual = intentName === 'informational' || intentName === 'summarization';
   
-  // ============================================
-  // EXECUTIVE SUMMARY
-  // ============================================
   if (grokResponse) {
     let summary = grokResponse;
     summary = summary.replace(/\*\*/g, '');
@@ -561,9 +642,6 @@ function humanizeResponse(query, grokResponse, results, confidence, intentInfo) 
     output.push('');
   }
   
-  // ============================================
-  // KEY DETAILS
-  // ============================================
   if (facts && facts.length > 0) {
     const mainFacts = facts.slice(0, 3);
     
@@ -584,9 +662,6 @@ function humanizeResponse(query, grokResponse, results, confidence, intentInfo) 
     }
   }
   
-  // ============================================
-  // CONTEXT & ANALYSIS
-  // ============================================
   if (grokResponse) {
     let analysis = grokResponse;
     analysis = analysis.replace(/\*\*/g, '');
@@ -632,9 +707,6 @@ function humanizeResponse(query, grokResponse, results, confidence, intentInfo) 
     }
   }
   
-  // ============================================
-  // QUICK REFERENCE
-  // ============================================
   if (sourceData && sourceData.length > 0) {
     output.push('**Quick reference:**');
     for (let i = 0; i < Math.min(sourceData.length, 3); i++) {
@@ -645,9 +717,6 @@ function humanizeResponse(query, grokResponse, results, confidence, intentInfo) 
     output.push('');
   }
   
-  // ============================================
-  // CONFIDENCE ASSESSMENT
-  // ============================================
   if (confidence) {
     const score = confidence.score || 0;
     let confidenceText = '';
@@ -664,9 +733,6 @@ function humanizeResponse(query, grokResponse, results, confidence, intentInfo) 
     output.push('');
   }
   
-  // ============================================
-  // SOURCES
-  // ============================================
   if (sourceData && sourceData.length > 0) {
     output.push('**Sources:**');
     for (let i = 0; i < Math.min(sourceData.length, 4); i++) {
@@ -682,9 +748,6 @@ function humanizeResponse(query, grokResponse, results, confidence, intentInfo) 
     output.push('');
   }
   
-  // ============================================
-  // CONFIDENCE LEVEL
-  // ============================================
   if (confidence) {
     const level = confidence.level || 'Low';
     const score = confidence.score || 0;
@@ -698,7 +761,7 @@ function humanizeResponse(query, grokResponse, results, confidence, intentInfo) 
 }
 
 // ============================================
-// GENERATE RESPONSE
+// GENERATE RESPONSE - ENHANCED (Day 8)
 // ============================================
 
 async function generateResponse(query, searchResult) {
@@ -713,7 +776,6 @@ async function generateResponse(query, searchResult) {
   const intentInfo = intentDetector.detectIntent(query);
   
   let context = '';
-  
   if (results && results.length > 0) {
     context = results.map((r, i) => 
       `Source ${i+1}: ${r.title}\n${r.chunk || r.fullContent?.substring(0, 500) || ''}`
@@ -727,12 +789,10 @@ async function generateResponse(query, searchResult) {
     : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
   let grokResponse = null;
-  
   try {
     const apiKey = process.env.GROQ_API_KEY;
     if (apiKey) {
       const grokRequest = buildGrokRequest(query, context, intentInfo.primary);
-      
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -757,9 +817,20 @@ async function generateResponse(query, searchResult) {
     grokResponse = null;
   }
   
+  let enhancedResponse = grokResponse;
+  if (grokResponse) {
+    enhancedResponse = enhanceSemanticContext(query, grokResponse, results);
+  }
+  
+  const qualityScore = scoreResponseQuality(
+    enhancedResponse || '', 
+    results || [], 
+    confidence
+  );
+  
   const humanizedResponse = humanizeResponse(
     query,
-    grokResponse || 'Unable to generate a response at this time.',
+    enhancedResponse || 'Unable to generate a response at this time.',
     results || [],
     confidence,
     intentInfo
@@ -776,15 +847,16 @@ async function generateResponse(query, searchResult) {
       intent: intentInfo.primary,
       intent_confidence: Math.round(intentInfo.confidence * 100),
       confidence: confidence,
+      quality_score: qualityScore,
       ai_generated: true,
       model: grokResponse ? 'grok' : 'fallback',
       humanized: true,
+      enhanced: true,
       last_updated: new Date().toISOString()
     }
   };
   
   responseCache.set(query, finalResponse);
-  
   return finalResponse;
 }
 
@@ -828,7 +900,7 @@ export default async function handler(req, res) {
       source_names: [...new Set(uniqueSources.map(s => s.source_name))],
       grok_available: !!process.env.GROQ_API_KEY,
       cache_stats: responseCache.getStats(),
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'humanized_output']
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'humanized_output', 'semantic_enhancement', 'quality_scoring']
     });
   }
 
@@ -854,7 +926,7 @@ export default async function handler(req, res) {
       source_stats: sourceStats,
       grok_available: !!process.env.GROQ_API_KEY,
       cache_stats: responseCache.getStats(),
-      features: ['humanized_output'],
+      features: ['humanized_output', 'semantic_enhancement', 'quality_scoring'],
       last_updated: new Date().toISOString()
     });
   }
@@ -876,9 +948,9 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     name: 'Omni Brand Intelligence Bot API',
-    version: '4.1.0',
+    version: '4.2.0',
     status: 'running',
-    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'humanized_output'],
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'humanized_output', 'semantic_enhancement', 'quality_scoring'],
     total_sources: uniqueSources.length,
     source_stats: sourceStats,
     source_names: [...new Set(uniqueSources.map(s => s.source_name))],
