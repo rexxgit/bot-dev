@@ -1,4 +1,4 @@
-// api/data.js - Complete API with Professional Layout & Formatting
+// api/data.js - Complete API with Professional Layout & Clickable Links
 
 // ============================================
 // IMPORTS - All from lib/
@@ -526,111 +526,57 @@ function scoreResponseQuality(response, sources, confidence) {
 }
 
 // ============================================
-// PROFESSIONAL LAYOUT FORMATTER - Better Spacing & Indentation
+// PROFESSIONAL LAYOUT FORMATTER - Clickable Links
 // ============================================
 
-# api/data.js - Snippet for Clickable Embedded Links
-# Replace the formatProfessionalResponse function with this:
-
-def formatProfessionalResponse(query, response, sources, confidence, qualityScore):
-    output = []
-    indent = '  '
-    doubleIndent = '    '
-    
-    # Response Body
-    if response:
-        cleanResponse = response.replace(/\*\*/g, '').replace(/\*/g, '')
-        cleanResponse = cleanResponse.replace(/Summary:|Executive Summary:|Overview:/gi, '')
-        cleanResponse = cleanResponse.replace(/Key Facts:|What you need to know:/gi, '')
-        
-        paragraphs = cleanResponse.split('\n\n')
-        formattedParagraphs = []
-        for para in paragraphs:
-            if para.strip():
-                words = para.strip().split(' ')
-                line = ''
-                wrappedLines = []
-                for word in words:
-                    if (line + word).length > 70:
-                        wrappedLines.push(f'{indent}{line.trim()}')
-                        line = ''
-                    line += word + ' '
-                if line.trim():
-                    wrappedLines.push(f'{indent}{line.trim()}')
-                formattedParagraphs.push(wrappedLines.join('\n'))
-        
-        output.push(formattedParagraphs.join('\n\n'))
-        output.push('')
-    
-    # Key Findings with Clickable Links
-    facts = extractFacts(query, sources or [])
-    if facts and facts.length > 0:
-        output.push('  Key Findings')
-        output.push('  ' + '-'.repeat(50))
-        
-        for i, f in enumerate(facts.slice(0, 4)):
-            factText = f.text
-            if not factText.endswith('.') and not factText.endswith('!') and not factText.endswith('?'):
-                factText += '.'
-            
-            # Find source and create clickable link
-            sourceMatch = sources.find(lambda s: s.source_name == f.source)
-            sourceUrl = sourceMatch?.source or sourceMatch?.url or '#'
-            sourceDisplay = sourceMatch?.source_name or f.source or 'Unknown'
-            
-            # Markdown format for clickable links
-            linkedSource = f'[{sourceDisplay}]({sourceUrl})'
-            
-            output.push(f'{indent}{i + 1}. {factText}')
-            output.push(f'{doubleIndent}Source: {linkedSource}')
-            output.push('')
-    
-    # Confidence Assessment
-    if confidence:
-        score = confidence.score or 0
-        if score >= 80:
-            confidenceText = 'High confidence — the sources are consistent and authoritative.'
-        elif score >= 50:
-            confidenceText = 'Moderate confidence — the data is solid but not overwhelming.'
-        else:
-            confidenceText = 'Limited confidence — the evidence is suggestive but not conclusive.'
-        
-        output.push(f'{indent}Confidence Assessment')
-        output.push(f'{indent}{"-".repeat(50)}')
-        output.push(f'{indent}{confidenceText}')
-        output.push('')
-    
-    # References with Clickable Links
-    if sources and sources.length > 0:
-        output.push(f'{indent}References')
-        output.push(f'{indent}{"-".repeat(50)}')
-        
-        for i, s in enumerate(sources.slice(0, 4)):
-            url = s.source or s.url or '#'
-            sourceName = s.source_name or 'Unknown'
-            
-            # Markdown format for clickable links
-            linkedSource = f'[{sourceName}]({url})'
-            
-            output.push(f'{doubleIndent}{i + 1}. {s.title or "Untitled"}')
-            output.push(f'{doubleIndent}   {linkedSource}{f", {s.date}" if s.date else ""}')
-            output.push('')
-    
-    # Quality Note
-    if qualityScore:
-        level = qualityScore.level or 'Good'
-        score = qualityScore.score or 0
-        output.push(f'{indent}Note: This response is rated as {level.lower()} ({score}%) based on source quality and coverage.')
-    
-    return output.join('\n')
+function formatProfessionalResponse(query, response, sources, confidence, qualityScore) {
+  const indent = '  ';
+  const doubleIndent = '    ';
+  let output = [];
   
   // ============================================
-  // KEY FINDINGS - Professional Bullet Points
+  // RESPONSE BODY - Clean paragraphs
+  // ============================================
+  if (response) {
+    let cleanResponse = response;
+    cleanResponse = cleanResponse.replace(/\*\*/g, '');
+    cleanResponse = cleanResponse.replace(/\*/g, '');
+    cleanResponse = cleanResponse.replace(/Summary:|Executive Summary:|Overview:/gi, '');
+    cleanResponse = cleanResponse.replace(/Key Facts:|What you need to know:/gi, '');
+    
+    const paragraphs = cleanResponse.split('\n\n');
+    let formattedParagraphs = [];
+    
+    for (const para of paragraphs) {
+      if (para.trim()) {
+        const words = para.trim().split(' ');
+        let line = '';
+        let wrappedLines = [];
+        for (const word of words) {
+          if ((line + word).length > 70) {
+            wrappedLines.push(`${indent}${line.trim()}`);
+            line = '';
+          }
+          line += word + ' ';
+        }
+        if (line.trim()) {
+          wrappedLines.push(`${indent}${line.trim()}`);
+        }
+        formattedParagraphs.push(wrappedLines.join('\n'));
+      }
+    }
+    
+    output.push(formattedParagraphs.join('\n\n'));
+    output.push('');
+  }
+  
+  // ============================================
+  // KEY FINDINGS - With Clickable Links
   // ============================================
   const facts = extractFacts(query, sources || []);
   if (facts && facts.length > 0) {
-    output.push(`  Key Findings`);
-    output.push(`  ${'-'.repeat(50)}`);
+    output.push(`${indent}Key Findings`);
+    output.push(`${indent}${'-'.repeat(50)}`);
     
     for (let i = 0; i < Math.min(facts.length, 4); i++) {
       const f = facts[i];
@@ -639,9 +585,12 @@ def formatProfessionalResponse(query, response, sources, confidence, qualityScor
         factText += '.';
       }
       
+      // Find source and create clickable link
       const sourceMatch = sources.find(s => s.source_name === f.source);
       const sourceUrl = sourceMatch?.source || sourceMatch?.url || '#';
       const sourceDisplay = sourceMatch?.source_name || f.source || 'Unknown';
+      
+      // Markdown format for clickable links (frontend will render)
       const linkedSource = `[${sourceDisplay}](${sourceUrl})`;
       
       output.push(`${indent}${i + 1}. ${factText}`);
@@ -651,7 +600,7 @@ def formatProfessionalResponse(query, response, sources, confidence, qualityScor
   }
   
   // ============================================
-  // CONFIDENCE ASSESSMENT - Professional
+  // CONFIDENCE ASSESSMENT
   // ============================================
   if (confidence) {
     const score = confidence.score || 0;
@@ -672,7 +621,7 @@ def formatProfessionalResponse(query, response, sources, confidence, qualityScor
   }
   
   // ============================================
-  // REFERENCES - Professional Source List
+  // REFERENCES - With Clickable Links
   // ============================================
   if (sources && sources.length > 0) {
     output.push(`${indent}References`);
@@ -682,6 +631,8 @@ def formatProfessionalResponse(query, response, sources, confidence, qualityScor
       const s = sources[i];
       const url = s.source || s.url || '#';
       const sourceName = s.source_name || 'Unknown';
+      
+      // Markdown format for clickable links (frontend will render)
       const linkedSource = `[${sourceName}](${url})`;
       
       output.push(`${doubleIndent}${i + 1}. ${s.title || 'Untitled'}`);
@@ -691,7 +642,7 @@ def formatProfessionalResponse(query, response, sources, confidence, qualityScor
   }
   
   // ============================================
-  // QUALITY NOTE - Professional Footer
+  // QUALITY NOTE
   // ============================================
   if (qualityScore) {
     const level = qualityScore.level || 'Good';
