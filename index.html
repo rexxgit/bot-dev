@@ -17,7 +17,6 @@
            CSS VARIABLES (Light & Dark Mode)
            ============================================ */
         :root {
-            /* Light Mode */
             --bg-primary: #F8FAFC;
             --bg-secondary: #FFFFFF;
             --bg-sidebar: #F8FAFC;
@@ -1294,19 +1293,17 @@
             if (val === null) return null;
             return val === 'true';
         }
-        // ============================================
-        // Render Markdown
-        //  ============================================
-        // In your frontend JavaScript (index.html)
-function renderMarkdown(text) {
-    // Convert [Text](URL) to <a href="URL">Text</a>
-    return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-    });
-}
 
-// Apply to response
-document.getElementById('chat-messages').innerHTML = renderMarkdown(response);
+        // ============================================
+        // RENDER MARKDOWN - CLICKABLE LINKS
+        // ============================================
+        function renderMarkdown(text) {
+            if (!text) return text;
+            // Convert [Text](URL) to <a href="URL">Text</a>
+            return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
+                return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--text-link); text-decoration: underline;">' + linkText + '</a>';
+            });
+        }
 
         // ============================================
         // UI FUNCTIONS
@@ -1347,7 +1344,8 @@ document.getElementById('chat-messages').innerHTML = renderMarkdown(response);
             bubble.className = 'message-bubble';
 
             if (role === 'assistant') {
-                bubble.innerHTML = content;
+                // Render markdown for clickable links
+                bubble.innerHTML = renderMarkdown(content);
 
                 const feedbackContainer = document.createElement('div');
                 feedbackContainer.className = 'feedback-container';
