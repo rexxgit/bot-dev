@@ -3,7 +3,11 @@
 // ============================================
 // IMPORTS - All from lib/
 // ============================================
+// api/data.js - Add these imports
 
+import { orchestrator } from '../lib/models/orchestrator.js';
+import { streamingHandler } from '../lib/response/streaming.js';
+import { feedbackSystem } from '../lib/response/feedback.js';
 import { semanticChunk } from '../lib/chunking/semantic.js';
 import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
 import { getFewShotExamples } from '../lib/prompts/examples.js';
@@ -720,7 +724,9 @@ function formatHumanResponse(query, response, sources, confidence, qualityScore)
 // GENERATE RESPONSE - ENHANCED WITH HUMAN FORMATTING
 // ============================================
 
-async function generateResponse(query, searchResult) {
+// api/data.js - Enhanced generateResponse with multi-model support
+
+async function generateResponse(query, searchResult, req, res) {
   const { results, classification } = searchResult;
   const queryType = classification?.type || 'factual';
   
@@ -730,6 +736,9 @@ async function generateResponse(query, searchResult) {
   }
   
   const intentInfo = intentDetector.detectIntent(query);
+  
+  // Check if streaming is requested
+  const streamRequested = req.query?.stream === 'true' || req.body?.stream === true;
   
   let context = '';
   if (results && results.length > 0) {
@@ -744,38 +753,22 @@ async function generateResponse(query, searchResult) {
     ? confidenceScorer.calculateConfidence(results, results, classification)
     : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
-  let grokResponse = null;
-  try {
+  // Handle streaming
+  if (streamRequested) {
     const apiKey = process.env.GROQ_API_KEY;
     if (apiKey) {
-      const grokRequest = buildGrokRequest(query, context, intentInfo.primary);
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: grokRequest.messages,
-          temperature: grokRequest.temperature,
-          max_tokens: grokRequest.maxTokens
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        grokResponse = data.choices[0].message.content;
-      }
+      await streamingHandler.streamResponse(query, context, apiKey, res);
+      return null; // Response already sent
     }
-  } catch (error) {
-    console.warn('Grok failed:', error.message);
-    grokResponse = null;
   }
   
-  let enhancedResponse = grokResponse;
-  if (grokResponse) {
-    enhancedResponse = enhanceSemanticContext(query, grokResponse, results);
+  // Use orchestrator for response
+  const apiKey = process.env.GROQ_API_KEY;
+  const modelResult = await orchestrator.generateResponse(query, context, intentInfo.primary, apiKey);
+  
+  let enhancedResponse = modelResult.response;
+  if (modelResult.success && modelResult.model === 'grok') {
+    enhancedResponse = enhanceSemanticContext(query, modelResult.response, results);
   }
   
   const qualityScore = scoreResponseQuality(
@@ -805,7 +798,7 @@ async function generateResponse(query, searchResult) {
       confidence: confidence,
       quality_score: qualityScore,
       ai_generated: true,
-      model: grokResponse ? 'grok' : 'fallback',
+      model: modelResult.model || 'fallback',
       formatted: true,
       enhanced: true,
       human_style: true,
@@ -815,111 +808,4 @@ async function generateResponse(query, searchResult) {
   
   responseCache.set(query, finalResponse);
   return finalResponse;
-}
-
-// ============================================
-// API HANDLER
-// ============================================
-
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'GET' && req.method !== 'POST') {
-    return res.status(405).json({ 
-      error: 'Method not allowed',
-      allowed: ['GET', 'POST']
-    });
-  }
-
-  let query = null;
-  let action = null;
-
-  if (req.method === 'GET') {
-    query = req.query.query || null;
-    action = req.query.action || null;
-  } else {
-    query = req.body?.query || null;
-    action = req.body?.action || null;
-  }
-
-  if (action === 'health' || action === 'ping') {
-    return res.status(200).json({
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      total_sources: uniqueSources.length,
-      source_stats: sourceStats,
-      source_names: [...new Set(uniqueSources.map(s => s.source_name))],
-      grok_available: !!process.env.GROQ_API_KEY,
-      cache_stats: responseCache.getStats(),
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring']
-    });
-  }
-
-  if (action === 'all') {
-    return res.status(200).json({
-      total: uniqueSources.length,
-      source_stats: sourceStats,
-      sources: uniqueSources.map(s => ({
-        title: s.title,
-        source_name: s.source_name,
-        author: s.author || 'Unknown',
-        date: s.date || '',
-        url: s.url,
-        word_count: s.word_count || 0,
-        domain: s.domain || 'unknown'
-      }))
-    });
-  }
-
-  if (action === 'stats') {
-    return res.status(200).json({
-      total_sources: uniqueSources.length,
-      source_stats: sourceStats,
-      grok_available: !!process.env.GROQ_API_KEY,
-      cache_stats: responseCache.getStats(),
-      features: ['human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring'],
-      last_updated: new Date().toISOString()
-    });
-  }
-
-  if (action === 'clear-cache') {
-    responseCache.clear();
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Cache cleared',
-      cache_stats: responseCache.getStats()
-    });
-  }
-
-  if (query) {
-    const searchResult = searchSources(query);
-    const response = await generateResponse(query, searchResult);
-    return res.status(200).json(response);
-  }
-
-  return res.status(200).json({
-    name: 'Omni Brand Intelligence Bot API',
-    version: '4.3.0',
-    status: 'running',
-    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring'],
-    total_sources: uniqueSources.length,
-    source_stats: sourceStats,
-    source_names: [...new Set(uniqueSources.map(s => s.source_name))],
-    grok_available: !!process.env.GROQ_API_KEY,
-    cache_stats: responseCache.getStats(),
-    endpoints: {
-      search: 'GET/POST with ?query=your+question',
-      health: 'GET?action=health',
-      all: 'GET?action=all',
-      stats: 'GET?action=stats',
-      clear_cache: 'GET?action=clear-cache'
-    },
-    last_updated: new Date().toISOString()
-  });
 }
