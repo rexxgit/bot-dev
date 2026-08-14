@@ -1294,6 +1294,19 @@
             if (val === null) return null;
             return val === 'true';
         }
+        // ============================================
+        // Render Markdown
+        //  ============================================
+        // In your frontend JavaScript (index.html)
+function renderMarkdown(text) {
+    // Convert [Text](URL) to <a href="URL">Text</a>
+    return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    });
+}
+
+// Apply to response
+document.getElementById('chat-messages').innerHTML = renderMarkdown(response);
 
         // ============================================
         // UI FUNCTIONS
