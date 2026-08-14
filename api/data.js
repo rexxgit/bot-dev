@@ -1,13 +1,9 @@
-// api/data.js - Complete Self-Contained API with Human-Written Style
+// api/data.js - Complete API with Human-Written Style + Embedded Links
 
 // ============================================
 // IMPORTS - All from lib/
 // ============================================
-// api/data.js - Add these imports
 
-import { orchestrator } from '../lib/models/orchestrator.js';
-import { streamingHandler } from '../lib/response/streaming.js';
-import { feedbackSystem } from '../lib/response/feedback.js';
 import { semanticChunk } from '../lib/chunking/semantic.js';
 import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
 import { getFewShotExamples } from '../lib/prompts/examples.js';
@@ -21,6 +17,9 @@ import { responseCache } from '../lib/response/cache.js';
 import { advancedSearch } from '../lib/search/hybrid.js';
 import { createGrokInstance } from '../lib/grok/index.js';
 import { buildGrokRequest } from '../lib/grok/prompts.js';
+import { orchestrator } from '../lib/models/orchestrator.js';
+import { streamingHandler } from '../lib/response/streaming.js';
+import { feedbackSystem } from '../lib/response/feedback.js';
 
 // ============================================
 // ALL DATA EMBEDDED HERE
@@ -44,7 +43,7 @@ const techCrunchSources = [
     title: "Mark Zuckerberg predicts that billions of people will have personal AI agents in five years",
     author: "Unknown",
     date: "2026-07-29T16:00:11-07:00",
-    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years. 'I think that it's extremely unlikely if you look out five years from now, for example — whatever period of time you want — that you don't have billions of people with a personal agent that understands your goals and that is just working on your behalf 24/7 to achieve your goals in whatever the domain is that you care about,' Zuckerberg said.",
+    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years.",
     url: "https://techcrunch.com/2026/07/29/mark-zuckerberg-predicts-that-billions-of-people-will-have-personal-ai-agents-in-five-years/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -57,7 +56,7 @@ const techCrunchSources = [
     title: "Microsoft logs $3.2B from Anthropic investment, but OpenAI was a mixed bag",
     author: "Unknown",
     date: "2026-07-29T15:46:03-07:00",
-    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing. For the quarter, it recorded its investment in Anthropic as a $3.2 billion gain.",
+    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing.",
     url: "https://techcrunch.com/2026/07/29/microsoft-logs-3-2b-from-anthropic-investment-but-openai-was-a-mixed-bag/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -70,7 +69,7 @@ const techCrunchSources = [
     title: "Zuckerberg says Meta's enterprise AI opportunity extends beyond agents",
     author: "Unknown",
     date: "2026-07-29T15:23:12-07:00",
-    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses, to help with customer service, support, and other daily operations. But the tech giant's enterprise AI ambitions are much more expansive, Meta CEO Mark Zuckerberg told investors on Wednesday's second-quarter earnings call.",
+    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses.",
     url: "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -83,7 +82,7 @@ const techCrunchSources = [
     title: "The Hugging Face break-in explained",
     author: "Unknown",
     date: "2026-07-29T12:44:49-07:00",
-    content: "Hugging Face on Monday published a technical timeline that walks readers through how an autonomous AI agent, built on OpenAI models and running inside one of OpenAI's own cybersecurity evaluations, broke into its systems over more than four days earlier this month.",
+    content: "Hugging Face on Monday published a technical timeline that walks readers through how an autonomous AI agent, built on OpenAI models and running inside one of OpenAI's own cybersecurity evaluations, broke into its systems.",
     url: "https://techcrunch.com/2026/07/29/the-hugging-face-ai-break-in-as-told-through-an-increasingly-committed-bear-metaphor/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -109,7 +108,7 @@ const techCrunchSources = [
     title: "Hint, a new AI startup co-founded by Martha Stewart, offers an AI assistant for homeowners",
     author: "Unknown",
     date: "2026-07-29T08:35:09-07:00",
-    content: "Martha Stewart is entering the AI software era in the most Martha Stewart way possible: She has joined the co-founding team at Hint, an app that leverages AI technology to manage the tasks surrounding home maintenance.",
+    content: "Martha Stewart is entering the AI software era in the most Martha Stewart way possible.",
     url: "https://techcrunch.com/2026/07/29/hint-a-new-ai-startup-co-founded-by-martha-stewart-offers-an-ai-assistant-for-homeowners/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -138,7 +137,7 @@ const staticSources = [
     title: "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
     author: "Raulji Technologies",
     date: "July 27, 2026",
-    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business, and how to turn it into a competitive advantage.",
+    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business.",
     url: "https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/",
     source_name: "Raulji Technologies",
     source_type: "blog",
@@ -177,7 +176,7 @@ const staticSources = [
     title: "The 12 Best AI Tools for 2026 (That People Actually Use)",
     author: "Synthesia",
     date: "July 27, 2026",
-    content: "Can you believe it's been over three years since ChatGPT landed in our internet browsers? In a short space of time, AI has become a staple part of daily work.",
+    content: "Can you believe it's been over three years since ChatGPT landed in our internet browsers?",
     url: "https://www.synthesia.io/post/ai-tools",
     source_name: "Synthesia",
     source_type: "blog",
@@ -203,7 +202,7 @@ const staticSources = [
 
 const ventureBeatSources = [
   {
-    title: "Thinking Machines debuts Inkling Small open source AI model nearing performance of predecessor at about 1/4 size",
+    title: "Thinking Machines debuts Inkling Small open source AI model",
     author: "Carl Franzen",
     date: "2026-07-31",
     content: "Thinking Machines has debuted Inkling Small, an open source AI model that achieves near performance of its predecessor at approximately 1/4 the size.",
@@ -216,10 +215,10 @@ const ventureBeatSources = [
     timestamp: "2026-07-31T12:29:19.456515"
   },
   {
-    title: "Enterprise AI agents can't talk to each other, can't be trusted with permissions, and can't be audited — 5 startups are already fixing that",
+    title: "Enterprise AI agents can't talk to each other",
     author: "Taryn Plumb",
     date: "2026-07-31",
-    content: "Enterprise AI agents face critical challenges including communication gaps, permission trust issues, and auditability concerns. Five startups are already developing solutions.",
+    content: "Enterprise AI agents face critical challenges including communication gaps, permission trust issues, and auditability concerns.",
     url: "https://venturebeat.com/orchestration/enterprise-ai-agents-cant-talk-to-each-other-cant-be-trusted-with-permissions-and-cant-be-audited-5-startups-are-already-fixing-that",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -229,85 +228,7 @@ const ventureBeatSources = [
     timestamp: "2026-07-31T12:29:19.493304"
   },
   {
-    title: "Nimble claims its new, domain-specialized Web Search Agents cut token costs in half while boosting retrieval accuracy",
-    author: "Carl Franzen",
-    date: "2026-07-31",
-    content: "Nimble's new domain-specialized Web Search Agents claim to cut token costs in half while significantly boosting retrieval accuracy.",
-    url: "https://venturebeat.com/orchestration/nimble-claims-its-new-domain-specialized-web-search-agents-cut-token-costs-in-half-while-boosting-retrieval-accuracy",
-    source_name: "VentureBeat",
-    source_type: "blog",
-    word_count: 38,
-    hash: "a4f69881",
-    domain: "venturebeat.com",
-    timestamp: "2026-07-31T12:29:19.527402"
-  },
-  {
-    title: "Target SVP says its real AI moat isn't the models — it's everything built around them",
-    author: "Taryn Plumb",
-    date: "2026-07-31",
-    content: "Target's SVP explains that the company's real competitive advantage in AI isn't the models themselves, but the entire ecosystem built around them.",
-    url: "https://venturebeat.com/orchestration/target-svp-says-its-real-ai-moat-isnt-the-models-its-everything-built-around-them",
-    source_name: "VentureBeat",
-    source_type: "blog",
-    word_count: 50,
-    hash: "7f8dc55f",
-    domain: "venturebeat.com",
-    timestamp: "2026-07-31T12:29:19.561786"
-  },
-  {
-    title: "Bright Machines says its new hybrid robot cell could help solve a major AI infrastructure bottleneck",
-    author: "Michael Nuñez",
-    date: "2026-07-31",
-    content: "Bright Machines introduces the Hybrid BRC (Bright Robotic Cell), an expansion of its Bright Factory platform that lets human operators step inside a sensor-monitored robotic cell.",
-    url: "https://venturebeat.com/infrastructure/bright-machines-says-its-new-hybrid-robot-cell-could-help-solve-a-major-ai-infrastructure-bottleneck",
-    source_name: "VentureBeat",
-    source_type: "blog",
-    word_count: 75,
-    hash: "efd58cb6",
-    domain: "venturebeat.com",
-    timestamp: "2026-07-31T12:29:19.600009"
-  },
-  {
-    title: "Instacart's CTO says AI made the company stop worrying about tech debt",
-    author: "Taryn Plumb",
-    date: "2026-07-31",
-    content: "Instacart's CTO reveals how AI has transformed the company's approach to technical debt, allowing them to focus on innovation rather than legacy code maintenance.",
-    url: "https://venturebeat.com/orchestration/instacarts-cto-says-ai-made-the-company-stop-worrying-about-tech-debt",
-    source_name: "VentureBeat",
-    source_type: "blog",
-    word_count: 40,
-    hash: "2352e881",
-    domain: "venturebeat.com",
-    timestamp: "2026-07-31T12:29:19.634158"
-  },
-  {
-    title: "GM redesigned its engineering workflows around AI agents — and tripled its merged pull requests",
-    author: "Carl Franzen",
-    date: "2026-07-31",
-    content: "General Motors redesigned its engineering workflows around AI agents, resulting in a tripling of merged pull requests and significant improvements in development efficiency.",
-    url: "https://venturebeat.com/orchestration/gm-redesigned-its-engineering-workflows-around-ai-agents-and-tripled-its-merged-pull-requests",
-    source_name: "VentureBeat",
-    source_type: "blog",
-    word_count: 45,
-    hash: "67958797",
-    domain: "venturebeat.com",
-    timestamp: "2026-07-31T12:29:19.668593"
-  },
-  {
-    title: "Runway couldn't fix a bug in its AI video model, so it turned the bug into a feature",
-    author: "Ben Dickson",
-    date: "2026-07-31",
-    content: "Runway discovered a creative solution to a bug in its AI video model by turning the unexpected behavior into a new feature.",
-    url: "https://venturebeat.com/technology/runway-couldnt-fix-a-bug-in-its-ai-video-model-so-it-turned-the-bug-into-a-feature",
-    source_name: "VentureBeat",
-    source_type: "blog",
-    word_count: 45,
-    hash: "d4aac8e4",
-    domain: "venturebeat.com",
-    timestamp: "2026-07-31T12:29:19.700556"
-  },
-  {
-    title: "MCP just got its biggest update ever — here's what changes for AI agents",
+    title: "MCP just got its biggest update ever",
     author: "Michael Nuñez",
     date: "2026-07-31",
     content: "The Model Context Protocol (MCP), the open standard connecting AI agents to software, receives its largest update since Anthropic released it.",
@@ -724,8 +645,6 @@ function formatHumanResponse(query, response, sources, confidence, qualityScore)
 // GENERATE RESPONSE - ENHANCED WITH HUMAN FORMATTING
 // ============================================
 
-// api/data.js - Enhanced generateResponse with multi-model support
-
 async function generateResponse(query, searchResult, req, res) {
   const { results, classification } = searchResult;
   const queryType = classification?.type || 'factual';
@@ -738,7 +657,7 @@ async function generateResponse(query, searchResult, req, res) {
   const intentInfo = intentDetector.detectIntent(query);
   
   // Check if streaming is requested
-  const streamRequested = req.query?.stream === 'true' || req.body?.stream === true;
+  const streamRequested = req?.query?.stream === 'true' || req?.body?.stream === true;
   
   let context = '';
   if (results && results.length > 0) {
@@ -758,7 +677,7 @@ async function generateResponse(query, searchResult, req, res) {
     const apiKey = process.env.GROQ_API_KEY;
     if (apiKey) {
       await streamingHandler.streamResponse(query, context, apiKey, res);
-      return null; // Response already sent
+      return null;
     }
   }
   
@@ -808,4 +727,182 @@ async function generateResponse(query, searchResult, req, res) {
   
   responseCache.set(query, finalResponse);
   return finalResponse;
+}
+
+// ============================================
+// API HANDLER - DEFAULT EXPORT
+// ============================================
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'GET' && req.method !== 'POST') {
+    return res.status(405).json({ 
+      error: 'Method not allowed',
+      allowed: ['GET', 'POST']
+    });
+  }
+
+  let query = null;
+  let action = null;
+
+  if (req.method === 'GET') {
+    query = req.query.query || null;
+    action = req.query.action || null;
+  } else {
+    query = req.body?.query || null;
+    action = req.body?.action || null;
+  }
+
+  // ============================================
+  // ROUTE: HEALTH
+  // ============================================
+  if (action === 'health' || action === 'ping') {
+    return res.status(200).json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      total_sources: uniqueSources.length,
+      source_stats: sourceStats,
+      source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+      grok_available: !!process.env.GROQ_API_KEY,
+      cache_stats: responseCache.getStats(),
+      feedback_stats: feedbackSystem.getStats(),
+      models: orchestrator.getAvailableModels(),
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback']
+    });
+  }
+
+  // ============================================
+  // ROUTE: FEEDBACK
+  // ============================================
+  if (action === 'feedback') {
+    const feedback = req.body?.feedback || req.query?.feedback;
+    const queryId = req.body?.queryId || req.query?.queryId;
+    
+    if (!feedback || !queryId) {
+      return res.status(400).json({ error: 'Missing feedback or queryId' });
+    }
+    
+    const result = feedbackSystem.addFeedback(queryId, feedback);
+    return res.status(200).json(result);
+  }
+
+  if (action === 'feedback-stats') {
+    return res.status(200).json(feedbackSystem.getStats());
+  }
+
+  // ============================================
+  // ROUTE: MODEL SWITCH
+  // ============================================
+  if (action === 'switch-model') {
+    const model = req.body?.model || req.query?.model;
+    if (!model) {
+      return res.status(400).json({ error: 'Missing model name' });
+    }
+    const result = orchestrator.switchModel(model);
+    return res.status(200).json(result);
+  }
+
+  if (action === 'models') {
+    return res.status(200).json({
+      models: orchestrator.getAvailableModels(),
+      active: orchestrator.activeModel
+    });
+  }
+
+  // ============================================
+  // ROUTE: ALL SOURCES
+  // ============================================
+  if (action === 'all') {
+    return res.status(200).json({
+      total: uniqueSources.length,
+      source_stats: sourceStats,
+      sources: uniqueSources.map(s => ({
+        title: s.title,
+        source_name: s.source_name,
+        author: s.author || 'Unknown',
+        date: s.date || '',
+        url: s.url,
+        word_count: s.word_count || 0,
+        domain: s.domain || 'unknown'
+      }))
+    });
+  }
+
+  // ============================================
+  // ROUTE: STATS
+  // ============================================
+  if (action === 'stats') {
+    return res.status(200).json({
+      total_sources: uniqueSources.length,
+      source_stats: sourceStats,
+      grok_available: !!process.env.GROQ_API_KEY,
+      cache_stats: responseCache.getStats(),
+      feedback_stats: feedbackSystem.getStats(),
+      active_model: orchestrator.activeModel,
+      features: ['human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model'],
+      last_updated: new Date().toISOString()
+    });
+  }
+
+  // ============================================
+  // ROUTE: CLEAR CACHE
+  // ============================================
+  if (action === 'clear-cache') {
+    responseCache.clear();
+    return res.status(200).json({
+      status: 'ok',
+      message: 'Cache cleared',
+      cache_stats: responseCache.getStats()
+    });
+  }
+
+  // ============================================
+  // ROUTE: SEARCH
+  // ============================================
+  if (query) {
+    const searchResult = searchSources(query);
+    const response = await generateResponse(query, searchResult, req, res);
+    
+    if (response === null) {
+      return;
+    }
+    
+    return res.status(200).json(response);
+  }
+
+  // ============================================
+  // DEFAULT
+  // ============================================
+  return res.status(200).json({
+    name: 'Omni Brand Intelligence Bot API',
+    version: '4.4.0',
+    status: 'running',
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback'],
+    total_sources: uniqueSources.length,
+    source_stats: sourceStats,
+    source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+    grok_available: !!process.env.GROQ_API_KEY,
+    cache_stats: responseCache.getStats(),
+    feedback_stats: feedbackSystem.getStats(),
+    active_model: orchestrator.activeModel,
+    models: orchestrator.getAvailableModels(),
+    endpoints: {
+      search: 'GET/POST with ?query=your+question',
+      health: 'GET?action=health',
+      all: 'GET?action=all',
+      stats: 'GET?action=stats',
+      clear_cache: 'GET?action=clear-cache',
+      feedback: 'POST with {queryId, feedback: {rating, comment}}',
+      models: 'GET?action=models',
+      switch_model: 'POST with {model: "grok"}'
+    },
+    last_updated: new Date().toISOString()
+  });
 }
