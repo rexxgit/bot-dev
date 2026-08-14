@@ -1,4 +1,4 @@
-// api/data.js - Complete API with Human-Written Style + Embedded Links
+// api/data.js - Complete API with Professional Layout & Formatting
 
 // ============================================
 // IMPORTS - All from lib/
@@ -526,14 +526,16 @@ function scoreResponseQuality(response, sources, confidence) {
 }
 
 // ============================================
-// HUMAN-WRITTEN STYLE FORMATTER - Embedded Links
+// PROFESSIONAL LAYOUT FORMATTER - Better Spacing & Indentation
 // ============================================
 
-function formatHumanResponse(query, response, sources, confidence, qualityScore) {
+function formatProfessionalResponse(query, response, sources, confidence, qualityScore) {
   let output = [];
+  const indent = '  ';
+  const doubleIndent = '    ';
   
   // ============================================
-  // RESPONSE BODY - Clean, indented paragraphs
+  // RESPONSE BODY
   // ============================================
   if (response) {
     let cleanResponse = response;
@@ -553,13 +555,13 @@ function formatHumanResponse(query, response, sources, confidence, qualityScore)
         let wrappedLines = [];
         for (const word of words) {
           if ((line + word).length > 70) {
-            wrappedLines.push(`  ${line.trim()}`);
+            wrappedLines.push(`${indent}${line.trim()}`);
             line = '';
           }
           line += word + ' ';
         }
         if (line.trim()) {
-          wrappedLines.push(`  ${line.trim()}`);
+          wrappedLines.push(`${indent}${line.trim()}`);
         }
         formattedParagraphs.push(wrappedLines.join('\n'));
       }
@@ -570,11 +572,13 @@ function formatHumanResponse(query, response, sources, confidence, qualityScore)
   }
   
   // ============================================
-  // KEY FACTS - Bullet points with embedded links
+  // KEY FINDINGS - Professional Bullet Points
   // ============================================
   const facts = extractFacts(query, sources || []);
   if (facts && facts.length > 0) {
-    output.push('  Key findings:');
+    output.push(`  Key Findings`);
+    output.push(`  ${'-'.repeat(50)}`);
+    
     for (let i = 0; i < Math.min(facts.length, 4); i++) {
       const f = facts[i];
       let factText = f.text;
@@ -587,62 +591,66 @@ function formatHumanResponse(query, response, sources, confidence, qualityScore)
       const sourceDisplay = sourceMatch?.source_name || f.source || 'Unknown';
       const linkedSource = `[${sourceDisplay}](${sourceUrl})`;
       
-      output.push(`    ${i+1}. ${factText}`);
-      output.push(`       Source: ${linkedSource}`);
+      output.push(`${indent}${i + 1}. ${factText}`);
+      output.push(`${doubleIndent}Source: ${linkedSource}`);
       output.push('');
     }
   }
   
   // ============================================
-  // CONFIDENCE - Natural language
+  // CONFIDENCE ASSESSMENT - Professional
   // ============================================
   if (confidence) {
     const score = confidence.score || 0;
     let confidenceText = '';
     
     if (score >= 80) {
-      confidenceText = 'I have high confidence in this information. The sources are consistent and authoritative.';
+      confidenceText = 'High confidence — the sources are consistent and authoritative.';
     } else if (score >= 50) {
-      confidenceText = 'I have moderate confidence in this information. The data is solid but not overwhelming.';
+      confidenceText = 'Moderate confidence — the data is solid but not overwhelming.';
     } else {
-      confidenceText = 'I have limited confidence in this information. The evidence is suggestive but not conclusive.';
+      confidenceText = 'Limited confidence — the evidence is suggestive but not conclusive.';
     }
     
-    output.push(`  ${confidenceText}`);
+    output.push(`${indent}Confidence Assessment`);
+    output.push(`${indent}${'-'.repeat(50)}`);
+    output.push(`${indent}${confidenceText}`);
     output.push('');
   }
   
   // ============================================
-  // SOURCES - Embedded links
+  // REFERENCES - Professional Source List
   // ============================================
   if (sources && sources.length > 0) {
-    output.push('  References:');
+    output.push(`${indent}References`);
+    output.push(`${indent}${'-'.repeat(50)}`);
+    
     for (let i = 0; i < Math.min(sources.length, 4); i++) {
       const s = sources[i];
       const url = s.source || s.url || '#';
       const sourceName = s.source_name || 'Unknown';
       const linkedSource = `[${sourceName}](${url})`;
       
-      output.push(`    ${i+1}. ${s.title || 'Untitled'}`);
-      output.push(`       ${linkedSource}${s.date ? `, ${s.date}` : ''}`);
+      output.push(`${doubleIndent}${i + 1}. ${s.title || 'Untitled'}`);
+      output.push(`${doubleIndent}   ${linkedSource}${s.date ? `, ${s.date}` : ''}`);
       output.push('');
     }
   }
   
   // ============================================
-  // QUALITY NOTE - Brief and natural
+  // QUALITY NOTE - Professional Footer
   // ============================================
   if (qualityScore) {
     const level = qualityScore.level || 'Good';
     const score = qualityScore.score || 0;
-    output.push(`  Note: This response is rated as ${level.toLowerCase()} (${score}%) based on source quality and coverage.`);
+    output.push(`${indent}Note: This response is rated as ${level.toLowerCase()} (${score}%) based on source quality and coverage.`);
   }
   
   return output.join('\n');
 }
 
 // ============================================
-// GENERATE RESPONSE - ENHANCED WITH HUMAN FORMATTING
+// GENERATE RESPONSE - ENHANCED WITH PROFESSIONAL FORMATTING
 // ============================================
 
 async function generateResponse(query, searchResult, req, res) {
@@ -656,7 +664,6 @@ async function generateResponse(query, searchResult, req, res) {
   
   const intentInfo = intentDetector.detectIntent(query);
   
-  // Check if streaming is requested
   const streamRequested = req?.query?.stream === 'true' || req?.body?.stream === true;
   
   let context = '';
@@ -672,7 +679,6 @@ async function generateResponse(query, searchResult, req, res) {
     ? confidenceScorer.calculateConfidence(results, results, classification)
     : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
-  // Handle streaming
   if (streamRequested) {
     const apiKey = process.env.GROQ_API_KEY;
     if (apiKey) {
@@ -681,7 +687,6 @@ async function generateResponse(query, searchResult, req, res) {
     }
   }
   
-  // Use orchestrator for response
   const apiKey = process.env.GROQ_API_KEY;
   const modelResult = await orchestrator.generateResponse(query, context, intentInfo.primary, apiKey);
   
@@ -696,7 +701,7 @@ async function generateResponse(query, searchResult, req, res) {
     confidence
   );
   
-  const formattedOutput = formatHumanResponse(
+  const formattedOutput = formatProfessionalResponse(
     query,
     enhancedResponse || 'Unable to generate a response at this time.',
     results || [],
@@ -720,7 +725,7 @@ async function generateResponse(query, searchResult, req, res) {
       model: modelResult.model || 'fallback',
       formatted: true,
       enhanced: true,
-      human_style: true,
+      professional_style: true,
       last_updated: new Date().toISOString()
     }
   };
@@ -760,9 +765,6 @@ export default async function handler(req, res) {
     action = req.body?.action || null;
   }
 
-  // ============================================
-  // ROUTE: HEALTH
-  // ============================================
   if (action === 'health' || action === 'ping') {
     return res.status(200).json({
       status: 'ok',
@@ -774,13 +776,10 @@ export default async function handler(req, res) {
       cache_stats: responseCache.getStats(),
       feedback_stats: feedbackSystem.getStats(),
       models: orchestrator.getAvailableModels(),
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback']
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback']
     });
   }
 
-  // ============================================
-  // ROUTE: FEEDBACK
-  // ============================================
   if (action === 'feedback') {
     const feedback = req.body?.feedback || req.query?.feedback;
     const queryId = req.body?.queryId || req.query?.queryId;
@@ -797,9 +796,6 @@ export default async function handler(req, res) {
     return res.status(200).json(feedbackSystem.getStats());
   }
 
-  // ============================================
-  // ROUTE: MODEL SWITCH
-  // ============================================
   if (action === 'switch-model') {
     const model = req.body?.model || req.query?.model;
     if (!model) {
@@ -816,9 +812,6 @@ export default async function handler(req, res) {
     });
   }
 
-  // ============================================
-  // ROUTE: ALL SOURCES
-  // ============================================
   if (action === 'all') {
     return res.status(200).json({
       total: uniqueSources.length,
@@ -835,9 +828,6 @@ export default async function handler(req, res) {
     });
   }
 
-  // ============================================
-  // ROUTE: STATS
-  // ============================================
   if (action === 'stats') {
     return res.status(200).json({
       total_sources: uniqueSources.length,
@@ -846,14 +836,11 @@ export default async function handler(req, res) {
       cache_stats: responseCache.getStats(),
       feedback_stats: feedbackSystem.getStats(),
       active_model: orchestrator.activeModel,
-      features: ['human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model'],
+      features: ['professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model'],
       last_updated: new Date().toISOString()
     });
   }
 
-  // ============================================
-  // ROUTE: CLEAR CACHE
-  // ============================================
   if (action === 'clear-cache') {
     responseCache.clear();
     return res.status(200).json({
@@ -863,9 +850,6 @@ export default async function handler(req, res) {
     });
   }
 
-  // ============================================
-  // ROUTE: SEARCH
-  // ============================================
   if (query) {
     const searchResult = searchSources(query);
     const response = await generateResponse(query, searchResult, req, res);
@@ -877,14 +861,11 @@ export default async function handler(req, res) {
     return res.status(200).json(response);
   }
 
-  // ============================================
-  // DEFAULT
-  // ============================================
   return res.status(200).json({
     name: 'Omni Brand Intelligence Bot API',
-    version: '4.4.0',
+    version: '4.5.0',
     status: 'running',
-    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'human_written_style', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback'],
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback'],
     total_sources: uniqueSources.length,
     source_stats: sourceStats,
     source_names: [...new Set(uniqueSources.map(s => s.source_name))],
