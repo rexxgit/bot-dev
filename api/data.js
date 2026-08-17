@@ -1,4 +1,4 @@
-// api/data.js - Complete API with Professional Layout & Clickable Links
+// api/data.js - Complete API with Advanced Analytics & Performance Optimization (Day 10)
 
 // ============================================
 // IMPORTS - All from lib/
@@ -20,6 +20,9 @@ import { buildGrokRequest } from '../lib/grok/prompts.js';
 import { orchestrator } from '../lib/models/orchestrator.js';
 import { streamingHandler } from '../lib/response/streaming.js';
 import { feedbackSystem } from '../lib/response/feedback.js';
+import { analytics } from '../lib/analytics/tracker.js';
+import { performanceMetrics } from '../lib/analytics/metrics.js';
+import { queryLogger } from '../lib/response/logger.js';
 
 // ============================================
 // ALL DATA EMBEDDED HERE
@@ -534,9 +537,6 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
   const doubleIndent = '    ';
   let output = [];
   
-  // ============================================
-  // RESPONSE BODY - Clean paragraphs
-  // ============================================
   if (response) {
     let cleanResponse = response;
     cleanResponse = cleanResponse.replace(/\*\*/g, '');
@@ -570,9 +570,6 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
     output.push('');
   }
   
-  // ============================================
-  // KEY FINDINGS - With Clickable Links
-  // ============================================
   const facts = extractFacts(query, sources || []);
   if (facts && facts.length > 0) {
     output.push(`${indent}Key Findings`);
@@ -585,12 +582,9 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
         factText += '.';
       }
       
-      // Find source and create clickable link
       const sourceMatch = sources.find(s => s.source_name === f.source);
       const sourceUrl = sourceMatch?.source || sourceMatch?.url || '#';
       const sourceDisplay = sourceMatch?.source_name || f.source || 'Unknown';
-      
-      // Markdown format for clickable links (frontend will render)
       const linkedSource = `[${sourceDisplay}](${sourceUrl})`;
       
       output.push(`${indent}${i + 1}. ${factText}`);
@@ -599,9 +593,6 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
     }
   }
   
-  // ============================================
-  // CONFIDENCE ASSESSMENT
-  // ============================================
   if (confidence) {
     const score = confidence.score || 0;
     let confidenceText = '';
@@ -620,9 +611,6 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
     output.push('');
   }
   
-  // ============================================
-  // REFERENCES - With Clickable Links
-  // ============================================
   if (sources && sources.length > 0) {
     output.push(`${indent}References`);
     output.push(`${indent}${'-'.repeat(50)}`);
@@ -631,8 +619,6 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
       const s = sources[i];
       const url = s.source || s.url || '#';
       const sourceName = s.source_name || 'Unknown';
-      
-      // Markdown format for clickable links (frontend will render)
       const linkedSource = `[${sourceName}](${url})`;
       
       output.push(`${doubleIndent}${i + 1}. ${s.title || 'Untitled'}`);
@@ -641,9 +627,6 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
     }
   }
   
-  // ============================================
-  // QUALITY NOTE
-  // ============================================
   if (qualityScore) {
     const level = qualityScore.level || 'Good';
     const score = qualityScore.score || 0;
@@ -654,20 +637,29 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
 }
 
 // ============================================
-// GENERATE RESPONSE - ENHANCED WITH PROFESSIONAL FORMATTING
+// GENERATE RESPONSE - WITH ANALYTICS
 // ============================================
 
 async function generateResponse(query, searchResult, req, res) {
+  const startTime = Date.now();
   const { results, classification } = searchResult;
   const queryType = classification?.type || 'factual';
   
+  performanceMetrics.trackMemory();
+  
   const cached = responseCache.get(query);
   if (cached) {
+    analytics.trackQuery(query, {
+      ...cached.metadata,
+      cached: true,
+      responseTime: Date.now() - startTime,
+      sources: cached.sources
+    });
+    performanceMetrics.trackResponseTime(Date.now() - startTime);
     return cached;
   }
   
   const intentInfo = intentDetector.detectIntent(query);
-  
   const streamRequested = req?.query?.stream === 'true' || req?.body?.stream === true;
   
   let context = '';
@@ -683,6 +675,8 @@ async function generateResponse(query, searchResult, req, res) {
     ? confidenceScorer.calculateConfidence(results, results, classification)
     : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
   
+  performanceMetrics.trackSourceCount(results?.length || 0);
+  
   if (streamRequested) {
     const apiKey = process.env.GROQ_API_KEY;
     if (apiKey) {
@@ -693,6 +687,10 @@ async function generateResponse(query, searchResult, req, res) {
   
   const apiKey = process.env.GROQ_API_KEY;
   const modelResult = await orchestrator.generateResponse(query, context, intentInfo.primary, apiKey);
+  
+  if (modelResult.usage) {
+    performanceMetrics.trackTokenUsage(modelResult.usage.total_tokens || 0);
+  }
   
   let enhancedResponse = modelResult.response;
   if (modelResult.success && modelResult.model === 'grok') {
@@ -713,6 +711,9 @@ async function generateResponse(query, searchResult, req, res) {
     qualityScore
   );
   
+  const responseTime = Date.now() - startTime;
+  performanceMetrics.trackResponseTime(responseTime);
+  
   const finalResponse = {
     response: formattedOutput,
     sources: results || [],
@@ -730,9 +731,24 @@ async function generateResponse(query, searchResult, req, res) {
       formatted: true,
       enhanced: true,
       professional_style: true,
+      responseTime: responseTime,
+      cached: false,
       last_updated: new Date().toISOString()
     }
   };
+  
+  analytics.trackQuery(query, {
+    ...finalResponse.metadata,
+    responseTime: responseTime,
+    sources: results || [],
+    userId: req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'anonymous'
+  });
+  
+  queryLogger.log(query, formattedOutput, {
+    ...finalResponse.metadata,
+    responseTime: responseTime,
+    sources: results || []
+  });
   
   responseCache.set(query, finalResponse);
   return finalResponse;
@@ -769,6 +785,9 @@ export default async function handler(req, res) {
     action = req.body?.action || null;
   }
 
+  // ============================================
+  // ROUTE: HEALTH
+  // ============================================
   if (action === 'health' || action === 'ping') {
     return res.status(200).json({
       status: 'ok',
@@ -780,10 +799,47 @@ export default async function handler(req, res) {
       cache_stats: responseCache.getStats(),
       feedback_stats: feedbackSystem.getStats(),
       models: orchestrator.getAvailableModels(),
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback']
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics']
     });
   }
 
+  // ============================================
+  // ROUTE: ANALYTICS
+  // ============================================
+  if (action === 'analytics' || action === 'stats') {
+    return res.status(200).json({
+      analytics: analytics.getStats(),
+      performance: performanceMetrics.getStats(),
+      logs: queryLogger.getStats(),
+      cache: responseCache.getStats()
+    });
+  }
+
+  // ============================================
+  // ROUTE: LOGS
+  // ============================================
+  if (action === 'logs') {
+    const limit = parseInt(req.query.limit) || 20;
+    return res.status(200).json({
+      logs: queryLogger.getLogs(limit)
+    });
+  }
+
+  // ============================================
+  // ROUTE: RESET ANALYTICS
+  // ============================================
+  if (action === 'reset-analytics') {
+    analytics.reset();
+    queryLogger.clear();
+    return res.status(200).json({
+      success: true,
+      message: 'Analytics reset'
+    });
+  }
+
+  // ============================================
+  // ROUTE: FEEDBACK
+  // ============================================
   if (action === 'feedback') {
     const feedback = req.body?.feedback || req.query?.feedback;
     const queryId = req.body?.queryId || req.query?.queryId;
@@ -800,6 +856,9 @@ export default async function handler(req, res) {
     return res.status(200).json(feedbackSystem.getStats());
   }
 
+  // ============================================
+  // ROUTE: MODEL SWITCH
+  // ============================================
   if (action === 'switch-model') {
     const model = req.body?.model || req.query?.model;
     if (!model) {
@@ -816,6 +875,9 @@ export default async function handler(req, res) {
     });
   }
 
+  // ============================================
+  // ROUTE: ALL SOURCES
+  // ============================================
   if (action === 'all') {
     return res.status(200).json({
       total: uniqueSources.length,
@@ -832,19 +894,9 @@ export default async function handler(req, res) {
     });
   }
 
-  if (action === 'stats') {
-    return res.status(200).json({
-      total_sources: uniqueSources.length,
-      source_stats: sourceStats,
-      grok_available: !!process.env.GROQ_API_KEY,
-      cache_stats: responseCache.getStats(),
-      feedback_stats: feedbackSystem.getStats(),
-      active_model: orchestrator.activeModel,
-      features: ['professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model'],
-      last_updated: new Date().toISOString()
-    });
-  }
-
+  // ============================================
+  // ROUTE: CLEAR CACHE
+  // ============================================
   if (action === 'clear-cache') {
     responseCache.clear();
     return res.status(200).json({
@@ -854,6 +906,9 @@ export default async function handler(req, res) {
     });
   }
 
+  // ============================================
+  // ROUTE: SEARCH
+  // ============================================
   if (query) {
     const searchResult = searchSources(query);
     const response = await generateResponse(query, searchResult, req, res);
@@ -865,11 +920,14 @@ export default async function handler(req, res) {
     return res.status(200).json(response);
   }
 
+  // ============================================
+  // DEFAULT
+  // ============================================
   return res.status(200).json({
     name: 'Omni Brand Intelligence Bot API',
-    version: '4.5.0',
+    version: '4.6.0',
     status: 'running',
-    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback'],
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'performance_tracking'],
     total_sources: uniqueSources.length,
     source_stats: sourceStats,
     source_names: [...new Set(uniqueSources.map(s => s.source_name))],
@@ -883,7 +941,10 @@ export default async function handler(req, res) {
       health: 'GET?action=health',
       all: 'GET?action=all',
       stats: 'GET?action=stats',
+      analytics: 'GET?action=analytics',
+      logs: 'GET?action=logs',
       clear_cache: 'GET?action=clear-cache',
+      reset_analytics: 'GET?action=reset-analytics',
       feedback: 'POST with {queryId, feedback: {rating, comment}}',
       models: 'GET?action=models',
       switch_model: 'POST with {model: "grok"}'
