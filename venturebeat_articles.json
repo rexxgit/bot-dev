@@ -1,8 +1,23 @@
 {
   "source": "VentureBeat AI",
   "source_url": "https://venturebeat.com/category/ai/",
-  "total_articles": 7,
+  "total_articles": 8,
   "articles": [
+    {
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/qwen3-8-27b-runs-frontier-class-coding-agents-and-reasoning-locally-no-cloud-api-required",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "c93bc103",
+      "headings": [
+        "Qwen3.8-27B runs frontier-class coding agents and reasoning locally, no cloud API required"
+      ],
+      "timestamp": "2026-08-18T08:28:31.323054"
+    },
     {
       "title": "CleoPtolemy made with Midjourney",
       "author": "Vineet Vijay",
@@ -16,7 +31,52 @@
       "headings": [
         "Cutting RAG inference costs 6x starts with deciding what never reaches the LLM"
       ],
-      "timestamp": "2026-08-17T08:35:43.037949"
+      "timestamp": "2026-08-18T08:28:31.365078"
+    },
+    {
+      "title": "CleoPtolemy made with Midjourney",
+      "author": "Taryn Plumb",
+      "date": "Taryn Plumb",
+      "content": "CleoPtolemy made with Midjourney",
+      "url": "https://venturebeat.com/orchestration/deepseeks-top-ranked-v4-flash-stumbles-on-real-agent-tasks-as-its-prices-surge",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 4,
+      "hash": "774eb4a5",
+      "headings": [
+        "DeepSeek's top-ranked V4 Flash stumbles on real agent tasks as its prices surge"
+      ],
+      "timestamp": "2026-08-18T08:28:31.399989"
+    },
+    {
+      "title": "CleoPtolemy made with Midjourney",
+      "author": "Arun Mishra",
+      "date": "Arun Mishra",
+      "content": "CleoPtolemy made with Midjourney There is a step in the development process for large language model (LLM)-assisted tooling that most teams skip because it's tedious, time-consuming, and doesn't produce results visible to end users: Verifying that what the model is saying is actually correct. Not fluent, not coherent, not topically relevant — correct in the sense of accurately identifying the right answer to the specific problem the tool was built to solve.",
+      "url": "https://venturebeat.com/orchestration/an-eval-harness-found-what-qualitative-review-couldnt-ai-models-are-most-confident-when-wrong",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 72,
+      "hash": "c6107ae9",
+      "headings": [
+        "An eval harness found what qualitative review couldn't: AI models are most confident when wrong"
+      ],
+      "timestamp": "2026-08-18T08:28:31.437874"
+    },
+    {
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/glm-5-3-is-here-with-advanced-cyber-capabilities-and-reportedly-already-found-a-serious-vulnerability-in-cursor",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "1ed22775",
+      "headings": [
+        "GLM-5.3 is here with advanced cyber capabilities — and reportedly already found a 'serious vulnerability' in Cursor"
+      ],
+      "timestamp": "2026-08-18T08:28:31.470320"
     },
     {
       "title": "Credit: VentureBeat made with Google Gemini",
@@ -31,7 +91,7 @@
       "headings": [
         "Google’s Gemini 3.7 Flash targets coding and agents with a 50% introductory price cut"
       ],
-      "timestamp": "2026-08-17T08:35:43.067688"
+      "timestamp": "2026-08-18T08:28:31.501192"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -46,7 +106,7 @@
       "headings": [
         "DeepSeek Harness launches as open source rival to Claude Code, alongside V4-Pro on API with higher prices"
       ],
-      "timestamp": "2026-08-17T08:35:43.095105"
+      "timestamp": "2026-08-18T08:28:31.532304"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -61,53 +121,8 @@
       "headings": [
         "Writer says its new Palmyra X6 model cuts AI agent costs by 52% as token spending surges"
       ],
-      "timestamp": "2026-08-17T08:35:43.136334"
-    },
-    {
-      "title": "Credit: VentureBeat made with Grok Imagine",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with Grok Imagine",
-      "url": "https://venturebeat.com/technology/spacexai-debuts-grok-4-6-overtaking-kimi-k3s-performance-and-matching-gpt-5-6-sol-for-worlds-third-best-on-artificial-analysis",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "0858c120",
-      "headings": [
-        "SpaceXAI debuts Grok 4.6, overtaking Kimi K3's performance and matching GPT-5.6 Sol for world's third best on Artificial Analysis"
-      ],
-      "timestamp": "2026-08-17T08:35:43.164038"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/orchestration/spacexais-grok-bot-turns-agents-into-persistent-digital-coworkers-that-can-operate-your-apps-for-120-per-month",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "7e475c3c",
-      "headings": [
-        "SpaceXAI's Grok Bot turns agents into persistent digital coworkers that can operate your apps for $120-per-month"
-      ],
-      "timestamp": "2026-08-17T08:35:43.192800"
-    },
-    {
-      "title": "Credit: VentureBeat made with Midjourney",
-      "author": "Michael Nuñez",
-      "date": "Michael Nuñez",
-      "content": "Credit: VentureBeat made with Midjourney",
-      "url": "https://venturebeat.com/infrastructure/mistral-ai-wants-to-build-1-gigawatt-of-european-compute-by-2030-and-lock-in-customers-now",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 5,
-      "hash": "cda84197",
-      "headings": [
-        "Mistral AI wants to build 1 gigawatt of European compute by 2030 — and lock in customers now"
-      ],
-      "timestamp": "2026-08-17T08:35:43.227508"
+      "timestamp": "2026-08-18T08:28:31.577804"
     }
   ],
-  "last_updated": "2026-08-17T08:35:43.257878"
+  "last_updated": "2026-08-18T08:28:31.620901"
 }
