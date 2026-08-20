@@ -42,7 +42,6 @@
             --scrollbar-track: #F1F5F9;
             --scrollbar-thumb: #CBD5E1;
             
-            /* NEW: Animation & Suggestion vars */
             --suggestion-bg: #EEF2FF;
             --suggestion-hover: #E0E7FF;
             --typing-dot-color: #7C3AED;
@@ -173,9 +172,6 @@
             flex-wrap: wrap;
         }
 
-        /* ============================================
-           DARK MODE TOGGLE
-           ============================================ */
         .theme-toggle {
             background: var(--badge-bg);
             border: 1px solid var(--border-color);
@@ -263,9 +259,6 @@
             overflow: hidden;
         }
 
-        /* ============================================
-           DESKTOP SIDEBAR
-           ============================================ */
         .sidebar {
             width: 260px;
             background: var(--bg-sidebar);
@@ -408,9 +401,6 @@
             top: 2px;
         }
 
-        /* ============================================
-           MOBILE SIDEBAR (Hidden on Desktop)
-           ============================================ */
         .sidebar-mobile-overlay {
             display: none;
             position: fixed;
@@ -536,13 +526,6 @@
                 transform: translateY(0) scale(1);
             }
         }
-
-        /* Stagger animation for multiple messages */
-        .message:nth-child(1) { animation-delay: 0s; }
-        .message:nth-child(2) { animation-delay: 0.05s; }
-        .message:nth-child(3) { animation-delay: 0.1s; }
-        .message:nth-child(4) { animation-delay: 0.15s; }
-        .message:nth-child(5) { animation-delay: 0.2s; }
 
         .message-user {
             align-self: flex-end;
@@ -673,6 +656,24 @@
         }
 
         /* ============================================
+           STREAMING RESPONSE - Cursor Blink
+           ============================================ */
+        .streaming-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--text-primary);
+            margin-left: 2px;
+            animation: cursorBlink 0.8s ease-in-out infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes cursorBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* ============================================
            QUICK SUGGESTIONS
            ============================================ */
         .suggestions-container {
@@ -782,7 +783,6 @@
 
         .btn:active { transform: scale(0.95); }
 
-        /* Button ripple effect */
         .btn::after {
             content: '';
             position: absolute;
@@ -1167,9 +1167,6 @@
             color: #FCA5A5;
         }
 
-        /* ============================================
-           SCROLLBAR STYLING
-           ============================================ */
         .chat-messages::-webkit-scrollbar {
             width: 4px;
         }
@@ -1517,6 +1514,7 @@
         const API_URL = '/api/data';
         let isProcessing = false;
         let messageIdCounter = 0;
+        let streamingInterval = null;
 
         const chatMessages = document.getElementById('chat-messages');
         const emptyState = document.getElementById('empty-state');
@@ -1594,7 +1592,6 @@
         // ============================================
         function renderMarkdown(text) {
             if (!text) return text;
-            // Convert [Text](URL) to <a href="URL">Text</a>
             return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
                 return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--text-link); text-decoration: underline;">' + linkText + '</a>';
             });
@@ -1606,7 +1603,6 @@
         let typingIndicatorElement = null;
 
         function showTypingIndicator() {
-            // Remove existing typing indicator
             removeTypingIndicator();
 
             const typingDiv = document.createElement('div');
@@ -1648,9 +1644,183 @@
         }
 
         // ============================================
+        // STREAMING RESPONSE
+        // ============================================
+        function streamResponse(messageElement, fullContent, speed = 'medium') {
+            return new Promise((resolve) => {
+                // Clear any existing interval
+                if (streamingInterval) {
+                    clearInterval(streamingInterval);
+                    streamingInterval = null;
+                }
+
+                const bubble = messageElement.querySelector('.message-bubble');
+                let index = 0;
+                const content = fullContent;
+                
+                // Speed settings (characters per interval)
+                const speeds = {
+                    slow: 15,    // 15 chars per frame - very readable
+                    medium: 30,  // 30 chars per frame - balanced
+                    fast: 50     // 50 chars per frame - quick
+                };
+                
+                const charsPerFrame = speeds[speed] || speeds.medium;
+                const intervalTime = 30; // ms between frames
+                
+                // Start with empty content + cursor
+                let displayedContent = '';
+                bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
+                const textSpan = bubble.querySelector('.streaming-text');
+                
+                // Function to add next chunk
+                function addNextChunk() {
+                    const remaining = content.length - index;
+                    if (remaining <= 0) {
+                        // Done streaming
+                        if (streamingInterval) {
+                            clearInterval(streamingInterval);
+                            streamingInterval = null;
+                        }
+                        // Remove cursor and finalize
+                        const cursor = bubble.querySelector('.streaming-cursor');
+                        if (cursor) cursor.remove();
+                        
+                        // Add feedback and source elements
+                        addFeedbackAndSources(messageElement);
+                        resolve();
+                        return;
+                    }
+                    
+                    // Calculate chunk size (adaptive)
+                    let chunkSize = Math.min(charsPerFrame, remaining);
+                    
+                    // Try to break at sentence boundaries for natural reading
+                    if (chunkSize < remaining) {
+                        const lookAhead = content.substring(index + chunkSize - 1, index + chunkSize + 30);
+                        const sentenceEnd = lookAhead.search(/[.!?]\s/);
+                        if (sentenceEnd > 0 && sentenceEnd < 20) {
+                            chunkSize += sentenceEnd + 1;
+                        }
+                    }
+                    
+                    const chunk = content.substring(index, index + chunkSize);
+                    displayedContent += chunk;
+                    textSpan.textContent = displayedContent;
+                    
+                    index += chunkSize;
+                    
+                    // Smooth scroll as content appears
+                    scrollToBottomSmooth();
+                }
+                
+                // Start streaming
+                streamingInterval = setInterval(addNextChunk, intervalTime);
+                
+                // Ensure we finish even if interval is interrupted
+                setTimeout(() => {
+                    if (streamingInterval) {
+                        clearInterval(streamingInterval);
+                        streamingInterval = null;
+                        // Force complete
+                        textSpan.textContent = content;
+                        const cursor = bubble.querySelector('.streaming-cursor');
+                        if (cursor) cursor.remove();
+                        addFeedbackAndSources(messageElement);
+                        resolve();
+                    }
+                }, (content.length / charsPerFrame) * intervalTime + 1000);
+            });
+        }
+
+        function addFeedbackAndSources(messageElement) {
+            // This is handled in addMessageToUI now
+            // We just need to ensure feedback is visible
+            const bubble = messageElement.querySelector('.message-bubble');
+            // Check if feedback already exists
+            if (!bubble.querySelector('.feedback-container')) {
+                const feedbackContainer = document.createElement('div');
+                feedbackContainer.className = 'feedback-container';
+                const messageId = messageElement.dataset.messageId || 'msg-' + Date.now();
+                
+                const upBtn = document.createElement('button');
+                upBtn.className = 'feedback-btn feedback-up';
+                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                upBtn.title = 'Thumbs up';
+                upBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    submitFeedback(messageId, true);
+                };
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'feedback-btn feedback-down';
+                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+                downBtn.title = 'Thumbs down';
+                downBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    submitFeedback(messageId, false);
+                };
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'feedback-btn feedback-copy';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.title = 'Copy response';
+                copyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const textToCopy = bubble.textContent || '';
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.classList.add('copied');
+                        showToast('Copied to clipboard! 📋', 'success');
+                        setTimeout(() => { 
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    }).catch(() => {
+                        showToast('Failed to copy', 'error');
+                    });
+                };
+
+                feedbackContainer.appendChild(upBtn);
+                feedbackContainer.appendChild(downBtn);
+                feedbackContainer.appendChild(copyBtn);
+                bubble.appendChild(feedbackContainer);
+            }
+        }
+
+        // ============================================
+        // SMOOTH SCROLL
+        // ============================================
+        function scrollToBottomSmooth() {
+            if (!chatMessages) return;
+            
+            const scrollHeight = chatMessages.scrollHeight;
+            const clientHeight = chatMessages.clientHeight;
+            const scrollTop = chatMessages.scrollTop;
+            
+            // Only auto-scroll if user is near the bottom (within 100px)
+            const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+            
+            if (isNearBottom) {
+                chatMessages.scrollTo({
+                    top: scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function scrollToBottom() {
+            if (!chatMessages) return;
+            chatMessages.scrollTo({
+                top: chatMessages.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+        // ============================================
         // UI FUNCTIONS
         // ============================================
-        function addMessageToUI(role, content, id) {
+        function addMessageToUI(role, content, id, isStreaming = false) {
             const container = chatMessages;
             if (emptyState) emptyState.style.display = 'none';
 
@@ -1685,62 +1855,67 @@
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
 
-            if (role === 'assistant') {
+            if (role === 'assistant' && isStreaming) {
+                // For streaming, we just set the content directly and let streamResponse handle it
+                bubble.innerHTML = content;
+            } else if (role === 'assistant') {
                 // Render markdown for clickable links
                 bubble.innerHTML = renderMarkdown(content);
+                
+                // Add feedback for non-streaming messages (like errors)
+                if (!content.includes('error') && !content.includes('No Results')) {
+                    const feedbackContainer = document.createElement('div');
+                    feedbackContainer.className = 'feedback-container';
+                    feedbackContainer.id = `feedback-${messageId}`;
 
-                const feedbackContainer = document.createElement('div');
-                feedbackContainer.className = 'feedback-container';
-                feedbackContainer.id = `feedback-${messageId}`;
+                    const upBtn = document.createElement('button');
+                    upBtn.className = 'feedback-btn feedback-up';
+                    upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                    upBtn.title = 'Thumbs up';
+                    upBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        submitFeedback(messageId, true);
+                    };
 
-                const upBtn = document.createElement('button');
-                upBtn.className = 'feedback-btn feedback-up';
-                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                upBtn.title = 'Thumbs up';
-                upBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    submitFeedback(messageId, true);
-                };
+                    const downBtn = document.createElement('button');
+                    downBtn.className = 'feedback-btn feedback-down';
+                    downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+                    downBtn.title = 'Thumbs down';
+                    downBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        submitFeedback(messageId, false);
+                    };
 
-                const downBtn = document.createElement('button');
-                downBtn.className = 'feedback-btn feedback-down';
-                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                downBtn.title = 'Thumbs down';
-                downBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    submitFeedback(messageId, false);
-                };
+                    const existingFeedback = getFeedback(messageId);
+                    if (existingFeedback !== null) {
+                        setTimeout(() => updateFeedbackUI(messageId, existingFeedback), 100);
+                    }
 
-                const existingFeedback = getFeedback(messageId);
-                if (existingFeedback !== null) {
-                    setTimeout(() => updateFeedbackUI(messageId, existingFeedback), 100);
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'feedback-btn feedback-copy';
+                    copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                    copyBtn.title = 'Copy response';
+                    copyBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        const textToCopy = bubble.textContent || '';
+                        navigator.clipboard.writeText(textToCopy).then(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                            copyBtn.classList.add('copied');
+                            showToast('Copied to clipboard! 📋', 'success');
+                            setTimeout(() => { 
+                                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                                copyBtn.classList.remove('copied');
+                            }, 2000);
+                        }).catch(() => {
+                            showToast('Failed to copy', 'error');
+                        });
+                    };
+
+                    feedbackContainer.appendChild(upBtn);
+                    feedbackContainer.appendChild(downBtn);
+                    feedbackContainer.appendChild(copyBtn);
+                    bubble.appendChild(feedbackContainer);
                 }
-
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'feedback-btn feedback-copy';
-                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                copyBtn.title = 'Copy response';
-                copyBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const textToCopy = bubble.textContent || '';
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                        copyBtn.classList.add('copied');
-                        showToast('Copied to clipboard! 📋', 'success');
-                        setTimeout(() => { 
-                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                            copyBtn.classList.remove('copied');
-                        }, 2000);
-                    }).catch(() => {
-                        showToast('Failed to copy', 'error');
-                    });
-                };
-
-                feedbackContainer.appendChild(upBtn);
-                feedbackContainer.appendChild(downBtn);
-                feedbackContainer.appendChild(copyBtn);
-                bubble.appendChild(feedbackContainer);
-
             } else {
                 bubble.textContent = content;
             }
@@ -1749,19 +1924,18 @@
             messageDiv.appendChild(bubble);
             container.appendChild(messageDiv);
 
-            const history = loadChatHistory();
-            history.push({ role, content, id: messageId });
-            saveChatHistory(history);
+            // Only save to history if not streaming (will be saved when streaming completes)
+            if (!isStreaming) {
+                const history = loadChatHistory();
+                history.push({ role, content, id: messageId });
+                saveChatHistory(history);
+            }
 
             return messageId;
         }
 
-        function addMessage(role, content) {
-            return addMessageToUI(role, content);
-        }
-
-        function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        function addMessage(role, content, isStreaming = false) {
+            return addMessageToUI(role, content, null, isStreaming);
         }
 
         // ============================================
@@ -1902,6 +2076,7 @@
             trackEvent('query', { question: message, timestamp: Date.now() });
             updateTotalQueries();
 
+            // Add user message
             addMessage('user', message);
             messageInput.value = '';
             isProcessing = true;
@@ -1934,10 +2109,60 @@
                 }
 
                 const data = await response.json();
-
                 statusText.textContent = 'Ready';
+
+                // Format the full response
                 const formattedHtml = formatResponse(data);
-                addMessage('assistant', formattedHtml);
+                
+                // Create message element with streaming placeholder
+                const messageId = `msg-${Date.now()}-${++messageIdCounter}`;
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message message-assistant';
+                messageDiv.dataset.messageId = messageId;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.innerHTML = `
+                    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="12" height="10" rx="3" fill="white" opacity="0.9"/>
+                        <circle cx="7" cy="8" r="1.5" fill="#7C3AED"/>
+                        <circle cx="11" cy="8" r="1.5" fill="#7C3AED"/>
+                        <rect x="6" y="11" width="6" height="1.5" rx="0.75" fill="#7C3AED"/>
+                        <rect x="8.25" y="1" width="1.5" height="2" rx="0.75" fill="white" opacity="0.9"/>
+                        <circle cx="9" cy="0.75" r="1.5" fill="white" opacity="0.9"/>
+                        <rect x="4.5" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
+                        <rect x="12" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
+                        <rect x="5.25" y="13" width="7.5" height="3" rx="1.5" fill="white" opacity="0.85"/>
+                        <rect x="3" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
+                        <rect x="12.75" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
+                    </svg>
+                `;
+
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                
+                // Initial content with streaming cursor
+                bubble.innerHTML = `<span class="streaming-text"></span><span class="streaming-cursor"></span>`;
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(bubble);
+                
+                // Add to chat
+                if (emptyState) emptyState.style.display = 'none';
+                chatMessages.appendChild(messageDiv);
+                
+                // Extract just the text content for streaming (without HTML tags)
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = formattedHtml;
+                const textContent = tempDiv.textContent || formattedHtml;
+                
+                // Now stream the content
+                await streamResponse(messageDiv, textContent, 'medium');
+                
+                // After streaming, save to history
+                const history = loadChatHistory();
+                history.push({ role: 'assistant', content: formattedHtml, id: messageId });
+                saveChatHistory(history);
                 updateConversationCount();
 
             } catch (error) {
@@ -1966,7 +2191,6 @@
             sendBtn.disabled = false;
             messageInput.disabled = false;
             messageInput.focus();
-            scrollToBottom();
         }
 
         // ============================================
@@ -1974,6 +2198,12 @@
         // ============================================
         function clearChat() {
             if (!confirm('Clear all conversations?')) return;
+
+            // Clear streaming interval if active
+            if (streamingInterval) {
+                clearInterval(streamingInterval);
+                streamingInterval = null;
+            }
 
             localStorage.removeItem('omniChatHistory');
             chatMessages.innerHTML = `
@@ -2036,12 +2266,10 @@
         // KEYBOARD SHORTCUTS
         // ============================================
         document.addEventListener('keydown', function(e) {
-            // Ctrl+Enter to send
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 sendMessage();
             }
-            // Escape to clear input
             if (e.key === 'Escape' && document.activeElement === messageInput) {
                 messageInput.value = '';
                 messageInput.blur();
@@ -2088,7 +2316,7 @@
         });
 
         console.log('🚀 Omni Brand Intelligence Bot loaded successfully!');
-        console.log('✨ Features: Typing indicator, Quick suggestions, Copy to clipboard, Response animations, Message formatting');
+        console.log('✨ Features: Smooth streaming, Typing indicator, Quick suggestions, Copy to clipboard');
     </script>
 </body>
 </html>
