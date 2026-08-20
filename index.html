@@ -687,7 +687,7 @@
         }
 
         /* ============================================
-           ENHANCED RESPONSE STYLES
+           ENHANCED RESPONSE STYLES - Professional
            ============================================ */
         .enhanced-response {
             width: 100%;
@@ -788,6 +788,11 @@
             gap: 6px;
         }
 
+        .section h3 .section-icon {
+            opacity: 0.7;
+            font-size: 0.85rem;
+        }
+
         .analysis-points {
             list-style: none;
             padding: 0;
@@ -841,6 +846,7 @@
             font-size: 0.9rem;
             flex-shrink: 0;
             margin-top: 2px;
+            opacity: 0.7;
         }
 
         .finding-card p {
@@ -1157,95 +1163,6 @@
 
         .input-footer a:hover {
             color: var(--text-link);
-        }
-
-        /* ============================================
-           SOURCE CARDS - Enhanced
-           ============================================ */
-        .source-card {
-            background: var(--bg-card);
-            border-radius: 10px;
-            padding: 12px 14px;
-            border-left: 4px solid #7C3AED;
-            margin-top: 10px;
-            border: 1px solid var(--border-color);
-            border-left-width: 4px;
-            transition: all 0.3s ease;
-            animation: sourceFadeIn 0.5s ease-out;
-        }
-
-        .source-card:hover {
-            transform: translateX(4px);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        @keyframes sourceFadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .source-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 4px;
-            flex-wrap: wrap;
-        }
-
-        .source-title {
-            font-weight: 500;
-            font-size: 0.8rem;
-            color: var(--text-primary);
-        }
-
-        .source-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            font-size: 0.65rem;
-            color: var(--text-secondary);
-        }
-
-        .source-badge {
-            background: var(--bg-accent);
-            color: var(--text-link);
-            padding: 2px 8px;
-            border-radius: 100px;
-            font-weight: 500;
-            font-size: 0.6rem;
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .source-badge {
-            background: #1E1B4B;
-        }
-
-        .source-relevance { font-weight: 500; font-size: 0.75rem; }
-        .source-relevance-high { color: #059669; }
-        .source-relevance-med { color: #D97706; }
-        .source-relevance-low { color: #DC2626; }
-
-        .source-link {
-            font-size: 0.7rem;
-            color: var(--text-link);
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .source-link:hover {
-            text-decoration: underline;
-            transform: translateX(2px);
         }
 
         /* ============================================
@@ -1579,10 +1496,10 @@
                 <div class="sidebar-section">
                     <div class="ai-accent">
                         <div class="feature-title">
-                            <i class="fas fa-bolt"></i> Multi-Source Scraping
+                            <i class="fas fa-bolt"></i> Multi-Source Intelligence
                         </div>
                         <div class="feature-desc">
-                            5+ competitor websites analyzed in real-time
+                            Real-time analysis from 5+ competitor sources
                         </div>
                     </div>
                 </div>
@@ -1590,13 +1507,13 @@
                 <div class="sidebar-section">
                     <div class="status-box">
                         <div class="status-item">
-                            <span class="status-item-label">Status</span>
+                            <span class="status-item-label">System Status</span>
                             <span class="status-item-value" id="status-text">Ready</span>
                         </div>
                         <div class="badge-group">
                             <span class="badge badge-live"><i class="fas fa-circle"></i> Live</span>
                             <span class="badge badge-ai"><i class="fas fa-brain"></i> AI-Powered</span>
-                            <span class="badge badge-sources"><i class="fas fa-database"></i> 5+ Sources</span>
+                            <span class="badge badge-sources"><i class="fas fa-database"></i> Multi-Source</span>
                         </div>
                         <div class="status-item" style="border-top:1px solid var(--border-color);padding-top:8px;">
                             <span class="status-item-label">Total Queries</span>
@@ -1606,40 +1523,40 @@
                 </div>
 
                 <div class="sidebar-section">
-                    <span class="sidebar-section-title">How it works</span>
+                    <span class="sidebar-section-title">Process</span>
                     <div class="how-it-works">
                         <ol>
-                            <li>You ask a question</li>
-                            <li>Searches 5+ scraped sources</li>
-                            <li>Finds relevant content</li>
-                            <li>Returns AI-generated answer with sources</li>
+                            <li>Submit a query</li>
+                            <li>Search 5+ sources</li>
+                            <li>Analyze relevant content</li>
+                            <li>Generate response with sources</li>
                         </ol>
                     </div>
                 </div>
             </aside>
 
             <!-- ==========================================
-            MOBILE SIDEBAR (Hidden on Desktop)
+            MOBILE SIDEBAR
             ========================================== -->
             <div class="sidebar-mobile-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
             <div class="sidebar-mobile" id="sidebarMobile">
                 <button class="close-sidebar" onclick="toggleMobileSidebar()"><i class="fas fa-times"></i></button>
                 <div class="sidebar-section">
                     <div class="ai-accent">
-                        <div class="feature-title"><i class="fas fa-bolt"></i> Multi-Source Scraping</div>
-                        <div class="feature-desc">5+ competitor websites analyzed in real-time</div>
+                        <div class="feature-title"><i class="fas fa-bolt"></i> Multi-Source Intelligence</div>
+                        <div class="feature-desc">Real-time analysis from 5+ sources</div>
                     </div>
                 </div>
                 <div class="sidebar-section">
                     <div class="status-box">
                         <div class="status-item">
-                            <span class="status-item-label">Status</span>
+                            <span class="status-item-label">System Status</span>
                             <span class="status-item-value" id="status-text-mobile">Ready</span>
                         </div>
                         <div class="badge-group">
                             <span class="badge badge-live"><i class="fas fa-circle"></i> Live</span>
                             <span class="badge badge-ai"><i class="fas fa-brain"></i> AI-Powered</span>
-                            <span class="badge badge-sources"><i class="fas fa-database"></i> 5+ Sources</span>
+                            <span class="badge badge-sources"><i class="fas fa-database"></i> Multi-Source</span>
                         </div>
                         <div class="status-item" style="border-top:1px solid var(--border-color);padding-top:8px;">
                             <span class="status-item-label">Total Queries</span>
@@ -1648,13 +1565,13 @@
                     </div>
                 </div>
                 <div class="sidebar-section">
-                    <span class="sidebar-section-title">How it works</span>
+                    <span class="sidebar-section-title">Process</span>
                     <div class="how-it-works">
                         <ol>
-                            <li>You ask a question</li>
-                            <li>Searches 5+ scraped sources</li>
-                            <li>Finds relevant content</li>
-                            <li>Returns AI-generated answer with sources</li>
+                            <li>Submit a query</li>
+                            <li>Search 5+ sources</li>
+                            <li>Analyze relevant content</li>
+                            <li>Generate response with sources</li>
                         </ol>
                     </div>
                 </div>
@@ -1688,9 +1605,9 @@
                                 <rect x="52" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
                             </svg>
                         </div>
-                        <h3>Ask a question</h3>
-                        <p>About AI tools, platforms, or industry trends.</p>
-                        <p class="powered"><i class="fas fa-bolt"></i> Powered by live web scraping + AI</p>
+                        <h3>Submit a Query</h3>
+                        <p>Ask about AI tools, platforms, or industry trends.</p>
+                        <p class="powered"><i class="fas fa-bolt"></i> Powered by multi-source intelligence</p>
                     </div>
                 </div>
 
@@ -1736,7 +1653,7 @@
                         </button>
                     </div>
                     <div class="input-footer">
-                        <span><i class="fas fa-shield-alt"></i> AI-generated with sources</span>
+                        <span><i class="fas fa-shield-alt"></i> AI-generated with source attribution</span>
                         <span>
                             <a href="/privacy.html"><i class="fas fa-shield-alt"></i> Privacy</a>
                             <span style="margin:0 6px;">•</span>
@@ -1752,9 +1669,68 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // ============================================
-        // DARK MODE
-        // ============================================
+        // ============================================================
+        // GROK API INTEGRATION - Professional Edition v2.0
+        // ============================================================
+        // Purpose: Frontend integration with Grok API for personality-driven
+        // intelligence responses with structured formatting.
+        // ============================================================
+
+        // ============================================================
+        // SECTION 1: CONFIGURATION
+        // ============================================================
+
+        const CONFIG = {
+            API: {
+                GROK_URL: '/api/grok',
+                DATA_URL: '/api/data',
+                TIMEOUT_MS: 30000
+            },
+            DEFAULTS: {
+                PERSONALITY: 'balanced',
+                INTENT: 'informational',
+                TEMPERATURE: 0.3,
+                MAX_TOKENS: 1500
+            },
+            UI: {
+                MAX_MESSAGE_LENGTH: 10000,
+                SCROLL_THRESHOLD: 100
+            }
+        };
+
+        // ============================================================
+        // SECTION 2: STATE MANAGEMENT
+        // ============================================================
+
+        let state = {
+            isProcessing: false,
+            messageIdCounter: 0,
+            streamingInterval: null,
+            requestCount: 0,
+            errorCount: 0
+        };
+
+        // ============================================================
+        // SECTION 3: DOM REFERENCES
+        // ============================================================
+
+        const DOM = {
+            chatMessages: document.getElementById('chat-messages'),
+            emptyState: document.getElementById('empty-state'),
+            messageInput: document.getElementById('message-input'),
+            sendBtn: document.getElementById('send-btn'),
+            clearBtn: document.getElementById('clear-btn'),
+            statusText: document.getElementById('status-text'),
+            conversationCount: document.getElementById('conversation-count'),
+            toast: document.getElementById('toast'),
+            themeToggle: document.getElementById('themeToggle'),
+            themeLabel: document.getElementById('themeLabel')
+        };
+
+        // ============================================================
+        // SECTION 4: THEME MANAGEMENT
+        // ============================================================
+
         function getPreferredTheme() {
             const stored = localStorage.getItem('theme');
             if (stored) return stored;
@@ -1767,45 +1743,89 @@
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
-            const icon = document.querySelector('#themeToggle i');
-            const label = document.querySelector('#themeLabel');
+            const icon = DOM.themeToggle.querySelector('i');
             if (theme === 'dark') {
                 icon.className = 'fas fa-sun';
-                label.textContent = 'Light';
+                DOM.themeLabel.textContent = 'Light';
             } else {
                 icon.className = 'fas fa-moon';
-                label.textContent = 'Dark';
+                DOM.themeLabel.textContent = 'Dark';
             }
         }
 
-        function toggleTheme() {
+        // Initialize theme
+        setTheme(getPreferredTheme());
+        DOM.themeToggle.addEventListener('click', function() {
             const current = document.documentElement.getAttribute('data-theme') || 'light';
             setTheme(current === 'dark' ? 'light' : 'dark');
+        });
+
+        // ============================================================
+        // SECTION 5: UTILITY FUNCTIONS
+        // ============================================================
+
+        function showToast(message, type) {
+            DOM.toast.textContent = message;
+            DOM.toast.className = 'toast ' + (type || 'info');
+            DOM.toast.classList.add('show');
+            clearTimeout(DOM.toast._timeout);
+            DOM.toast._timeout = setTimeout(function() {
+                DOM.toast.classList.remove('show');
+            }, 3000);
         }
 
-        setTheme(getPreferredTheme());
-        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-        // ============================================
-        // ANALYTICS TRACKING
-        // ============================================
-        function trackEvent(eventType, data) {
-            try {
-                const events = JSON.parse(localStorage.getItem('botEvents') || '[]');
-                events.push({
-                    type: eventType,
-                    data: data,
-                    timestamp: new Date().toISOString()
+        function scrollToBottomSmooth() {
+            if (!DOM.chatMessages) return;
+            const scrollHeight = DOM.chatMessages.scrollHeight;
+            const clientHeight = DOM.chatMessages.clientHeight;
+            const scrollTop = DOM.chatMessages.scrollTop;
+            const isNearBottom = scrollHeight - scrollTop - clientHeight < CONFIG.UI.SCROLL_THRESHOLD;
+            if (isNearBottom) {
+                DOM.chatMessages.scrollTo({
+                    top: scrollHeight,
+                    behavior: 'smooth'
                 });
-                if (events.length > 1000) events.splice(0, events.length - 1000);
-                localStorage.setItem('botEvents', JSON.stringify(events));
+            }
+        }
+
+        function scrollToBottom() {
+            if (DOM.chatMessages) {
+                DOM.chatMessages.scrollTo({
+                    top: DOM.chatMessages.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // ============================================================
+        // SECTION 6: CHAT HISTORY MANAGEMENT
+        // ============================================================
+
+        function loadChatHistory() {
+            try {
+                const history = localStorage.getItem('omniChatHistory');
+                return history ? JSON.parse(history) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveChatHistory(messages) {
+            try {
+                localStorage.setItem('omniChatHistory', JSON.stringify(messages));
+                updateConversationCount();
             } catch (e) {}
+        }
+
+        function updateConversationCount() {
+            const history = loadChatHistory();
+            DOM.conversationCount.innerHTML = '<i class="far fa-comment-dots"></i> ' + history.length;
         }
 
         function getTotalQueries() {
             try {
                 const events = JSON.parse(localStorage.getItem('botEvents') || '[]');
-                return events.filter(e => e.type === 'query').length;
+                return events.filter(function(e) { return e.type === 'query'; }).length;
             } catch (e) {
                 return 0;
             }
@@ -1819,151 +1839,42 @@
             if (el2) el2.textContent = total;
         }
 
-        // ============================================
-        // MOBILE SIDEBAR
-        // ============================================
-        function toggleMobileSidebar() {
-            const overlay = document.getElementById('sidebarOverlay');
-            const sidebar = document.getElementById('sidebarMobile');
-            overlay.classList.toggle('active');
-            sidebar.classList.toggle('active');
-        }
-
-        // ============================================
-        // TOAST
-        // ============================================
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type}`;
-            toast.classList.add('show');
-            clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // ============================================
-        // API CONFIGURATION - Uses Grok API
-        // ============================================
-        const API_URL = '/api/grok'; // Using the grok API endpoint
-        const DATA_API_URL = '/api/data'; // Fallback to data API if needed
-        
-        // ============================================
-        // GROK API INTEGRATION
-        // ============================================
-        async function callGrokAPI(query, context = {}) {
+        function trackEvent(eventType, data) {
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        query: query,
-                        context: {
-                            ...context,
-                            personality: 'balanced',
-                            style: 'professional',
-                            format: 'structured'
-                        },
-                        options: {
-                            enhanceWithSources: true,
-                            includeRecommendations: true,
-                            confidenceScoring: true
-                        }
-                    })
+                const events = JSON.parse(localStorage.getItem('botEvents') || '[]');
+                events.push({
+                    type: eventType,
+                    data: data,
+                    timestamp: new Date().toISOString()
                 });
-
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
-                }
-
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.warn('Grok API error, falling back to data API:', error);
-                // Fallback to data API if grok fails
-                return await callDataAPI(query);
-            }
-        }
-
-        async function callDataAPI(query) {
-            const response = await fetch(DATA_API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Data API Error: ${response.status}`);
-            }
-            
-            return await response.json();
-        }
-
-        // ============================================
-        // DOM Elements
-        // ============================================
-        let isProcessing = false;
-        let messageIdCounter = 0;
-        let streamingInterval = null;
-
-        const chatMessages = document.getElementById('chat-messages');
-        const emptyState = document.getElementById('empty-state');
-        const messageInput = document.getElementById('message-input');
-        const sendBtn = document.getElementById('send-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const statusText = document.getElementById('status-text');
-        const conversationCountEl = document.getElementById('conversation-count');
-
-        updateTotalQueries();
-
-        // ============================================
-        // CHAT HISTORY
-        // ============================================
-        function loadChatHistory() {
-            try {
-                const history = localStorage.getItem('omniChatHistory');
-                return history ? JSON.parse(history) : [];
-            } catch (e) { return []; }
-        }
-
-        function saveChatHistory(messages) {
-            try {
-                localStorage.setItem('omniChatHistory', JSON.stringify(messages));
-                updateConversationCount();
+                if (events.length > 1000) events.splice(0, events.length - 1000);
+                localStorage.setItem('botEvents', JSON.stringify(events));
             } catch (e) {}
         }
 
-        function updateConversationCount() {
-            const history = loadChatHistory();
-            conversationCountEl.innerHTML = `<i class="far fa-comment-dots"></i> ${history.length}`;
-        }
+        // ============================================================
+        // SECTION 7: FEEDBACK SYSTEM
+        // ============================================================
 
-        // ============================================
-        // FEEDBACK
-        // ============================================
         function submitFeedback(messageId, isPositive) {
-            const feedbackKey = `feedback_${messageId}`;
+            const feedbackKey = 'feedback_' + messageId;
             const existing = localStorage.getItem(feedbackKey);
 
-            if (existing) {
-                if (existing === String(isPositive)) {
-                    localStorage.removeItem(feedbackKey);
-                    updateFeedbackUI(messageId, null);
-                    showToast('Feedback removed', 'info');
-                    return;
-                }
+            if (existing && existing === String(isPositive)) {
+                localStorage.removeItem(feedbackKey);
+                updateFeedbackUI(messageId, null);
+                showToast('Feedback removed', 'info');
+                return;
             }
 
             localStorage.setItem(feedbackKey, String(isPositive));
             updateFeedbackUI(messageId, isPositive);
-            trackEvent('feedback', { messageId, isPositive });
-            showToast(isPositive ? 'Thanks for the positive feedback! 👍' : 'Thanks for your feedback!', 'success');
+            trackEvent('feedback', { messageId: messageId, isPositive: isPositive });
+            showToast(isPositive ? 'Positive feedback recorded' : 'Feedback recorded', 'success');
         }
 
         function updateFeedbackUI(messageId, isPositive) {
-            const container = document.getElementById(`feedback-${messageId}`);
+            const container = document.getElementById('feedback-' + messageId);
             if (!container) return;
 
             const thumbsUp = container.querySelector('.feedback-up');
@@ -1973,15 +1884,10 @@
             if (thumbsDown) thumbsDown.classList.toggle('active', isPositive === false);
         }
 
-        function getFeedback(messageId) {
-            const val = localStorage.getItem(`feedback_${messageId}`);
-            if (val === null) return null;
-            return val === 'true';
-        }
+        // ============================================================
+        // SECTION 8: MESSAGE RENDERING
+        // ============================================================
 
-        // ============================================
-        // RENDER MARKDOWN
-        // ============================================
         function renderMarkdown(text) {
             if (!text) return text;
             return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
@@ -1989,10 +1895,272 @@
             });
         }
 
-        // ============================================
-        // PERSONALITY ENHANCED RESPONSE FORMATTER
-        // ============================================
-        function formatEnhancedResponse(data) {
+        function addMessageToUI(role, content, id, isStreaming) {
+            const container = DOM.chatMessages;
+            if (DOM.emptyState) DOM.emptyState.style.display = 'none';
+
+            const messageId = id || 'msg-' + Date.now() + '-' + (++state.messageIdCounter);
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message message-' + role;
+            messageDiv.dataset.messageId = messageId;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = role === 'user' 
+                ? '<i class="fas fa-user"></i>' 
+                : '<i class="fas fa-robot"></i>';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+
+            if (role === 'assistant' && !isStreaming) {
+                // Check if content contains HTML structure
+                if (content && content.trim().startsWith('<')) {
+                    bubble.innerHTML = content;
+                } else {
+                    bubble.innerHTML = renderMarkdown(content);
+                }
+                
+                // Add feedback for non-error responses
+                if (content && !content.includes('error') && !content.includes('No Results')) {
+                    addFeedbackControls(bubble, messageId);
+                }
+            } else if (role === 'assistant' && isStreaming) {
+                bubble.innerHTML = content;
+            } else {
+                bubble.textContent = content;
+            }
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(bubble);
+            container.appendChild(messageDiv);
+
+            if (!isStreaming) {
+                const history = loadChatHistory();
+                history.push({ role: role, content: content, id: messageId });
+                saveChatHistory(history);
+            }
+
+            return messageId;
+        }
+
+        function addFeedbackControls(bubble, messageId) {
+            const feedbackContainer = document.createElement('div');
+            feedbackContainer.className = 'feedback-container';
+            feedbackContainer.id = 'feedback-' + messageId;
+
+            const upBtn = document.createElement('button');
+            upBtn.className = 'feedback-btn feedback-up';
+            upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+            upBtn.title = 'Positive feedback';
+            upBtn.onclick = function(e) {
+                e.stopPropagation();
+                submitFeedback(messageId, true);
+            };
+
+            const downBtn = document.createElement('button');
+            downBtn.className = 'feedback-btn feedback-down';
+            downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+            downBtn.title = 'Negative feedback';
+            downBtn.onclick = function(e) {
+                e.stopPropagation();
+                submitFeedback(messageId, false);
+            };
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'feedback-btn feedback-copy';
+            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+            copyBtn.title = 'Copy response';
+            copyBtn.onclick = function(e) {
+                e.stopPropagation();
+                const textToCopy = bubble.textContent || '';
+                navigator.clipboard.writeText(textToCopy).then(function() {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    copyBtn.classList.add('copied');
+                    showToast('Copied to clipboard', 'success');
+                    setTimeout(function() {
+                        copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                }).catch(function() {
+                    showToast('Failed to copy', 'error');
+                });
+            };
+
+            feedbackContainer.appendChild(upBtn);
+            feedbackContainer.appendChild(downBtn);
+            feedbackContainer.appendChild(copyBtn);
+            bubble.appendChild(feedbackContainer);
+        }
+
+        function addMessage(role, content, isStreaming) {
+            return addMessageToUI(role, content, null, isStreaming);
+        }
+
+        // ============================================================
+        // SECTION 9: TYPING INDICATOR
+        // ============================================================
+
+        let typingIndicatorElement = null;
+
+        function showTypingIndicator() {
+            removeTypingIndicator();
+
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="typing-dots">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+            `;
+            
+            DOM.chatMessages.appendChild(typingDiv);
+            typingIndicatorElement = typingDiv;
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            if (typingIndicatorElement) {
+                typingIndicatorElement.remove();
+                typingIndicatorElement = null;
+            }
+        }
+
+        // ============================================================
+        // SECTION 10: STREAMING RESPONSE
+        // ============================================================
+
+        function streamResponse(messageElement, fullContent, speed) {
+            return new Promise(function(resolve) {
+                if (state.streamingInterval) {
+                    clearInterval(state.streamingInterval);
+                    state.streamingInterval = null;
+                }
+
+                const bubble = messageElement.querySelector('.message-bubble');
+                let index = 0;
+                const content = fullContent || '';
+                
+                const speeds = {
+                    slow: 15,
+                    medium: 30,
+                    fast: 50
+                };
+                
+                const charsPerFrame = speeds[speed] || speeds.medium;
+                const intervalTime = 30;
+                
+                let displayedContent = '';
+                bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
+                const textSpan = bubble.querySelector('.streaming-text');
+                
+                function addNextChunk() {
+                    const remaining = content.length - index;
+                    if (remaining <= 0) {
+                        if (state.streamingInterval) {
+                            clearInterval(state.streamingInterval);
+                            state.streamingInterval = null;
+                        }
+                        const cursor = bubble.querySelector('.streaming-cursor');
+                        if (cursor) cursor.remove();
+                        resolve();
+                        return;
+                    }
+                    
+                    let chunkSize = Math.min(charsPerFrame, remaining);
+                    
+                    if (chunkSize < remaining) {
+                        const lookAhead = content.substring(index + chunkSize - 1, index + chunkSize + 30);
+                        const sentenceEnd = lookAhead.search(/[.!?]\s/);
+                        if (sentenceEnd > 0 && sentenceEnd < 20) {
+                            chunkSize += sentenceEnd + 1;
+                        }
+                    }
+                    
+                    const chunk = content.substring(index, index + chunkSize);
+                    displayedContent += chunk;
+                    textSpan.textContent = displayedContent;
+                    
+                    index += chunkSize;
+                    scrollToBottomSmooth();
+                }
+                
+                state.streamingInterval = setInterval(addNextChunk, intervalTime);
+                
+                setTimeout(function() {
+                    if (state.streamingInterval) {
+                        clearInterval(state.streamingInterval);
+                        state.streamingInterval = null;
+                        textSpan.textContent = content;
+                        const cursor = bubble.querySelector('.streaming-cursor');
+                        if (cursor) cursor.remove();
+                        resolve();
+                    }
+                }, (content.length / charsPerFrame) * intervalTime + 1000);
+            });
+        }
+
+        // ============================================================
+        // SECTION 11: API COMMUNICATION
+        // ============================================================
+
+        async function callGrokAPI(query, context) {
+            try {
+                const response = await fetch(CONFIG.API.GROK_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        context: context || {},
+                        intent: 'informational',
+                        personality: CONFIG.DEFAULTS.PERSONALITY,
+                        options: {
+                            temperature: CONFIG.DEFAULTS.TEMPERATURE,
+                            maxTokens: CONFIG.DEFAULTS.MAX_TOKENS,
+                            enhanceWithSources: true,
+                            includeRecommendations: true,
+                            confidenceScoring: true
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API Error: ' + response.status);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.warn('Grok API error, falling back to data API:', error);
+                return await callDataAPI(query);
+            }
+        }
+
+        async function callDataAPI(query) {
+            const response = await fetch(CONFIG.API.DATA_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Data API Error: ' + response.status);
+            }
+            
+            return await response.json();
+        }
+
+        // ============================================================
+        // SECTION 12: RESPONSE FORMATTING
+        // ============================================================
+
+        function formatResponse(data) {
             if (!data || !data.response) {
                 return generateEmptyResponse();
             }
@@ -2001,15 +2169,14 @@
             const sources = data.sources || [];
             const metadata = data.metadata || {};
             
-            // Generate personality badges based on content
-            const personalityBadges = generatePersonalityBadges(responseText);
+            // Generate personality badges from metadata
+            const personalityBadges = generatePersonalityBadges(metadata);
             
             // Calculate confidence
             const confidence = calculateConfidence(metadata);
             const confidenceClass = confidence === 'High' ? 'confidence-high' : 
                                    confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
             
-            // Build the enhanced response HTML
             let html = `
                 <div class="enhanced-response">
                     <div class="personality-header">
@@ -2017,7 +2184,7 @@
                     </div>
                     
                     <div class="response-header">
-                        <h2>🎯 Intelligence Brief</h2>
+                        <h2>Intelligence Brief</h2>
                         <div class="summary-box">
                             <p>${extractExecutiveSummary(responseText)}</p>
                             <div class="confidence-badge">
@@ -2029,38 +2196,27 @@
                     </div>
             `;
 
-            // Add analysis section
             html += generateAnalysisSection(responseText);
-            
-            // Add findings section
             html += generateFindingsSection(responseText, sources);
-            
-            // Add recommendations section
             html += generateRecommendationsSection(sources);
-            
-            // Add sources section
             html += generateSourceReferences(sources);
-            
-            // Add metadata footer
             html += generateMetadataFooter(metadata);
 
             html += '</div>';
             return html;
         }
 
-        function generatePersonalityBadges(text) {
-            const badges = [
-                { icon: '🧠', label: 'Openness: Exploring possibilities', trait: 'Openness' },
-                { icon: '🚀', label: 'Conscientiousness: Structured insights', trait: 'Conscientiousness' },
-                { icon: '💬', label: 'Extraversion: Engaging analysis', trait: 'Extraversion' },
-                { icon: '⚡', label: 'Neuroticism: Balanced perspective', trait: 'Neuroticism' }
-            ];
+        function generatePersonalityBadges(metadata) {
+            const personality = metadata.personality || 'balanced';
+            const labels = {
+                openness: 'Openness: Exploring possibilities',
+                conscientiousness: 'Conscientiousness: Structured insights',
+                extraversion: 'Extraversion: Engaging analysis',
+                neuroticism: 'Neuroticism: Balanced perspective',
+                balanced: 'Balanced: Multi-dimensional analysis'
+            };
             
-            return badges.map(b => `
-                <span class="personality-badge">
-                    ${b.icon} ${b.label}
-                </span>
-            `).join('');
+            return '<span class="personality-badge">' + (labels[personality] || labels.balanced) + '</span>';
         }
 
         function extractExecutiveSummary(text) {
@@ -2072,14 +2228,16 @@
         }
 
         function generateAnalysisSection(text) {
-            const sentences = text.split(/[.!?]\s+/).filter(s => s.trim().length > 30);
+            const sentences = text.split(/[.!?]\s+/).filter(function(s) {
+                return s.trim().length > 30;
+            });
             const points = sentences.slice(0, Math.min(4, sentences.length));
             
             return `
                 <div class="section">
-                    <h3>📊 Deep Dive Analysis</h3>
+                    <h3><span class="section-icon">▸</span> Analysis</h3>
                     <ul class="analysis-points">
-                        ${points.map(p => `<li>${p.trim()}</li>`).join('')}
+                        ${points.map(function(p) { return '<li>' + p.trim() + '</li>'; }).join('')}
                     </ul>
                 </div>
             `;
@@ -2089,7 +2247,7 @@
             const keywords = ['AI', 'tool', 'platform', 'innovation', 'technology', 'model', 'data', 'cloud', 'API'];
             const findings = [];
             
-            keywords.forEach(keyword => {
+            keywords.forEach(function(keyword) {
                 if (text.toLowerCase().includes(keyword.toLowerCase())) {
                     const idx = text.toLowerCase().indexOf(keyword.toLowerCase());
                     const start = Math.max(0, idx - 20);
@@ -2101,27 +2259,29 @@
                 }
             });
             
-            // Take only unique findings
             const uniqueFindings = [...new Set(findings)].slice(0, 4);
             
-            // If no findings found, create some from the text
             if (uniqueFindings.length === 0) {
-                const sentences = text.split(/[.!?]\s+/).filter(s => s.trim().length > 20);
-                sentences.slice(0, 4).forEach(s => {
+                const sentences = text.split(/[.!?]\s+/).filter(function(s) {
+                    return s.trim().length > 20;
+                });
+                sentences.slice(0, 4).forEach(function(s) {
                     findings.push(s.trim());
                 });
             }
             
             return `
                 <div class="section">
-                    <h3>🔍 Key Findings</h3>
+                    <h3><span class="section-icon">▸</span> Key Findings</h3>
                     <div class="findings-grid">
-                        ${(findings.length > 0 ? findings : ['Analysis complete']).slice(0, 4).map(f => `
-                            <div class="finding-card">
-                                <span class="finding-icon">✅</span>
-                                <p>${f.substring(0, 100)}${f.length > 100 ? '...' : ''}</p>
-                            </div>
-                        `).join('')}
+                        ${(findings.length > 0 ? findings : ['Analysis complete']).slice(0, 4).map(function(f) {
+                            return `
+                                <div class="finding-card">
+                                    <span class="finding-icon">✓</span>
+                                    <p>${f.substring(0, 100)}${f.length > 100 ? '...' : ''}</p>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
@@ -2130,7 +2290,7 @@
         function generateRecommendationsSection(sources) {
             const recs = {
                 individual: [
-                    'Start with free tiers to test AI capabilities',
+                    'Start with free tiers to test capabilities',
                     'Focus on specific use cases first',
                     'Build a continuous learning roadmap',
                     'Experiment with different AI models'
@@ -2145,18 +2305,18 @@
             
             return `
                 <div class="section">
-                    <h3>💡 Actionable Recommendations</h3>
+                    <h3><span class="section-icon">▸</span> Recommendations</h3>
                     <div class="recommendations">
                         <div class="rec-item">
-                            <span class="rec-tag">👤 Individual</span>
+                            <span class="rec-tag">Individual</span>
                             <ul>
-                                ${recs.individual.map(r => `<li>${r}</li>`).join('')}
+                                ${recs.individual.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
                             </ul>
                         </div>
                         <div class="rec-item">
-                            <span class="rec-tag">🏢 Commercial</span>
+                            <span class="rec-tag">Commercial</span>
                             <ul>
-                                ${recs.commercial.map(r => `<li>${r}</li>`).join('')}
+                                ${recs.commercial.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
                             </ul>
                         </div>
                     </div>
@@ -2168,7 +2328,7 @@
             if (!sources || sources.length === 0) {
                 return `
                     <div class="response-footer">
-                        <h4>📚 Sources</h4>
+                        <h4>Sources</h4>
                         <p style="color: var(--text-muted); font-size: 0.8rem;">No sources available for this response.</p>
                     </div>
                 `;
@@ -2176,9 +2336,9 @@
             
             return `
                 <div class="response-footer">
-                    <h4>📚 Source References</h4>
+                    <h4>Source References</h4>
                     <div class="source-grid">
-                        ${sources.map(s => {
+                        ${sources.map(function(s) {
                             const pct = Math.min((s.score/20)*100, 100);
                             return `
                                 <div class="source-item" style="border-left-color: ${getScoreColor(s.score)}">
@@ -2207,8 +2367,8 @@
                     <span>📅 ${metadata.last_updated ? new Date(metadata.last_updated).toLocaleString() : 'N/A'}</span>
                     <span>📊 ${metadata.total_sources || 0} sources</span>
                     <span>🎯 ${metadata.matches_found || 0} matches</span>
-                    ${metadata.ai_generated ? '<span>🧠 AI-Generated</span>' : ''}
-                    ${metadata.error ? `<span style="color: #DC2626;">⚠️ ${metadata.error}</span>` : ''}
+                    ${metadata.ai_generated ? '<span>AI-Generated</span>' : ''}
+                    ${metadata.error ? '<span style="color: #DC2626;">⚠️ ' + metadata.error + '</span>' : ''}
                 </div>
             `;
         }
@@ -2233,523 +2393,28 @@
             return `
                 <div class="enhanced-response">
                     <div class="empty-state">
-                        <h3>🤔 No Results Found</h3>
+                        <h3>No Results Found</h3>
                         <p>Try asking about specific AI tools, platforms, or industry trends.</p>
                         <div class="suggestion-hint">
-                            <span>💡 Suggested: "What are the top AI tools for 2025?"</span>
+                            <span>Suggested: "What are the top AI tools for 2025?"</span>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        // ============================================
-        // TYPING INDICATOR
-        // ============================================
-        let typingIndicatorElement = null;
+        // ============================================================
+        // SECTION 13: ERROR HANDLING
+        // ============================================================
 
-        function showTypingIndicator() {
-            removeTypingIndicator();
-
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.id = 'typing-indicator';
-            typingDiv.innerHTML = `
-                <div class="message-avatar">
-                    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="3" width="12" height="10" rx="3" fill="white" opacity="0.9"/>
-                        <circle cx="7" cy="8" r="1.5" fill="#7C3AED"/>
-                        <circle cx="11" cy="8" r="1.5" fill="#7C3AED"/>
-                        <rect x="6" y="11" width="6" height="1.5" rx="0.75" fill="#7C3AED"/>
-                        <rect x="8.25" y="1" width="1.5" height="2" rx="0.75" fill="white" opacity="0.9"/>
-                        <circle cx="9" cy="0.75" r="1.5" fill="white" opacity="0.9"/>
-                        <rect x="4.5" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
-                        <rect x="12" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
-                        <rect x="5.25" y="13" width="7.5" height="3" rx="1.5" fill="white" opacity="0.85"/>
-                        <rect x="3" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
-                        <rect x="12.75" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
-                    </svg>
-                </div>
-                <div class="typing-dots">
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                </div>
-            `;
-            
-            chatMessages.appendChild(typingDiv);
-            typingIndicatorElement = typingDiv;
-            scrollToBottom();
-        }
-
-        function removeTypingIndicator() {
-            if (typingIndicatorElement) {
-                typingIndicatorElement.remove();
-                typingIndicatorElement = null;
-            }
-        }
-
-        // ============================================
-        // STREAMING RESPONSE
-        // ============================================
-        function streamResponse(messageElement, fullContent, speed = 'medium') {
-            return new Promise((resolve) => {
-                if (streamingInterval) {
-                    clearInterval(streamingInterval);
-                    streamingInterval = null;
-                }
-
-                const bubble = messageElement.querySelector('.message-bubble');
-                let index = 0;
-                const content = fullContent;
-                
-                const speeds = {
-                    slow: 15,
-                    medium: 30,
-                    fast: 50
-                };
-                
-                const charsPerFrame = speeds[speed] || speeds.medium;
-                const intervalTime = 30;
-                
-                let displayedContent = '';
-                bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
-                const textSpan = bubble.querySelector('.streaming-text');
-                
-                function addNextChunk() {
-                    const remaining = content.length - index;
-                    if (remaining <= 0) {
-                        if (streamingInterval) {
-                            clearInterval(streamingInterval);
-                            streamingInterval = null;
-                        }
-                        const cursor = bubble.querySelector('.streaming-cursor');
-                        if (cursor) cursor.remove();
-                        
-                        addFeedbackAndSources(messageElement);
-                        resolve();
-                        return;
-                    }
-                    
-                    let chunkSize = Math.min(charsPerFrame, remaining);
-                    
-                    if (chunkSize < remaining) {
-                        const lookAhead = content.substring(index + chunkSize - 1, index + chunkSize + 30);
-                        const sentenceEnd = lookAhead.search(/[.!?]\s/);
-                        if (sentenceEnd > 0 && sentenceEnd < 20) {
-                            chunkSize += sentenceEnd + 1;
-                        }
-                    }
-                    
-                    const chunk = content.substring(index, index + chunkSize);
-                    displayedContent += chunk;
-                    textSpan.textContent = displayedContent;
-                    
-                    index += chunkSize;
-                    scrollToBottomSmooth();
-                }
-                
-                streamingInterval = setInterval(addNextChunk, intervalTime);
-                
-                setTimeout(() => {
-                    if (streamingInterval) {
-                        clearInterval(streamingInterval);
-                        streamingInterval = null;
-                        textSpan.textContent = content;
-                        const cursor = bubble.querySelector('.streaming-cursor');
-                        if (cursor) cursor.remove();
-                        addFeedbackAndSources(messageElement);
-                        resolve();
-                    }
-                }, (content.length / charsPerFrame) * intervalTime + 1000);
-            });
-        }
-
-        function addFeedbackAndSources(messageElement) {
-            const bubble = messageElement.querySelector('.message-bubble');
-            if (!bubble.querySelector('.feedback-container')) {
-                const feedbackContainer = document.createElement('div');
-                feedbackContainer.className = 'feedback-container';
-                const messageId = messageElement.dataset.messageId || 'msg-' + Date.now();
-                
-                const upBtn = document.createElement('button');
-                upBtn.className = 'feedback-btn feedback-up';
-                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                upBtn.title = 'Thumbs up';
-                upBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    submitFeedback(messageId, true);
-                };
-
-                const downBtn = document.createElement('button');
-                downBtn.className = 'feedback-btn feedback-down';
-                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                downBtn.title = 'Thumbs down';
-                downBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    submitFeedback(messageId, false);
-                };
-
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'feedback-btn feedback-copy';
-                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                copyBtn.title = 'Copy response';
-                copyBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const textToCopy = bubble.textContent || '';
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                        copyBtn.classList.add('copied');
-                        showToast('Copied to clipboard! 📋', 'success');
-                        setTimeout(() => { 
-                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                            copyBtn.classList.remove('copied');
-                        }, 2000);
-                    }).catch(() => {
-                        showToast('Failed to copy', 'error');
-                    });
-                };
-
-                feedbackContainer.appendChild(upBtn);
-                feedbackContainer.appendChild(downBtn);
-                feedbackContainer.appendChild(copyBtn);
-                bubble.appendChild(feedbackContainer);
-            }
-        }
-
-        // ============================================
-        // SMOOTH SCROLL
-        // ============================================
-        function scrollToBottomSmooth() {
-            if (!chatMessages) return;
-            
-            const scrollHeight = chatMessages.scrollHeight;
-            const clientHeight = chatMessages.clientHeight;
-            const scrollTop = chatMessages.scrollTop;
-            
-            const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-            
-            if (isNearBottom) {
-                chatMessages.scrollTo({
-                    top: scrollHeight,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        function scrollToBottom() {
-            if (!chatMessages) return;
-            chatMessages.scrollTo({
-                top: chatMessages.scrollHeight,
-                behavior: 'smooth'
-            });
-        }
-
-        // ============================================
-        // UI FUNCTIONS
-        // ============================================
-        function addMessageToUI(role, content, id, isStreaming = false) {
-            const container = chatMessages;
-            if (emptyState) emptyState.style.display = 'none';
-
-            const messageId = id || `msg-${Date.now()}-${++messageIdCounter}`;
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message message-${role}`;
-            messageDiv.dataset.messageId = messageId;
-
-            const avatar = document.createElement('div');
-            avatar.className = 'message-avatar';
-
-            if (role === 'user') {
-                avatar.innerHTML = `<i class="fas fa-user"></i>`;
-            } else {
-                avatar.innerHTML = `
-                    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="3" width="12" height="10" rx="3" fill="white" opacity="0.9"/>
-                        <circle cx="7" cy="8" r="1.5" fill="#7C3AED"/>
-                        <circle cx="11" cy="8" r="1.5" fill="#7C3AED"/>
-                        <rect x="6" y="11" width="6" height="1.5" rx="0.75" fill="#7C3AED"/>
-                        <rect x="8.25" y="1" width="1.5" height="2" rx="0.75" fill="white" opacity="0.9"/>
-                        <circle cx="9" cy="0.75" r="1.5" fill="white" opacity="0.9"/>
-                        <rect x="4.5" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
-                        <rect x="12" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
-                        <rect x="5.25" y="13" width="7.5" height="3" rx="1.5" fill="white" opacity="0.85"/>
-                        <rect x="3" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
-                        <rect x="12.75" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
-                    </svg>
-                `;
-            }
-
-            const bubble = document.createElement('div');
-            bubble.className = 'message-bubble';
-
-            if (role === 'assistant' && isStreaming) {
-                bubble.innerHTML = content;
-            } else if (role === 'assistant') {
-                // Check if content is already HTML or plain text
-                if (content.trim().startsWith('<')) {
-                    bubble.innerHTML = content;
-                } else {
-                    bubble.innerHTML = renderMarkdown(content);
-                }
-                
-                if (!content.includes('error') && !content.includes('No Results')) {
-                    const feedbackContainer = document.createElement('div');
-                    feedbackContainer.className = 'feedback-container';
-                    feedbackContainer.id = `feedback-${messageId}`;
-
-                    const upBtn = document.createElement('button');
-                    upBtn.className = 'feedback-btn feedback-up';
-                    upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                    upBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        submitFeedback(messageId, true);
-                    };
-
-                    const downBtn = document.createElement('button');
-                    downBtn.className = 'feedback-btn feedback-down';
-                    downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                    downBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        submitFeedback(messageId, false);
-                    };
-
-                    const existingFeedback = getFeedback(messageId);
-                    if (existingFeedback !== null) {
-                        setTimeout(() => updateFeedbackUI(messageId, existingFeedback), 100);
-                    }
-
-                    const copyBtn = document.createElement('button');
-                    copyBtn.className = 'feedback-btn feedback-copy';
-                    copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                    copyBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        const textToCopy = bubble.textContent || '';
-                        navigator.clipboard.writeText(textToCopy).then(() => {
-                            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                            copyBtn.classList.add('copied');
-                            showToast('Copied to clipboard! 📋', 'success');
-                            setTimeout(() => { 
-                                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                                copyBtn.classList.remove('copied');
-                            }, 2000);
-                        }).catch(() => {
-                            showToast('Failed to copy', 'error');
-                        });
-                    };
-
-                    feedbackContainer.appendChild(upBtn);
-                    feedbackContainer.appendChild(downBtn);
-                    feedbackContainer.appendChild(copyBtn);
-                    bubble.appendChild(feedbackContainer);
-                }
-            } else {
-                bubble.textContent = content;
-            }
-
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(bubble);
-            container.appendChild(messageDiv);
-
-            if (!isStreaming) {
-                const history = loadChatHistory();
-                history.push({ role, content, id: messageId });
-                saveChatHistory(history);
-            }
-
-            return messageId;
-        }
-
-        function addMessage(role, content, isStreaming = false) {
-            return addMessageToUI(role, content, null, isStreaming);
-        }
-
-        // ============================================
-        // SEND MESSAGE WITH GROK API
-        // ============================================
-        async function sendMessage() {
-            const message = messageInput.value.trim();
-            if (!message || isProcessing) return;
-
-            trackEvent('query', { question: message, timestamp: Date.now() });
-            updateTotalQueries();
-
-            // Add user message
-            addMessage('user', message);
-            messageInput.value = '';
-            isProcessing = true;
-            sendBtn.disabled = true;
-            messageInput.disabled = true;
-            statusText.textContent = 'Processing...';
-
-            // Show typing indicator
-            showTypingIndicator();
-
-            try {
-                statusText.textContent = 'Generating response...';
-
-                // Call the Grok API
-                const data = await callGrokAPI(message, {
-                    userHistory: loadChatHistory().slice(-5),
-                    timestamp: new Date().toISOString()
-                });
-
-                // Remove typing indicator
-                removeTypingIndicator();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                statusText.textContent = 'Ready';
-
-                // Format the full response using enhanced formatter
-                const formattedHtml = formatEnhancedResponse(data);
-                
-                // Create message element with streaming placeholder
-                const messageId = `msg-${Date.now()}-${++messageIdCounter}`;
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message message-assistant';
-                messageDiv.dataset.messageId = messageId;
-
-                const avatar = document.createElement('div');
-                avatar.className = 'message-avatar';
-                avatar.innerHTML = `
-                    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="3" width="12" height="10" rx="3" fill="white" opacity="0.9"/>
-                        <circle cx="7" cy="8" r="1.5" fill="#7C3AED"/>
-                        <circle cx="11" cy="8" r="1.5" fill="#7C3AED"/>
-                        <rect x="6" y="11" width="6" height="1.5" rx="0.75" fill="#7C3AED"/>
-                        <rect x="8.25" y="1" width="1.5" height="2" rx="0.75" fill="white" opacity="0.9"/>
-                        <circle cx="9" cy="0.75" r="1.5" fill="white" opacity="0.9"/>
-                        <rect x="4.5" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
-                        <rect x="12" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
-                        <rect x="5.25" y="13" width="7.5" height="3" rx="1.5" fill="white" opacity="0.85"/>
-                        <rect x="3" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
-                        <rect x="12.75" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
-                    </svg>
-                `;
-
-                const bubble = document.createElement('div');
-                bubble.className = 'message-bubble';
-                
-                // Initial content with streaming cursor
-                bubble.innerHTML = `<span class="streaming-text"></span><span class="streaming-cursor"></span>`;
-                
-                messageDiv.appendChild(avatar);
-                messageDiv.appendChild(bubble);
-                
-                // Add to chat
-                if (emptyState) emptyState.style.display = 'none';
-                chatMessages.appendChild(messageDiv);
-                
-                // Extract text content for streaming
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = formattedHtml;
-                const textContent = tempDiv.textContent || formattedHtml;
-                
-                // Stream the content
-                await streamResponse(messageDiv, textContent, 'medium');
-                
-                // After streaming, replace with full HTML
-                const existingFeedback = bubble.querySelector('.feedback-container');
-                if (existingFeedback) {
-                    existingFeedback.remove();
-                }
-                
-                // Set final HTML content
-                bubble.innerHTML = formattedHtml;
-                
-                // Re-add feedback
-                const feedbackContainer = document.createElement('div');
-                feedbackContainer.className = 'feedback-container';
-                feedbackContainer.id = `feedback-${messageId}`;
-
-                const upBtn = document.createElement('button');
-                upBtn.className = 'feedback-btn feedback-up';
-                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                upBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    submitFeedback(messageId, true);
-                };
-
-                const downBtn = document.createElement('button');
-                downBtn.className = 'feedback-btn feedback-down';
-                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                downBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    submitFeedback(messageId, false);
-                };
-
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'feedback-btn feedback-copy';
-                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                copyBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    const textToCopy = bubble.textContent || '';
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                        copyBtn.classList.add('copied');
-                        showToast('Copied to clipboard! 📋', 'success');
-                        setTimeout(() => { 
-                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                            copyBtn.classList.remove('copied');
-                        }, 2000);
-                    }).catch(() => {
-                        showToast('Failed to copy', 'error');
-                    });
-                };
-
-                feedbackContainer.appendChild(upBtn);
-                feedbackContainer.appendChild(downBtn);
-                feedbackContainer.appendChild(copyBtn);
-                bubble.appendChild(feedbackContainer);
-
-                // Save to history
-                const history = loadChatHistory();
-                history.push({ role: 'assistant', content: formattedHtml, id: messageId });
-                saveChatHistory(history);
-                updateConversationCount();
-
-            } catch (error) {
-                console.error('Error:', error);
-                removeTypingIndicator();
-                statusText.textContent = 'Error';
-
-                const errorMsg = error.message;
-                let errorHtml;
-                if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate')) {
-                    errorHtml = displayRateLimit();
-                } else if (errorMsg.includes('401') || errorMsg.toLowerCase().includes('key')) {
-                    errorHtml = displayError('Authentication Error', 'Please check your API key.');
-                } else if (errorMsg.includes('404')) {
-                    errorHtml = displayError('Resource Not Found', 'Data was not available.');
-                } else if (errorMsg.includes('No matching content')) {
-                    errorHtml = displayNoResults();
-                } else {
-                    errorHtml = displayError(errorMsg, 'Please try again.');
-                }
-                addMessage('assistant', errorHtml);
-                showToast('Something went wrong. Please try again.', 'error');
-            }
-
-            isProcessing = false;
-            sendBtn.disabled = false;
-            messageInput.disabled = false;
-            messageInput.focus();
-        }
-
-        // ============================================
-        // ERROR HANDLING
-        // ============================================
-        function displayError(message, details = null) {
+        function displayError(message, details) {
             let html = `
                 <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:14px;color:#991B1B;">
                     <strong><i class="fas fa-exclamation-circle"></i> Error</strong>
                     <p style="margin-top:4px;font-size:0.85rem;">${message}</p>
             `;
             if (details) {
-                html += `<p style="font-size:0.7rem;color:#B91C1C;margin-top:6px;">${details}</p>`;
+                html += '<p style="font-size:0.7rem;color:#B91C1C;margin-top:6px;">' + details + '</p>';
             }
             html += `
                     <p style="font-size:0.75rem;color:#6B7280;margin-top:6px;">Please try again.</p>
@@ -2776,19 +2441,167 @@
             `;
         }
 
-        // ============================================
-        // CLEAR CHAT
-        // ============================================
+        // ============================================================
+        // SECTION 14: SEND MESSAGE
+        // ============================================================
+
+        async function sendMessage() {
+            const message = DOM.messageInput.value.trim();
+            if (!message || state.isProcessing) return;
+
+            trackEvent('query', { question: message, timestamp: Date.now() });
+            updateTotalQueries();
+
+            addMessage('user', message);
+            DOM.messageInput.value = '';
+            state.isProcessing = true;
+            DOM.sendBtn.disabled = true;
+            DOM.messageInput.disabled = true;
+            DOM.statusText.textContent = 'Processing...';
+
+            showTypingIndicator();
+
+            try {
+                DOM.statusText.textContent = 'Generating response...';
+
+                const data = await callGrokAPI(message, {
+                    userHistory: loadChatHistory().slice(-5),
+                    timestamp: new Date().toISOString()
+                });
+
+                removeTypingIndicator();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                DOM.statusText.textContent = 'Ready';
+
+                const formattedHtml = formatResponse(data);
+                
+                const messageId = 'msg-' + Date.now() + '-' + (++state.messageIdCounter);
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message message-assistant';
+                messageDiv.dataset.messageId = messageId;
+
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.innerHTML = '<i class="fas fa-robot"></i>';
+
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(bubble);
+                
+                if (DOM.emptyState) DOM.emptyState.style.display = 'none';
+                DOM.chatMessages.appendChild(messageDiv);
+                
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = formattedHtml;
+                const textContent = tempDiv.textContent || formattedHtml;
+                
+                await streamResponse(messageDiv, textContent, 'medium');
+                
+                const existingFeedback = bubble.querySelector('.feedback-container');
+                if (existingFeedback) {
+                    existingFeedback.remove();
+                }
+                
+                bubble.innerHTML = formattedHtml;
+                
+                const feedbackContainer = document.createElement('div');
+                feedbackContainer.className = 'feedback-container';
+                feedbackContainer.id = 'feedback-' + messageId;
+
+                const upBtn = document.createElement('button');
+                upBtn.className = 'feedback-btn feedback-up';
+                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                upBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    submitFeedback(messageId, true);
+                };
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'feedback-btn feedback-down';
+                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+                downBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    submitFeedback(messageId, false);
+                };
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'feedback-btn feedback-copy';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    const textToCopy = bubble.textContent || '';
+                    navigator.clipboard.writeText(textToCopy).then(function() {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.classList.add('copied');
+                        showToast('Copied to clipboard', 'success');
+                        setTimeout(function() {
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    }).catch(function() {
+                        showToast('Failed to copy', 'error');
+                    });
+                };
+
+                feedbackContainer.appendChild(upBtn);
+                feedbackContainer.appendChild(downBtn);
+                feedbackContainer.appendChild(copyBtn);
+                bubble.appendChild(feedbackContainer);
+
+                const history = loadChatHistory();
+                history.push({ role: 'assistant', content: formattedHtml, id: messageId });
+                saveChatHistory(history);
+                updateConversationCount();
+
+            } catch (error) {
+                console.error('Error:', error);
+                removeTypingIndicator();
+                DOM.statusText.textContent = 'Error';
+
+                const errorMsg = error.message;
+                let errorHtml;
+                if (errorMsg.includes('429') || errorMsg.toLowerCase().includes('rate')) {
+                    errorHtml = displayRateLimit();
+                } else if (errorMsg.includes('401') || errorMsg.toLowerCase().includes('key')) {
+                    errorHtml = displayError('Authentication Error', 'Please check your API key.');
+                } else if (errorMsg.includes('404')) {
+                    errorHtml = displayError('Resource Not Found', 'Data was not available.');
+                } else if (errorMsg.includes('No matching content')) {
+                    errorHtml = displayNoResults();
+                } else {
+                    errorHtml = displayError(errorMsg, 'Please try again.');
+                }
+                addMessage('assistant', errorHtml);
+                showToast('An error occurred. Please try again.', 'error');
+            }
+
+            state.isProcessing = false;
+            DOM.sendBtn.disabled = false;
+            DOM.messageInput.disabled = false;
+            DOM.messageInput.focus();
+        }
+
+        // ============================================================
+        // SECTION 15: CLEAR CHAT
+        // ============================================================
+
         function clearChat() {
             if (!confirm('Clear all conversations?')) return;
 
-            if (streamingInterval) {
-                clearInterval(streamingInterval);
-                streamingInterval = null;
+            if (state.streamingInterval) {
+                clearInterval(state.streamingInterval);
+                state.streamingInterval = null;
             }
 
             localStorage.removeItem('omniChatHistory');
-            chatMessages.innerHTML = `
+            DOM.chatMessages.innerHTML = `
                 <div class="empty-state" id="empty-state">
                     <div class="empty-robot">
                         <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2812,83 +2625,87 @@
                             <rect x="52" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
                         </svg>
                     </div>
-                    <h3>Ask a question</h3>
-                    <p>About AI tools, platforms, or industry trends.</p>
-                    <p class="powered"><i class="fas fa-bolt"></i> Powered by live web scraping + AI</p>
+                    <h3>Submit a Query</h3>
+                    <p>Ask about AI tools, platforms, or industry trends.</p>
+                    <p class="powered"><i class="fas fa-bolt"></i> Powered by multi-source intelligence</p>
                 </div>
             `;
-            statusText.textContent = 'Ready';
+            DOM.statusText.textContent = 'Ready';
             updateConversationCount();
             showToast('Chat cleared', 'info');
         }
 
-        // ============================================
-        // QUICK SUGGESTIONS
-        // ============================================
+        // ============================================================
+        // SECTION 16: SUGGESTIONS
+        // ============================================================
+
         function setupSuggestions() {
             const chips = document.querySelectorAll('.suggestion-chip');
-            chips.forEach(chip => {
+            chips.forEach(function(chip) {
                 chip.addEventListener('click', function() {
                     const query = this.dataset.query;
                     if (query) {
-                        messageInput.value = query;
+                        DOM.messageInput.value = query;
                         sendMessage();
                     }
                 });
-                chip.addEventListener('touchstart', function() {
-                    this.style.transform = 'scale(0.95)';
-                }, { passive: true });
-                chip.addEventListener('touchend', function() {
-                    this.style.transform = 'scale(1)';
-                }, { passive: true });
             });
         }
 
-        // ============================================
-        // KEYBOARD SHORTCUTS
-        // ============================================
+        // ============================================================
+        // SECTION 17: MOBILE SIDEBAR
+        // ============================================================
+
+        function toggleMobileSidebar() {
+            const overlay = document.getElementById('sidebarOverlay');
+            const sidebar = document.getElementById('sidebarMobile');
+            overlay.classList.toggle('active');
+            sidebar.classList.toggle('active');
+        }
+
+        // ============================================================
+        // SECTION 18: EVENT LISTENERS & INITIALIZATION
+        // ============================================================
+
+        // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 sendMessage();
             }
-            if (e.key === 'Escape' && document.activeElement === messageInput) {
-                messageInput.value = '';
-                messageInput.blur();
+            if (e.key === 'Escape' && document.activeElement === DOM.messageInput) {
+                DOM.messageInput.value = '';
+                DOM.messageInput.blur();
             }
         });
 
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-        messageInput.addEventListener('keypress', (e) => {
+        // Input events
+        DOM.messageInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
         });
 
-        sendBtn.addEventListener('click', sendMessage);
-        clearBtn.addEventListener('click', clearChat);
+        DOM.sendBtn.addEventListener('click', sendMessage);
+        DOM.clearBtn.addEventListener('click', clearChat);
 
-        // ============================================
-        // INIT
-        // ============================================
+        // Initialize
         const history = loadChatHistory();
         if (history.length > 0) {
-            chatMessages.innerHTML = '';
-            history.forEach(msg => {
+            DOM.chatMessages.innerHTML = '';
+            history.forEach(function(msg) {
                 addMessageToUI(msg.role, msg.content, msg.id);
             });
-            if (emptyState) emptyState.style.display = 'none';
+            if (DOM.emptyState) DOM.emptyState.style.display = 'none';
         }
         updateConversationCount();
-        statusText.textContent = 'Ready';
+        DOM.statusText.textContent = 'Ready';
         updateTotalQueries();
         setupSuggestions();
 
         // iOS touch feedback
-        document.querySelectorAll('.btn, .feedback-btn, .suggestion-chip').forEach(el => {
+        document.querySelectorAll('.btn, .feedback-btn, .suggestion-chip').forEach(function(el) {
             el.addEventListener('touchstart', function() {
                 this.style.opacity = '0.7';
             }, { passive: true });
@@ -2897,10 +2714,9 @@
             }, { passive: true });
         });
 
-        console.log('🚀 Omni Brand Intelligence Bot loaded successfully!');
-        console.log('🧠 Using Grok API for enhanced responses');
-        console.log('✨ Features: AI Personality Engine, Enhanced Formatting, Smooth Streaming');
-        console.log('🎭 Personalities: Openness | Conscientiousness | Extraversion | Neuroticism');
+        console.log('Omni Brand Intelligence Bot initialized successfully');
+        console.log('Integration: Grok API with personality-driven intelligence');
+        console.log('Version: 2.0.0');
     </script>
 </body>
 </html>
