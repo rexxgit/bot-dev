@@ -9,7 +9,8 @@ import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
 import { getFewShotExamples } from '../lib/prompts/examples.js';
 import { selectTemplate } from '../lib/prompts/templates.js';
 import { generateCOTPrompt } from '../lib/prompts/cot.js';
-import { selectPersona } from '../lib/prompts/personas.js';
+// FIXED: Use getPersona instead of selectPersona
+import { getPersona, getAvailablePersonas } from '../lib/prompts/personas.js';
 import { intentDetector } from '../lib/response/intent.js';
 import { confidenceScorer } from '../lib/response/confidence.js';
 import { responseFormatter } from '../lib/response/formatter.js';
@@ -24,6 +25,104 @@ import { analytics } from '../lib/analytics/tracker.js';
 import { performanceMetrics } from '../lib/analytics/metrics.js';
 import { queryLogger } from '../lib/response/logger.js';
 import { semanticSearch, indexSources } from '../lib/embeddings/index.js';
+
+// ============================================
+// SECTION 1: COMPATIBILITY WRAPPER FOR selectPersona
+// ============================================
+
+/**
+ * Select a persona based on query analysis
+ * This wraps the existing getPersona function with intelligent selection
+ * @param {string} queryType - Type of query
+ * @param {string} query - User's question
+ * @param {string} preferredPersona - Optional preferred persona
+ * @returns {object} Selected persona object
+ */
+export function selectPersona(queryType, query, preferredPersona = null) {
+    // If a preferred persona is specified, use it
+    if (preferredPersona) {
+        const persona = getPersona(preferredPersona);
+        if (persona && persona.id) return persona;
+    }
+
+    // Analyze query to determine persona
+    const lower = query.toLowerCase();
+    
+    // Define persona selection criteria
+    const criteria = [
+        { 
+            terms: ['architecture', 'deployment', 'implementation', 'code', 'api', 'developer', 'engineering', 'pipeline', 'workflow', 'system', 'technical'], 
+            personaId: 'technical_architect' 
+        },
+        { 
+            terms: ['strategy', 'business', 'roi', 'competitive', 'market', 'enterprise', 'investment', 'growth', 'profit', 'revenue'], 
+            personaId: 'strategy_consultant' 
+        },
+        { 
+            terms: ['trend', 'future', 'prediction', 'forecast', 'emerging', 'roadmap', 'vision', 'next-generation', 'innovate'], 
+            personaId: 'trend_forecaster' 
+        },
+        { 
+            terms: ['research', 'paper', 'study', 'findings', 'analysis', 'methodology', 'experiment', 'hypothesis', 'evidence'], 
+            personaId: 'research_analyst' 
+        },
+        { 
+            terms: ['compare', 'versus', 'vs', 'against', 'better', 'difference', 'pros', 'cons', 'evaluation', 'benchmark'], 
+            personaId: 'comparative_analyst' 
+        },
+        { 
+            terms: ['design', 'ux', 'user experience', 'interface', 'usability', 'accessibility', 'interaction', 'user interface'], 
+            personaId: 'ux_expert' 
+        },
+        { 
+            terms: ['product', 'roadmap', 'feature', 'specification', 'go-to-market', 'launch', 'development', 'product management'], 
+            personaId: 'product_expert' 
+        },
+        { 
+            terms: ['data', 'analytics', 'statistics', 'model', 'metrics', 'visualization', 'dataset', 'database'], 
+            personaId: 'data_expert' 
+        }
+    ];
+
+    // Score each criterion
+    let bestScore = 0;
+    let bestPersonaId = 'default_persona';
+
+    for (const criterion of criteria) {
+        let matches = 0;
+        for (const term of criterion.terms) {
+            if (lower.includes(term)) {
+                matches++;
+            }
+        }
+        // Weight: if queryType matches, boost score
+        if (queryType && queryType.includes(criterion.personaId.replace('_', ''))) {
+            matches += 2;
+        }
+        if (matches > bestScore) {
+            bestScore = matches;
+            bestPersonaId = criterion.personaId;
+        }
+    }
+
+    // Get the persona using the existing getPersona function
+    const persona = getPersona(bestPersonaId);
+    
+    // If no persona found, return default
+    if (!persona || !persona.id) {
+        return getPersona('default_persona') || {
+            id: 'default_persona',
+            name: 'Balanced Analyst',
+            type: 'general',
+            description: 'Balanced expert combining all domain knowledge',
+            systemPrompt: 'You are a Balanced Analyst with broad expertise across domains. Provide clear, balanced, and practical analysis.',
+            temperature: 0.3,
+            maxTokens: 1500
+        };
+    }
+    
+    return persona;
+}
 
 // ============================================
 // ALL DATA EMBEDDED HERE - DO NOT REMOVE
