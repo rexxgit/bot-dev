@@ -687,7 +687,7 @@
         }
 
         /* ============================================
-           ENHANCED RESPONSE STYLES - Professional
+           ENHANCED RESPONSE STYLES
            ============================================ */
         .enhanced-response {
             width: 100%;
@@ -720,6 +720,30 @@
         .personality-badge:hover {
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+        }
+
+        .response-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.7;
+            font-size: 0.85rem;
+        }
+
+        .response-content p {
+            margin-bottom: 8px;
+        }
+
+        .response-content .section-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-top: 12px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .response-content .indent {
+            padding-left: 20px;
         }
 
         .response-header {
@@ -1166,7 +1190,7 @@
         }
 
         /* ============================================
-           FEEDBACK - Enhanced
+           FEEDBACK
            ============================================ */
         .feedback-container {
             display: flex;
@@ -1296,9 +1320,6 @@
                 text-align: center;
                 gap: 2px;
             }
-
-            .source-card { padding: 10px 12px; }
-            .source-title { font-size: 0.75rem; }
 
             .empty-state h3 { font-size: 0.9rem; }
             .empty-state p { font-size: 0.8rem; }
@@ -1672,9 +1693,6 @@
         // ============================================================
         // GROK API INTEGRATION - Professional Edition v2.0
         // ============================================================
-        // Purpose: Frontend integration with Grok API for personality-driven
-        // intelligence responses with structured formatting.
-        // ============================================================
 
         // ============================================================
         // SECTION 1: CONFIGURATION
@@ -1753,7 +1771,6 @@
             }
         }
 
-        // Initialize theme
         setTheme(getPreferredTheme());
         DOM.themeToggle.addEventListener('click', function() {
             const current = document.documentElement.getAttribute('data-theme') || 'light';
@@ -1914,14 +1931,12 @@
             bubble.className = 'message-bubble';
 
             if (role === 'assistant' && !isStreaming) {
-                // Check if content contains HTML structure
                 if (content && content.trim().startsWith('<')) {
                     bubble.innerHTML = content;
                 } else {
                     bubble.innerHTML = renderMarkdown(content);
                 }
                 
-                // Add feedback for non-error responses
                 if (content && !content.includes('error') && !content.includes('No Results')) {
                     addFeedbackControls(bubble, messageId);
                 }
@@ -2157,36 +2172,139 @@
         }
 
         // ============================================================
-        // SECTION 12: RESPONSE FORMATTING
+        // SECTION 12: RESPONSE FORMATTING - FIXED VERSION
         // ============================================================
 
         function formatResponse(data) {
-            if (!data || !data.response) {
+            if (!data) {
                 return generateEmptyResponse();
             }
 
-            const responseText = data.response;
+            let responseText = data.response || '';
             const sources = data.sources || [];
             const metadata = data.metadata || {};
+
+            if (!responseText || responseText.trim().length === 0) {
+                return generateEmptyResponse();
+            }
+
+            // Check if the response is already professionally formatted
+            const hasStructuredSections = responseText.includes('Key Findings') || 
+                                          responseText.includes('References') || 
+                                          responseText.includes('Analysis') ||
+                                          responseText.includes('Confidence Assessment');
+
+            if (hasStructuredSections) {
+                // Clean up raw data markers
+                let cleanedText = responseText;
+                cleanedText = cleanedText.replace(/Source \d+:/g, '');
+                cleanedText = cleanedText.replace(/Title:/g, '');
+                cleanedText = cleanedText.replace(/Content:/g, '');
+                cleanedText = cleanedText.replace(/\s{2,}/g, ' ');
+                cleanedText = cleanedText.replace(/[•\-*]\s*$/gm, '');
+                
+                // Build the enhanced response
+                let html = `
+                    <div class="enhanced-response">
+                        <div class="personality-header">
+                            <span class="personality-badge">Balanced: Multi-dimensional analysis</span>
+                        </div>
+                        <div class="response-content">
+                            ${cleanedText.replace(/\n/g, '<br>')}
+                        </div>
+                `;
+
+                if (sources && sources.length > 0) {
+                    html += generateSimpleSources(sources);
+                }
+
+                if (metadata && Object.keys(metadata).length > 0) {
+                    html += generateSimpleMetadata(metadata);
+                }
+
+                html += '</div>';
+                return html;
+            }
+
+            return buildStructuredResponse(responseText, sources, metadata);
+        }
+
+        function generateSimpleSources(sources) {
+            if (!sources || sources.length === 0) return '';
             
-            // Generate personality badges from metadata
-            const personalityBadges = generatePersonalityBadges(metadata);
+            let html = `
+                <div class="response-footer">
+                    <h4>Sources</h4>
+                    <div class="source-grid">
+            `;
             
-            // Calculate confidence
+            const displaySources = sources.slice(0, 5);
+            for (const s of displaySources) {
+                const title = s.title || 'Untitled';
+                const sourceName = s.source_name || 'Unknown';
+                const url = s.source || s.url || '#';
+                const date = s.date || '';
+                const author = s.author || 'Unknown';
+                
+                html += `
+                    <div class="source-item">
+                        <div class="source-title">${title}</div>
+                        <div class="source-meta">
+                            ${author} • ${date} • 
+                            <span class="source-badge">${sourceName}</span>
+                        </div>
+                        <a href="${url}" target="_blank" class="source-link">
+                            View Source →
+                        </a>
+                    </div>
+                `;
+            }
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            return html;
+        }
+
+        function generateSimpleMetadata(metadata) {
+            const timestamp = metadata.last_updated || metadata.generated_at || new Date().toISOString();
+            const totalSources = metadata.total_sources || 0;
+            const matches = metadata.matches_found || 0;
+            
+            return `
+                <div class="metadata-footer">
+                    <span>📅 ${new Date(timestamp).toLocaleString()}</span>
+                    <span>📊 ${totalSources} sources</span>
+                    <span>🎯 ${matches} matches</span>
+                    ${metadata.ai_generated !== false ? '<span>AI-Generated</span>' : ''}
+                </div>
+            `;
+        }
+
+        function buildStructuredResponse(responseText, sources, metadata) {
+            const sentences = responseText.split(/[.!?]\s+/).filter(function(s) {
+                return s.trim().length > 20;
+            });
+            
+            const summary = sentences.length > 0 ? sentences.slice(0, 2).join('. ') + '.' : 'Analysis based on available sources.';
+            const analysisPoints = sentences.slice(2, Math.min(6, sentences.length));
+            
             const confidence = calculateConfidence(metadata);
             const confidenceClass = confidence === 'High' ? 'confidence-high' : 
                                    confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
-            
+
             let html = `
                 <div class="enhanced-response">
                     <div class="personality-header">
-                        ${personalityBadges}
+                        <span class="personality-badge">Balanced: Multi-dimensional analysis</span>
                     </div>
                     
                     <div class="response-header">
                         <h2>Intelligence Brief</h2>
                         <div class="summary-box">
-                            <p>${extractExecutiveSummary(responseText)}</p>
+                            <p>${summary}</p>
                             <div class="confidence-badge">
                                 <span class="badge-icon">✓</span>
                                 Confidence: <span class="${confidenceClass}">${confidence}</span> | 
@@ -2196,95 +2314,87 @@
                     </div>
             `;
 
-            html += generateAnalysisSection(responseText);
-            html += generateFindingsSection(responseText, sources);
+            if (analysisPoints.length > 0) {
+                html += `
+                    <div class="section">
+                        <h3><span class="section-icon">▸</span> Analysis</h3>
+                        <ul class="analysis-points">
+                            ${analysisPoints.map(function(p) { return '<li>' + p.trim() + '</li>'; }).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Key Findings
+            const findings = extractFindings(responseText);
+            if (findings.length > 0) {
+                html += `
+                    <div class="section">
+                        <h3><span class="section-icon">▸</span> Key Findings</h3>
+                        <div class="findings-grid">
+                            ${findings.slice(0, 4).map(function(f) {
+                                return `
+                                    <div class="finding-card">
+                                        <span class="finding-icon">✓</span>
+                                        <p>${f}</p>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Recommendations
             html += generateRecommendationsSection(sources);
-            html += generateSourceReferences(sources);
+
+            // Sources
+            if (sources && sources.length > 0) {
+                html += generateSourceReferences(sources);
+            }
+
+            // Metadata
             html += generateMetadataFooter(metadata);
 
             html += '</div>';
             return html;
         }
 
-        function generatePersonalityBadges(metadata) {
-            const personality = metadata.personality || 'balanced';
-            const labels = {
-                openness: 'Openness: Exploring possibilities',
-                conscientiousness: 'Conscientiousness: Structured insights',
-                extraversion: 'Extraversion: Engaging analysis',
-                neuroticism: 'Neuroticism: Balanced perspective',
-                balanced: 'Balanced: Multi-dimensional analysis'
-            };
-            
-            return '<span class="personality-badge">' + (labels[personality] || labels.balanced) + '</span>';
-        }
-
-        function extractExecutiveSummary(text) {
-            const sentences = text.split(/[.!?]\s+/);
-            if (sentences.length >= 2) {
-                return sentences.slice(0, 2).join('. ') + '.';
-            }
-            return text.substring(0, 150) + '...';
-        }
-
-        function generateAnalysisSection(text) {
-            const sentences = text.split(/[.!?]\s+/).filter(function(s) {
-                return s.trim().length > 30;
-            });
-            const points = sentences.slice(0, Math.min(4, sentences.length));
-            
-            return `
-                <div class="section">
-                    <h3><span class="section-icon">▸</span> Analysis</h3>
-                    <ul class="analysis-points">
-                        ${points.map(function(p) { return '<li>' + p.trim() + '</li>'; }).join('')}
-                    </ul>
-                </div>
-            `;
-        }
-
-        function generateFindingsSection(text, sources) {
-            const keywords = ['AI', 'tool', 'platform', 'innovation', 'technology', 'model', 'data', 'cloud', 'API'];
+        function extractFindings(text) {
             const findings = [];
+            const lines = text.split('\n');
             
-            keywords.forEach(function(keyword) {
-                if (text.toLowerCase().includes(keyword.toLowerCase())) {
-                    const idx = text.toLowerCase().indexOf(keyword.toLowerCase());
-                    const start = Math.max(0, idx - 20);
-                    const end = Math.min(text.length, idx + 60);
-                    const context = text.substring(start, end);
-                    if (context.trim().length > 10) {
-                        findings.push(context.trim());
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (trimmed.length > 20 && trimmed.length < 200) {
+                    // Look for bullet points or key phrases
+                    if (trimmed.match(/^[•\-*]\s*|^[0-9]+\.\s*|^[A-Z][a-z]+\s*:/) || 
+                        trimmed.toLowerCase().includes('finding') ||
+                        trimmed.toLowerCase().includes('discovered') ||
+                        trimmed.toLowerCase().includes('reveals')) {
+                        let clean = trimmed.replace(/^[•\-*]\s*/, '');
+                        clean = clean.replace(/^[0-9]+\.\s*/, '');
+                        clean = clean.replace(/^[A-Z][a-z]+\s*:\s*/, '');
+                        if (clean.length > 10 && !findings.includes(clean)) {
+                            findings.push(clean);
+                        }
                     }
                 }
-            });
-            
-            const uniqueFindings = [...new Set(findings)].slice(0, 4);
-            
-            if (uniqueFindings.length === 0) {
-                const sentences = text.split(/[.!?]\s+/).filter(function(s) {
-                    return s.trim().length > 20;
-                });
-                sentences.slice(0, 4).forEach(function(s) {
-                    findings.push(s.trim());
-                });
             }
-            
-            return `
-                <div class="section">
-                    <h3><span class="section-icon">▸</span> Key Findings</h3>
-                    <div class="findings-grid">
-                        ${(findings.length > 0 ? findings : ['Analysis complete']).slice(0, 4).map(function(f) {
-                            return `
-                                <div class="finding-card">
-                                    <span class="finding-icon">✓</span>
-                                    <p>${f.substring(0, 100)}${f.length > 100 ? '...' : ''}</p>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
+
+            // If no findings found, extract key sentences
+            if (findings.length === 0) {
+                const sentences = text.split(/[.!?]\s+/);
+                for (const sentence of sentences) {
+                    const trimmed = sentence.trim();
+                    if (trimmed.length > 30 && trimmed.length < 150) {
+                        findings.push(trimmed);
+                    }
+                    if (findings.length >= 4) break;
+                }
+            }
+
+            return findings;
         }
 
         function generateRecommendationsSection(sources) {
@@ -2338,10 +2448,10 @@
                 <div class="response-footer">
                     <h4>Source References</h4>
                     <div class="source-grid">
-                        ${sources.map(function(s) {
-                            const pct = Math.min((s.score/20)*100, 100);
+                        ${sources.slice(0, 5).map(function(s) {
+                            const pct = Math.min(Math.round((s.relevance || s.score || 0) * 100), 100);
                             return `
-                                <div class="source-item" style="border-left-color: ${getScoreColor(s.score)}">
+                                <div class="source-item" style="border-left-color: ${getScoreColor(s.score || s.relevance || 0)}">
                                     <div class="source-title">${s.title || 'Source'}</div>
                                     <div class="source-meta">
                                         ${s.author || 'Unknown'} • ${s.date || ''} • 
@@ -2350,7 +2460,7 @@
                                     <div class="source-relevance">
                                         Relevance: ${Math.round(pct)}%
                                     </div>
-                                    <a href="${s.source || '#'}" target="_blank" class="source-link">
+                                    <a href="${s.source || s.url || '#'}" target="_blank" class="source-link">
                                         View Source →
                                     </a>
                                 </div>
@@ -2362,12 +2472,16 @@
         }
 
         function generateMetadataFooter(metadata) {
+            const timestamp = metadata.last_updated || metadata.generated_at || new Date().toISOString();
+            const totalSources = metadata.total_sources || 0;
+            const matches = metadata.matches_found || 0;
+            
             return `
                 <div class="metadata-footer">
-                    <span>📅 ${metadata.last_updated ? new Date(metadata.last_updated).toLocaleString() : 'N/A'}</span>
-                    <span>📊 ${metadata.total_sources || 0} sources</span>
-                    <span>🎯 ${metadata.matches_found || 0} matches</span>
-                    ${metadata.ai_generated ? '<span>AI-Generated</span>' : ''}
+                    <span>📅 ${new Date(timestamp).toLocaleString()}</span>
+                    <span>📊 ${totalSources} sources</span>
+                    <span>🎯 ${matches} matches</span>
+                    ${metadata.ai_generated !== false ? '<span>AI-Generated</span>' : ''}
                     ${metadata.error ? '<span style="color: #DC2626;">⚠️ ' + metadata.error + '</span>' : ''}
                 </div>
             `;
@@ -2477,8 +2591,12 @@
 
                 DOM.statusText.textContent = 'Ready';
 
-                const formattedHtml = formatResponse(data);
-                
+                // Format the response
+                let formattedHtml = formatResponse(data);
+                if (!formattedHtml) {
+                    formattedHtml = generateEmptyResponse();
+                }
+
                 const messageId = 'msg-' + Date.now() + '-' + (++state.messageIdCounter);
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message message-assistant';
@@ -2491,69 +2609,71 @@
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
                 bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
-                
+
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(bubble);
-                
+
                 if (DOM.emptyState) DOM.emptyState.style.display = 'none';
                 DOM.chatMessages.appendChild(messageDiv);
-                
+
+                // Get plain text for streaming
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = formattedHtml;
                 const textContent = tempDiv.textContent || formattedHtml;
-                
+
                 await streamResponse(messageDiv, textContent, 'medium');
-                
-                const existingFeedback = bubble.querySelector('.feedback-container');
-                if (existingFeedback) {
-                    existingFeedback.remove();
-                }
-                
+
+                // Remove cursor and set final HTML
+                const cursor = bubble.querySelector('.streaming-cursor');
+                if (cursor) cursor.remove();
                 bubble.innerHTML = formattedHtml;
-                
-                const feedbackContainer = document.createElement('div');
-                feedbackContainer.className = 'feedback-container';
-                feedbackContainer.id = 'feedback-' + messageId;
 
-                const upBtn = document.createElement('button');
-                upBtn.className = 'feedback-btn feedback-up';
-                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                upBtn.onclick = function(e) {
-                    e.stopPropagation();
-                    submitFeedback(messageId, true);
-                };
+                // Add feedback controls if not already present
+                if (!bubble.querySelector('.feedback-container')) {
+                    const feedbackContainer = document.createElement('div');
+                    feedbackContainer.className = 'feedback-container';
+                    feedbackContainer.id = 'feedback-' + messageId;
 
-                const downBtn = document.createElement('button');
-                downBtn.className = 'feedback-btn feedback-down';
-                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                downBtn.onclick = function(e) {
-                    e.stopPropagation();
-                    submitFeedback(messageId, false);
-                };
+                    const upBtn = document.createElement('button');
+                    upBtn.className = 'feedback-btn feedback-up';
+                    upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                    upBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        submitFeedback(messageId, true);
+                    };
 
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'feedback-btn feedback-copy';
-                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                copyBtn.onclick = function(e) {
-                    e.stopPropagation();
-                    const textToCopy = bubble.textContent || '';
-                    navigator.clipboard.writeText(textToCopy).then(function() {
-                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                        copyBtn.classList.add('copied');
-                        showToast('Copied to clipboard', 'success');
-                        setTimeout(function() {
-                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                            copyBtn.classList.remove('copied');
-                        }, 2000);
-                    }).catch(function() {
-                        showToast('Failed to copy', 'error');
-                    });
-                };
+                    const downBtn = document.createElement('button');
+                    downBtn.className = 'feedback-btn feedback-down';
+                    downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+                    downBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        submitFeedback(messageId, false);
+                    };
 
-                feedbackContainer.appendChild(upBtn);
-                feedbackContainer.appendChild(downBtn);
-                feedbackContainer.appendChild(copyBtn);
-                bubble.appendChild(feedbackContainer);
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'feedback-btn feedback-copy';
+                    copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                    copyBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        const textToCopy = bubble.textContent || '';
+                        navigator.clipboard.writeText(textToCopy).then(function() {
+                            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                            copyBtn.classList.add('copied');
+                            showToast('Copied to clipboard', 'success');
+                            setTimeout(function() {
+                                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                                copyBtn.classList.remove('copied');
+                            }, 2000);
+                        }).catch(function() {
+                            showToast('Failed to copy', 'error');
+                        });
+                    };
+
+                    feedbackContainer.appendChild(upBtn);
+                    feedbackContainer.appendChild(downBtn);
+                    feedbackContainer.appendChild(copyBtn);
+                    bubble.appendChild(feedbackContainer);
+                }
 
                 const history = loadChatHistory();
                 history.push({ role: 'assistant', content: formattedHtml, id: messageId });
@@ -2667,7 +2787,6 @@
         // SECTION 18: EVENT LISTENERS & INITIALIZATION
         // ============================================================
 
-        // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
@@ -2679,7 +2798,6 @@
             }
         });
 
-        // Input events
         DOM.messageInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -2704,7 +2822,6 @@
         updateTotalQueries();
         setupSuggestions();
 
-        // iOS touch feedback
         document.querySelectorAll('.btn, .feedback-btn, .suggestion-chip').forEach(function(el) {
             el.addEventListener('touchstart', function() {
                 this.style.opacity = '0.7';
