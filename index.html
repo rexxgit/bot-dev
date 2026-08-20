@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <meta name="theme-color" content="#7C3AED" />
-    <!-- FIXED: Replaced deprecated apple-mobile-web-app-capable with mobile-web-app-capable -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Omni Brand Intelligence Bot</title>
@@ -42,6 +41,11 @@
             --hover-bg: #F1F5F9;
             --scrollbar-track: #F1F5F9;
             --scrollbar-thumb: #CBD5E1;
+            
+            /* NEW: Animation & Suggestion vars */
+            --suggestion-bg: #EEF2FF;
+            --suggestion-hover: #E0E7FF;
+            --typing-dot-color: #7C3AED;
         }
 
         /* Dark Mode */
@@ -71,6 +75,10 @@
             --hover-bg: #334155;
             --scrollbar-track: #1E293B;
             --scrollbar-thumb: #475569;
+            
+            --suggestion-bg: #1E1B4B;
+            --suggestion-hover: #312E81;
+            --typing-dot-color: #8B5CF6;
         }
 
         /* ============================================
@@ -464,6 +472,7 @@
             flex-direction: column;
             gap: 12px;
             min-height: 200px;
+            scroll-behavior: smooth;
         }
 
         .empty-state {
@@ -507,13 +516,33 @@
             color: var(--text-muted);
         }
 
-        /* Messages */
+        /* ============================================
+           MESSAGES - Enhanced with animations
+           ============================================ */
         .message {
             display: flex;
             gap: 10px;
             max-width: 88%;
-            animation: fadeInUp 0.3s ease-out;
+            animation: messageSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Stagger animation for multiple messages */
+        .message:nth-child(1) { animation-delay: 0s; }
+        .message:nth-child(2) { animation-delay: 0.05s; }
+        .message:nth-child(3) { animation-delay: 0.1s; }
+        .message:nth-child(4) { animation-delay: 0.15s; }
+        .message:nth-child(5) { animation-delay: 0.2s; }
 
         .message-user {
             align-self: flex-end;
@@ -535,6 +564,11 @@
             font-size: 0.7rem;
             color: white;
             overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .message-avatar:hover {
+            transform: scale(1.1);
         }
 
         .message-avatar svg {
@@ -559,22 +593,126 @@
             color: var(--text-primary);
             word-break: break-word;
             border: 1px solid var(--border-color);
+            position: relative;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .message-bubble:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .message-user .message-bubble {
             background: var(--bg-bubble-user);
             color: var(--text-white);
             border: none;
+            border-radius: 14px 14px 4px 14px;
         }
 
         .message-assistant .message-bubble {
             background: var(--bg-bubble-assistant);
             border: 1px solid var(--border-color);
+            border-radius: 14px 14px 14px 4px;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* ============================================
+           TYPING INDICATOR
+           ============================================ */
+        .typing-indicator {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            max-width: 88%;
+            align-self: flex-start;
+            animation: messageSlideIn 0.3s ease-out;
+            padding: 4px 0;
+        }
+
+        .typing-indicator .message-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #7C3AED, #6D28D9);
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            padding: 10px 16px;
+            background: var(--bg-bubble-assistant);
+            border-radius: 14px 14px 14px 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--typing-dot-color);
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+
+        /* ============================================
+           QUICK SUGGESTIONS
+           ============================================ */
+        .suggestions-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 0 4px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4px;
+        }
+
+        .suggestion-chip {
+            background: var(--suggestion-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "Inter", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
+        }
+
+        .suggestion-chip:hover {
+            background: var(--suggestion-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+        }
+
+        .suggestion-chip:active {
+            transform: scale(0.95);
+        }
+
+        .suggestion-chip i {
+            margin-right: 4px;
+            font-size: 0.6rem;
+            opacity: 0.7;
         }
 
         /* ============================================
@@ -612,11 +750,16 @@
 
         .input-row input::placeholder {
             color: var(--text-muted);
+            transition: opacity 0.3s ease;
         }
 
         .input-row input:focus {
             border-color: #7C3AED;
             box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .input-row input:focus::placeholder {
+            opacity: 0.5;
         }
 
         .btn {
@@ -626,16 +769,33 @@
             font-weight: 500;
             font-size: 0.8rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             display: inline-flex;
             align-items: center;
             gap: 6px;
             font-family: "Inter", sans-serif;
             -webkit-tap-highlight-color: transparent;
             flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn:active { transform: scale(0.97); }
+        .btn:active { transform: scale(0.95); }
+
+        /* Button ripple effect */
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0);
+            border-radius: 100px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:active::after {
+            transform: scale(1);
+        }
 
         .btn-primary {
             background: linear-gradient(135deg, #7C3AED, #6D28D9);
@@ -643,8 +803,18 @@
             box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
         }
 
-        .btn-primary:hover { background: linear-gradient(135deg, #6D28D9, #5B21B6); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6D28D9, #5B21B6);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
 
         .btn-secondary {
             background: var(--badge-bg);
@@ -652,7 +822,10 @@
             border: 1px solid var(--border-color);
         }
 
-        .btn-secondary:hover { background: var(--hover-bg); }
+        .btn-secondary:hover {
+            background: var(--hover-bg);
+            transform: translateY(-1px);
+        }
 
         .input-footer {
             display: flex;
@@ -667,6 +840,7 @@
         .input-footer a {
             color: var(--text-muted);
             text-decoration: none;
+            transition: color 0.2s ease;
         }
 
         .input-footer a:hover {
@@ -674,7 +848,7 @@
         }
 
         /* ============================================
-           SOURCE CARDS
+           SOURCE CARDS - Enhanced
            ============================================ */
         .source-card {
             background: var(--bg-card);
@@ -684,6 +858,24 @@
             margin-top: 10px;
             border: 1px solid var(--border-color);
             border-left-width: 4px;
+            transition: all 0.3s ease;
+            animation: sourceFadeIn 0.5s ease-out;
+        }
+
+        .source-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        @keyframes sourceFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .source-header {
@@ -716,6 +908,7 @@
             border-radius: 100px;
             font-weight: 500;
             font-size: 0.6rem;
+            transition: all 0.3s ease;
         }
 
         [data-theme="dark"] .source-badge {
@@ -735,12 +928,16 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            transition: all 0.2s ease;
         }
 
-        .source-link:hover { text-decoration: underline; }
+        .source-link:hover {
+            text-decoration: underline;
+            transform: translateX(2px);
+        }
 
         /* ============================================
-           FEEDBACK
+           FEEDBACK - Enhanced
            ============================================ */
         .feedback-container {
             display: flex;
@@ -755,18 +952,36 @@
             background: transparent;
             border: none;
             cursor: pointer;
-            padding: 4px 6px;
+            padding: 4px 8px;
             border-radius: 6px;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             font-size: 0.8rem;
             color: var(--text-muted);
             -webkit-tap-highlight-color: transparent;
+            position: relative;
         }
 
-        .feedback-btn:hover { background: var(--hover-bg); }
-        .feedback-btn.active { background: var(--bg-accent); color: var(--text-link); }
+        .feedback-btn:hover {
+            background: var(--hover-bg);
+            transform: scale(1.1);
+        }
 
-        .feedback-copy { margin-left: auto; }
+        .feedback-btn.active {
+            background: var(--bg-accent);
+            color: var(--text-link);
+        }
+
+        .feedback-btn:active {
+            transform: scale(0.9);
+        }
+
+        .feedback-copy {
+            margin-left: auto;
+        }
+
+        .feedback-copy.copied {
+            color: #22C55E;
+        }
 
         /* ============================================
            RESPONSIVE - MOBILE FIRST
@@ -800,7 +1015,6 @@
                 padding: 4px 10px;
             }
 
-            /* Show mobile toggle, hide desktop sidebar */
             .mobile-sidebar-toggle {
                 display: flex;
             }
@@ -809,7 +1023,6 @@
                 display: none;
             }
 
-            /* Mobile sidebar overlay */
             .sidebar-mobile-overlay {
                 display: none;
             }
@@ -822,8 +1035,14 @@
                 padding: 12px 14px;
             }
 
-            .message { max-width: 95%; }
-            .message-bubble { font-size: 0.8rem; padding: 8px 12px; }
+            .message { 
+                max-width: 95%; 
+            }
+            
+            .message-bubble { 
+                font-size: 0.8rem; 
+                padding: 8px 12px; 
+            }
 
             .input-row input {
                 font-size: 0.8rem;
@@ -863,6 +1082,20 @@
             .desktop-only {
                 display: none !important;
             }
+
+            .suggestions-container {
+                gap: 4px;
+            }
+            
+            .suggestion-chip {
+                font-size: 0.65rem;
+                padding: 4px 10px;
+            }
+            
+            .typing-dot {
+                width: 6px;
+                height: 6px;
+            }
         }
 
         @media (max-width: 420px) {
@@ -900,7 +1133,7 @@
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 200;
             max-width: 90%;
             text-align: center;
@@ -912,8 +1145,47 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        .toast.success { border-color: #22C55E; }
-        .toast.error { border-color: #EF4444; }
+        .toast.success { 
+            border-color: #22C55E; 
+            background: #ECFDF5;
+            color: #065F46;
+        }
+        
+        .toast.error { 
+            border-color: #EF4444;
+            background: #FEF2F2;
+            color: #991B1B;
+        }
+
+        [data-theme="dark"] .toast.success {
+            background: #064E3B;
+            color: #6EE7B7;
+        }
+        
+        [data-theme="dark"] .toast.error {
+            background: #7F1D1D;
+            color: #FCA5A5;
+        }
+
+        /* ============================================
+           SCROLLBAR STYLING
+           ============================================ */
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 2px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -1092,6 +1364,27 @@
                     </div>
                 </div>
 
+                <!-- ==========================================
+                QUICK SUGGESTIONS
+                ========================================== -->
+                <div class="suggestions-container" id="suggestionsContainer">
+                    <button class="suggestion-chip" data-query="What are the top AI tools for 2025?">
+                        <i class="fas fa-rocket"></i> Top AI Tools 2025
+                    </button>
+                    <button class="suggestion-chip" data-query="How does generative AI work?">
+                        <i class="fas fa-brain"></i> How GenAI Works
+                    </button>
+                    <button class="suggestion-chip" data-query="Best AI platforms for business?">
+                        <i class="fas fa-building"></i> AI for Business
+                    </button>
+                    <button class="suggestion-chip" data-query="Latest AI trends and innovations">
+                        <i class="fas fa-chart-line"></i> AI Trends
+                    </button>
+                    <button class="suggestion-chip" data-query="Compare ChatGPT vs Claude vs Gemini">
+                        <i class="fas fa-balance-scale"></i> Compare AI Models
+                    </button>
+                </div>
+
                 <div class="input-area">
                     <div class="input-row">
                         <input
@@ -1268,6 +1561,7 @@
                 if (existing === String(isPositive)) {
                     localStorage.removeItem(feedbackKey);
                     updateFeedbackUI(messageId, null);
+                    showToast('Feedback removed', 'info');
                     return;
                 }
             }
@@ -1275,6 +1569,7 @@
             localStorage.setItem(feedbackKey, String(isPositive));
             updateFeedbackUI(messageId, isPositive);
             trackEvent('feedback', { messageId, isPositive });
+            showToast(isPositive ? 'Thanks for the positive feedback! 👍' : 'Thanks for your feedback!', 'success');
         }
 
         function updateFeedbackUI(messageId, isPositive) {
@@ -1295,7 +1590,7 @@
         }
 
         // ============================================
-        // RENDER MARKDOWN - CLICKABLE LINKS
+        // RENDER MARKDOWN
         // ============================================
         function renderMarkdown(text) {
             if (!text) return text;
@@ -1303,6 +1598,53 @@
             return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
                 return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--text-link); text-decoration: underline;">' + linkText + '</a>';
             });
+        }
+
+        // ============================================
+        // TYPING INDICATOR
+        // ============================================
+        let typingIndicatorElement = null;
+
+        function showTypingIndicator() {
+            // Remove existing typing indicator
+            removeTypingIndicator();
+
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">
+                    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="12" height="10" rx="3" fill="white" opacity="0.9"/>
+                        <circle cx="7" cy="8" r="1.5" fill="#7C3AED"/>
+                        <circle cx="11" cy="8" r="1.5" fill="#7C3AED"/>
+                        <rect x="6" y="11" width="6" height="1.5" rx="0.75" fill="#7C3AED"/>
+                        <rect x="8.25" y="1" width="1.5" height="2" rx="0.75" fill="white" opacity="0.9"/>
+                        <circle cx="9" cy="0.75" r="1.5" fill="white" opacity="0.9"/>
+                        <rect x="4.5" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
+                        <rect x="12" y="6" width="1.5" height="4" rx="0.75" fill="white" opacity="0.9"/>
+                        <rect x="5.25" y="13" width="7.5" height="3" rx="1.5" fill="white" opacity="0.85"/>
+                        <rect x="3" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
+                        <rect x="12.75" y="13.5" width="2.25" height="1.5" rx="0.75" fill="white" opacity="0.85"/>
+                    </svg>
+                </div>
+                <div class="typing-dots">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+            `;
+            
+            chatMessages.appendChild(typingDiv);
+            typingIndicatorElement = typingDiv;
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            if (typingIndicatorElement) {
+                typingIndicatorElement.remove();
+                typingIndicatorElement = null;
+            }
         }
 
         // ============================================
@@ -1354,6 +1696,7 @@
                 const upBtn = document.createElement('button');
                 upBtn.className = 'feedback-btn feedback-up';
                 upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                upBtn.title = 'Thumbs up';
                 upBtn.onclick = (e) => {
                     e.stopPropagation();
                     submitFeedback(messageId, true);
@@ -1362,6 +1705,7 @@
                 const downBtn = document.createElement('button');
                 downBtn.className = 'feedback-btn feedback-down';
                 downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+                downBtn.title = 'Thumbs down';
                 downBtn.onclick = (e) => {
                     e.stopPropagation();
                     submitFeedback(messageId, false);
@@ -1381,7 +1725,14 @@
                     const textToCopy = bubble.textContent || '';
                     navigator.clipboard.writeText(textToCopy).then(() => {
                         copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                        setTimeout(() => { copyBtn.innerHTML = '<i class="far fa-copy"></i>'; }, 2000);
+                        copyBtn.classList.add('copied');
+                        showToast('Copied to clipboard! 📋', 'success');
+                        setTimeout(() => { 
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    }).catch(() => {
+                        showToast('Failed to copy', 'error');
                     });
                 };
 
@@ -1420,7 +1771,12 @@
             let html = '';
 
             if (data.response) {
-                html += `<div class="response-content">${data.response.replace(/\n/g, '<br>')}</div>`;
+                // Enhanced response with better formatting
+                const formattedResponse = data.response
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                html += `<div class="response-content">${formattedResponse}</div>`;
             }
 
             if (data.metadata && data.metadata.ai_generated) {
@@ -1553,7 +1909,8 @@
             messageInput.disabled = true;
             statusText.textContent = 'Processing...';
 
-            const loadingId = addMessage('assistant', '<i class="fas fa-spinner fa-spin"></i> Searching 5+ sources...');
+            // Show typing indicator
+            showTypingIndicator();
 
             try {
                 statusText.textContent = 'Searching...';
@@ -1563,6 +1920,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ query: message })
                 });
+
+                // Remove typing indicator
+                removeTypingIndicator();
 
                 if (!response.ok) {
                     let errorMsg = `Server error: ${response.status}`;
@@ -1576,27 +1936,14 @@
                 const data = await response.json();
 
                 statusText.textContent = 'Ready';
-
-                const messages = chatMessages.querySelectorAll('.message-assistant');
-                const lastMsg = messages[messages.length - 1];
-                if (lastMsg && lastMsg.dataset.messageId === loadingId) {
-                    lastMsg.remove();
-                }
-
                 const formattedHtml = formatResponse(data);
                 addMessage('assistant', formattedHtml);
                 updateConversationCount();
 
             } catch (error) {
                 console.error('Error:', error);
-
+                removeTypingIndicator();
                 statusText.textContent = 'Error';
-
-                const messages = chatMessages.querySelectorAll('.message-assistant');
-                const lastMsg = messages[messages.length - 1];
-                if (lastMsg && lastMsg.dataset.messageId === loadingId) {
-                    lastMsg.remove();
-                }
 
                 const errorMsg = error.message;
                 let errorHtml;
@@ -1612,6 +1959,7 @@
                     errorHtml = displayError(errorMsg, 'Please try again.');
                 }
                 addMessage('assistant', errorHtml);
+                showToast('Something went wrong. Please try again.', 'error');
             }
 
             isProcessing = false;
@@ -1659,13 +2007,55 @@
             `;
             statusText.textContent = 'Ready';
             updateConversationCount();
+            showToast('Chat cleared', 'info');
         }
+
+        // ============================================
+        // QUICK SUGGESTIONS
+        // ============================================
+        function setupSuggestions() {
+            const chips = document.querySelectorAll('.suggestion-chip');
+            chips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const query = this.dataset.query;
+                    if (query) {
+                        messageInput.value = query;
+                        sendMessage();
+                    }
+                });
+                chip.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                }, { passive: true });
+                chip.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                }, { passive: true });
+            });
+        }
+
+        // ============================================
+        // KEYBOARD SHORTCUTS
+        // ============================================
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+Enter to send
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+            // Escape to clear input
+            if (e.key === 'Escape' && document.activeElement === messageInput) {
+                messageInput.value = '';
+                messageInput.blur();
+            }
+        });
 
         // ============================================
         // EVENT LISTENERS
         // ============================================
         messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
         });
 
         sendBtn.addEventListener('click', sendMessage);
@@ -1685,9 +2075,10 @@
         updateConversationCount();
         statusText.textContent = 'Ready';
         updateTotalQueries();
+        setupSuggestions();
 
         // iOS touch feedback
-        document.querySelectorAll('.btn, .feedback-btn').forEach(el => {
+        document.querySelectorAll('.btn, .feedback-btn, .suggestion-chip').forEach(el => {
             el.addEventListener('touchstart', function() {
                 this.style.opacity = '0.7';
             }, { passive: true });
@@ -1695,6 +2086,9 @@
                 this.style.opacity = '1';
             }, { passive: true });
         });
+
+        console.log('🚀 Omni Brand Intelligence Bot loaded successfully!');
+        console.log('✨ Features: Typing indicator, Quick suggestions, Copy to clipboard, Response animations, Message formatting');
     </script>
 </body>
 </html>
