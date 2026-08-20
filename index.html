@@ -687,33 +687,34 @@
         }
 
         /* ============================================
-           ENHANCED RESPONSE STYLES
+           ENHANCED RESPONSE STYLES - Professional Formatting
            ============================================ */
         .enhanced-response {
             width: 100%;
             animation: fadeInUp 0.5s ease-out;
+            padding: 2px 0;
         }
 
         .personality-header {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-            padding: 8px 0;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 10px 0;
             border-bottom: 2px solid var(--border-color);
         }
 
         .personality-badge {
             background: var(--personality-bg);
             color: var(--personality-text);
-            padding: 3px 10px;
+            padding: 4px 14px;
             border-radius: 100px;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 500;
             border: 1px solid rgba(67, 56, 202, 0.15);
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             transition: all 0.3s ease;
         }
 
@@ -725,51 +726,133 @@
         .response-content {
             white-space: pre-wrap;
             word-wrap: break-word;
-            line-height: 1.7;
-            font-size: 0.85rem;
+            line-height: 1.8;
+            font-size: 0.9rem;
+            color: var(--text-primary);
         }
 
         .response-content p {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            padding-left: 4px;
         }
 
         .response-content .section-title {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-primary);
-            margin-top: 12px;
-            margin-bottom: 6px;
+            margin-top: 18px;
+            margin-bottom: 8px;
             display: block;
+            padding-left: 4px;
         }
 
         .response-content .indent {
+            padding-left: 24px;
+        }
+
+        .response-content .indent-double {
+            padding-left: 48px;
+        }
+
+        .response-content ul, 
+        .response-content ol {
+            padding-left: 28px;
+            margin: 8px 0 12px 0;
+        }
+
+        .response-content ul li,
+        .response-content ol li {
+            margin-bottom: 4px;
+            line-height: 1.7;
+        }
+
+        .response-content ul li {
+            list-style-type: disc;
+        }
+
+        .response-content ol li {
+            list-style-type: decimal;
+        }
+
+        .response-content .bullet-item {
             padding-left: 20px;
+            position: relative;
+            margin-bottom: 6px;
+            line-height: 1.7;
+        }
+
+        .response-content .bullet-item::before {
+            content: "•";
+            position: absolute;
+            left: 4px;
+            color: var(--text-link);
+            font-weight: bold;
+        }
+
+        .response-content .numbered-item {
+            padding-left: 28px;
+            position: relative;
+            margin-bottom: 6px;
+            line-height: 1.7;
+        }
+
+        .response-content .numbered-item .number {
+            position: absolute;
+            left: 0;
+            font-weight: 600;
+            color: var(--text-link);
+        }
+
+        .response-content .blockquote {
+            border-left: 3px solid var(--text-link);
+            padding: 8px 16px;
+            margin: 10px 0;
+            background: var(--bg-accent);
+            border-radius: 4px;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .response-content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 16px 0;
         }
 
         .response-header {
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .response-header h2 {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             color: var(--text-primary);
         }
 
         .summary-box {
             background: var(--bg-accent);
             border-radius: 10px;
-            padding: 14px;
+            padding: 16px 18px;
             border: 1px solid var(--border-color);
             position: relative;
         }
 
         .summary-box p {
-            font-size: 0.88rem;
-            line-height: 1.7;
+            font-size: 0.9rem;
+            line-height: 1.8;
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .summary-box .summary-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+            display: block;
         }
 
         .confidence-badge {
@@ -779,9 +862,10 @@
             font-size: 0.7rem;
             color: var(--text-secondary);
             background: var(--bg-card);
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 100px;
             border: 1px solid var(--border-color);
+            margin-top: 4px;
         }
 
         .confidence-badge .badge-icon {
@@ -793,8 +877,8 @@
         .confidence-low { color: var(--confidence-low); }
 
         .section {
-            margin: 12px 0;
-            padding: 10px 0;
+            margin: 14px 0;
+            padding: 12px 0;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -803,13 +887,13 @@
         }
 
         .section h3 {
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .section h3 .section-icon {
@@ -823,17 +907,17 @@
         }
 
         .analysis-points li {
-            padding: 4px 0 4px 20px;
+            padding: 5px 0 5px 22px;
             position: relative;
-            font-size: 0.82rem;
-            line-height: 1.6;
+            font-size: 0.85rem;
+            line-height: 1.7;
             color: var(--text-secondary);
         }
 
         .analysis-points li::before {
-            content: '▸';
+            content: "▸";
             position: absolute;
-            left: 0;
+            left: 2px;
             color: var(--text-link);
             font-weight: bold;
         }
@@ -841,7 +925,7 @@
         .findings-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
         }
 
         @media (max-width: 768px) {
@@ -852,12 +936,12 @@
 
         .finding-card {
             background: var(--bg-card);
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             display: flex;
             align-items: flex-start;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.3s ease;
         }
 
@@ -871,18 +955,19 @@
             flex-shrink: 0;
             margin-top: 2px;
             opacity: 0.7;
+            color: var(--text-link);
         }
 
         .finding-card p {
-            font-size: 0.78rem;
-            line-height: 1.5;
+            font-size: 0.8rem;
+            line-height: 1.6;
             color: var(--text-secondary);
         }
 
         .recommendations {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
         }
 
         @media (max-width: 768px) {
@@ -894,7 +979,7 @@
         .rec-item {
             background: var(--bg-card);
             border-radius: 10px;
-            padding: 12px 14px;
+            padding: 14px 16px;
             border: 1px solid var(--border-color);
         }
 
@@ -904,11 +989,11 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            padding: 2px 10px;
+            padding: 3px 12px;
             border-radius: 100px;
             background: var(--bg-accent);
             color: var(--text-link);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .rec-item ul {
@@ -917,43 +1002,43 @@
         }
 
         .rec-item ul li {
-            padding: 3px 0 3px 16px;
-            font-size: 0.78rem;
+            padding: 4px 0 4px 18px;
+            font-size: 0.8rem;
             color: var(--text-secondary);
             position: relative;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .rec-item ul li::before {
-            content: '•';
+            content: "•";
             position: absolute;
             left: 0;
             color: var(--text-link);
         }
 
         .response-footer {
-            margin-top: 12px;
-            padding-top: 10px;
+            margin-top: 14px;
+            padding-top: 12px;
             border-top: 1px solid var(--border-color);
         }
 
         .response-footer h4 {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .source-grid {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .source-item {
             background: var(--bg-card);
             border-radius: 8px;
-            padding: 10px 12px;
+            padding: 12px 14px;
             border-left: 4px solid #7C3AED;
             border: 1px solid var(--border-color);
             border-left-width: 4px;
@@ -967,20 +1052,20 @@
 
         .source-item .source-title {
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--text-primary);
         }
 
         .source-item .source-meta {
-            font-size: 0.65rem;
+            font-size: 0.68rem;
             color: var(--text-muted);
-            margin: 2px 0;
+            margin: 3px 0;
         }
 
         .source-item .source-relevance {
             font-size: 0.7rem;
             font-weight: 500;
-            margin: 2px 0;
+            margin: 3px 0;
             color: var(--text-secondary);
         }
 
@@ -992,6 +1077,7 @@
             color: var(--text-link);
             text-decoration: none;
             font-weight: 500;
+            padding: 2px 0;
         }
 
         .source-item .source-link:hover {
@@ -1001,12 +1087,12 @@
         .metadata-footer {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            padding: 10px 0 4px 0;
-            font-size: 0.65rem;
+            gap: 12px;
+            padding: 12px 0 6px 0;
+            font-size: 0.68rem;
             color: var(--text-muted);
             border-top: 1px solid var(--border-color);
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .metadata-footer span {
@@ -1367,6 +1453,15 @@
             .summary-box p {
                 font-size: 0.82rem;
             }
+
+            .response-content {
+                font-size: 0.82rem;
+            }
+
+            .response-content ul,
+            .response-content ol {
+                padding-left: 20px;
+            }
         }
 
         @media (max-width: 420px) {
@@ -1705,10 +1800,10 @@
                 TIMEOUT_MS: 30000
             },
             DEFAULTS: {
-                PERSONALITY: 'balanced',
-                INTENT: 'informational',
+                PERSONALITY: 'conscientiousness',
+                INTENT: 'analytical',
                 TEMPERATURE: 0.3,
-                MAX_TOKENS: 1500
+                MAX_TOKENS: 2000
             },
             UI: {
                 MAX_MESSAGE_LENGTH: 10000,
@@ -2120,7 +2215,7 @@
         }
 
         // ============================================================
-        // SECTION 11: API COMMUNICATION
+        // SECTION 11: API COMMUNICATION - ENHANCED
         // ============================================================
 
         async function callGrokAPI(query, context) {
@@ -2134,14 +2229,16 @@
                     body: JSON.stringify({
                         query: query,
                         context: context || {},
-                        intent: 'informational',
+                        intent: CONFIG.DEFAULTS.INTENT,
                         personality: CONFIG.DEFAULTS.PERSONALITY,
                         options: {
                             temperature: CONFIG.DEFAULTS.TEMPERATURE,
                             maxTokens: CONFIG.DEFAULTS.MAX_TOKENS,
                             enhanceWithSources: true,
                             includeRecommendations: true,
-                            confidenceScoring: true
+                            confidenceScoring: true,
+                            requireSynthesis: true,
+                            requireContextualAnalysis: true
                         }
                     })
                 });
@@ -2161,7 +2258,11 @@
             const response = await fetch(CONFIG.API.DATA_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query })
+                body: JSON.stringify({ 
+                    query: query,
+                    requireSynthesis: true,
+                    requireContextualAnalysis: true 
+                })
             });
             
             if (!response.ok) {
@@ -2172,7 +2273,7 @@
         }
 
         // ============================================================
-        // SECTION 12: RESPONSE FORMATTING - FIXED VERSION
+        // SECTION 12: ENHANCED RESPONSE FORMATTER - WITH CONTEXT ANALYSIS
         // ============================================================
 
         function formatResponse(data) {
@@ -2195,63 +2296,304 @@
                                           responseText.includes('Confidence Assessment');
 
             if (hasStructuredSections) {
+                // Synthesize and contextualize the response
+                let synthesizedText = synthesizeResponse(responseText, sources, metadata);
+                
                 // Clean up raw data markers
-                let cleanedText = responseText;
+                let cleanedText = synthesizedText;
                 cleanedText = cleanedText.replace(/Source \d+:/g, '');
                 cleanedText = cleanedText.replace(/Title:/g, '');
                 cleanedText = cleanedText.replace(/Content:/g, '');
                 cleanedText = cleanedText.replace(/\s{2,}/g, ' ');
                 cleanedText = cleanedText.replace(/[•\-*]\s*$/gm, '');
                 
-                // Build the enhanced response
+                // Format with proper paragraphs and spacing
+                cleanedText = formatResponseText(cleanedText);
+                
+                // Build the enhanced response with context
                 let html = `
                     <div class="enhanced-response">
                         <div class="personality-header">
-                            <span class="personality-badge">Balanced: Multi-dimensional analysis</span>
+                            <span class="personality-badge">Conscientiousness: Structured contextual analysis</span>
                         </div>
                         <div class="response-content">
                             ${cleanedText.replace(/\n/g, '<br>')}
                         </div>
                 `;
 
+                // Add contextual summary if available
+                if (metadata.contextualSummary) {
+                    html += `
+                        <div class="section">
+                            <h3><span class="section-icon">▸</span> Contextual Summary</h3>
+                            <div class="summary-box">
+                                <p>${metadata.contextualSummary}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Add theme analysis
+                const themes = extractThemes(responseText);
+                if (themes.length > 0) {
+                    html += `
+                        <div class="section">
+                            <h3><span class="section-icon">▸</span> Key Themes Identified</h3>
+                            <ul class="analysis-points">
+                                ${themes.map(function(t) { return '<li>' + t + '</li>'; }).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                // Add entities
+                const entities = extractEntities(responseText);
+                if (entities.length > 0) {
+                    html += `
+                        <div class="section">
+                            <h3><span class="section-icon">▸</span> Key Entities</h3>
+                            <div class="findings-grid">
+                                ${entities.slice(0, 4).map(function(e) {
+                                    return `
+                                        <div class="finding-card">
+                                            <span class="finding-icon">◆</span>
+                                            <p>${e}</p>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
                 if (sources && sources.length > 0) {
-                    html += generateSimpleSources(sources);
+                    html += generateEnhancedSources(sources);
                 }
 
                 if (metadata && Object.keys(metadata).length > 0) {
-                    html += generateSimpleMetadata(metadata);
+                    html += generateEnhancedMetadata(metadata);
                 }
 
                 html += '</div>';
                 return html;
             }
 
-            return buildStructuredResponse(responseText, sources, metadata);
+            return buildEnhancedStructuredResponse(responseText, sources, metadata);
         }
 
-        function generateSimpleSources(sources) {
+        function formatResponseText(text) {
+            if (!text) return text;
+            
+            // Split into paragraphs
+            let paragraphs = text.split(/\n\s*\n/);
+            
+            // Process each paragraph
+            let formattedParagraphs = [];
+            for (let para of paragraphs) {
+                if (!para.trim()) continue;
+                
+                // Remove excessive spaces
+                para = para.replace(/\s{2,}/g, ' ');
+                
+                // Check if it's a list item
+                if (para.trim().match(/^[•\-*]\s/)) {
+                    // It's a bullet list item
+                    let items = para.split(/\n/);
+                    let formattedItems = items.map(function(item) {
+                        item = item.trim();
+                        if (item.match(/^[•\-*]\s/)) {
+                            return '<div class="bullet-item">' + item.replace(/^[•\-*]\s/, '') + '</div>';
+                        }
+                        return item;
+                    });
+                    formattedParagraphs.push(formattedItems.join('\n'));
+                } else if (para.trim().match(/^\d+\.\s/)) {
+                    // It's a numbered list item
+                    let items = para.split(/\n/);
+                    let formattedItems = items.map(function(item) {
+                        item = item.trim();
+                        if (item.match(/^\d+\.\s/)) {
+                            let num = item.match(/^(\d+)\.\s/)[1];
+                            return '<div class="numbered-item"><span class="number">' + num + '.</span> ' + item.replace(/^\d+\.\s/, '') + '</div>';
+                        }
+                        return item;
+                    });
+                    formattedParagraphs.push(formattedItems.join('\n'));
+                } else if (para.trim().match(/^[A-Z][a-z]+:/)) {
+                    // It's a section header
+                    formattedParagraphs.push('<div class="section-title">' + para.trim() + '</div>');
+                } else if (para.trim().length > 50) {
+                    // Regular paragraph
+                    formattedParagraphs.push('<p>' + para.trim() + '</p>');
+                } else {
+                    // Short text, likely a sub-header or emphasis
+                    formattedParagraphs.push('<div>' + para.trim() + '</div>');
+                }
+            }
+            
+            return formattedParagraphs.join('\n');
+        }
+
+        function synthesizeResponse(text, sources, metadata) {
+            let synthesized = text;
+            
+            // Remove duplicate/redundant information
+            const lines = text.split('\n');
+            const uniqueLines = [];
+            const seenContent = new Set();
+            
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
+                
+                // Skip lines that are just raw data markers
+                if (trimmed.match(/^Source \d+:$/) || 
+                    trimmed.match(/^Title:$/) || 
+                    trimmed.match(/^Content:$/)) {
+                    continue;
+                }
+                
+                // Skip duplicate content
+                const key = trimmed.substring(0, 50);
+                if (!seenContent.has(key)) {
+                    seenContent.add(key);
+                    uniqueLines.push(trimmed);
+                }
+            }
+            
+            synthesized = uniqueLines.join('\n');
+            
+            // Add contextual analysis if not present
+            if (!synthesized.toLowerCase().includes('analysis') && 
+                !synthesized.toLowerCase().includes('insight')) {
+                synthesized = generateContextualAnalysis(text, sources) + '\n\n' + synthesized;
+            }
+            
+            return synthesized;
+        }
+
+        function generateContextualAnalysis(text, sources) {
+            const entities = extractEntities(text);
+            const themes = extractThemes(text);
+            
+            let analysis = 'Contextual Analysis\n';
+            analysis += 'Based on the available information, the following key themes emerge:\n\n';
+            
+            if (themes.length > 0) {
+                for (const theme of themes.slice(0, 3)) {
+                    analysis += '• ' + theme + '\n';
+                }
+            }
+            
+            if (entities.length > 0) {
+                analysis += '\nKey entities referenced:\n';
+                for (const entity of entities.slice(0, 5)) {
+                    analysis += '• ' + entity + '\n';
+                }
+            }
+            
+            if (sources && sources.length > 0) {
+                analysis += '\nSource Synthesis:\n';
+                const sourceNames = [...new Set(sources.map(s => s.source_name || 'Unknown'))];
+                for (const name of sourceNames.slice(0, 3)) {
+                    const relevantSources = sources.filter(s => (s.source_name || 'Unknown') === name);
+                    if (relevantSources.length > 0) {
+                        analysis += '• ' + name + ': ' + relevantSources.length + ' relevant source(s)\n';
+                    }
+                }
+            }
+            
+            return analysis;
+        }
+
+        function extractEntities(text) {
+            const entities = [];
+            const patterns = [
+                /(Microsoft|OpenAI|Anthropic|Meta|Google|Amazon|Apple|Tesla|NVIDIA|AMD|Intel|IBM|Oracle|Salesforce|Adobe|Cisco|Dell|HP|Samsung|Sony|XAI|Grok|Claude|ChatGPT|Gemini|Gemma|Mistral|LLaMA|Pickaxe|Synthesia|Raulji|Gumloop|Red River)/g,
+                /(GPT-5\.6|GPT-4|Claude Sonnet|Claude Opus|Grok 4\.5|Grok 3|LLaMA|Gemini|Gemma|Mistral|Mixtral)/g,
+                /(Satya Nadella|Sam Altman|Mark Zuckerberg|Dario Amodei|Elon Musk|Bill Gates|Tim Cook|Jeff Bezos|Sundar Pichai|Carl Franzen|Taryn Plumb|Michael Nuñez)/g
+            ];
+            
+            for (const pattern of patterns) {
+                const matches = text.match(pattern) || [];
+                for (const match of matches) {
+                    if (!entities.includes(match)) {
+                        entities.push(match);
+                    }
+                }
+            }
+            
+            return [...new Set(entities)];
+        }
+
+        function extractThemes(text) {
+            const themes = [];
+            const themeKeywords = {
+                'Investment': ['investment', 'invested', 'funding', 'capital', 'billion', 'million', 'financial'],
+                'Competition': ['competing', 'competition', 'competitive', 'vs', 'versus', 'against', 'rivalry'],
+                'Innovation': ['innovate', 'innovation', 'new', 'breakthrough', 'emerging', 'cutting-edge', 'revolution'],
+                'Safety': ['safety', 'security', 'risk', 'protect', 'vulnerability', 'breach', 'threat'],
+                'Enterprise': ['enterprise', 'business', 'commercial', 'corporate', 'industry', 'market'],
+                'Consumer': ['consumer', 'user', 'customer', 'personal', 'individual', 'homeowner'],
+                'Technology': ['model', 'platform', 'tool', 'application', 'system', 'architecture', 'infrastructure'],
+                'Regulation': ['regulation', 'policy', 'governance', 'compliance', 'oversight'],
+                'Ethics': ['ethical', 'ethics', 'responsible', 'transparent', 'fairness'],
+                'Development': ['development', 'deployment', 'implementation', 'rollout', 'launch']
+            };
+            
+            const lowerText = text.toLowerCase();
+            for (const [theme, keywords] of Object.entries(themeKeywords)) {
+                for (const keyword of keywords) {
+                    if (lowerText.includes(keyword)) {
+                        if (!themes.includes(theme)) {
+                            themes.push(theme);
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            return themes;
+        }
+
+        function generateEnhancedSources(sources) {
             if (!sources || sources.length === 0) return '';
+            
+            // Filter out invalid sources
+            const validSources = sources.filter(function(s) {
+                return s.title && s.title !== 'Untitled' && s.source_name && s.source_name !== 'Unknown';
+            });
+            
+            const displaySources = validSources.length > 0 ? validSources.slice(0, 5) : sources.slice(0, 5);
+            
+            if (displaySources.length === 0) return '';
             
             let html = `
                 <div class="response-footer">
-                    <h4>Sources</h4>
+                    <h4>Source References</h4>
                     <div class="source-grid">
             `;
             
-            const displaySources = sources.slice(0, 5);
             for (const s of displaySources) {
                 const title = s.title || 'Untitled';
                 const sourceName = s.source_name || 'Unknown';
                 const url = s.source || s.url || '#';
                 const date = s.date || '';
                 const author = s.author || 'Unknown';
+                const relevance = s.relevance || s.score || 0;
+                const pct = Math.min(Math.round((relevance / 20) * 100), 100);
+                
+                const color = pct > 60 ? '#22C55E' : pct > 30 ? '#F59E0B' : '#EF4444';
                 
                 html += `
-                    <div class="source-item">
+                    <div class="source-item" style="border-left-color: ${color}">
                         <div class="source-title">${title}</div>
                         <div class="source-meta">
                             ${author} • ${date} • 
                             <span class="source-badge">${sourceName}</span>
+                        </div>
+                        <div class="source-relevance">
+                            Relevance: ${pct}%
                         </div>
                         <a href="${url}" target="_blank" class="source-link">
                             View Source →
@@ -2268,75 +2610,85 @@
             return html;
         }
 
-        function generateSimpleMetadata(metadata) {
+        function generateEnhancedMetadata(metadata) {
             const timestamp = metadata.last_updated || metadata.generated_at || new Date().toISOString();
             const totalSources = metadata.total_sources || 0;
             const matches = metadata.matches_found || 0;
+            const confidence = metadata.confidence || 'Medium';
+            const qualityScore = metadata.quality_score || {};
+            const score = qualityScore.score || 0;
+            
+            const confidenceClass = confidence === 'High' ? 'confidence-high' : 
+                                   confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
             
             return `
                 <div class="metadata-footer">
                     <span>📅 ${new Date(timestamp).toLocaleString()}</span>
                     <span>📊 ${totalSources} sources</span>
                     <span>🎯 ${matches} matches</span>
+                    <span>📈 Quality: ${score}%</span>
+                    <span class="${confidenceClass}">Confidence: ${confidence}</span>
                     ${metadata.ai_generated !== false ? '<span>AI-Generated</span>' : ''}
                 </div>
             `;
         }
 
-        function buildStructuredResponse(responseText, sources, metadata) {
+        function buildEnhancedStructuredResponse(responseText, sources, metadata) {
+            // Extract meaningful content
             const sentences = responseText.split(/[.!?]\s+/).filter(function(s) {
-                return s.trim().length > 20;
+                return s.trim().length > 20 && !s.includes('Source') && !s.includes('Title') && !s.includes('Content');
             });
             
-            const summary = sentences.length > 0 ? sentences.slice(0, 2).join('. ') + '.' : 'Analysis based on available sources.';
-            const analysisPoints = sentences.slice(2, Math.min(6, sentences.length));
+            // Generate contextual summary
+            const contextualSummary = generateContextualSummary(sentences, sources);
             
-            const confidence = calculateConfidence(metadata);
-            const confidenceClass = confidence === 'High' ? 'confidence-high' : 
-                                   confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
-
+            // Extract themes and entities
+            const themes = extractThemes(responseText);
+            const entities = extractEntities(responseText);
+            
             let html = `
                 <div class="enhanced-response">
                     <div class="personality-header">
-                        <span class="personality-badge">Balanced: Multi-dimensional analysis</span>
+                        <span class="personality-badge">Conscientiousness: Structured contextual analysis</span>
                     </div>
                     
                     <div class="response-header">
                         <h2>Intelligence Brief</h2>
                         <div class="summary-box">
-                            <p>${summary}</p>
+                            <span class="summary-label">Executive Summary</span>
+                            <p>${contextualSummary}</p>
                             <div class="confidence-badge">
                                 <span class="badge-icon">✓</span>
-                                Confidence: <span class="${confidenceClass}">${confidence}</span> | 
+                                Confidence: ${calculateConfidence(metadata)} | 
                                 Sources: ${sources.length}+
                             </div>
                         </div>
                     </div>
             `;
 
-            if (analysisPoints.length > 0) {
+            // Themes section
+            if (themes.length > 0) {
                 html += `
                     <div class="section">
-                        <h3><span class="section-icon">▸</span> Analysis</h3>
+                        <h3><span class="section-icon">▸</span> Key Themes Identified</h3>
                         <ul class="analysis-points">
-                            ${analysisPoints.map(function(p) { return '<li>' + p.trim() + '</li>'; }).join('')}
+                            ${themes.map(function(t) { return '<li>' + t + '</li>'; }).join('')}
                         </ul>
                     </div>
                 `;
             }
 
-            // Key Findings
-            const findings = extractFindings(responseText);
-            if (findings.length > 0) {
+            // Entities section
+            if (entities.length > 0) {
                 html += `
                     <div class="section">
-                        <h3><span class="section-icon">▸</span> Key Findings</h3>
+                        <h3><span class="section-icon">▸</span> Key Entities</h3>
                         <div class="findings-grid">
-                            ${findings.slice(0, 4).map(function(f) {
+                            ${entities.slice(0, 4).map(function(e) {
                                 return `
                                     <div class="finding-card">
-                                        <span class="finding-icon">✓</span>
-                                        <p>${f}</p>
+                                        <span class="finding-icon">◆</span>
+                                        <p>${e}</p>
                                     </div>
                                 `;
                             }).join('')}
@@ -2345,73 +2697,104 @@
                 `;
             }
 
+            // Main analysis
+            if (sentences.length > 0) {
+                html += `
+                    <div class="section">
+                        <h3><span class="section-icon">▸</span> Analysis</h3>
+                        <ul class="analysis-points">
+                            ${sentences.slice(0, Math.min(4, sentences.length)).map(function(s) { 
+                                return '<li>' + s.trim() + '</li>'; 
+                            }).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
             // Recommendations
-            html += generateRecommendationsSection(sources);
+            html += generateEnhancedRecommendations(sources, themes);
 
             // Sources
             if (sources && sources.length > 0) {
-                html += generateSourceReferences(sources);
+                html += generateEnhancedSources(sources);
             }
 
             // Metadata
-            html += generateMetadataFooter(metadata);
+            html += generateEnhancedMetadata(metadata);
 
             html += '</div>';
             return html;
         }
 
-        function extractFindings(text) {
-            const findings = [];
-            const lines = text.split('\n');
+        function generateContextualSummary(sentences, sources) {
+            if (!sentences || sentences.length === 0) {
+                return 'Analysis based on available sources.';
+            }
             
-            for (const line of lines) {
-                const trimmed = line.trim();
-                if (trimmed.length > 20 && trimmed.length < 200) {
-                    // Look for bullet points or key phrases
-                    if (trimmed.match(/^[•\-*]\s*|^[0-9]+\.\s*|^[A-Z][a-z]+\s*:/) || 
-                        trimmed.toLowerCase().includes('finding') ||
-                        trimmed.toLowerCase().includes('discovered') ||
-                        trimmed.toLowerCase().includes('reveals')) {
-                        let clean = trimmed.replace(/^[•\-*]\s*/, '');
-                        clean = clean.replace(/^[0-9]+\.\s*/, '');
-                        clean = clean.replace(/^[A-Z][a-z]+\s*:\s*/, '');
-                        if (clean.length > 10 && !findings.includes(clean)) {
-                            findings.push(clean);
-                        }
-                    }
+            // Extract the most relevant sentence
+            let summary = sentences[0] || '';
+            
+            // Add source context
+            if (sources && sources.length > 0) {
+                const sourceNames = [...new Set(sources.map(function(s) { 
+                    return s.source_name || 'Unknown'; 
+                }))].filter(function(name) { return name !== 'Unknown'; });
+                
+                if (sourceNames.length > 0) {
+                    summary += ' This analysis synthesizes information from ' + sourceNames.join(', ') + '.';
                 }
             }
-
-            // If no findings found, extract key sentences
-            if (findings.length === 0) {
-                const sentences = text.split(/[.!?]\s+/);
-                for (const sentence of sentences) {
-                    const trimmed = sentence.trim();
-                    if (trimmed.length > 30 && trimmed.length < 150) {
-                        findings.push(trimmed);
-                    }
-                    if (findings.length >= 4) break;
-                }
-            }
-
-            return findings;
+            
+            return summary;
         }
 
-        function generateRecommendationsSection(sources) {
-            const recs = {
-                individual: [
-                    'Start with free tiers to test capabilities',
-                    'Focus on specific use cases first',
-                    'Build a continuous learning roadmap',
-                    'Experiment with different AI models'
-                ],
-                commercial: [
-                    'Assess ROI potential before full implementation',
-                    'Consider enterprise-grade solutions',
-                    'Develop internal AI expertise',
-                    'Monitor industry trends and competitors'
-                ]
-            };
+        function generateEnhancedRecommendations(sources, themes) {
+            // Generate context-aware recommendations based on themes
+            let individualRecs = [
+                'Start with free tiers to test capabilities before committing',
+                'Focus on specific use cases that align with your needs',
+                'Build a continuous learning roadmap for AI adoption',
+                'Experiment with different AI models to find the best fit'
+            ];
+            
+            let commercialRecs = [
+                'Assess ROI potential before full implementation',
+                'Consider enterprise-grade solutions for scale and security',
+                'Develop internal AI expertise through training and hiring',
+                'Monitor industry trends and competitor strategies'
+            ];
+            
+            // If themes include specific topics, tailor recommendations
+            if (themes && themes.length > 0) {
+                if (themes.includes('Investment')) {
+                    individualRecs.push('Evaluate investment opportunities in AI startups');
+                    commercialRecs.push('Develop a strategic AI investment roadmap');
+                }
+                if (themes.includes('Competition')) {
+                    individualRecs.push('Stay informed about competitive AI offerings');
+                    commercialRecs.push('Conduct regular competitive intelligence analysis');
+                }
+                if (themes.includes('Innovation')) {
+                    individualRecs.push('Experiment with emerging AI technologies');
+                    commercialRecs.push('Establish an innovation lab for AI experimentation');
+                }
+                if (themes.includes('Safety')) {
+                    individualRecs.push('Be aware of AI safety and privacy implications');
+                    commercialRecs.push('Implement robust AI governance and safety frameworks');
+                }
+                if (themes.includes('Enterprise')) {
+                    individualRecs.push('Explore enterprise-grade AI solutions for professional use');
+                    commercialRecs.push('Develop an enterprise AI adoption strategy');
+                }
+                if (themes.includes('Consumer')) {
+                    individualRecs.push('Identify consumer-friendly AI applications');
+                    commercialRecs.push('Build consumer-focused AI products and services');
+                }
+            }
+            
+            // Remove duplicates
+            individualRecs = [...new Set(individualRecs)];
+            commercialRecs = [...new Set(commercialRecs)];
             
             return `
                 <div class="section">
@@ -2420,69 +2803,16 @@
                         <div class="rec-item">
                             <span class="rec-tag">Individual</span>
                             <ul>
-                                ${recs.individual.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
+                                ${individualRecs.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
                             </ul>
                         </div>
                         <div class="rec-item">
                             <span class="rec-tag">Commercial</span>
                             <ul>
-                                ${recs.commercial.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
+                                ${commercialRecs.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
                             </ul>
                         </div>
                     </div>
-                </div>
-            `;
-        }
-
-        function generateSourceReferences(sources) {
-            if (!sources || sources.length === 0) {
-                return `
-                    <div class="response-footer">
-                        <h4>Sources</h4>
-                        <p style="color: var(--text-muted); font-size: 0.8rem;">No sources available for this response.</p>
-                    </div>
-                `;
-            }
-            
-            return `
-                <div class="response-footer">
-                    <h4>Source References</h4>
-                    <div class="source-grid">
-                        ${sources.slice(0, 5).map(function(s) {
-                            const pct = Math.min(Math.round((s.relevance || s.score || 0) * 100), 100);
-                            return `
-                                <div class="source-item" style="border-left-color: ${getScoreColor(s.score || s.relevance || 0)}">
-                                    <div class="source-title">${s.title || 'Source'}</div>
-                                    <div class="source-meta">
-                                        ${s.author || 'Unknown'} • ${s.date || ''} • 
-                                        <span class="source-badge">${s.source_name || 'Unknown'}</span>
-                                    </div>
-                                    <div class="source-relevance">
-                                        Relevance: ${Math.round(pct)}%
-                                    </div>
-                                    <a href="${s.source || s.url || '#'}" target="_blank" class="source-link">
-                                        View Source →
-                                    </a>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function generateMetadataFooter(metadata) {
-            const timestamp = metadata.last_updated || metadata.generated_at || new Date().toISOString();
-            const totalSources = metadata.total_sources || 0;
-            const matches = metadata.matches_found || 0;
-            
-            return `
-                <div class="metadata-footer">
-                    <span>📅 ${new Date(timestamp).toLocaleString()}</span>
-                    <span>📊 ${totalSources} sources</span>
-                    <span>🎯 ${matches} matches</span>
-                    ${metadata.ai_generated !== false ? '<span>AI-Generated</span>' : ''}
-                    ${metadata.error ? '<span style="color: #DC2626;">⚠️ ' + metadata.error + '</span>' : ''}
                 </div>
             `;
         }
@@ -2494,13 +2824,6 @@
             if (ratio > 0.6) return 'High';
             if (ratio > 0.3) return 'Medium';
             return 'Low';
-        }
-
-        function getScoreColor(score) {
-            const pct = (score / 20) * 100;
-            if (pct > 60) return '#22C55E';
-            if (pct > 30) return '#F59E0B';
-            return '#EF4444';
         }
 
         function generateEmptyResponse() {
@@ -2576,11 +2899,16 @@
             showTypingIndicator();
 
             try {
-                DOM.statusText.textContent = 'Generating response...';
+                DOM.statusText.textContent = 'Analyzing and synthesizing...';
 
+                // Enhanced API call with context
                 const data = await callGrokAPI(message, {
                     userHistory: loadChatHistory().slice(-5),
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    requireSynthesis: true,
+                    requireContextualAnalysis: true,
+                    themes: extractThemes(message),
+                    entities: extractEntities(message)
                 });
 
                 removeTypingIndicator();
@@ -2591,7 +2919,7 @@
 
                 DOM.statusText.textContent = 'Ready';
 
-                // Format the response
+                // Format the response with enhanced processing
                 let formattedHtml = formatResponse(data);
                 if (!formattedHtml) {
                     formattedHtml = generateEmptyResponse();
@@ -2833,7 +3161,7 @@
 
         console.log('Omni Brand Intelligence Bot initialized successfully');
         console.log('Integration: Grok API with personality-driven intelligence');
-        console.log('Version: 2.0.0');
+        console.log('Version: 2.1.0 - Enhanced Contextual Analysis');
     </script>
 </body>
 </html>
