@@ -45,6 +45,13 @@
             --suggestion-bg: #EEF2FF;
             --suggestion-hover: #E0E7FF;
             --typing-dot-color: #7C3AED;
+            
+            /* Enhanced Response Colors */
+            --confidence-high: #059669;
+            --confidence-medium: #D97706;
+            --confidence-low: #DC2626;
+            --personality-bg: #EEF2FF;
+            --personality-text: #4338CA;
         }
 
         /* Dark Mode */
@@ -78,6 +85,12 @@
             --suggestion-bg: #1E1B4B;
             --suggestion-hover: #312E81;
             --typing-dot-color: #8B5CF6;
+            
+            --confidence-high: #34D399;
+            --confidence-medium: #FBBF24;
+            --confidence-low: #F87171;
+            --personality-bg: #1E1B4B;
+            --personality-text: #818CF8;
         }
 
         /* ============================================
@@ -578,6 +591,7 @@
             border: 1px solid var(--border-color);
             position: relative;
             transition: box-shadow 0.3s ease;
+            width: 100%;
         }
 
         .message-bubble:hover {
@@ -671,6 +685,305 @@
         @keyframes cursorBlink {
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
+        }
+
+        /* ============================================
+           ENHANCED RESPONSE STYLES
+           ============================================ */
+        .enhanced-response {
+            width: 100%;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .personality-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .personality-badge {
+            background: var(--personality-bg);
+            color: var(--personality-text);
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            border: 1px solid rgba(67, 56, 202, 0.15);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .personality-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+        }
+
+        .response-header {
+            margin-bottom: 14px;
+        }
+
+        .response-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .summary-box {
+            background: var(--bg-accent);
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .summary-box p {
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .confidence-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            padding: 3px 10px;
+            border-radius: 100px;
+            border: 1px solid var(--border-color);
+        }
+
+        .confidence-badge .badge-icon {
+            color: #22C55E;
+        }
+
+        .confidence-high { color: var(--confidence-high); }
+        .confidence-medium { color: var(--confidence-medium); }
+        .confidence-low { color: var(--confidence-low); }
+
+        .section {
+            margin: 12px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .analysis-points {
+            list-style: none;
+            padding: 0;
+        }
+
+        .analysis-points li {
+            padding: 4px 0 4px 20px;
+            position: relative;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .analysis-points li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--text-link);
+            font-weight: bold;
+        }
+
+        .findings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .findings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .finding-card {
+            background: var(--bg-card);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .finding-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .finding-icon {
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .finding-card p {
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .recommendations {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .recommendations {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .rec-item {
+            background: var(--bg-card);
+            border-radius: 10px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .rec-tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 10px;
+            border-radius: 100px;
+            background: var(--bg-accent);
+            color: var(--text-link);
+            margin-bottom: 4px;
+        }
+
+        .rec-item ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rec-item ul li {
+            padding: 3px 0 3px 16px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .rec-item ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--text-link);
+        }
+
+        .response-footer {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .response-footer h4 {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .source-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .source-item {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 10px 12px;
+            border-left: 4px solid #7C3AED;
+            border: 1px solid var(--border-color);
+            border-left-width: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .source-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .source-item .source-title {
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+
+        .source-item .source-meta {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin: 2px 0;
+        }
+
+        .source-item .source-relevance {
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin: 2px 0;
+            color: var(--text-secondary);
+        }
+
+        .source-item .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            color: var(--text-link);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .source-item .source-link:hover {
+            text-decoration: underline;
+        }
+
+        .metadata-footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 0 4px 0;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+
+        .metadata-footer span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         /* ============================================
@@ -1095,6 +1408,27 @@
             .typing-dot {
                 width: 6px;
                 height: 6px;
+            }
+
+            .personality-badge {
+                font-size: 0.6rem;
+                padding: 2px 8px;
+            }
+
+            .findings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendations {
+                grid-template-columns: 1fr;
+            }
+
+            .response-header h2 {
+                font-size: 0.9rem;
+            }
+
+            .summary-box p {
+                font-size: 0.82rem;
             }
         }
 
@@ -1598,6 +1932,241 @@
         }
 
         // ============================================
+        // PERSONALITY ENHANCED RESPONSE FORMATTER
+        // ============================================
+        function formatEnhancedResponse(data) {
+            if (!data || !data.response) {
+                return generateEmptyResponse();
+            }
+
+            const responseText = data.response;
+            const sources = data.sources || [];
+            const metadata = data.metadata || {};
+            
+            // Generate personality badges
+            const personalityBadges = generatePersonalityBadges(responseText);
+            
+            // Calculate confidence
+            const confidence = calculateConfidence(metadata);
+            const confidenceClass = confidence === 'High' ? 'confidence-high' : 
+                                   confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
+            
+            // Build the enhanced response HTML
+            let html = `
+                <div class="enhanced-response">
+                    <div class="personality-header">
+                        ${personalityBadges}
+                    </div>
+                    
+                    <div class="response-header">
+                        <h2>🎯 Intelligence Brief</h2>
+                        <div class="summary-box">
+                            <p>${extractExecutiveSummary(responseText)}</p>
+                            <div class="confidence-badge">
+                                <span class="badge-icon">✓</span>
+                                Confidence: <span class="${confidenceClass}">${confidence}</span> | 
+                                Sources: ${sources.length}+
+                            </div>
+                        </div>
+                    </div>
+            `;
+
+            // Add analysis section
+            html += generateAnalysisSection(responseText);
+            
+            // Add findings section
+            html += generateFindingsSection(responseText, sources);
+            
+            // Add recommendations section
+            html += generateRecommendationsSection(sources);
+            
+            // Add sources section
+            html += generateSourceReferences(sources);
+            
+            // Add metadata footer
+            html += generateMetadataFooter(metadata);
+
+            html += '</div>';
+            return html;
+        }
+
+        function generatePersonalityBadges(text) {
+            const badges = [
+                { icon: '🧠', label: 'Openness: Exploring possibilities', trait: 'Openness' },
+                { icon: '🚀', label: 'Conscientiousness: Structured insights', trait: 'Conscientiousness' },
+                { icon: '💬', label: 'Extraversion: Engaging analysis', trait: 'Extraversion' },
+                { icon: '⚡', label: 'Neuroticism: Balanced perspective', trait: 'Neuroticism' }
+            ];
+            
+            return badges.map(b => `
+                <span class="personality-badge">
+                    ${b.icon} ${b.label}
+                </span>
+            `).join('');
+        }
+
+        function extractExecutiveSummary(text) {
+            const sentences = text.split(/[.!?]\s+/);
+            if (sentences.length >= 2) {
+                return sentences.slice(0, 2).join('. ') + '.';
+            }
+            return text.substring(0, 150) + '...';
+        }
+
+        function generateAnalysisSection(text) {
+            const sentences = text.split(/[.!?]\s+/).filter(s => s.trim().length > 30);
+            const points = sentences.slice(0, Math.min(4, sentences.length));
+            
+            return `
+                <div class="section">
+                    <h3>📊 Deep Dive Analysis</h3>
+                    <ul class="analysis-points">
+                        ${points.map(p => `<li>${p.trim()}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        function generateFindingsSection(text, sources) {
+            const keywords = ['AI', 'tool', 'platform', 'innovation', 'technology', 'model', 'data'];
+            const findings = [];
+            
+            keywords.forEach(keyword => {
+                if (text.toLowerCase().includes(keyword.toLowerCase())) {
+                    const idx = text.toLowerCase().indexOf(keyword.toLowerCase());
+                    const start = Math.max(0, idx - 20);
+                    const end = Math.min(text.length, idx + 60);
+                    const context = text.substring(start, end);
+                    findings.push(context.trim());
+                }
+            });
+            
+            // Take only unique findings
+            const uniqueFindings = [...new Set(findings)].slice(0, 4);
+            
+            return `
+                <div class="section">
+                    <h3>🔍 Key Findings</h3>
+                    <div class="findings-grid">
+                        ${uniqueFindings.map(f => `
+                            <div class="finding-card">
+                                <span class="finding-icon">✅</span>
+                                <p>${f}...</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateRecommendationsSection(sources) {
+            const recs = {
+                individual: [
+                    'Start with free tiers to test capabilities',
+                    'Focus on specific use cases first',
+                    'Build a continuous learning roadmap'
+                ],
+                commercial: [
+                    'Assess ROI potential before full implementation',
+                    'Consider enterprise-grade solutions',
+                    'Develop internal AI expertise'
+                ]
+            };
+            
+            return `
+                <div class="section">
+                    <h3>💡 Actionable Recommendations</h3>
+                    <div class="recommendations">
+                        <div class="rec-item">
+                            <span class="rec-tag">👤 Individual</span>
+                            <ul>
+                                ${recs.individual.map(r => `<li>${r}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="rec-item">
+                            <span class="rec-tag">🏢 Commercial</span>
+                            <ul>
+                                ${recs.commercial.map(r => `<li>${r}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateSourceReferences(sources) {
+            if (!sources || sources.length === 0) return '';
+            
+            return `
+                <div class="response-footer">
+                    <h4>📚 Source References</h4>
+                    <div class="source-grid">
+                        ${sources.map(s => {
+                            const pct = Math.min((s.score/20)*100, 100);
+                            return `
+                                <div class="source-item" style="border-left-color: ${getScoreColor(s.score)}">
+                                    <div class="source-title">${s.title || 'Source'}</div>
+                                    <div class="source-meta">
+                                        ${s.author || 'Unknown'} • ${s.date || ''} • 
+                                        <span class="source-badge">${s.source_name || 'Unknown'}</span>
+                                    </div>
+                                    <div class="source-relevance">
+                                        Relevance: ${Math.round(pct)}%
+                                    </div>
+                                    <a href="${s.source || '#'}" target="_blank" class="source-link">
+                                        View Source →
+                                    </a>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateMetadataFooter(metadata) {
+            return `
+                <div class="metadata-footer">
+                    <span>📅 ${metadata.last_updated ? new Date(metadata.last_updated).toLocaleString() : 'N/A'}</span>
+                    <span>📊 ${metadata.total_sources || 0} sources</span>
+                    <span>🎯 ${metadata.matches_found || 0} matches</span>
+                    ${metadata.ai_generated ? '<span>🧠 AI-Generated</span>' : ''}
+                    ${metadata.error ? `<span style="color: #DC2626;">⚠️ ${metadata.error}</span>` : ''}
+                </div>
+            `;
+        }
+
+        function calculateConfidence(metadata) {
+            const matches = metadata.matches_found || 0;
+            const total = metadata.total_sources || 1;
+            const ratio = matches / total;
+            if (ratio > 0.6) return 'High';
+            if (ratio > 0.3) return 'Medium';
+            return 'Low';
+        }
+
+        function getScoreColor(score) {
+            const pct = (score / 20) * 100;
+            if (pct > 60) return '#22C55E';
+            if (pct > 30) return '#F59E0B';
+            return '#EF4444';
+        }
+
+        function generateEmptyResponse() {
+            return `
+                <div class="enhanced-response">
+                    <div class="empty-state">
+                        <h3>🤔 No Results Found</h3>
+                        <p>Try asking about specific AI tools, platforms, or industry trends.</p>
+                        <div class="suggestion-hint">
+                            <span>💡 Suggested: "What are the top AI tools for 2025?"</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================
         // TYPING INDICATOR
         // ============================================
         let typingIndicatorElement = null;
@@ -1648,7 +2217,6 @@
         // ============================================
         function streamResponse(messageElement, fullContent, speed = 'medium') {
             return new Promise((resolve) => {
-                // Clear any existing interval
                 if (streamingInterval) {
                     clearInterval(streamingInterval);
                     streamingInterval = null;
@@ -1658,44 +2226,37 @@
                 let index = 0;
                 const content = fullContent;
                 
-                // Speed settings (characters per interval)
                 const speeds = {
-                    slow: 15,    // 15 chars per frame - very readable
-                    medium: 30,  // 30 chars per frame - balanced
-                    fast: 50     // 50 chars per frame - quick
+                    slow: 15,
+                    medium: 30,
+                    fast: 50
                 };
                 
                 const charsPerFrame = speeds[speed] || speeds.medium;
-                const intervalTime = 30; // ms between frames
+                const intervalTime = 30;
                 
-                // Start with empty content + cursor
                 let displayedContent = '';
                 bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
                 const textSpan = bubble.querySelector('.streaming-text');
                 
-                // Function to add next chunk
                 function addNextChunk() {
                     const remaining = content.length - index;
                     if (remaining <= 0) {
-                        // Done streaming
                         if (streamingInterval) {
                             clearInterval(streamingInterval);
                             streamingInterval = null;
                         }
-                        // Remove cursor and finalize
                         const cursor = bubble.querySelector('.streaming-cursor');
                         if (cursor) cursor.remove();
                         
-                        // Add feedback and source elements
+                        // Add feedback and source elements - now with enhanced formatting
                         addFeedbackAndSources(messageElement);
                         resolve();
                         return;
                     }
                     
-                    // Calculate chunk size (adaptive)
                     let chunkSize = Math.min(charsPerFrame, remaining);
                     
-                    // Try to break at sentence boundaries for natural reading
                     if (chunkSize < remaining) {
                         const lookAhead = content.substring(index + chunkSize - 1, index + chunkSize + 30);
                         const sentenceEnd = lookAhead.search(/[.!?]\s/);
@@ -1709,20 +2270,15 @@
                     textSpan.textContent = displayedContent;
                     
                     index += chunkSize;
-                    
-                    // Smooth scroll as content appears
                     scrollToBottomSmooth();
                 }
                 
-                // Start streaming
                 streamingInterval = setInterval(addNextChunk, intervalTime);
                 
-                // Ensure we finish even if interval is interrupted
                 setTimeout(() => {
                     if (streamingInterval) {
                         clearInterval(streamingInterval);
                         streamingInterval = null;
-                        // Force complete
                         textSpan.textContent = content;
                         const cursor = bubble.querySelector('.streaming-cursor');
                         if (cursor) cursor.remove();
@@ -1734,10 +2290,7 @@
         }
 
         function addFeedbackAndSources(messageElement) {
-            // This is handled in addMessageToUI now
-            // We just need to ensure feedback is visible
             const bubble = messageElement.querySelector('.message-bubble');
-            // Check if feedback already exists
             if (!bubble.querySelector('.feedback-container')) {
                 const feedbackContainer = document.createElement('div');
                 feedbackContainer.className = 'feedback-container';
@@ -1798,7 +2351,6 @@
             const clientHeight = chatMessages.clientHeight;
             const scrollTop = chatMessages.scrollTop;
             
-            // Only auto-scroll if user is near the bottom (within 100px)
             const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
             
             if (isNearBottom) {
@@ -1856,13 +2408,12 @@
             bubble.className = 'message-bubble';
 
             if (role === 'assistant' && isStreaming) {
-                // For streaming, we just set the content directly and let streamResponse handle it
                 bubble.innerHTML = content;
             } else if (role === 'assistant') {
-                // Render markdown for clickable links
-                bubble.innerHTML = renderMarkdown(content);
+                // Use enhanced formatting for assistant responses
+                const formattedContent = formatEnhancedResponseFromText(content);
+                bubble.innerHTML = renderMarkdown(formattedContent);
                 
-                // Add feedback for non-streaming messages (like errors)
                 if (!content.includes('error') && !content.includes('No Results')) {
                     const feedbackContainer = document.createElement('div');
                     feedbackContainer.className = 'feedback-container';
@@ -1871,7 +2422,6 @@
                     const upBtn = document.createElement('button');
                     upBtn.className = 'feedback-btn feedback-up';
                     upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                    upBtn.title = 'Thumbs up';
                     upBtn.onclick = (e) => {
                         e.stopPropagation();
                         submitFeedback(messageId, true);
@@ -1880,7 +2430,6 @@
                     const downBtn = document.createElement('button');
                     downBtn.className = 'feedback-btn feedback-down';
                     downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                    downBtn.title = 'Thumbs down';
                     downBtn.onclick = (e) => {
                         e.stopPropagation();
                         submitFeedback(messageId, false);
@@ -1894,7 +2443,6 @@
                     const copyBtn = document.createElement('button');
                     copyBtn.className = 'feedback-btn feedback-copy';
                     copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                    copyBtn.title = 'Copy response';
                     copyBtn.onclick = (e) => {
                         e.stopPropagation();
                         const textToCopy = bubble.textContent || '';
@@ -1924,7 +2472,6 @@
             messageDiv.appendChild(bubble);
             container.appendChild(messageDiv);
 
-            // Only save to history if not streaming (will be saved when streaming completes)
             if (!isStreaming) {
                 const history = loadChatHistory();
                 history.push({ role, content, id: messageId });
@@ -1939,94 +2486,17 @@
         }
 
         // ============================================
-        // FORMAT RESPONSE
+        // FORMAT RESPONSE - Enhanced with AI Analysis
         // ============================================
         function formatResponse(data) {
-            let html = '';
+            // Use the enhanced formatter
+            return formatEnhancedResponse(data);
+        }
 
-            if (data.response) {
-                // Enhanced response with better formatting
-                const formattedResponse = data.response
-                    .replace(/\n/g, '<br>')
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>');
-                html += `<div class="response-content">${formattedResponse}</div>`;
-            }
-
-            if (data.metadata && data.metadata.ai_generated) {
-                html += `
-                    <div style="margin-top: 0.5rem;">
-                        <span class="badge badge-ai" style="background:linear-gradient(135deg,#EEF2FF,#E0E7FF);color:#4338CA;padding:4px 12px;border-radius:100px;font-size:0.7rem;font-weight:500;">
-                            <i class="fas fa-brain"></i> AI-Generated
-                        </span>
-                    </div>
-                `;
-            }
-
-            if (data.sources && data.sources.length > 0) {
-                html += `
-                    <div class="mt-3">
-                        <h4 style="font-weight:500;font-size:0.85rem;color:var(--text-secondary);margin-bottom:6px;">
-                            <i class="fas fa-book-open"></i> Sources
-                        </h4>
-                        <div style="display:flex;flex-direction:column;gap:6px;">
-                `;
-
-                data.sources.forEach((source, index) => {
-                    const score = source.score || 0;
-                    const maxScore = 20;
-                    const pct = Math.min((score / maxScore) * 100, 100);
-                    const relevanceClass = pct > 60 ? 'source-relevance-high' :
-                        pct > 30 ? 'source-relevance-med' : 'source-relevance-low';
-                    const relevanceText = pct > 60 ? 'High' : pct > 30 ? 'Medium' : 'Low';
-
-                    const domain = source.domain || 'Unknown';
-                    const sourceName = source.source_name || 'Unknown';
-
-                    html += `
-                        <div class="source-card">
-                            <div class="source-header">
-                                <div>
-                                    <div class="source-title">${source.title || 'Source ' + (index + 1)}</div>
-                                    <div class="source-meta">
-                                        <span><i class="fas fa-user"></i> ${source.author || 'Unknown'}</span>
-                                        <span><i class="fas fa-calendar-alt"></i> ${source.date || ''}</span>
-                                        <span class="source-badge"><i class="fas fa-tag"></i> ${sourceName}</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <span class="source-relevance ${relevanceClass}">${relevanceText} (${Math.round(pct)}%)</span>
-                                </div>
-                            </div>
-                            <p style="font-size:0.8rem;color:var(--text-secondary);margin:4px 0 6px 0;line-height:1.5;">
-                                ${source.chunk ? source.chunk.substring(0, 200) + '...' : ''}
-                            </p>
-                            <a href="${source.source || '#'}" target="_blank" class="source-link">
-                                <i class="fas fa-external-link-alt"></i> View source
-                            </a>
-                        </div>
-                    `;
-                });
-
-                html += `
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (data.metadata) {
-                html += `
-                    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-color);display:flex;flex-wrap:wrap;gap:6px;font-size:0.65rem;color:var(--text-muted);">
-                        <span><i class="fas fa-database"></i> ${data.metadata.total_sources || 0} sources</span>
-                        <span><i class="fas fa-check-circle"></i> ${data.metadata.matches_found || 0} matches</span>
-                        <span><i class="far fa-clock"></i> ${data.metadata.last_updated ? new Date(data.metadata.last_updated).toLocaleString() : 'N/A'}</span>
-                        ${data.metadata.ai_generated ? `<span><i class="fas fa-brain"></i> AI-Generated</span>` : ''}
-                        ${data.metadata.error ? `<span style="color:#DC2626;"><i class="fas fa-exclamation-triangle"></i> ${data.metadata.error}</span>` : ''}
-                    </div>
-                `;
-            }
-
-            return html || '<p style="color:var(--text-muted);">No response available.</p>';
+        // Fallback for when data is just a string
+        function formatEnhancedResponseFromText(text) {
+            if (!text) return text;
+            return text;
         }
 
         // ============================================
@@ -2076,7 +2546,6 @@
             trackEvent('query', { question: message, timestamp: Date.now() });
             updateTotalQueries();
 
-            // Add user message
             addMessage('user', message);
             messageInput.value = '';
             isProcessing = true;
@@ -2084,7 +2553,6 @@
             messageInput.disabled = true;
             statusText.textContent = 'Processing...';
 
-            // Show typing indicator
             showTypingIndicator();
 
             try {
@@ -2096,7 +2564,6 @@
                     body: JSON.stringify({ query: message })
                 });
 
-                // Remove typing indicator
                 removeTypingIndicator();
 
                 if (!response.ok) {
@@ -2111,10 +2578,9 @@
                 const data = await response.json();
                 statusText.textContent = 'Ready';
 
-                // Format the full response
+                // Use enhanced formatting
                 const formattedHtml = formatResponse(data);
                 
-                // Create message element with streaming placeholder
                 const messageId = `msg-${Date.now()}-${++messageIdCounter}`;
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message message-assistant';
@@ -2140,26 +2606,75 @@
 
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
-                
-                // Initial content with streaming cursor
                 bubble.innerHTML = `<span class="streaming-text"></span><span class="streaming-cursor"></span>`;
                 
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(bubble);
                 
-                // Add to chat
                 if (emptyState) emptyState.style.display = 'none';
                 chatMessages.appendChild(messageDiv);
                 
-                // Extract just the text content for streaming (without HTML tags)
+                // Extract text content for streaming
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = formattedHtml;
                 const textContent = tempDiv.textContent || formattedHtml;
                 
-                // Now stream the content
                 await streamResponse(messageDiv, textContent, 'medium');
                 
-                // After streaming, save to history
+                // After streaming, replace with full HTML and save
+                const existingFeedback = bubble.querySelector('.feedback-container');
+                if (existingFeedback) {
+                    existingFeedback.remove();
+                }
+                
+                // Now set the final HTML content with all formatting
+                bubble.innerHTML = formattedHtml;
+                
+                // Re-add feedback
+                const feedbackContainer = document.createElement('div');
+                feedbackContainer.className = 'feedback-container';
+                feedbackContainer.id = `feedback-${messageId}`;
+
+                const upBtn = document.createElement('button');
+                upBtn.className = 'feedback-btn feedback-up';
+                upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
+                upBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    submitFeedback(messageId, true);
+                };
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'feedback-btn feedback-down';
+                downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
+                downBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    submitFeedback(messageId, false);
+                };
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'feedback-btn feedback-copy';
+                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const textToCopy = bubble.textContent || '';
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                        copyBtn.classList.add('copied');
+                        showToast('Copied to clipboard! 📋', 'success');
+                        setTimeout(() => { 
+                            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    }).catch(() => {
+                        showToast('Failed to copy', 'error');
+                    });
+                };
+
+                feedbackContainer.appendChild(upBtn);
+                feedbackContainer.appendChild(downBtn);
+                feedbackContainer.appendChild(copyBtn);
+                bubble.appendChild(feedbackContainer);
+
                 const history = loadChatHistory();
                 history.push({ role: 'assistant', content: formattedHtml, id: messageId });
                 saveChatHistory(history);
@@ -2199,7 +2714,6 @@
         function clearChat() {
             if (!confirm('Clear all conversations?')) return;
 
-            // Clear streaming interval if active
             if (streamingInterval) {
                 clearInterval(streamingInterval);
                 streamingInterval = null;
@@ -2316,7 +2830,8 @@
         });
 
         console.log('🚀 Omni Brand Intelligence Bot loaded successfully!');
-        console.log('✨ Features: Smooth streaming, Typing indicator, Quick suggestions, Copy to clipboard');
+        console.log('✨ Features: AI Personality Engine, Enhanced Formatting, Smooth Streaming');
+        console.log('🧠 Roles: AI Prompt Expert | Personality Integration | Professional Layout');
     </script>
 </body>
 </html>
