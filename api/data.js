@@ -1,4 +1,4 @@
-// api/data.js - Complete Self-Contained API
+// api/data.js - Complete Self-Contained API with Enhanced Features
 
 // ============================================
 // IMPORTS - All from lib/
@@ -9,15 +9,14 @@ import { systemPrompts, selectPrompt } from '../lib/prompts/system.js';
 import { getFewShotExamples } from '../lib/prompts/examples.js';
 import { selectTemplate } from '../lib/prompts/templates.js';
 import { generateCOTPrompt } from '../lib/prompts/cot.js';
-// FIXED: Use getPersona instead of selectPersona
-import { getPersona, getAvailablePersonas } from '../lib/prompts/personas.js';
+import { getPersona, getAvailablePersonas, selectPersona } from '../lib/prompts/personas.js';
 import { intentDetector } from '../lib/response/intent.js';
 import { confidenceScorer } from '../lib/response/confidence.js';
 import { responseFormatter } from '../lib/response/formatter.js';
 import { responseCache } from '../lib/response/cache.js';
 import { advancedSearch } from '../lib/search/hybrid.js';
 import { createGrokInstance } from '../lib/grok/index.js';
-import { buildGrokRequest } from '../lib/grok/prompts.js';
+import { buildGrokRequest, buildContextualRequest, getContextualPrompt, getSynthesisPrompt } from '../lib/grok/prompts.js';
 import { orchestrator } from '../lib/models/orchestrator.js';
 import { streamingHandler } from '../lib/response/streaming.js';
 import { feedbackSystem } from '../lib/response/feedback.js';
@@ -27,102 +26,26 @@ import { queryLogger } from '../lib/response/logger.js';
 import { semanticSearch, indexSources } from '../lib/embeddings/index.js';
 
 // ============================================
-// SECTION 1: COMPATIBILITY WRAPPER FOR selectPersona
+// SECTION 1: CONFIGURATION
 // ============================================
 
-/**
- * Select a persona based on query analysis
- * This wraps the existing getPersona function with intelligent selection
- * @param {string} queryType - Type of query
- * @param {string} query - User's question
- * @param {string} preferredPersona - Optional preferred persona
- * @returns {object} Selected persona object
- */
-export function selectPersona(queryType, query, preferredPersona = null) {
-    // If a preferred persona is specified, use it
-    if (preferredPersona) {
-        const persona = getPersona(preferredPersona);
-        if (persona && persona.id) return persona;
-    }
-
-    // Analyze query to determine persona
-    const lower = query.toLowerCase();
-    
-    // Define persona selection criteria
-    const criteria = [
-        { 
-            terms: ['architecture', 'deployment', 'implementation', 'code', 'api', 'developer', 'engineering', 'pipeline', 'workflow', 'system', 'technical'], 
-            personaId: 'technical_architect' 
-        },
-        { 
-            terms: ['strategy', 'business', 'roi', 'competitive', 'market', 'enterprise', 'investment', 'growth', 'profit', 'revenue'], 
-            personaId: 'strategy_consultant' 
-        },
-        { 
-            terms: ['trend', 'future', 'prediction', 'forecast', 'emerging', 'roadmap', 'vision', 'next-generation', 'innovate'], 
-            personaId: 'trend_forecaster' 
-        },
-        { 
-            terms: ['research', 'paper', 'study', 'findings', 'analysis', 'methodology', 'experiment', 'hypothesis', 'evidence'], 
-            personaId: 'research_analyst' 
-        },
-        { 
-            terms: ['compare', 'versus', 'vs', 'against', 'better', 'difference', 'pros', 'cons', 'evaluation', 'benchmark'], 
-            personaId: 'comparative_analyst' 
-        },
-        { 
-            terms: ['design', 'ux', 'user experience', 'interface', 'usability', 'accessibility', 'interaction', 'user interface'], 
-            personaId: 'ux_expert' 
-        },
-        { 
-            terms: ['product', 'roadmap', 'feature', 'specification', 'go-to-market', 'launch', 'development', 'product management'], 
-            personaId: 'product_expert' 
-        },
-        { 
-            terms: ['data', 'analytics', 'statistics', 'model', 'metrics', 'visualization', 'dataset', 'database'], 
-            personaId: 'data_expert' 
-        }
-    ];
-
-    // Score each criterion
-    let bestScore = 0;
-    let bestPersonaId = 'default_persona';
-
-    for (const criterion of criteria) {
-        let matches = 0;
-        for (const term of criterion.terms) {
-            if (lower.includes(term)) {
-                matches++;
-            }
-        }
-        // Weight: if queryType matches, boost score
-        if (queryType && queryType.includes(criterion.personaId.replace('_', ''))) {
-            matches += 2;
-        }
-        if (matches > bestScore) {
-            bestScore = matches;
-            bestPersonaId = criterion.personaId;
-        }
-    }
-
-    // Get the persona using the existing getPersona function
-    const persona = getPersona(bestPersonaId);
-    
-    // If no persona found, return default
-    if (!persona || !persona.id) {
-        return getPersona('default_persona') || {
-            id: 'default_persona',
-            name: 'Balanced Analyst',
-            type: 'general',
-            description: 'Balanced expert combining all domain knowledge',
-            systemPrompt: 'You are a Balanced Analyst with broad expertise across domains. Provide clear, balanced, and practical analysis.',
-            temperature: 0.3,
-            maxTokens: 1500
-        };
-    }
-    
-    return persona;
-}
+const ENHANCED_CONFIG = {
+  DEFAULTS: {
+    PERSONALITY: 'conscientiousness',
+    INTENT: 'contextual',
+    TEMPERATURE: 0.25,
+    MAX_TOKENS: 2000,
+    REQUIRE_SYNTHESIS: true,
+    REQUIRE_CONTEXTUAL_ANALYSIS: true
+  },
+  FEATURES: {
+    EXTRACT_THEMES: true,
+    EXTRACT_ENTITIES: true,
+    FORMAT_WITH_BULLETS: true,
+    FORMAT_WITH_PARAGRAPHS: true,
+    INDENT_LISTS: true
+  }
+};
 
 // ============================================
 // ALL DATA EMBEDDED HERE - DO NOT REMOVE
@@ -371,13 +294,228 @@ const sourceStats = {
 };
 
 // ============================================
+// ENHANCED FUNCTIONS - Contextual Analysis & Synthesis
+// ============================================
+
+/**
+ * Extract themes from text
+ * @param {string} text - Text to analyze
+ * @returns {Array} Array of identified themes
+ */
+function extractThemesFromText(text) {
+  if (!text) return [];
+  
+  var themes = [];
+  var themeKeywords = {
+    'Investment': ['investment', 'invested', 'funding', 'capital', 'billion', 'million', 'financial'],
+    'Competition': ['competing', 'competition', 'competitive', 'vs', 'versus', 'against', 'rivalry'],
+    'Innovation': ['innovate', 'innovation', 'new', 'breakthrough', 'emerging', 'cutting-edge', 'revolution'],
+    'Safety': ['safety', 'security', 'risk', 'protect', 'vulnerability', 'breach', 'threat'],
+    'Enterprise': ['enterprise', 'business', 'commercial', 'corporate', 'industry', 'market'],
+    'Consumer': ['consumer', 'user', 'customer', 'personal', 'individual'],
+    'Technology': ['model', 'platform', 'tool', 'application', 'system', 'architecture'],
+    'Regulation': ['regulation', 'policy', 'governance', 'compliance', 'oversight'],
+    'Ethics': ['ethical', 'ethics', 'responsible', 'transparent', 'fairness'],
+    'Development': ['development', 'deployment', 'implementation', 'rollout', 'launch']
+  };
+  
+  var lowerText = text.toLowerCase();
+  for (var theme in themeKeywords) {
+    if (themeKeywords.hasOwnProperty(theme)) {
+      var keywords = themeKeywords[theme];
+      for (var i = 0; i < keywords.length; i++) {
+        if (lowerText.indexOf(keywords[i]) !== -1) {
+          if (themes.indexOf(theme) === -1) {
+            themes.push(theme);
+          }
+          break;
+        }
+      }
+    }
+  }
+  
+  return themes;
+}
+
+/**
+ * Extract entities from text
+ * @param {string} text - Text to analyze
+ * @returns {Array} Array of identified entities
+ */
+function extractEntitiesFromText(text) {
+  if (!text) return [];
+  
+  var entities = [];
+  var patterns = [
+    /(Microsoft|OpenAI|Anthropic|Meta|Google|Amazon|Apple|Tesla|NVIDIA|AMD|Intel|IBM|Oracle|Salesforce|Adobe|Cisco|Dell|HP|Samsung|Sony|XAI|Grok|Claude|ChatGPT|Gemini|Gemma|Mistral|LLaMA|Pickaxe|Synthesia|Raulji|Gumloop|Red River)/g,
+    /(GPT-5\.6|GPT-4|Claude Sonnet|Claude Opus|Grok 4\.5|Grok 3|LLaMA|Gemini|Gemma|Mistral|Mixtral)/g,
+    /(Satya Nadella|Sam Altman|Mark Zuckerberg|Dario Amodei|Elon Musk|Bill Gates|Tim Cook|Jeff Bezos|Sundar Pichai|Carl Franzen|Taryn Plumb|Michael Nuñez)/g
+  ];
+  
+  for (var i = 0; i < patterns.length; i++) {
+    var matches = text.match(patterns[i]) || [];
+    for (var j = 0; j < matches.length; j++) {
+      if (entities.indexOf(matches[j]) === -1) {
+        entities.push(matches[j]);
+      }
+    }
+  }
+  
+  return entities;
+}
+
+/**
+ * Synthesize response from multiple sources
+ * @param {string} response - Original response
+ * @param {Array} sources - Source objects
+ * @returns {string} Synthesized response
+ */
+function synthesizeResponse(response, sources) {
+  if (!response || !sources || sources.length === 0) return response;
+  
+  var lines = response.split('\n');
+  var uniqueLines = [];
+  var seenContent = new Set();
+  
+  for (var i = 0; i < lines.length; i++) {
+    var trimmed = lines[i].trim();
+    if (!trimmed) continue;
+    
+    if (trimmed.match(/^Source \d+:$/) || 
+        trimmed.match(/^Title:$/) || 
+        trimmed.match(/^Content:$/)) {
+      continue;
+    }
+    
+    var key = trimmed.substring(0, 50);
+    if (!seenContent.has(key)) {
+      seenContent.add(key);
+      uniqueLines.push(trimmed);
+    }
+  }
+  
+  var synthesized = uniqueLines.join('\n');
+  
+  if (sources.length > 1) {
+    var sourceNames = [];
+    var seenNames = new Set();
+    for (var j = 0; j < sources.length; j++) {
+      var name = sources[j].source_name || 'Unknown';
+      if (!seenNames.has(name)) {
+        seenNames.add(name);
+        sourceNames.push(name);
+      }
+    }
+    if (sourceNames.length > 0) {
+      synthesized += '\n\nSynthesis Note: This response synthesizes information from ' + 
+                     sourceNames.join(', ') + '.';
+    }
+  }
+  
+  return synthesized;
+}
+
+/**
+ * Add contextual analysis to response
+ * @param {string} response - Original response
+ * @param {Array} sources - Source objects
+ * @returns {string} Response with contextual analysis
+ */
+function addContextualAnalysis(response, sources) {
+  if (!response) return response;
+  
+  var themes = extractThemesFromText(response);
+  var entities = extractEntitiesFromText(response);
+  
+  var analysis = '\n\nContextual Analysis:\n';
+  
+  if (themes.length > 0) {
+    analysis += 'Key Themes:\n';
+    for (var i = 0; i < Math.min(themes.length, 4); i++) {
+      analysis += '  • ' + themes[i] + '\n';
+    }
+  }
+  
+  if (entities.length > 0) {
+    analysis += '\nKey Entities:\n';
+    for (var j = 0; j < Math.min(entities.length, 5); j++) {
+      analysis += '  • ' + entities[j] + '\n';
+    }
+  }
+  
+  if (sources && sources.length > 0) {
+    var sourceNames = [];
+    var seenNames = new Set();
+    for (var k = 0; k < sources.length; k++) {
+      var name = sources[k].source_name || 'Unknown';
+      if (!seenNames.has(name)) {
+        seenNames.add(name);
+        sourceNames.push(name);
+      }
+    }
+    if (sourceNames.length > 0) {
+      analysis += '\nSources: ' + sourceNames.join(', ') + '\n';
+    }
+  }
+  
+  return response + analysis;
+}
+
+/**
+ * Format response with proper structure
+ * @param {string} text - Text to format
+ * @returns {string} Formatted text
+ */
+function formatWithProperStructure(text) {
+  if (!text) return text;
+  
+  var paragraphs = text.split(/\n\s*\n/);
+  var formatted = [];
+  
+  for (var i = 0; i < paragraphs.length; i++) {
+    var para = paragraphs[i].trim();
+    if (!para) continue;
+    
+    if (para.match(/^[•\-*]\s/m)) {
+      var items = para.split('\n');
+      var formattedItems = [];
+      for (var j = 0; j < items.length; j++) {
+        var item = items[j].trim();
+        if (item.match(/^[•\-*]\s/)) {
+          formattedItems.push('  • ' + item.replace(/^[•\-*]\s/, ''));
+        } else {
+          formattedItems.push(item);
+        }
+      }
+      formatted.push(formattedItems.join('\n'));
+    } else if (para.match(/^\d+\.\s/m)) {
+      var items2 = para.split('\n');
+      var formattedItems2 = [];
+      for (var k = 0; k < items2.length; k++) {
+        var item2 = items2[k].trim();
+        if (item2.match(/^\d+\.\s/)) {
+          formattedItems2.push('  ' + item2);
+        } else {
+          formattedItems2.push(item2);
+        }
+      }
+      formatted.push(formattedItems2.join('\n'));
+    } else {
+      formatted.push(para);
+    }
+  }
+  
+  return formatted.join('\n\n');
+}
+
+// ============================================
 // SEARCH FUNCTIONS
 // ============================================
 
 function classifyQuery(query) {
-  const lower = query.toLowerCase();
+  var lower = query.toLowerCase();
   
-  const categories = {
+  var categories = {
     factual: { keywords: ['what', 'when', 'where', 'who', 'which', 'is', 'are', 'was', 'were', 'did'], weight: 1 },
     analytical: { keywords: ['compare', 'contrast', 'analyze', 'synthesis', 'trend', 'pattern', 'relationship', 'impact', 'cause'], weight: 1.5 },
     comparative: { keywords: ['better', 'best', 'worst', 'top', 'vs', 'versus', 'compared to', 'difference'], weight: 1.5 },
@@ -385,19 +523,22 @@ function classifyQuery(query) {
     summarization: { keywords: ['summarize', 'summarise', 'brief', 'overview', 'key points', 'main ideas', 'tl;dr'], weight: 1.3 }
   };
   
-  let scores = {};
-  let bestCategory = 'factual';
-  let bestScore = 0;
+  var scores = {};
+  var bestCategory = 'factual';
+  var bestScore = 0;
   
-  for (const [category, data] of Object.entries(categories)) {
-    let score = 0;
-    for (const keyword of data.keywords) {
-      if (lower.includes(keyword)) score += 1;
-    }
-    scores[category] = score * data.weight;
-    if (scores[category] > bestScore) {
-      bestScore = scores[category];
-      bestCategory = category;
+  for (var category in categories) {
+    if (categories.hasOwnProperty(category)) {
+      var data = categories[category];
+      var score = 0;
+      for (var i = 0; i < data.keywords.length; i++) {
+        if (lower.indexOf(data.keywords[i]) !== -1) score += 1;
+      }
+      scores[category] = score * data.weight;
+      if (scores[category] > bestScore) {
+        bestScore = scores[category];
+        bestCategory = category;
+      }
     }
   }
   
@@ -416,29 +557,26 @@ function classifyQuery(query) {
 async function searchSources(query) {
   if (!query) return { results: [], classification: null };
   
-  const queryLower = query.toLowerCase().trim();
+  var queryLower = query.toLowerCase().trim();
   if (queryLower.length < 2) return { results: [], classification: null };
   
-  const classification = classifyQuery(query);
+  var classification = classifyQuery(query);
   
-  // Try semantic search first
-  let semanticResults = [];
+  var semanticResults = [];
   try {
     semanticResults = await semanticSearch(query, uniqueSources, 10);
   } catch (error) {
     console.warn('Semantic search error:', error.message);
   }
   
-  // Keyword/hybrid search
-  const keywordResults = advancedSearch.search(query, uniqueSources);
+  var keywordResults = advancedSearch.search(query, uniqueSources);
   
-  // Merge results
-  const seenUrlsMerged = new Set();
-  const mergedResults = [];
+  var seenUrlsMerged = new Set();
+  var mergedResults = [];
   
-  // Add semantic results
-  for (const result of semanticResults) {
-    const url = result.source || '#';
+  for (var i = 0; i < semanticResults.length; i++) {
+    var result = semanticResults[i];
+    var url = result.source || '#';
     if (!seenUrlsMerged.has(url)) {
       seenUrlsMerged.add(url);
       mergedResults.push({
@@ -449,14 +587,14 @@ async function searchSources(query) {
     }
   }
   
-  // Add keyword results
-  for (const item of keywordResults) {
-    const url = item.source || '#';
-    if (!seenUrlsMerged.has(url)) {
-      seenUrlsMerged.add(url);
+  for (var j = 0; j < keywordResults.length; j++) {
+    var item = keywordResults[j];
+    var url2 = item.source || '#';
+    if (!seenUrlsMerged.has(url2)) {
+      seenUrlsMerged.add(url2);
       mergedResults.push({
         title: item.title || 'Untitled',
-        source: url,
+        source: url2,
         source_name: item.source_name || 'Unknown',
         author: item.author || 'Unknown',
         date: item.date || '',
@@ -471,7 +609,9 @@ async function searchSources(query) {
     }
   }
   
-  mergedResults.sort((a, b) => (b.relevance || 0) - (a.relevance || 0));
+  mergedResults.sort(function(a, b) {
+    return (b.relevance || 0) - (a.relevance || 0);
+  });
   
   return {
     results: mergedResults.slice(0, 5),
@@ -480,21 +620,26 @@ async function searchSources(query) {
 }
 
 function extractFacts(query, results) {
-  const facts = [];
-  const queryWords = query.toLowerCase().split(/\s+/);
+  var facts = [];
+  var queryWords = query.toLowerCase().split(/\s+/);
   
-  for (const result of results) {
-    const content = result.fullContent || result.chunk || '';
-    const sentences = content.split(/[.!?]+/);
+  for (var i = 0; i < results.length; i++) {
+    var result = results[i];
+    var content = result.fullContent || result.chunk || '';
+    var sentences = content.split(/[.!?]+/);
     
-    for (const sentence of sentences) {
-      const sentenceLower = sentence.toLowerCase();
-      const matchedWords = queryWords.filter(w => 
-        w.length > 3 && sentenceLower.includes(w)
-      );
+    for (var j = 0; j < sentences.length; j++) {
+      var sentence = sentences[j];
+      var sentenceLower = sentence.toLowerCase();
+      var matchedWords = [];
+      for (var k = 0; k < queryWords.length; k++) {
+        if (queryWords[k].length > 3 && sentenceLower.indexOf(queryWords[k]) !== -1) {
+          matchedWords.push(queryWords[k]);
+        }
+      }
       
       if (matchedWords.length >= 1) {
-        const relevance = matchedWords.length / queryWords.length;
+        var relevance = matchedWords.length / queryWords.length;
         facts.push({
           text: sentence.trim(),
           source: result.source_name,
@@ -506,12 +651,16 @@ function extractFacts(query, results) {
     }
   }
   
-  facts.sort((a, b) => b.relevance - a.relevance);
-  const uniqueFacts = [];
-  const seenTexts = new Set();
+  facts.sort(function(a, b) {
+    return b.relevance - a.relevance;
+  });
   
-  for (const fact of facts) {
-    const key = fact.text.substring(0, 50);
+  var uniqueFacts = [];
+  var seenTexts = new Set();
+  
+  for (var l = 0; l < facts.length; l++) {
+    var fact = facts[l];
+    var key = fact.text.substring(0, 50);
     if (!seenTexts.has(key) && fact.text.length > 20) {
       seenTexts.add(key);
       uniqueFacts.push(fact);
@@ -522,66 +671,171 @@ function extractFacts(query, results) {
   return uniqueFacts;
 }
 
-function generateNoResultsResponse(query) {
-  const topics = [
-    "Microsoft investment in Anthropic ($5B)",
-    "OpenAI vs Anthropic comparison",
-    "AI agent security risks",
-    "Enterprise AI adoption",
-    "AI model releases July 2026",
-    "Meta AI strategy",
-    "Hugging Face security incident",
-    "AI safety and ethics",
-    "AI tools and platforms",
-    "TechCrunch Disrupt 2026"
-  ];
+// ============================================
+// ENHANCED RESPONSE GENERATION
+// ============================================
+
+async function generateResponse(query, searchResult, req, res) {
+  var startTime = Date.now();
+  var results = searchResult.results || [];
+  var classification = searchResult.classification || null;
+  var queryType = classification ? classification.type : 'factual';
   
-  const queryWords = query.toLowerCase().split(/\s+/);
-  const related = topics.filter(topic => {
-    const topicWords = topic.toLowerCase().split(/\s+/);
-    return topicWords.some(tw => queryWords.some(qw => tw.includes(qw) || qw.includes(tw)));
+  performanceMetrics.trackMemory();
+  
+  var cached = responseCache.get(query);
+  if (cached) {
+    analytics.trackQuery(query, {
+      ...cached.metadata,
+      cached: true,
+      responseTime: Date.now() - startTime,
+      sources: cached.sources
+    });
+    performanceMetrics.trackResponseTime(Date.now() - startTime);
+    return cached;
+  }
+  
+  var intentInfo = intentDetector.detectIntent(query);
+  var streamRequested = req && (req.query && req.query.stream === 'true' || req.body && req.body.stream === true);
+  
+  // Check for enhanced parameters
+  var requireSynthesis = req && req.body ? req.body.requireSynthesis || false : false;
+  var requireContextualAnalysis = req && req.body ? req.body.requireContextualAnalysis || false : false;
+  var personality = req && req.body ? req.body.personality || ENHANCED_CONFIG.DEFAULTS.PERSONALITY : ENHANCED_CONFIG.DEFAULTS.PERSONALITY;
+  var intent = req && req.body ? req.body.intent || ENHANCED_CONFIG.DEFAULTS.INTENT : ENHANCED_CONFIG.DEFAULTS.INTENT;
+  
+  var context = '';
+  if (results && results.length > 0) {
+    context = results.map(function(r, i) {
+      return 'Source ' + (i+1) + ': ' + r.title + '\n' + (r.chunk || (r.fullContent ? r.fullContent.substring(0, 500) : ''));
+    }).join('\n\n');
+  } else {
+    context = 'No specific sources found. Provide a general response based on your knowledge.';
+  }
+  
+  var confidence = results && results.length > 0 
+    ? confidenceScorer.calculateConfidence(results, results, classification)
+    : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
+  
+  performanceMetrics.trackSourceCount(results ? results.length : 0);
+  
+  if (streamRequested) {
+    var apiKey = process.env.GROQ_API_KEY;
+    if (apiKey) {
+      await streamingHandler.streamResponse(query, context, apiKey, res);
+      return null;
+    }
+  }
+  
+  var apiKey = process.env.GROQ_API_KEY;
+  
+  // Pass enhanced parameters to orchestrator
+  var modelResult = await orchestrator.generateResponse(
+    query, 
+    context, 
+    intentInfo.primary, 
+    apiKey,
+    {
+      requireSynthesis: requireSynthesis,
+      requireContextualAnalysis: requireContextualAnalysis,
+      personality: personality,
+      intent: intent
+    }
+  );
+  
+  if (modelResult.usage) {
+    performanceMetrics.trackTokenUsage(modelResult.usage.total_tokens || 0);
+  }
+  
+  var enhancedResponse = modelResult.response;
+  if (modelResult.success && modelResult.model === 'grok') {
+    enhancedResponse = enhanceSemanticContext(query, modelResult.response, results);
+    
+    if (requireSynthesis) {
+      enhancedResponse = synthesizeResponse(enhancedResponse, results);
+    }
+    
+    if (requireContextualAnalysis) {
+      enhancedResponse = addContextualAnalysis(enhancedResponse, results);
+    }
+  }
+  
+  enhancedResponse = formatWithProperStructure(enhancedResponse);
+  
+  var qualityScore = scoreResponseQuality(
+    enhancedResponse || '', 
+    results || [], 
+    confidence
+  );
+  
+  var formattedOutput = formatProfessionalResponse(
+    query,
+    enhancedResponse || 'Unable to generate a response at this time.',
+    results || [],
+    confidence,
+    qualityScore
+  );
+  
+  var responseTime = Date.now() - startTime;
+  performanceMetrics.trackResponseTime(responseTime);
+  
+  var finalResponse = {
+    response: formattedOutput,
+    sources: results || [],
+    metadata: {
+      total_sources: uniqueSources.length,
+      matches_found: results ? results.length : 0,
+      query_type: queryType,
+      query_confidence: classification ? classification.confidence || 0 : 0,
+      intent: intentInfo.primary,
+      intent_confidence: Math.round(intentInfo.confidence * 100),
+      confidence: confidence,
+      quality_score: qualityScore,
+      ai_generated: true,
+      model: modelResult.model || 'fallback',
+      formatted: true,
+      enhanced: true,
+      professional_style: true,
+      contextual_analysis: requireContextualAnalysis,
+      synthesized: requireSynthesis,
+      personality: personality,
+      responseTime: responseTime,
+      cached: false,
+      searchTypes: results ? results.map(function(r) { return r.searchType; }).filter(Boolean) : [],
+      last_updated: new Date().toISOString()
+    }
+  };
+  
+  // Add themes and entities if available
+  if (ENHANCED_CONFIG.FEATURES.EXTRACT_THEMES && enhancedResponse) {
+    var themes = extractThemesFromText(enhancedResponse);
+    if (themes.length > 0) {
+      finalResponse.metadata.themes = themes;
+    }
+  }
+  
+  if (ENHANCED_CONFIG.FEATURES.EXTRACT_ENTITIES && enhancedResponse) {
+    var entities = extractEntitiesFromText(enhancedResponse);
+    if (entities.length > 0) {
+      finalResponse.metadata.entities = entities;
+    }
+  }
+  
+  analytics.trackQuery(query, {
+    ...finalResponse.metadata,
+    responseTime: responseTime,
+    sources: results || [],
+    userId: req ? (req.headers ? req.headers['x-forwarded-for'] || req.socket ? req.socket.remoteAddress || 'anonymous' : 'anonymous' : 'anonymous') : 'anonymous'
   });
   
-  const suggestions = related.length > 0 ? related : topics.slice(0, 5);
-  
-  return `NO RESULTS FOUND
-
-Query: "${query}"
-
-Data Available:
-- TechCrunch AI articles: ${techCrunchSources.length}
-- VentureBeat AI articles: ${ventureBeatSources.length}
-- Static sources: ${staticSources.length}
-- Total: ${uniqueSources.length} articles
-
-Try asking about:
-${suggestions.map(s => `- ${s}`).join('\n')}
-
-Available Sources:
-${[...new Set(uniqueSources.map(s => `- ${s.source_name}`))].join('\n')}`;
-}
-
-function generateSuggestions(query) {
-  const topics = [
-    "Microsoft investment in Anthropic ($5B)",
-    "OpenAI vs Anthropic comparison",
-    "AI agent security risks",
-    "Enterprise AI adoption",
-    "AI model releases July 2026",
-    "Meta AI strategy",
-    "Hugging Face security incident",
-    "AI safety and ethics",
-    "AI tools and platforms",
-    "TechCrunch Disrupt 2026"
-  ];
-  
-  const queryWords = query.toLowerCase().split(/\s+/);
-  const related = topics.filter(topic => {
-    const topicWords = topic.toLowerCase().split(/\s+/);
-    return topicWords.some(tw => queryWords.some(qw => tw.includes(qw) || qw.includes(tw)));
+  queryLogger.log(query, formattedOutput, {
+    ...finalResponse.metadata,
+    responseTime: responseTime,
+    sources: results || []
   });
   
-  return related.length > 0 ? related : topics.slice(0, 5);
+  responseCache.set(query, finalResponse);
+  return finalResponse;
 }
 
 // ============================================
@@ -589,19 +843,21 @@ function generateSuggestions(query) {
 // ============================================
 
 function extractEntities(text) {
-  const entities = [];
-  const patterns = {
+  var entities = [];
+  var patterns = {
     company: /(Microsoft|OpenAI|Anthropic|Meta|Google|Amazon|Apple|Tesla|NVIDIA|AMD|Intel|IBM|Oracle|Salesforce|Adobe|Cisco|Dell|HP|Samsung|Sony|XAI|Grok|Claude|ChatGPT)/g,
     person: /(Satya Nadella|Sam Altman|Mark Zuckerberg|Dario Amodei|Elon Musk|Bill Gates|Tim Cook|Jeff Bezos|Sundar Pichai|Satya|Nadella|Altman|Zuckerberg|Amodei|Musk|Gates|Cook|Bezos|Pichai)/g,
     model: /(GPT-5\.6|GPT-4|Claude Sonnet|Claude Opus|Grok 4\.5|Grok 3|LLaMA|Gemini|Gemma|Mistral|Mixtral)/g,
     topic: /(AI|artificial intelligence|machine learning|deep learning|neural network|agent|automation|safety|security|investment|enterprise|startup)/gi
   };
   
-  for (const [type, pattern] of Object.entries(patterns)) {
-    const matches = text.match(pattern) || [];
-    for (const match of matches) {
-      if (!entities.includes(match)) {
-        entities.push(match);
+  for (var type in patterns) {
+    if (patterns.hasOwnProperty(type)) {
+      var matches = text.match(patterns[type]) || [];
+      for (var i = 0; i < matches.length; i++) {
+        if (entities.indexOf(matches[i]) === -1) {
+          entities.push(matches[i]);
+        }
       }
     }
   }
@@ -614,18 +870,24 @@ function enhanceSemanticContext(query, grokResponse, results) {
     return grokResponse;
   }
 
-  const entities = extractEntities(query);
-  let enhancedResponse = grokResponse;
+  var entities = extractEntities(query);
+  var enhancedResponse = grokResponse;
   
-  for (const entity of entities) {
-    if (!enhancedResponse.toLowerCase().includes(entity.toLowerCase())) {
-      const relevantSource = results.find(r => 
-        (r.fullContent || r.content || '').toLowerCase().includes(entity.toLowerCase())
-      );
+  for (var i = 0; i < entities.length; i++) {
+    var entity = entities[i];
+    if (enhancedResponse.toLowerCase().indexOf(entity.toLowerCase()) === -1) {
+      var relevantSource = null;
+      for (var j = 0; j < results.length; j++) {
+        var content = (results[j].fullContent || results[j].content || '').toLowerCase();
+        if (content.indexOf(entity.toLowerCase()) !== -1) {
+          relevantSource = results[j];
+          break;
+        }
+      }
       if (relevantSource) {
-        const contextChunk = relevantSource.chunk || relevantSource.fullContent?.substring(0, 300) || '';
+        var contextChunk = relevantSource.chunk || (relevantSource.fullContent ? relevantSource.fullContent.substring(0, 300) : '');
         if (contextChunk) {
-          enhancedResponse += `\n\nAbout ${entity}: ${contextChunk}`;
+          enhancedResponse += '\n\nAbout ' + entity + ': ' + contextChunk;
           break;
         }
       }
@@ -636,9 +898,9 @@ function enhanceSemanticContext(query, grokResponse, results) {
 }
 
 function scoreResponseQuality(response, sources, confidence) {
-  let score = 0;
+  var score = 0;
   
-  const wordCount = (response || '').split(' ').length;
+  var wordCount = (response || '').split(' ').length;
   if (wordCount > 200) score += 30;
   else if (wordCount > 100) score += 20;
   else if (wordCount > 50) score += 10;
@@ -651,7 +913,7 @@ function scoreResponseQuality(response, sources, confidence) {
   else if (confidence && confidence.score >= 50) score += 15;
   else if (confidence && confidence.score >= 30) score += 10;
   
-  const entities = extractEntities(response || '');
+  var entities = extractEntities(response || '');
   if (entities.length >= 3) score += 20;
   else if (entities.length >= 2) score += 15;
   else if (entities.length >= 1) score += 10;
@@ -673,34 +935,35 @@ function scoreResponseQuality(response, sources, confidence) {
 // ============================================
 
 function formatProfessionalResponse(query, response, sources, confidence, qualityScore) {
-  const indent = '  ';
-  const doubleIndent = '    ';
-  let output = [];
+  var indent = '  ';
+  var doubleIndent = '    ';
+  var output = [];
   
   if (response) {
-    let cleanResponse = response;
+    var cleanResponse = response;
     cleanResponse = cleanResponse.replace(/\*\*/g, '');
     cleanResponse = cleanResponse.replace(/\*/g, '');
     cleanResponse = cleanResponse.replace(/Summary:|Executive Summary:|Overview:/gi, '');
     cleanResponse = cleanResponse.replace(/Key Facts:|What you need to know:/gi, '');
     
-    const paragraphs = cleanResponse.split('\n\n');
-    let formattedParagraphs = [];
+    var paragraphs = cleanResponse.split('\n\n');
+    var formattedParagraphs = [];
     
-    for (const para of paragraphs) {
+    for (var i = 0; i < paragraphs.length; i++) {
+      var para = paragraphs[i];
       if (para.trim()) {
-        const words = para.trim().split(' ');
-        let line = '';
-        let wrappedLines = [];
-        for (const word of words) {
-          if ((line + word).length > 70) {
-            wrappedLines.push(`${indent}${line.trim()}`);
+        var words = para.trim().split(' ');
+        var line = '';
+        var wrappedLines = [];
+        for (var j = 0; j < words.length; j++) {
+          if ((line + words[j]).length > 70) {
+            wrappedLines.push(indent + line.trim());
             line = '';
           }
-          line += word + ' ';
+          line += words[j] + ' ';
         }
         if (line.trim()) {
-          wrappedLines.push(`${indent}${line.trim()}`);
+          wrappedLines.push(indent + line.trim());
         }
         formattedParagraphs.push(wrappedLines.join('\n'));
       }
@@ -710,32 +973,38 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
     output.push('');
   }
   
-  const facts = extractFacts(query, sources || []);
+  var facts = extractFacts(query, sources || []);
   if (facts && facts.length > 0) {
-    output.push(`${indent}Key Findings`);
-    output.push(`${indent}${'-'.repeat(50)}`);
+    output.push(indent + 'Key Findings');
+    output.push(indent + '-'.repeat(50));
     
-    for (let i = 0; i < Math.min(facts.length, 4); i++) {
-      const f = facts[i];
-      let factText = f.text;
+    for (var k = 0; k < Math.min(facts.length, 4); k++) {
+      var f = facts[k];
+      var factText = f.text;
       if (!factText.endsWith('.') && !factText.endsWith('!') && !factText.endsWith('?')) {
         factText += '.';
       }
       
-      const sourceMatch = sources.find(s => s.source_name === f.source);
-      const sourceUrl = sourceMatch?.source || sourceMatch?.url || '#';
-      const sourceDisplay = sourceMatch?.source_name || f.source || 'Unknown';
-      const linkedSource = `[${sourceDisplay}](${sourceUrl})`;
+      var sourceMatch = null;
+      for (var l = 0; l < sources.length; l++) {
+        if (sources[l].source_name === f.source) {
+          sourceMatch = sources[l];
+          break;
+        }
+      }
+      var sourceUrl = sourceMatch ? (sourceMatch.source || sourceMatch.url || '#') : '#';
+      var sourceDisplay = sourceMatch ? sourceMatch.source_name : (f.source || 'Unknown');
+      var linkedSource = '[' + sourceDisplay + '](' + sourceUrl + ')';
       
-      output.push(`${indent}${i + 1}. ${factText}`);
-      output.push(`${doubleIndent}Source: ${linkedSource}`);
+      output.push(indent + (k + 1) + '. ' + factText);
+      output.push(doubleIndent + 'Source: ' + linkedSource);
       output.push('');
     }
   }
   
   if (confidence) {
-    const score = confidence.score || 0;
-    let confidenceText = '';
+    var score = confidence.score || 0;
+    var confidenceText = '';
     
     if (score >= 80) {
       confidenceText = 'High confidence — the sources are consistent and authoritative.';
@@ -745,154 +1014,35 @@ function formatProfessionalResponse(query, response, sources, confidence, qualit
       confidenceText = 'Limited confidence — the evidence is suggestive but not conclusive.';
     }
     
-    output.push(`${indent}Confidence Assessment`);
-    output.push(`${indent}${'-'.repeat(50)}`);
-    output.push(`${indent}${confidenceText}`);
+    output.push(indent + 'Confidence Assessment');
+    output.push(indent + '-'.repeat(50));
+    output.push(indent + confidenceText);
     output.push('');
   }
   
   if (sources && sources.length > 0) {
-    output.push(`${indent}References`);
-    output.push(`${indent}${'-'.repeat(50)}`);
+    output.push(indent + 'References');
+    output.push(indent + '-'.repeat(50));
     
-    for (let i = 0; i < Math.min(sources.length, 4); i++) {
-      const s = sources[i];
-      const url = s.source || s.url || '#';
-      const sourceName = s.source_name || 'Unknown';
-      const linkedSource = `[${sourceName}](${url})`;
+    for (var m = 0; m < Math.min(sources.length, 4); m++) {
+      var s = sources[m];
+      var url = s.source || s.url || '#';
+      var sourceName = s.source_name || 'Unknown';
+      var linkedSource = '[' + sourceName + '](' + url + ')';
       
-      output.push(`${doubleIndent}${i + 1}. ${s.title || 'Untitled'}`);
-      output.push(`${doubleIndent}   ${linkedSource}${s.date ? `, ${s.date}` : ''}`);
+      output.push(doubleIndent + (m + 1) + '. ' + (s.title || 'Untitled'));
+      output.push(doubleIndent + '   ' + linkedSource + (s.date ? ', ' + s.date : ''));
       output.push('');
     }
   }
   
   if (qualityScore) {
-    const level = qualityScore.level || 'Good';
-    const score = qualityScore.score || 0;
-    output.push(`${indent}Note: This response is rated as ${level.toLowerCase()} (${score}%) based on source quality and coverage.`);
+    var level = qualityScore.level || 'Good';
+    var score2 = qualityScore.score || 0;
+    output.push(indent + 'Note: This response is rated as ' + level.toLowerCase() + ' (' + score2 + '%) based on source quality and coverage.');
   }
   
   return output.join('\n');
-}
-
-// ============================================
-// GENERATE RESPONSE
-// ============================================
-
-async function generateResponse(query, searchResult, req, res) {
-  const startTime = Date.now();
-  const { results, classification } = searchResult;
-  const queryType = classification?.type || 'factual';
-  
-  performanceMetrics.trackMemory();
-  
-  const cached = responseCache.get(query);
-  if (cached) {
-    analytics.trackQuery(query, {
-      ...cached.metadata,
-      cached: true,
-      responseTime: Date.now() - startTime,
-      sources: cached.sources
-    });
-    performanceMetrics.trackResponseTime(Date.now() - startTime);
-    return cached;
-  }
-  
-  const intentInfo = intentDetector.detectIntent(query);
-  const streamRequested = req?.query?.stream === 'true' || req?.body?.stream === true;
-  
-  let context = '';
-  if (results && results.length > 0) {
-    context = results.map((r, i) => 
-      `Source ${i+1}: ${r.title}\n${r.chunk || r.fullContent?.substring(0, 500) || ''}`
-    ).join('\n\n');
-  } else {
-    context = 'No specific sources found. Provide a general response based on your knowledge.';
-  }
-  
-  const confidence = results && results.length > 0 
-    ? confidenceScorer.calculateConfidence(results, results, classification)
-    : { level: 'Low', score: 20, breakdown: { relevance: 0, authority: 0, diversity: 0 } };
-  
-  performanceMetrics.trackSourceCount(results?.length || 0);
-  
-  if (streamRequested) {
-    const apiKey = process.env.GROQ_API_KEY;
-    if (apiKey) {
-      await streamingHandler.streamResponse(query, context, apiKey, res);
-      return null;
-    }
-  }
-  
-  const apiKey = process.env.GROQ_API_KEY;
-  const modelResult = await orchestrator.generateResponse(query, context, intentInfo.primary, apiKey);
-  
-  if (modelResult.usage) {
-    performanceMetrics.trackTokenUsage(modelResult.usage.total_tokens || 0);
-  }
-  
-  let enhancedResponse = modelResult.response;
-  if (modelResult.success && modelResult.model === 'grok') {
-    enhancedResponse = enhanceSemanticContext(query, modelResult.response, results);
-  }
-  
-  const qualityScore = scoreResponseQuality(
-    enhancedResponse || '', 
-    results || [], 
-    confidence
-  );
-  
-  const formattedOutput = formatProfessionalResponse(
-    query,
-    enhancedResponse || 'Unable to generate a response at this time.',
-    results || [],
-    confidence,
-    qualityScore
-  );
-  
-  const responseTime = Date.now() - startTime;
-  performanceMetrics.trackResponseTime(responseTime);
-  
-  const finalResponse = {
-    response: formattedOutput,
-    sources: results || [],
-    metadata: {
-      total_sources: uniqueSources.length,
-      matches_found: results?.length || 0,
-      query_type: queryType,
-      query_confidence: classification?.confidence || 0,
-      intent: intentInfo.primary,
-      intent_confidence: Math.round(intentInfo.confidence * 100),
-      confidence: confidence,
-      quality_score: qualityScore,
-      ai_generated: true,
-      model: modelResult.model || 'fallback',
-      formatted: true,
-      enhanced: true,
-      professional_style: true,
-      responseTime: responseTime,
-      cached: false,
-      searchTypes: results.map(r => r.searchType).filter(Boolean),
-      last_updated: new Date().toISOString()
-    }
-  };
-  
-  analytics.trackQuery(query, {
-    ...finalResponse.metadata,
-    responseTime: responseTime,
-    sources: results || [],
-    userId: req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'anonymous'
-  });
-  
-  queryLogger.log(query, formattedOutput, {
-    ...finalResponse.metadata,
-    responseTime: responseTime,
-    sources: results || []
-  });
-  
-  responseCache.set(query, finalResponse);
-  return finalResponse;
 }
 
 // ============================================
@@ -915,15 +1065,15 @@ export default async function handler(req, res) {
     });
   }
 
-  let query = null;
-  let action = null;
+  var query = null;
+  var action = null;
 
   if (req.method === 'GET') {
     query = req.query.query || null;
     action = req.query.action || null;
   } else {
-    query = req.body?.query || null;
-    action = req.body?.action || null;
+    query = req.body ? req.body.query || null : null;
+    action = req.body ? req.body.action || null : null;
   }
 
   // ============================================
@@ -935,13 +1085,13 @@ export default async function handler(req, res) {
       timestamp: new Date().toISOString(),
       total_sources: uniqueSources.length,
       source_stats: sourceStats,
-      source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+      source_names: [...new Set(uniqueSources.map(function(s) { return s.source_name; }))],
       grok_available: !!process.env.GROQ_API_KEY,
       embedding_available: !!process.env.OPENAI_API_KEY,
       cache_stats: responseCache.getStats(),
       feedback_stats: feedbackSystem.getStats(),
       models: orchestrator.getAvailableModels(),
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'vector_embeddings', 'semantic_search']
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'vector_embeddings', 'semantic_search', 'contextual_analysis', 'synthesis', 'theme_extraction', 'entity_extraction']
     });
   }
 
@@ -961,7 +1111,7 @@ export default async function handler(req, res) {
   // ROUTE: LOGS
   // ============================================
   if (action === 'logs') {
-    const limit = parseInt(req.query.limit) || 20;
+    var limit = parseInt(req.query.limit) || 20;
     return res.status(200).json({
       logs: queryLogger.getLogs(limit)
     });
@@ -983,14 +1133,14 @@ export default async function handler(req, res) {
   // ROUTE: FEEDBACK
   // ============================================
   if (action === 'feedback') {
-    const feedback = req.body?.feedback || req.query?.feedback;
-    const queryId = req.body?.queryId || req.query?.queryId;
+    var feedback = req.body ? (req.body.feedback || req.query.feedback) : null;
+    var queryId = req.body ? (req.body.queryId || req.query.queryId) : null;
     
     if (!feedback || !queryId) {
       return res.status(400).json({ error: 'Missing feedback or queryId' });
     }
     
-    const result = feedbackSystem.addFeedback(queryId, feedback);
+    var result = feedbackSystem.addFeedback(queryId, feedback);
     return res.status(200).json(result);
   }
 
@@ -1002,11 +1152,11 @@ export default async function handler(req, res) {
   // ROUTE: MODEL SWITCH
   // ============================================
   if (action === 'switch-model') {
-    const model = req.body?.model || req.query?.model;
+    var model = req.body ? (req.body.model || req.query.model) : null;
     if (!model) {
       return res.status(400).json({ error: 'Missing model name' });
     }
-    const result = orchestrator.switchModel(model);
+    var result = orchestrator.switchModel(model);
     return res.status(200).json(result);
   }
 
@@ -1024,15 +1174,17 @@ export default async function handler(req, res) {
     return res.status(200).json({
       total: uniqueSources.length,
       source_stats: sourceStats,
-      sources: uniqueSources.map(s => ({
-        title: s.title,
-        source_name: s.source_name,
-        author: s.author || 'Unknown',
-        date: s.date || '',
-        url: s.url,
-        word_count: s.word_count || 0,
-        domain: s.domain || 'unknown'
-      }))
+      sources: uniqueSources.map(function(s) {
+        return {
+          title: s.title,
+          source_name: s.source_name,
+          author: s.author || 'Unknown',
+          date: s.date || '',
+          url: s.url,
+          word_count: s.word_count || 0,
+          domain: s.domain || 'unknown'
+        };
+      })
     });
   }
 
@@ -1052,8 +1204,8 @@ export default async function handler(req, res) {
   // ROUTE: SEARCH
   // ============================================
   if (query) {
-    const searchResult = await searchSources(query);
-    const response = await generateResponse(query, searchResult, req, res);
+    var searchResult = await searchSources(query);
+    var response = await generateResponse(query, searchResult, req, res);
     
     if (response === null) {
       return;
@@ -1067,12 +1219,12 @@ export default async function handler(req, res) {
   // ============================================
   return res.status(200).json({
     name: 'Omni Brand Intelligence Bot API',
-    version: '4.7.0',
+    version: '5.0.0',
     status: 'running',
-    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'performance_tracking', 'vector_embeddings', 'semantic_search'],
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'performance_tracking', 'vector_embeddings', 'semantic_search', 'contextual_analysis', 'synthesis', 'theme_extraction', 'entity_extraction'],
     total_sources: uniqueSources.length,
     source_stats: sourceStats,
-    source_names: [...new Set(uniqueSources.map(s => s.source_name))],
+    source_names: [...new Set(uniqueSources.map(function(s) { return s.source_name; }))],
     grok_available: !!process.env.GROQ_API_KEY,
     embedding_available: !!process.env.OPENAI_API_KEY,
     cache_stats: responseCache.getStats(),
@@ -1090,7 +1242,8 @@ export default async function handler(req, res) {
       reset_analytics: 'GET?action=reset-analytics',
       feedback: 'POST with {queryId, feedback: {rating, comment}}',
       models: 'GET?action=models',
-      switch_model: 'POST with {model: "grok"}'
+      switch_model: 'POST with {model: "grok"}',
+      enhanced: 'POST with {query, requireSynthesis: true, requireContextualAnalysis: true, personality: "conscientiousness"}'
     },
     last_updated: new Date().toISOString()
   });
