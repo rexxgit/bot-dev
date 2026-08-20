@@ -46,7 +46,6 @@
             --suggestion-hover: #E0E7FF;
             --typing-dot-color: #7C3AED;
             
-            /* Enhanced Response Colors */
             --confidence-high: #059669;
             --confidence-medium: #D97706;
             --confidence-low: #DC2626;
@@ -1843,9 +1842,68 @@
         }
 
         // ============================================
+        // API CONFIGURATION - Uses Grok API
+        // ============================================
+        const API_URL = '/api/grok'; // Using the grok API endpoint
+        const DATA_API_URL = '/api/data'; // Fallback to data API if needed
+        
+        // ============================================
+        // GROK API INTEGRATION
+        // ============================================
+        async function callGrokAPI(query, context = {}) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        context: {
+                            ...context,
+                            personality: 'balanced',
+                            style: 'professional',
+                            format: 'structured'
+                        },
+                        options: {
+                            enhanceWithSources: true,
+                            includeRecommendations: true,
+                            confidenceScoring: true
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.warn('Grok API error, falling back to data API:', error);
+                // Fallback to data API if grok fails
+                return await callDataAPI(query);
+            }
+        }
+
+        async function callDataAPI(query) {
+            const response = await fetch(DATA_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: query })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Data API Error: ${response.status}`);
+            }
+            
+            return await response.json();
+        }
+
+        // ============================================
         // DOM Elements
         // ============================================
-        const API_URL = '/api/data';
         let isProcessing = false;
         let messageIdCounter = 0;
         let streamingInterval = null;
@@ -1943,7 +2001,7 @@
             const sources = data.sources || [];
             const metadata = data.metadata || {};
             
-            // Generate personality badges
+            // Generate personality badges based on content
             const personalityBadges = generatePersonalityBadges(responseText);
             
             // Calculate confidence
@@ -2028,7 +2086,7 @@
         }
 
         function generateFindingsSection(text, sources) {
-            const keywords = ['AI', 'tool', 'platform', 'innovation', 'technology', 'model', 'data'];
+            const keywords = ['AI', 'tool', 'platform', 'innovation', 'technology', 'model', 'data', 'cloud', 'API'];
             const findings = [];
             
             keywords.forEach(keyword => {
@@ -2037,21 +2095,31 @@
                     const start = Math.max(0, idx - 20);
                     const end = Math.min(text.length, idx + 60);
                     const context = text.substring(start, end);
-                    findings.push(context.trim());
+                    if (context.trim().length > 10) {
+                        findings.push(context.trim());
+                    }
                 }
             });
             
             // Take only unique findings
             const uniqueFindings = [...new Set(findings)].slice(0, 4);
             
+            // If no findings found, create some from the text
+            if (uniqueFindings.length === 0) {
+                const sentences = text.split(/[.!?]\s+/).filter(s => s.trim().length > 20);
+                sentences.slice(0, 4).forEach(s => {
+                    findings.push(s.trim());
+                });
+            }
+            
             return `
                 <div class="section">
                     <h3>🔍 Key Findings</h3>
                     <div class="findings-grid">
-                        ${uniqueFindings.map(f => `
+                        ${(findings.length > 0 ? findings : ['Analysis complete']).slice(0, 4).map(f => `
                             <div class="finding-card">
                                 <span class="finding-icon">✅</span>
-                                <p>${f}...</p>
+                                <p>${f.substring(0, 100)}${f.length > 100 ? '...' : ''}</p>
                             </div>
                         `).join('')}
                     </div>
@@ -2062,14 +2130,16 @@
         function generateRecommendationsSection(sources) {
             const recs = {
                 individual: [
-                    'Start with free tiers to test capabilities',
+                    'Start with free tiers to test AI capabilities',
                     'Focus on specific use cases first',
-                    'Build a continuous learning roadmap'
+                    'Build a continuous learning roadmap',
+                    'Experiment with different AI models'
                 ],
                 commercial: [
                     'Assess ROI potential before full implementation',
                     'Consider enterprise-grade solutions',
-                    'Develop internal AI expertise'
+                    'Develop internal AI expertise',
+                    'Monitor industry trends and competitors'
                 ]
             };
             
@@ -2095,7 +2165,14 @@
         }
 
         function generateSourceReferences(sources) {
-            if (!sources || sources.length === 0) return '';
+            if (!sources || sources.length === 0) {
+                return `
+                    <div class="response-footer">
+                        <h4>📚 Sources</h4>
+                        <p style="color: var(--text-muted); font-size: 0.8rem;">No sources available for this response.</p>
+                    </div>
+                `;
+            }
             
             return `
                 <div class="response-footer">
@@ -2249,7 +2326,6 @@
                         const cursor = bubble.querySelector('.streaming-cursor');
                         if (cursor) cursor.remove();
                         
-                        // Add feedback and source elements - now with enhanced formatting
                         addFeedbackAndSources(messageElement);
                         resolve();
                         return;
@@ -2410,9 +2486,12 @@
             if (role === 'assistant' && isStreaming) {
                 bubble.innerHTML = content;
             } else if (role === 'assistant') {
-                // Use enhanced formatting for assistant responses
-                const formattedContent = formatEnhancedResponseFromText(content);
-                bubble.innerHTML = renderMarkdown(formattedContent);
+                // Check if content is already HTML or plain text
+                if (content.trim().startsWith('<')) {
+                    bubble.innerHTML = content;
+                } else {
+                    bubble.innerHTML = renderMarkdown(content);
+                }
                 
                 if (!content.includes('error') && !content.includes('No Results')) {
                     const feedbackContainer = document.createElement('div');
@@ -2486,58 +2565,7 @@
         }
 
         // ============================================
-        // FORMAT RESPONSE - Enhanced with AI Analysis
-        // ============================================
-        function formatResponse(data) {
-            // Use the enhanced formatter
-            return formatEnhancedResponse(data);
-        }
-
-        // Fallback for when data is just a string
-        function formatEnhancedResponseFromText(text) {
-            if (!text) return text;
-            return text;
-        }
-
-        // ============================================
-        // ERROR HANDLING
-        // ============================================
-        function displayError(message, details = null) {
-            let html = `
-                <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:14px;color:#991B1B;">
-                    <strong><i class="fas fa-exclamation-circle"></i> Error</strong>
-                    <p style="margin-top:4px;font-size:0.85rem;">${message}</p>
-            `;
-            if (details) {
-                html += `<p style="font-size:0.7rem;color:#B91C1C;margin-top:6px;">${details}</p>`;
-            }
-            html += `
-                    <p style="font-size:0.75rem;color:#6B7280;margin-top:6px;">Please try again.</p>
-                </div>
-            `;
-            return html;
-        }
-
-        function displayRateLimit() {
-            return `
-                <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:14px;color:#92400E;">
-                    <strong><i class="fas fa-hourglass-half"></i> Rate Limit</strong>
-                    <p style="margin-top:4px;font-size:0.85rem;">Too many requests. Please wait a moment.</p>
-                </div>
-            `;
-        }
-
-        function displayNoResults() {
-            return `
-                <div style="background:#FEFCE8;border:1px solid #FDE68A;border-radius:12px;padding:14px;color:#854D0E;">
-                    <strong><i class="fas fa-search"></i> No Results</strong>
-                    <p style="margin-top:4px;font-size:0.85rem;">Try asking about AI tools, platforms, or industry trends.</p>
-                </div>
-            `;
-        }
-
-        // ============================================
-        // SEND MESSAGE
+        // SEND MESSAGE WITH GROK API
         // ============================================
         async function sendMessage() {
             const message = messageInput.value.trim();
@@ -2546,6 +2574,7 @@
             trackEvent('query', { question: message, timestamp: Date.now() });
             updateTotalQueries();
 
+            // Add user message
             addMessage('user', message);
             messageInput.value = '';
             isProcessing = true;
@@ -2553,34 +2582,31 @@
             messageInput.disabled = true;
             statusText.textContent = 'Processing...';
 
+            // Show typing indicator
             showTypingIndicator();
 
             try {
-                statusText.textContent = 'Searching...';
+                statusText.textContent = 'Generating response...';
 
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: message })
+                // Call the Grok API
+                const data = await callGrokAPI(message, {
+                    userHistory: loadChatHistory().slice(-5),
+                    timestamp: new Date().toISOString()
                 });
 
+                // Remove typing indicator
                 removeTypingIndicator();
 
-                if (!response.ok) {
-                    let errorMsg = `Server error: ${response.status}`;
-                    try {
-                        const errorData = await response.json();
-                        errorMsg = errorData.error || errorMsg;
-                    } catch (e) {}
-                    throw new Error(errorMsg);
+                if (data.error) {
+                    throw new Error(data.error);
                 }
 
-                const data = await response.json();
                 statusText.textContent = 'Ready';
 
-                // Use enhanced formatting
-                const formattedHtml = formatResponse(data);
+                // Format the full response using enhanced formatter
+                const formattedHtml = formatEnhancedResponse(data);
                 
+                // Create message element with streaming placeholder
                 const messageId = `msg-${Date.now()}-${++messageIdCounter}`;
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message message-assistant';
@@ -2606,11 +2632,14 @@
 
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
+                
+                // Initial content with streaming cursor
                 bubble.innerHTML = `<span class="streaming-text"></span><span class="streaming-cursor"></span>`;
                 
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(bubble);
                 
+                // Add to chat
                 if (emptyState) emptyState.style.display = 'none';
                 chatMessages.appendChild(messageDiv);
                 
@@ -2619,15 +2648,16 @@
                 tempDiv.innerHTML = formattedHtml;
                 const textContent = tempDiv.textContent || formattedHtml;
                 
+                // Stream the content
                 await streamResponse(messageDiv, textContent, 'medium');
                 
-                // After streaming, replace with full HTML and save
+                // After streaming, replace with full HTML
                 const existingFeedback = bubble.querySelector('.feedback-container');
                 if (existingFeedback) {
                     existingFeedback.remove();
                 }
                 
-                // Now set the final HTML content with all formatting
+                // Set final HTML content
                 bubble.innerHTML = formattedHtml;
                 
                 // Re-add feedback
@@ -2675,6 +2705,7 @@
                 feedbackContainer.appendChild(copyBtn);
                 bubble.appendChild(feedbackContainer);
 
+                // Save to history
                 const history = loadChatHistory();
                 history.push({ role: 'assistant', content: formattedHtml, id: messageId });
                 saveChatHistory(history);
@@ -2706,6 +2737,43 @@
             sendBtn.disabled = false;
             messageInput.disabled = false;
             messageInput.focus();
+        }
+
+        // ============================================
+        // ERROR HANDLING
+        // ============================================
+        function displayError(message, details = null) {
+            let html = `
+                <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:14px;color:#991B1B;">
+                    <strong><i class="fas fa-exclamation-circle"></i> Error</strong>
+                    <p style="margin-top:4px;font-size:0.85rem;">${message}</p>
+            `;
+            if (details) {
+                html += `<p style="font-size:0.7rem;color:#B91C1C;margin-top:6px;">${details}</p>`;
+            }
+            html += `
+                    <p style="font-size:0.75rem;color:#6B7280;margin-top:6px;">Please try again.</p>
+                </div>
+            `;
+            return html;
+        }
+
+        function displayRateLimit() {
+            return `
+                <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:14px;color:#92400E;">
+                    <strong><i class="fas fa-hourglass-half"></i> Rate Limit</strong>
+                    <p style="margin-top:4px;font-size:0.85rem;">Too many requests. Please wait a moment.</p>
+                </div>
+            `;
+        }
+
+        function displayNoResults() {
+            return `
+                <div style="background:#FEFCE8;border:1px solid #FDE68A;border-radius:12px;padding:14px;color:#854D0E;">
+                    <strong><i class="fas fa-search"></i> No Results</strong>
+                    <p style="margin-top:4px;font-size:0.85rem;">Try asking about AI tools, platforms, or industry trends.</p>
+                </div>
+            `;
         }
 
         // ============================================
@@ -2830,8 +2898,9 @@
         });
 
         console.log('🚀 Omni Brand Intelligence Bot loaded successfully!');
+        console.log('🧠 Using Grok API for enhanced responses');
         console.log('✨ Features: AI Personality Engine, Enhanced Formatting, Smooth Streaming');
-        console.log('🧠 Roles: AI Prompt Expert | Personality Integration | Professional Layout');
+        console.log('🎭 Personalities: Openness | Conscientiousness | Extraversion | Neuroticism');
     </script>
 </body>
 </html>
