@@ -1,4 +1,4 @@
-// api/data.js - Complete Self-Contained API with Enhanced Features
+// api/data.js - Complete Self-Contained API with Professional Framework
 
 // ============================================
 // IMPORTS - All from lib/
@@ -16,7 +16,14 @@ import { responseFormatter } from '../lib/response/formatter.js';
 import { responseCache } from '../lib/response/cache.js';
 import { advancedSearch } from '../lib/search/hybrid.js';
 import { createGrokInstance } from '../lib/grok/index.js';
-import { buildGrokRequest, buildContextualRequest, getContextualPrompt, getSynthesisPrompt } from '../lib/grok/prompts.js';
+import { 
+  buildGrokRequest, 
+  buildContextualRequest, 
+  buildProfessionalFrameworkRequest,
+  getContextualPrompt, 
+  getSynthesisPrompt,
+  getProfessionalFrameworkPrompt
+} from '../lib/grok/prompts.js';
 import { orchestrator } from '../lib/models/orchestrator.js';
 import { streamingHandler } from '../lib/response/streaming.js';
 import { feedbackSystem } from '../lib/response/feedback.js';
@@ -29,21 +36,32 @@ import { semanticSearch, indexSources } from '../lib/embeddings/index.js';
 // SECTION 1: CONFIGURATION
 // ============================================
 
-const ENHANCED_CONFIG = {
+var ENHANCED_CONFIG = {
   DEFAULTS: {
     PERSONALITY: 'conscientiousness',
-    INTENT: 'contextual',
+    INTENT: 'professionalFramework',
     TEMPERATURE: 0.25,
-    MAX_TOKENS: 2000,
+    MAX_TOKENS: 2500,
     REQUIRE_SYNTHESIS: true,
-    REQUIRE_CONTEXTUAL_ANALYSIS: true
+    REQUIRE_CONTEXTUAL_ANALYSIS: true,
+    FRAMEWORK_MODE: true,
+    STRUCTURED_OUTPUT: true
   },
   FEATURES: {
     EXTRACT_THEMES: true,
     EXTRACT_ENTITIES: true,
+    EXTRACT_SECTIONS: true,
     FORMAT_WITH_BULLETS: true,
     FORMAT_WITH_PARAGRAPHS: true,
-    INDENT_LISTS: true
+    INDENT_LISTS: true,
+    CLICKABLE_SOURCES: true
+  },
+  FRAMEWORK_SECTIONS: {
+    reasoning: 'Grok API Reasoning Block',
+    explanation: 'Explanation',
+    interpretation: 'Interpretation',
+    conclusion: 'Conclusion',
+    suggestions: 'Suggestions'
   }
 };
 
@@ -52,7 +70,7 @@ const ENHANCED_CONFIG = {
 // ============================================
 
 // TechCrunch Sources
-const techCrunchSources = [
+var techCrunchSources = [
   {
     title: "Microsoft is openly competing with OpenAI, Anthropic more than ever",
     author: "Unknown",
@@ -160,7 +178,7 @@ const techCrunchSources = [
 ];
 
 // Static Sources
-const staticSources = [
+var staticSources = [
   {
     title: "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
     author: "Raulji Technologies",
@@ -229,7 +247,7 @@ const staticSources = [
 ];
 
 // VentureBeat Sources
-const ventureBeatSources = [
+var ventureBeatSources = [
   {
     title: "Thinking Machines debuts Inkling Small open source AI model",
     author: "Carl Franzen",
@@ -275,18 +293,19 @@ const ventureBeatSources = [
 // MERGE ALL SOURCES
 // ============================================
 
-const allSources = [...techCrunchSources, ...staticSources, ...ventureBeatSources];
+var allSources = techCrunchSources.concat(staticSources).concat(ventureBeatSources);
 
-const uniqueSources = [];
-const seenUrls = new Set();
-for (const source of allSources) {
+var uniqueSources = [];
+var seenUrls = new Set();
+for (var i = 0; i < allSources.length; i++) {
+  var source = allSources[i];
   if (!seenUrls.has(source.url)) {
     seenUrls.add(source.url);
     uniqueSources.push(source);
   }
 }
 
-const sourceStats = {
+var sourceStats = {
   techcrunch: techCrunchSources.length,
   static: staticSources.length,
   venturebeat: ventureBeatSources.length,
@@ -297,11 +316,6 @@ const sourceStats = {
 // ENHANCED FUNCTIONS - Contextual Analysis & Synthesis
 // ============================================
 
-/**
- * Extract themes from text
- * @param {string} text - Text to analyze
- * @returns {Array} Array of identified themes
- */
 function extractThemesFromText(text) {
   if (!text) return [];
   
@@ -323,8 +337,8 @@ function extractThemesFromText(text) {
   for (var theme in themeKeywords) {
     if (themeKeywords.hasOwnProperty(theme)) {
       var keywords = themeKeywords[theme];
-      for (var i = 0; i < keywords.length; i++) {
-        if (lowerText.indexOf(keywords[i]) !== -1) {
+      for (var j = 0; j < keywords.length; j++) {
+        if (lowerText.indexOf(keywords[j]) !== -1) {
           if (themes.indexOf(theme) === -1) {
             themes.push(theme);
           }
@@ -337,11 +351,6 @@ function extractThemesFromText(text) {
   return themes;
 }
 
-/**
- * Extract entities from text
- * @param {string} text - Text to analyze
- * @returns {Array} Array of identified entities
- */
 function extractEntitiesFromText(text) {
   if (!text) return [];
   
@@ -364,12 +373,6 @@ function extractEntitiesFromText(text) {
   return entities;
 }
 
-/**
- * Synthesize response from multiple sources
- * @param {string} response - Original response
- * @param {Array} sources - Source objects
- * @returns {string} Synthesized response
- */
 function synthesizeResponse(response, sources) {
   if (!response || !sources || sources.length === 0) return response;
   
@@ -415,12 +418,6 @@ function synthesizeResponse(response, sources) {
   return synthesized;
 }
 
-/**
- * Add contextual analysis to response
- * @param {string} response - Original response
- * @param {Array} sources - Source objects
- * @returns {string} Response with contextual analysis
- */
 function addContextualAnalysis(response, sources) {
   if (!response) return response;
   
@@ -461,11 +458,6 @@ function addContextualAnalysis(response, sources) {
   return response + analysis;
 }
 
-/**
- * Format response with proper structure
- * @param {string} text - Text to format
- * @returns {string} Formatted text
- */
 function formatWithProperStructure(text) {
   if (!text) return text;
   
@@ -580,9 +572,17 @@ async function searchSources(query) {
     if (!seenUrlsMerged.has(url)) {
       seenUrlsMerged.add(url);
       mergedResults.push({
-        ...result,
-        searchType: 'semantic',
-        relevance: Math.max(result.relevance || 0, (result.score || 0) * 100 || 0)
+        title: result.title || 'Untitled',
+        source: url,
+        source_name: result.source_name || 'Unknown',
+        author: result.author || 'Unknown',
+        date: result.date || '',
+        chunk: (result.chunk || '').substring(0, 500) + '...',
+        relevance: Math.max(result.relevance || 0, (result.score || 0) * 100 || 0),
+        score: result.score || 0,
+        domain: result.domain || 'unknown',
+        fullContent: result.fullContent || '',
+        searchType: 'semantic'
       });
     }
   }
@@ -699,8 +699,10 @@ async function generateResponse(query, searchResult, req, res) {
   var streamRequested = req && (req.query && req.query.stream === 'true' || req.body && req.body.stream === true);
   
   // Check for enhanced parameters
-  var requireSynthesis = req && req.body ? req.body.requireSynthesis || false : false;
-  var requireContextualAnalysis = req && req.body ? req.body.requireContextualAnalysis || false : false;
+  var requireSynthesis = req && req.body ? req.body.requireSynthesis || ENHANCED_CONFIG.DEFAULTS.REQUIRE_SYNTHESIS : ENHANCED_CONFIG.DEFAULTS.REQUIRE_SYNTHESIS;
+  var requireContextualAnalysis = req && req.body ? req.body.requireContextualAnalysis || ENHANCED_CONFIG.DEFAULTS.REQUIRE_CONTEXTUAL_ANALYSIS : ENHANCED_CONFIG.DEFAULTS.REQUIRE_CONTEXTUAL_ANALYSIS;
+  var frameworkMode = req && req.body ? req.body.frameworkMode || ENHANCED_CONFIG.DEFAULTS.FRAMEWORK_MODE : ENHANCED_CONFIG.DEFAULTS.FRAMEWORK_MODE;
+  var structuredOutput = req && req.body ? req.body.structuredOutput || ENHANCED_CONFIG.DEFAULTS.STRUCTURED_OUTPUT : ENHANCED_CONFIG.DEFAULTS.STRUCTURED_OUTPUT;
   var personality = req && req.body ? req.body.personality || ENHANCED_CONFIG.DEFAULTS.PERSONALITY : ENHANCED_CONFIG.DEFAULTS.PERSONALITY;
   var intent = req && req.body ? req.body.intent || ENHANCED_CONFIG.DEFAULTS.INTENT : ENHANCED_CONFIG.DEFAULTS.INTENT;
   
@@ -738,6 +740,8 @@ async function generateResponse(query, searchResult, req, res) {
     {
       requireSynthesis: requireSynthesis,
       requireContextualAnalysis: requireContextualAnalysis,
+      frameworkMode: frameworkMode,
+      structuredOutput: structuredOutput,
       personality: personality,
       intent: intent
     }
@@ -768,13 +772,26 @@ async function generateResponse(query, searchResult, req, res) {
     confidence
   );
   
-  var formattedOutput = formatProfessionalResponse(
-    query,
-    enhancedResponse || 'Unable to generate a response at this time.',
-    results || [],
-    confidence,
-    qualityScore
-  );
+  // Format the response - use professional framework if enabled
+  var formattedOutput;
+  if (frameworkMode || structuredOutput) {
+    formattedOutput = formatProfessionalFrameworkResponse(
+      query,
+      enhancedResponse || 'Unable to generate a response at this time.',
+      results || [],
+      confidence,
+      qualityScore,
+      modelResult
+    );
+  } else {
+    formattedOutput = formatProfessionalResponse(
+      query,
+      enhancedResponse || 'Unable to generate a response at this time.',
+      results || [],
+      confidence,
+      qualityScore
+    );
+  }
   
   var responseTime = Date.now() - startTime;
   performanceMetrics.trackResponseTime(responseTime);
@@ -798,6 +815,8 @@ async function generateResponse(query, searchResult, req, res) {
       professional_style: true,
       contextual_analysis: requireContextualAnalysis,
       synthesized: requireSynthesis,
+      framework_mode: frameworkMode,
+      structured_output: structuredOutput,
       personality: personality,
       responseTime: responseTime,
       cached: false,
@@ -836,6 +855,251 @@ async function generateResponse(query, searchResult, req, res) {
   
   responseCache.set(query, finalResponse);
   return finalResponse;
+}
+
+// ============================================
+// PROFESSIONAL FRAMEWORK RESPONSE FORMATTER
+// ============================================
+
+function formatProfessionalFrameworkResponse(query, response, sources, confidence, qualityScore, modelResult) {
+  var indent = '  ';
+  var doubleIndent = '    ';
+  var output = [];
+  
+  // Extract sections from the response
+  var sections = extractFrameworkSections(response);
+  
+  // Grok API Reasoning Block
+  if (sections.reasoning) {
+    output.push('## Grok API Reasoning Block');
+    output.push('');
+    var reasoningLines = sections.reasoning.split('\n');
+    for (var i = 0; i < reasoningLines.length; i++) {
+      var line = reasoningLines[i].trim();
+      if (line) {
+        output.push(indent + line);
+      }
+    }
+    output.push('');
+  }
+  
+  // Explanation
+  if (sections.explanation) {
+    output.push('## Explanation');
+    output.push('');
+    var explanationLines = sections.explanation.split('\n');
+    for (var j = 0; j < explanationLines.length; j++) {
+      var line2 = explanationLines[j].trim();
+      if (line2) {
+        // Check if it's a bullet point
+        if (line2.match(/^[•\-*]/)) {
+          output.push(indent + line2);
+        } else {
+          output.push(indent + line2);
+        }
+      }
+    }
+    output.push('');
+  }
+  
+  // Interpretation
+  if (sections.interpretation) {
+    output.push('## Interpretation');
+    output.push('');
+    var interpretationLines = sections.interpretation.split('\n');
+    for (var k = 0; k < interpretationLines.length; k++) {
+      var line3 = interpretationLines[k].trim();
+      if (line3) {
+        if (line3.match(/^[•\-*]/)) {
+          output.push(indent + line3);
+        } else {
+          output.push(indent + line3);
+        }
+      }
+    }
+    output.push('');
+  }
+  
+  // Conclusion
+  if (sections.conclusion) {
+    output.push('## Conclusion');
+    output.push('');
+    var conclusionLines = sections.conclusion.split('\n');
+    for (var l = 0; l < conclusionLines.length; l++) {
+      var line4 = conclusionLines[l].trim();
+      if (line4) {
+        output.push(indent + line4);
+      }
+    }
+    output.push('');
+  }
+  
+  // Suggestions
+  if (sections.suggestions) {
+    output.push('## Suggestions');
+    output.push('');
+    var suggestionsLines = sections.suggestions.split('\n');
+    for (var m = 0; m < suggestionsLines.length; m++) {
+      var line5 = suggestionsLines[m].trim();
+      if (line5) {
+        if (line5.match(/^[•\-*]|^\d+\./)) {
+          output.push(indent + line5);
+        } else {
+          output.push(indent + '• ' + line5);
+        }
+      }
+    }
+    output.push('');
+  }
+  
+  // Add source references with clickable links
+  if (sources && sources.length > 0) {
+    output.push('---');
+    output.push('');
+    output.push('## Source References');
+    output.push('');
+    
+    for (var n = 0; n < Math.min(sources.length, 5); n++) {
+      var s = sources[n];
+      var title = s.title || 'Untitled';
+      var url = s.source || s.url || '#';
+      var sourceName = s.source_name || 'Unknown';
+      var date = s.date || '';
+      var author = s.author || 'Unknown';
+      var relevance = s.relevance || s.score || 0;
+      var pct = Math.min(Math.round((relevance / 20) * 100), 100);
+      
+      if (pct === 0 && s.score) {
+        pct = Math.min(Math.round(s.score * 5), 100);
+      }
+      
+      output.push(indent + (n + 1) + '. **' + title + '**');
+      output.push(doubleIndent + 'Author: ' + author);
+      output.push(doubleIndent + 'Source: [' + sourceName + '](' + url + ')');
+      if (date) {
+        output.push(doubleIndent + 'Date: ' + date);
+      }
+      output.push(doubleIndent + 'Relevance: ' + pct + '%');
+      output.push('');
+    }
+  }
+  
+  // Add confidence and quality score
+  if (confidence || qualityScore) {
+    output.push('---');
+    output.push('');
+    output.push('## Assessment');
+    output.push('');
+    
+    if (confidence) {
+      var score = confidence.score || 0;
+      var confidenceText = '';
+      if (score >= 80) {
+        confidenceText = 'High confidence — the sources are consistent and authoritative.';
+      } else if (score >= 50) {
+        confidenceText = 'Moderate confidence — the data is solid but not overwhelming.';
+      } else {
+        confidenceText = 'Limited confidence — the evidence is suggestive but not conclusive.';
+      }
+      output.push(indent + '**Confidence:** ' + confidenceText);
+    }
+    
+    if (qualityScore) {
+      var level = qualityScore.level || 'Good';
+      var score2 = qualityScore.score || 0;
+      output.push(indent + '**Quality Rating:** ' + level + ' (' + score2 + '%)');
+    }
+    
+    output.push('');
+  }
+  
+  // Add metadata footer
+  var timestamp = new Date().toISOString();
+  output.push('---');
+  output.push('');
+  output.push('*Analysis generated on ' + new Date(timestamp).toLocaleString() + ' using multi-source intelligence.*');
+  output.push('*Sources: ' + (sources ? sources.length : 0) + ' | Matches: ' + (sources ? sources.length : 0) + ' | Model: ' + (modelResult ? modelResult.model || 'grok-enhanced' : 'grok-enhanced') + '*');
+  
+  return output.join('\n');
+}
+
+// ============================================
+// FRAMEWORK SECTION EXTRACTION
+// ============================================
+
+function extractFrameworkSections(text) {
+  var sections = {
+    reasoning: '',
+    explanation: '',
+    interpretation: '',
+    conclusion: '',
+    suggestions: ''
+  };
+  
+  if (!text) return sections;
+  
+  var lines = text.split('\n');
+  var currentSection = null;
+  var currentContent = [];
+  
+  var sectionPatterns = {
+    reasoning: ['reasoning block', 'grok api reasoning', 'logic pathway', 'retrieval context'],
+    explanation: ['explanation', 'overview', 'current leading', 'technology landscape'],
+    interpretation: ['interpretation', 'implies', 'meaning for', 'analysis of'],
+    conclusion: ['conclusion', 'summary statement', 'definitive summary', 'bottom line'],
+    suggestions: ['suggestions', 'actionable steps', 'recommendations', 'next steps']
+  };
+  
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+    
+    var lowerLine = line.toLowerCase();
+    var sectionDetected = false;
+    
+    for (var section in sectionPatterns) {
+      if (sectionPatterns.hasOwnProperty(section)) {
+        var keywords = sectionPatterns[section];
+        for (var j = 0; j < keywords.length; j++) {
+          if (lowerLine.indexOf(keywords[j]) !== -1) {
+            if (currentSection && currentContent.length > 0) {
+              sections[currentSection] = currentContent.join('\n').trim();
+            }
+            currentSection = section;
+            currentContent = [];
+            sectionDetected = true;
+            break;
+          }
+        }
+        if (sectionDetected) break;
+      }
+    }
+    
+    if (!sectionDetected && currentSection) {
+      // Clean the line
+      var cleanLine = line;
+      cleanLine = cleanLine.replace(/^#{1,3}\s*/, '');
+      cleanLine = cleanLine.replace(/^[•\-*]\s*/, '');
+      cleanLine = cleanLine.replace(/^[0-9]+\.\s*/, '');
+      cleanLine = cleanLine.replace(/\*\*([^*]+)\*\*/g, '$1');
+      
+      if (cleanLine.length > 0) {
+        currentContent.push(cleanLine);
+      }
+    }
+  }
+  
+  if (currentSection && currentContent.length > 0) {
+    sections[currentSection] = currentContent.join('\n').trim();
+  }
+  
+  for (var sec in sections) {
+    if (sections.hasOwnProperty(sec)) {
+      sections[sec] = sections[sec].replace(/\s{2,}/g, ' ');
+    }
+  }
+  
+  return sections;
 }
 
 // ============================================
@@ -931,7 +1195,7 @@ function scoreResponseQuality(response, sources, confidence) {
 }
 
 // ============================================
-// PROFESSIONAL LAYOUT FORMATTER
+// PROFESSIONAL LAYOUT FORMATTER (Legacy)
 // ============================================
 
 function formatProfessionalResponse(query, response, sources, confidence, qualityScore) {
@@ -1091,7 +1355,7 @@ export default async function handler(req, res) {
       cache_stats: responseCache.getStats(),
       feedback_stats: feedbackSystem.getStats(),
       models: orchestrator.getAvailableModels(),
-      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'vector_embeddings', 'semantic_search', 'contextual_analysis', 'synthesis', 'theme_extraction', 'entity_extraction']
+      features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'vector_embeddings', 'semantic_search', 'contextual_analysis', 'synthesis', 'theme_extraction', 'entity_extraction', 'framework_mode', 'structured_output']
     });
   }
 
@@ -1219,9 +1483,9 @@ export default async function handler(req, res) {
   // ============================================
   return res.status(200).json({
     name: 'Omni Brand Intelligence Bot API',
-    version: '5.0.0',
+    version: '5.1.0',
     status: 'running',
-    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'performance_tracking', 'vector_embeddings', 'semantic_search', 'contextual_analysis', 'synthesis', 'theme_extraction', 'entity_extraction'],
+    features: ['grok_ai', 'intent_detection', 'confidence_scoring', 'advanced_search', 'professional_formatting', 'embedded_links', 'semantic_enhancement', 'quality_scoring', 'multi_model', 'streaming', 'feedback', 'analytics', 'performance_tracking', 'vector_embeddings', 'semantic_search', 'contextual_analysis', 'synthesis', 'theme_extraction', 'entity_extraction', 'framework_mode', 'structured_output'],
     total_sources: uniqueSources.length,
     source_stats: sourceStats,
     source_names: [...new Set(uniqueSources.map(function(s) { return s.source_name; }))],
@@ -1243,7 +1507,7 @@ export default async function handler(req, res) {
       feedback: 'POST with {queryId, feedback: {rating, comment}}',
       models: 'GET?action=models',
       switch_model: 'POST with {model: "grok"}',
-      enhanced: 'POST with {query, requireSynthesis: true, requireContextualAnalysis: true, personality: "conscientiousness"}'
+      enhanced: 'POST with {query, requireSynthesis: true, requireContextualAnalysis: true, personality: "conscientiousness", frameworkMode: true, structuredOutput: true}'
     },
     last_updated: new Date().toISOString()
   });
