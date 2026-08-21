@@ -687,33 +687,34 @@
         }
 
         /* ============================================
-           ENHANCED RESPONSE STYLES - Professional
+           ENHANCED RESPONSE STYLES - Professional Framework
            ============================================ */
         .enhanced-response {
             width: 100%;
             animation: fadeInUp 0.5s ease-out;
+            padding: 2px 0;
         }
 
         .personality-header {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-            padding: 8px 0;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 10px 0;
             border-bottom: 2px solid var(--border-color);
         }
 
         .personality-badge {
             background: var(--personality-bg);
             color: var(--personality-text);
-            padding: 3px 10px;
+            padding: 4px 14px;
             border-radius: 100px;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: 500;
             border: 1px solid rgba(67, 56, 202, 0.15);
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             transition: all 0.3s ease;
         }
 
@@ -736,11 +737,23 @@
         }
 
         .response-content .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-top: 18px;
+            margin-bottom: 8px;
+            display: block;
+            padding-left: 2px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 4px;
+        }
+
+        .response-content .sub-section-title {
             font-weight: 600;
             font-size: 0.95rem;
             color: var(--text-primary);
-            margin-top: 16px;
-            margin-bottom: 6px;
+            margin-top: 12px;
+            margin-bottom: 4px;
             display: block;
             padding-left: 2px;
         }
@@ -828,8 +841,7 @@
             opacity: 0.8;
         }
 
-        /* Source Link styling */
-        .source-link-inline {
+        .response-content .source-link-inline {
             color: var(--text-link);
             text-decoration: underline;
             font-weight: 500;
@@ -837,27 +849,39 @@
             word-break: break-all;
         }
 
-        .source-link-inline:hover {
+        .response-content .source-link-inline:hover {
             opacity: 0.8;
         }
 
-        .response-header {
-            margin-bottom: 14px;
+        /* Reasoning Block */
+        .reasoning-block {
+            background: var(--bg-accent);
+            border-left: 4px solid var(--text-link);
+            padding: 12px 16px;
+            margin: 8px 0 16px 0;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
         }
 
-        .response-header h2 {
-            font-size: 1rem;
+        .reasoning-block .reasoning-label {
             font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--text-primary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-link);
+            display: block;
+            margin-bottom: 4px;
         }
 
+        /* Summary Box */
         .summary-box {
             background: var(--bg-accent);
             border-radius: 10px;
             padding: 14px 16px;
             border: 1px solid var(--border-color);
             position: relative;
+            margin-bottom: 12px;
         }
 
         .summary-box .summary-label {
@@ -871,10 +895,10 @@
         }
 
         .summary-box p {
-            font-size: 0.88rem;
-            line-height: 1.7;
+            font-size: 0.9rem;
+            line-height: 1.8;
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .confidence-badge {
@@ -908,7 +932,7 @@
         }
 
         .section h3 {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 6px;
@@ -930,8 +954,8 @@
         .analysis-points li {
             padding: 4px 0 4px 20px;
             position: relative;
-            font-size: 0.82rem;
-            line-height: 1.6;
+            font-size: 0.85rem;
+            line-height: 1.7;
             color: var(--text-secondary);
         }
 
@@ -980,8 +1004,8 @@
         }
 
         .finding-card p {
-            font-size: 0.78rem;
-            line-height: 1.5;
+            font-size: 0.8rem;
+            line-height: 1.6;
             color: var(--text-secondary);
         }
 
@@ -1024,10 +1048,10 @@
 
         .rec-item ul li {
             padding: 3px 0 3px 16px;
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
             position: relative;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .rec-item ul li::before {
@@ -1044,7 +1068,7 @@
         }
 
         .response-footer h4 {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-primary);
             margin-bottom: 6px;
@@ -1073,20 +1097,20 @@
 
         .source-item .source-title {
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--text-primary);
         }
 
         .source-item .source-meta {
-            font-size: 0.65rem;
+            font-size: 0.68rem;
             color: var(--text-muted);
-            margin: 2px 0;
+            margin: 3px 0;
         }
 
         .source-item .source-relevance {
             font-size: 0.7rem;
             font-weight: 500;
-            margin: 2px 0;
+            margin: 3px 0;
             color: var(--text-secondary);
         }
 
@@ -1108,12 +1132,12 @@
         .metadata-footer {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            padding: 10px 0 4px 0;
-            font-size: 0.65rem;
+            gap: 12px;
+            padding: 12px 0 6px 0;
+            font-size: 0.68rem;
             color: var(--text-muted);
             border-top: 1px solid var(--border-color);
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .metadata-footer span {
@@ -1483,6 +1507,11 @@
             .response-content ol {
                 padding-left: 20px;
             }
+
+            .reasoning-block {
+                font-size: 0.8rem;
+                padding: 10px 12px;
+            }
         }
 
         @media (max-width: 420px) {
@@ -1573,6 +1602,9 @@
     </style>
 </head>
 <body>
+    <!-- ==========================================
+    BODY CONTENT - Same as before
+    ========================================== -->
     <div class="bot-container">
         <!-- HEADER -->
         <header class="header">
@@ -1742,8 +1774,8 @@
 
                 <!-- QUICK SUGGESTIONS -->
                 <div class="suggestions-container" id="suggestionsContainer">
-                    <button class="suggestion-chip" data-query="What are the top AI tools for 2025?">
-                        <i class="fas fa-rocket"></i> Top AI Tools 2025
+                    <button class="suggestion-chip" data-query="What are the top AI tools for 2026?">
+                        <i class="fas fa-rocket"></i> Top AI Tools 2026
                     </button>
                     <button class="suggestion-chip" data-query="How does generative AI work?">
                         <i class="fas fa-brain"></i> How GenAI Works
@@ -1797,7 +1829,7 @@
 
     <script>
         // ============================================================
-        // GROK API INTEGRATION - Professional Edition v3.0
+        // GROK API INTEGRATION - Professional Framework v4.0
         // ============================================================
 
         // ============================================================
@@ -1814,7 +1846,7 @@
                 PERSONALITY: 'conscientiousness',
                 INTENT: 'contextual',
                 TEMPERATURE: 0.25,
-                MAX_TOKENS: 2000,
+                MAX_TOKENS: 2500,
                 REQUIRE_SYNTHESIS: true,
                 REQUIRE_CONTEXTUAL_ANALYSIS: true
             },
@@ -2017,7 +2049,10 @@
             if (!text) return text;
             // Convert [Text](URL) to clickable link
             return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
-                return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--text-link); text-decoration: underline; word-break: break-all;">' + linkText + '</a>';
+                if (url && url !== '[object Object]' && url !== '#') {
+                    return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--text-link); text-decoration: underline; word-break: break-all;">' + linkText + '</a>';
+                }
+                return linkText;
             });
         }
 
@@ -2170,13 +2205,13 @@
                 var content = fullContent || '';
                 
                 var speeds = {
-                    slow: 15,
-                    medium: 30,
-                    fast: 50
+                    slow: 20,
+                    medium: 40,
+                    fast: 60
                 };
                 
                 var charsPerFrame = speeds[speed] || speeds.medium;
-                var intervalTime = 30;
+                var intervalTime = 25;
                 
                 var displayedContent = '';
                 bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
@@ -2200,7 +2235,7 @@
                     if (chunkSize < remaining) {
                         var lookAhead = content.substring(index + chunkSize - 1, index + chunkSize + 30);
                         var sentenceEnd = lookAhead.search(/[.!?]\s/);
-                        if (sentenceEnd > 0 && sentenceEnd < 20) {
+                        if (sentenceEnd > 0 && sentenceEnd < 25) {
                             chunkSize += sentenceEnd + 1;
                         }
                     }
@@ -2252,7 +2287,8 @@
                             maxTokens: CONFIG.DEFAULTS.MAX_TOKENS,
                             enhanceWithSources: true,
                             includeRecommendations: true,
-                            confidenceScoring: true
+                            confidenceScoring: true,
+                            structuredOutput: true
                         }
                     })
                 });
@@ -2277,7 +2313,8 @@
                     requireSynthesis: CONFIG.DEFAULTS.REQUIRE_SYNTHESIS,
                     requireContextualAnalysis: CONFIG.DEFAULTS.REQUIRE_CONTEXTUAL_ANALYSIS,
                     personality: CONFIG.DEFAULTS.PERSONALITY,
-                    intent: CONFIG.DEFAULTS.INTENT
+                    intent: CONFIG.DEFAULTS.INTENT,
+                    structuredOutput: true
                 })
             });
             
@@ -2289,7 +2326,7 @@
         }
 
         // ============================================================
-        // SECTION 12: ENHANCED RESPONSE FORMATTER
+        // SECTION 12: PROFESSIONAL FRAMEWORK RESPONSE FORMATTER
         // ============================================================
 
         function formatResponse(data) {
@@ -2305,57 +2342,333 @@
                 return generateEmptyResponse();
             }
 
-            // Check if the response is already professionally formatted
-            var hasStructuredSections = responseText.indexOf('Key Findings') !== -1 || 
-                                        responseText.indexOf('References') !== -1 || 
-                                        responseText.indexOf('Analysis') !== -1 ||
-                                        responseText.indexOf('Confidence Assessment') !== -1 ||
-                                        responseText.indexOf('Executive Summary') !== -1 ||
-                                        responseText.indexOf('Recommendations') !== -1;
-
-            if (hasStructuredSections) {
-                // Clean up raw data markers
-                var cleanedText = responseText;
-                cleanedText = cleanedText.replace(/Source \d+:/g, '');
-                cleanedText = cleanedText.replace(/Title:/g, '');
-                cleanedText = cleanedText.replace(/Content:/g, '');
-                cleanedText = cleanedText.replace(/\s{2,}/g, ' ');
-                cleanedText = cleanedText.replace(/[•\-*]\s*$/gm, '');
-                
-                // Convert markdown links to HTML
-                cleanedText = renderMarkdown(cleanedText);
-                
-                // Build the enhanced response
-                var personality = metadata.personality || CONFIG.DEFAULTS.PERSONALITY;
-                var personalityLabel = personality.charAt(0).toUpperCase() + personality.slice(1);
-                
-                var html = `
-                    <div class="enhanced-response">
-                        <div class="personality-header">
-                            <span class="personality-badge">${personalityLabel}: Structured contextual analysis</span>
-                        </div>
-                        <div class="response-content">
-                            ${cleanedText.replace(/\n/g, '<br>')}
-                        </div>
-                `;
-
-                if (sources && sources.length > 0) {
-                    html += generateClickableSources(sources);
-                }
-
-                if (metadata && Object.keys(metadata).length > 0) {
-                    html += generateEnhancedMetadata(metadata);
-                }
-
-                html += '</div>';
-                return html;
-            }
-
-            return buildStructuredResponse(responseText, sources, metadata);
+            // Clean the response text
+            var cleanedText = cleanResponseText(responseText);
+            
+            // Extract structured sections
+            var sections = extractStructuredSections(cleanedText);
+            
+            // Build the professional framework HTML
+            var html = buildProfessionalFramework(sections, sources, metadata);
+            
+            return html;
         }
 
         // ============================================================
-        // SECTION 13: CLICKABLE SOURCE GENERATION
+        // SECTION 13: CLEAN RESPONSE TEXT
+        // ============================================================
+
+        function cleanResponseText(text) {
+            if (!text) return '';
+            
+            var cleaned = text;
+            
+            // Remove raw data markers
+            cleaned = cleaned.replace(/Source \d+:/g, '');
+            cleaned = cleaned.replace(/Title:/g, '');
+            cleaned = cleaned.replace(/Content:/g, '');
+            cleaned = cleaned.replace(/\[object Object\]/g, '');
+            cleaned = cleaned.replace(/undefined/g, '');
+            
+            // Remove "Untitled" markers
+            cleaned = cleaned.replace(/Untitled/g, '');
+            
+            // Clean up multiple spaces and empty lines
+            cleaned = cleaned.replace(/\s{3,}/g, '  ');
+            cleaned = cleaned.replace(/^[•\-*]\s*$/gm, '');
+            
+            // Fix markdown links
+            cleaned = cleaned.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
+                if (linkText && url && url !== '[object Object]' && url !== '#') {
+                    return '[' + linkText + '](' + url + ')';
+                }
+                return linkText || '';
+            });
+            
+            return cleaned;
+        }
+
+        // ============================================================
+        // SECTION 14: EXTRACT STRUCTURED SECTIONS
+        // ============================================================
+
+        function extractStructuredSections(text) {
+            var sections = {
+                reasoning: '',
+                explanation: '',
+                interpretation: '',
+                conclusion: '',
+                suggestions: [],
+                rawContent: text
+            };
+            
+            if (!text) return sections;
+            
+            var lines = text.split('\n');
+            var currentSection = 'none';
+            var currentContent = [];
+            
+            var sectionKeywords = {
+                reasoning: ['grok api reasoning', 'reasoning block', 'logic pathway', 'reasoning pathway', 'context synthesis'],
+                explanation: ['explanation', 'overview', 'current leading', 'technology landscape'],
+                interpretation: ['interpretation', 'implies', 'meaning', 'analysis'],
+                conclusion: ['conclusion', 'summary statement', 'definitive summary', 'bottom line'],
+                suggestions: ['suggestions', 'actionable steps', 'recommendations', 'next steps']
+            };
+            
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (!line) continue;
+                
+                var lowerLine = line.toLowerCase();
+                var sectionDetected = false;
+                
+                // Detect section headers
+                for (var section in sectionKeywords) {
+                    if (sectionKeywords.hasOwnProperty(section)) {
+                        var keywords = sectionKeywords[section];
+                        for (var j = 0; j < keywords.length; j++) {
+                            if (lowerLine.indexOf(keywords[j]) !== -1) {
+                                // Save previous section content
+                                if (currentSection !== 'none' && currentContent.length > 0) {
+                                    sections[currentSection] = currentContent.join('\n').trim();
+                                }
+                                currentSection = section;
+                                currentContent = [];
+                                sectionDetected = true;
+                                break;
+                            }
+                        }
+                        if (sectionDetected) break;
+                    }
+                }
+                
+                if (!sectionDetected && currentSection !== 'none') {
+                    // Clean the line
+                    var cleanLine = line.replace(/^[•\-*]\s*/, '');
+                    cleanLine = cleanLine.replace(/^[0-9]+\.\s*/, '');
+                    if (cleanLine.length > 0) {
+                        currentContent.push(cleanLine);
+                    }
+                } else if (!sectionDetected && currentSection === 'none') {
+                    // If no section detected, add to explanation as default
+                    if (line.length > 10) {
+                        if (!sections.explanation) {
+                            sections.explanation = '';
+                        }
+                        sections.explanation += line + ' ';
+                    }
+                }
+            }
+            
+            // Save the last section
+            if (currentSection !== 'none' && currentContent.length > 0) {
+                sections[currentSection] = currentContent.join('\n').trim();
+            }
+            
+            // If explanation is empty, use first part of text
+            if (!sections.explanation && text.length > 0) {
+                var firstParagraph = text.split('\n\n')[0] || text.substring(0, 500);
+                sections.explanation = firstParagraph;
+            }
+            
+            // Clean up sections
+            for (var sec in sections) {
+                if (sections.hasOwnProperty(sec) && typeof sections[sec] === 'string') {
+                    sections[sec] = sections[sec].replace(/\s{2,}/g, ' ');
+                    sections[sec] = sections[sec].trim();
+                }
+            }
+            
+            return sections;
+        }
+
+        // ============================================================
+        // SECTION 15: BUILD PROFESSIONAL FRAMEWORK
+        // ============================================================
+
+        function buildProfessionalFramework(sections, sources, metadata) {
+            var personality = metadata.personality || CONFIG.DEFAULTS.PERSONALITY;
+            var personalityLabel = personality.charAt(0).toUpperCase() + personality.slice(1);
+            
+            var confidence = calculateConfidence(metadata);
+            var confidenceClass = confidence === 'High' ? 'confidence-high' : 
+                                 confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
+            
+            // Build reasoning block
+            var reasoningHtml = '';
+            if (sections.reasoning) {
+                reasoningHtml = `
+                    <div class="reasoning-block">
+                        <span class="reasoning-label">Grok API Reasoning Block</span>
+                        ${renderMarkdown(sections.reasoning.replace(/\n/g, '<br>'))}
+                    </div>
+                `;
+            }
+            
+            // Build explanation
+            var explanationHtml = '';
+            if (sections.explanation) {
+                var explanationParagraphs = sections.explanation.split('\n\n');
+                var formattedExplanation = explanationParagraphs.map(function(p) {
+                    if (p.trim().match(/^[•\-*]/)) {
+                        var items = p.split('\n').filter(function(item) { return item.trim(); });
+                        var listItems = items.map(function(item) {
+                            var clean = item.replace(/^[•\-*]\s*/, '');
+                            return '<li>' + renderMarkdown(clean) + '</li>';
+                        });
+                        return '<ul>' + listItems.join('') + '</ul>';
+                    }
+                    return '<p>' + renderMarkdown(p) + '</p>';
+                }).join('');
+                
+                explanationHtml = `
+                    <div class="section">
+                        <h3><span class="section-icon">📊</span> Explanation</h3>
+                        ${formattedExplanation}
+                    </div>
+                `;
+            }
+            
+            // Build interpretation
+            var interpretationHtml = '';
+            if (sections.interpretation) {
+                var interpretationParagraphs = sections.interpretation.split('\n\n');
+                var formattedInterpretation = interpretationParagraphs.map(function(p) {
+                    if (p.trim().match(/^[•\-*]/)) {
+                        var items = p.split('\n').filter(function(item) { return item.trim(); });
+                        var listItems = items.map(function(item) {
+                            var clean = item.replace(/^[•\-*]\s*/, '');
+                            return '<li>' + renderMarkdown(clean) + '</li>';
+                        });
+                        return '<ul>' + listItems.join('') + '</ul>';
+                    }
+                    return '<p>' + renderMarkdown(p) + '</p>';
+                }).join('');
+                
+                interpretationHtml = `
+                    <div class="section">
+                        <h3><span class="section-icon">🔍</span> Interpretation</h3>
+                        ${formattedInterpretation}
+                    </div>
+                `;
+            }
+            
+            // Build conclusion
+            var conclusionHtml = '';
+            if (sections.conclusion) {
+                conclusionHtml = `
+                    <div class="section">
+                        <h3><span class="section-icon">✅</span> Conclusion</h3>
+                        <div class="summary-box">
+                            <p>${renderMarkdown(sections.conclusion)}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Build suggestions
+            var suggestionsHtml = '';
+            if (sections.suggestions) {
+                var suggestionItems = sections.suggestions.split('\n').filter(function(item) { return item.trim(); });
+                var formattedSuggestions = suggestionItems.map(function(item) {
+                    var clean = item.replace(/^[•\-*]\s*/, '');
+                    clean = clean.replace(/^[0-9]+\.\s*/, '');
+                    return '<li>' + renderMarkdown(clean) + '</li>';
+                });
+                
+                if (formattedSuggestions.length > 0) {
+                    suggestionsHtml = `
+                        <div class="section">
+                            <h3><span class="section-icon">💡</span> Suggestions</h3>
+                            <ul>
+                                ${formattedSuggestions.join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+            }
+            
+            // If no suggestions, generate default ones
+            if (!suggestionsHtml) {
+                suggestionsHtml = generateDefaultSuggestions(sources);
+            }
+            
+            // Build sources
+            var sourcesHtml = '';
+            if (sources && sources.length > 0) {
+                sourcesHtml = generateClickableSources(sources);
+            }
+            
+            // Build metadata
+            var metadataHtml = generateEnhancedMetadata(metadata);
+            
+            // Assemble the full response
+            var html = `
+                <div class="enhanced-response">
+                    <div class="personality-header">
+                        <span class="personality-badge">${personalityLabel}: Structured contextual analysis</span>
+                    </div>
+                    
+                    <div class="response-content">
+                        ${reasoningHtml}
+                        ${explanationHtml}
+                        ${interpretationHtml}
+                        ${conclusionHtml}
+                        ${suggestionsHtml}
+                    </div>
+                    
+                    ${sourcesHtml}
+                    ${metadataHtml}
+                </div>
+            `;
+            
+            return html;
+        }
+
+        // ============================================================
+        // SECTION 16: GENERATE DEFAULT SUGGESTIONS
+        // ============================================================
+
+        function generateDefaultSuggestions(sources) {
+            var recs = {
+                individual: [
+                    'Start with free tiers to test capabilities before committing',
+                    'Focus on specific use cases that align with your needs',
+                    'Build a continuous learning roadmap for AI adoption',
+                    'Experiment with different AI models to find the best fit'
+                ],
+                commercial: [
+                    'Assess ROI potential before full implementation',
+                    'Consider enterprise-grade solutions for scale and security',
+                    'Develop internal AI expertise through training and hiring',
+                    'Monitor industry trends and competitor strategies'
+                ]
+            };
+            
+            return `
+                <div class="section">
+                    <h3><span class="section-icon">💡</span> Suggestions</h3>
+                    <div class="recommendations">
+                        <div class="rec-item">
+                            <span class="rec-tag">Individual</span>
+                            <ul>
+                                ${recs.individual.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
+                            </ul>
+                        </div>
+                        <div class="rec-item">
+                            <span class="rec-tag">Commercial</span>
+                            <ul>
+                                ${recs.commercial.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // SECTION 17: CLICKABLE SOURCE GENERATION
         // ============================================================
 
         function generateClickableSources(sources) {
@@ -2363,12 +2676,16 @@
             
             // Filter out invalid sources
             var validSources = sources.filter(function(s) {
-                return s.title && s.title !== 'Untitled' && s.source_name && s.source_name !== 'Unknown';
+                var hasValidTitle = s.title && s.title !== 'Untitled' && s.title !== 'Unknown';
+                var hasValidSource = s.source_name && s.source_name !== 'Unknown';
+                return hasValidTitle || hasValidSource;
             });
             
             var displaySources = validSources.length > 0 ? validSources.slice(0, 5) : sources.slice(0, 5);
             
-            if (displaySources.length === 0) return '';
+            if (displaySources.length === 0) {
+                return '';
+            }
             
             var html = `
                 <div class="response-footer">
@@ -2378,7 +2695,7 @@
             
             for (var i = 0; i < displaySources.length; i++) {
                 var s = displaySources[i];
-                var title = s.title || 'Untitled';
+                var title = s.title && s.title !== 'Untitled' ? s.title : (s.source_name || 'Source');
                 var sourceName = s.source_name || 'Unknown';
                 var url = s.source || s.url || '#';
                 var date = s.date || '';
@@ -2386,13 +2703,18 @@
                 var relevance = s.relevance || s.score || 0;
                 var pct = Math.min(Math.round((relevance / 20) * 100), 100);
                 
+                // If relevance is 0, try to calculate from score
+                if (pct === 0 && s.score) {
+                    pct = Math.min(Math.round(s.score * 5), 100);
+                }
+                
                 var color = pct > 60 ? '#22C55E' : pct > 30 ? '#F59E0B' : '#EF4444';
                 
                 html += `
                     <div class="source-item" style="border-left-color: ${color}">
                         <div class="source-title">${title}</div>
                         <div class="source-meta">
-                            ${author} • ${date} • 
+                            ${author !== 'Unknown' ? author + ' • ' : ''}${date ? date + ' • ' : ''}
                             <span class="source-badge">${sourceName}</span>
                         </div>
                         <div class="source-relevance">
@@ -2414,19 +2736,27 @@
         }
 
         // ============================================================
-        // SECTION 14: ENHANCED METADATA
+        // SECTION 18: ENHANCED METADATA
         // ============================================================
 
         function generateEnhancedMetadata(metadata) {
             var timestamp = metadata.last_updated || metadata.generated_at || new Date().toISOString();
             var totalSources = metadata.total_sources || 0;
             var matches = metadata.matches_found || 0;
-            var confidence = metadata.confidence || 'Medium';
             var qualityScore = metadata.quality_score || {};
             var score = qualityScore.score || 0;
             
+            var confidence = 'Medium';
+            if (metadata.confidence) {
+                if (typeof metadata.confidence === 'object') {
+                    confidence = metadata.confidence.level || 'Medium';
+                } else {
+                    confidence = metadata.confidence;
+                }
+            }
+            
             var confidenceClass = confidence === 'High' ? 'confidence-high' : 
-                                   confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
+                                 confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
             
             var html = `
                 <div class="metadata-footer">
@@ -2445,165 +2775,8 @@
         }
 
         // ============================================================
-        // SECTION 15: STRUCTURED RESPONSE BUILDER
+        // SECTION 19: UTILITY FUNCTIONS
         // ============================================================
-
-        function buildStructuredResponse(responseText, sources, metadata) {
-            var sentences = responseText.split(/[.!?]\s+/).filter(function(s) {
-                return s.trim().length > 20 && s.indexOf('Source') === -1 && s.indexOf('Title') === -1 && s.indexOf('Content') === -1;
-            });
-            
-            var summary = sentences.length > 0 ? sentences.slice(0, 2).join('. ') + '.' : 'Analysis based on available sources.';
-            var analysisPoints = sentences.slice(2, Math.min(6, sentences.length));
-            
-            var confidence = calculateConfidence(metadata);
-            var confidenceClass = confidence === 'High' ? 'confidence-high' : 
-                                   confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
-            
-            var personality = metadata.personality || CONFIG.DEFAULTS.PERSONALITY;
-            var personalityLabel = personality.charAt(0).toUpperCase() + personality.slice(1);
-
-            var html = `
-                <div class="enhanced-response">
-                    <div class="personality-header">
-                        <span class="personality-badge">${personalityLabel}: Structured contextual analysis</span>
-                    </div>
-                    
-                    <div class="response-header">
-                        <h2>Intelligence Brief</h2>
-                        <div class="summary-box">
-                            <span class="summary-label">Executive Summary</span>
-                            <p>${summary}</p>
-                            <div class="confidence-badge">
-                                <span class="badge-icon">✓</span>
-                                Confidence: <span class="${confidenceClass}">${confidence}</span> | 
-                                Sources: ${sources.length}+
-                            </div>
-                        </div>
-                    </div>
-            `;
-
-            if (analysisPoints.length > 0) {
-                html += `
-                    <div class="section">
-                        <h3><span class="section-icon">▸</span> Analysis</h3>
-                        <ul class="analysis-points">
-                            ${analysisPoints.map(function(p) { return '<li>' + p.trim() + '</li>'; }).join('')}
-                        </ul>
-                    </div>
-                `;
-            }
-
-            // Key Findings
-            var findings = extractFindings(responseText);
-            if (findings.length > 0) {
-                html += `
-                    <div class="section">
-                        <h3><span class="section-icon">▸</span> Key Findings</h3>
-                        <div class="findings-grid">
-                            ${findings.slice(0, 4).map(function(f) {
-                                return `
-                                    <div class="finding-card">
-                                        <span class="finding-icon">✓</span>
-                                        <p>${f}</p>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Recommendations
-            html += generateRecommendationsSection(sources);
-
-            // Sources
-            if (sources && sources.length > 0) {
-                html += generateClickableSources(sources);
-            }
-
-            // Metadata
-            html += generateEnhancedMetadata(metadata);
-
-            html += '</div>';
-            return html;
-        }
-
-        // ============================================================
-        // SECTION 16: HELPER FUNCTIONS
-        // ============================================================
-
-        function extractFindings(text) {
-            var findings = [];
-            var lines = text.split('\n');
-            
-            for (var i = 0; i < lines.length; i++) {
-                var trimmed = lines[i].trim();
-                if (trimmed.length > 20 && trimmed.length < 200) {
-                    if (trimmed.match(/^[•\-*]\s*|^[0-9]+\.\s*|^[A-Z][a-z]+\s*:/) || 
-                        trimmed.toLowerCase().indexOf('finding') !== -1 ||
-                        trimmed.toLowerCase().indexOf('discovered') !== -1 ||
-                        trimmed.toLowerCase().indexOf('reveals') !== -1) {
-                        var clean = trimmed.replace(/^[•\-*]\s*/, '');
-                        clean = clean.replace(/^[0-9]+\.\s*/, '');
-                        clean = clean.replace(/^[A-Z][a-z]+\s*:\s*/, '');
-                        if (clean.length > 10 && findings.indexOf(clean) === -1) {
-                            findings.push(clean);
-                        }
-                    }
-                }
-            }
-
-            if (findings.length === 0) {
-                var sentences = text.split(/[.!?]\s+/);
-                for (var j = 0; j < sentences.length; j++) {
-                    var trimmed2 = sentences[j].trim();
-                    if (trimmed2.length > 30 && trimmed2.length < 150) {
-                        findings.push(trimmed2);
-                    }
-                    if (findings.length >= 4) break;
-                }
-            }
-
-            return findings;
-        }
-
-        function generateRecommendationsSection(sources) {
-            var recs = {
-                individual: [
-                    'Start with free tiers to test capabilities',
-                    'Focus on specific use cases first',
-                    'Build a continuous learning roadmap',
-                    'Experiment with different AI models'
-                ],
-                commercial: [
-                    'Assess ROI potential before full implementation',
-                    'Consider enterprise-grade solutions',
-                    'Develop internal AI expertise',
-                    'Monitor industry trends and competitors'
-                ]
-            };
-            
-            return `
-                <div class="section">
-                    <h3><span class="section-icon">▸</span> Recommendations</h3>
-                    <div class="recommendations">
-                        <div class="rec-item">
-                            <span class="rec-tag">Individual</span>
-                            <ul>
-                                ${recs.individual.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
-                            </ul>
-                        </div>
-                        <div class="rec-item">
-                            <span class="rec-tag">Commercial</span>
-                            <ul>
-                                ${recs.commercial.map(function(r) { return '<li>' + r + '</li>'; }).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
 
         function calculateConfidence(metadata) {
             var matches = metadata.matches_found || 0;
@@ -2621,7 +2794,7 @@
                         <h3>No Results Found</h3>
                         <p>Try asking about specific AI tools, platforms, or industry trends.</p>
                         <div class="suggestion-hint">
-                            <span>Suggested: "What are the top AI tools for 2025?"</span>
+                            <span>Suggested: "What are the top AI tools for 2026?"</span>
                         </div>
                     </div>
                 </div>
@@ -2629,7 +2802,7 @@
         }
 
         // ============================================================
-        // SECTION 17: ERROR HANDLING
+        // SECTION 20: ERROR HANDLING
         // ============================================================
 
         function displayError(message, details) {
@@ -2667,7 +2840,7 @@
         }
 
         // ============================================================
-        // SECTION 18: SEND MESSAGE
+        // SECTION 21: SEND MESSAGE
         // ============================================================
 
         async function sendMessage() {
@@ -2816,7 +2989,7 @@
         }
 
         // ============================================================
-        // SECTION 19: CLEAR CHAT
+        // SECTION 22: CLEAR CHAT
         // ============================================================
 
         function clearChat() {
@@ -2863,7 +3036,7 @@
         }
 
         // ============================================================
-        // SECTION 20: SUGGESTIONS
+        // SECTION 23: SUGGESTIONS
         // ============================================================
 
         function setupSuggestions() {
@@ -2880,7 +3053,7 @@
         }
 
         // ============================================================
-        // SECTION 21: MOBILE SIDEBAR
+        // SECTION 24: MOBILE SIDEBAR
         // ============================================================
 
         function toggleMobileSidebar() {
@@ -2891,7 +3064,7 @@
         }
 
         // ============================================================
-        // SECTION 22: EVENT LISTENERS & INITIALIZATION
+        // SECTION 25: EVENT LISTENERS & INITIALIZATION
         // ============================================================
 
         document.addEventListener('keydown', function(e) {
@@ -2939,8 +3112,8 @@
         });
 
         console.log('Omni Brand Intelligence Bot initialized successfully');
-        console.log('Integration: Grok API with personality-driven intelligence');
-        console.log('Version: 3.0.0 - Enhanced Contextual Analysis & Clickable Sources');
+        console.log('Integration: Grok API with Professional Framework');
+        console.log('Version: 4.0.0 - Professional Publishing Framework');
     </script>
 </body>
 </html>
