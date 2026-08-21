@@ -519,7 +519,7 @@
         }
 
         /* ============================================
-           MESSAGES - Enhanced with animations
+           MESSAGES
            ============================================ */
         .message {
             display: flex;
@@ -564,11 +564,6 @@
 
         .message-avatar:hover {
             transform: scale(1.1);
-        }
-
-        .message-avatar svg {
-            width: 15px;
-            height: 15px;
         }
 
         .message-user .message-avatar {
@@ -687,104 +682,125 @@
         }
 
         /* ============================================
-           ENHANCED RESPONSE STYLES - Professional
+           ENHANCED RESPONSE STYLES - Markdown Style
            ============================================ */
         .enhanced-response {
             width: 100%;
             animation: fadeInUp 0.5s ease-out;
         }
 
-        .personality-header {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+        .response-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
             margin-bottom: 12px;
-            padding: 8px 0;
             border-bottom: 2px solid var(--border-color);
-        }
-
-        .personality-badge {
-            background: var(--personality-bg);
-            color: var(--personality-text);
-            padding: 3px 10px;
-            border-radius: 100px;
-            font-size: 0.65rem;
-            font-weight: 500;
-            border: 1px solid rgba(67, 56, 202, 0.15);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .personality-badge:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+            padding-bottom: 8px;
         }
 
         .response-content {
-            white-space: pre-wrap;
-            word-wrap: break-word;
             line-height: 1.8;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             color: var(--text-primary);
+        }
+
+        .response-content .section-header {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-top: 14px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .response-content .subsection-header {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: var(--text-primary);
+            margin-top: 10px;
+            margin-bottom: 4px;
+            display: block;
         }
 
         .response-content p {
-            margin-bottom: 10px;
-            padding-left: 2px;
-        }
-
-        .response-content .section-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--text-primary);
-            margin-top: 18px;
             margin-bottom: 8px;
-            display: block;
-            padding-left: 2px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 4px;
         }
 
-        .response-content .sub-section-title {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            margin-top: 12px;
-            margin-bottom: 4px;
-            display: block;
-            padding-left: 2px;
+        .response-content ul {
+            padding-left: 24px;
+            margin: 6px 0 10px 0;
         }
 
-        .response-content ul, 
+        .response-content ul li {
+            list-style-type: disc;
+            margin-bottom: 3px;
+            line-height: 1.7;
+        }
+
         .response-content ol {
             padding-left: 28px;
             margin: 6px 0 10px 0;
         }
 
-        .response-content ul li,
-        .response-content ol li {
-            margin-bottom: 3px;
-            line-height: 1.7;
-        }
-
-        .response-content ul li {
-            list-style-type: disc;
-        }
-
         .response-content ol li {
             list-style-type: decimal;
+            margin-bottom: 3px;
+            line-height: 1.7;
         }
 
         .response-content a {
             color: var(--text-link);
             text-decoration: underline;
             word-break: break-all;
+            font-weight: 500;
         }
 
         .response-content a:hover {
             opacity: 0.8;
+        }
+
+        .response-content .inline-code {
+            background: var(--badge-bg);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+
+        .response-content .blockquote {
+            border-left: 4px solid var(--text-link);
+            padding: 8px 16px;
+            margin: 8px 0;
+            background: var(--bg-accent);
+            border-radius: 4px;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .response-content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 14px 0;
+        }
+
+        .response-content .grok-trace {
+            background: var(--bg-accent);
+            border-left: 4px solid var(--text-link);
+            padding: 10px 14px;
+            margin: 8px 0 14px 0;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .response-content .grok-trace .trace-label {
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-link);
+            display: block;
+            margin-bottom: 4px;
         }
 
         .summary-box {
@@ -1403,8 +1419,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .response-header h2 {
-                font-size: 0.9rem;
+            .response-title {
+                font-size: 1rem;
             }
 
             .summary-box p {
@@ -1733,7 +1749,7 @@
 
     <script>
         // ============================================================
-        // GROK API INTEGRATION - Professional Framework v4.0
+        // GROK API INTEGRATION - Professional Framework v5.0
         // ============================================================
 
         // ============================================================
@@ -1742,7 +1758,6 @@
 
         var CONFIG = {
             API: {
-                // Using /api/data as the main endpoint (GROQ_API_KEY is used server-side)
                 API_URL: '/api/data',
                 TIMEOUT_MS: 30000
             },
@@ -1953,13 +1968,25 @@
 
         function renderMarkdown(text) {
             if (!text) return text;
+            
             // Convert [Text](URL) to clickable link
-            return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
-                if (url && url !== '[object Object]' && url !== '#') {
+            var result = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
+                if (url && url !== '[object Object]' && url !== '#' && url.trim().length > 0) {
                     return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--text-link); text-decoration: underline; word-break: break-all;">' + linkText + '</a>';
                 }
                 return linkText;
             });
+            
+            // Convert **bold** to <strong>
+            result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            
+            // Convert *italic* to <em>
+            result = result.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            
+            // Convert `code` to <code>
+            result = result.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            
+            return result;
         }
 
         function addMessageToUI(role, content, id, isStreaming) {
@@ -2170,7 +2197,7 @@
         }
 
         // ============================================================
-        // SECTION 11: API COMMUNICATION - Using /api/data
+        // SECTION 11: API COMMUNICATION
         // ============================================================
 
         async function callAPI(query, context) {
@@ -2205,7 +2232,16 @@
                     throw new Error('API Error: ' + response.status + ' - ' + errorText);
                 }
 
-                return await response.json();
+                var data = await response.json();
+                
+                // Ensure sources are properly formatted
+                if (data.sources) {
+                    data.sources = data.sources.filter(function(s) {
+                        return s && (s.title || s.source_name);
+                    });
+                }
+                
+                return data;
             } catch (error) {
                 console.warn('API error:', error);
                 throw error;
@@ -2213,7 +2249,7 @@
         }
 
         // ============================================================
-        // SECTION 12: RESPONSE FORMATTING
+        // SECTION 12: ENHANCED RESPONSE FORMATTING
         // ============================================================
 
         function formatResponse(data) {
@@ -2232,30 +2268,190 @@
             // Clean up the response text
             var cleanedText = cleanResponseText(responseText);
             
-            // Convert markdown links to HTML
-            cleanedText = renderMarkdown(cleanedText);
+            // Process the content to extract sections
+            var processedContent = processResponseContent(cleanedText);
+            
+            // Render markdown
+            var renderedContent = renderMarkdown(processedContent);
             
             // Build the HTML response
+            var html = buildResponseHTML(renderedContent, sources, metadata);
+            
+            return html;
+        }
+
+        function cleanResponseText(text) {
+            if (!text) return '';
+            
+            var cleaned = text;
+            
+            // Remove raw data markers
+            cleaned = cleaned.replace(/Source \d+:/g, '');
+            cleaned = cleaned.replace(/Title:/g, '');
+            cleaned = cleaned.replace(/Content:/g, '');
+            cleaned = cleaned.replace(/\[object Object\]/g, '');
+            cleaned = cleaned.replace(/undefined/g, '');
+            cleaned = cleaned.replace(/\s{3,}/g, '  ');
+            cleaned = cleaned.replace(/^[•\-*]\s*$/gm, '');
+            
+            // Fix markdown links with empty URLs
+            cleaned = cleaned.replace(/\[([^\]]+)\]\(\)/g, '$1');
+            cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]*\)/g, function(match, text) {
+                if (match.indexOf('()') > -1 || match.indexOf('( )') > -1) {
+                    return text;
+                }
+                return match;
+            });
+            
+            return cleaned;
+        }
+
+        function processResponseContent(text) {
+            if (!text) return text;
+            
+            // Try to identify and structure the content
+            var lines = text.split('\n');
+            var processed = [];
+            var inList = false;
+            var listItems = [];
+            var inCodeBlock = false;
+            var codeLines = [];
+            
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                
+                // Handle code blocks
+                if (line.startsWith('```')) {
+                    if (!inCodeBlock) {
+                        inCodeBlock = true;
+                        codeLines = [];
+                        continue;
+                    } else {
+                        inCodeBlock = false;
+                        processed.push('<pre><code>' + codeLines.join('\n') + '</code></pre>');
+                        continue;
+                    }
+                }
+                
+                if (inCodeBlock) {
+                    codeLines.push(line);
+                    continue;
+                }
+                
+                // Handle empty lines
+                if (!line) {
+                    if (inList && listItems.length > 0) {
+                        processed.push('<ul>' + listItems.join('') + '</ul>');
+                        listItems = [];
+                        inList = false;
+                    }
+                    processed.push('');
+                    continue;
+                }
+                
+                // Handle bullet points
+                if (line.match(/^[•\-*]\s/)) {
+                    var item = line.replace(/^[•\-*]\s/, '');
+                    listItems.push('<li>' + item + '</li>');
+                    inList = true;
+                    continue;
+                }
+                
+                // Handle numbered items
+                if (line.match(/^\d+\.\s/)) {
+                    var numItem = line.replace(/^\d+\.\s/, '');
+                    listItems.push('<li>' + numItem + '</li>');
+                    inList = true;
+                    continue;
+                }
+                
+                // Handle section headers (##)
+                if (line.startsWith('##')) {
+                    if (inList && listItems.length > 0) {
+                        processed.push('<ul>' + listItems.join('') + '</ul>');
+                        listItems = [];
+                        inList = false;
+                    }
+                    processed.push('<div class="section-header">' + line.replace(/^##\s*/, '') + '</div>');
+                    continue;
+                }
+                
+                // Handle sub-section headers (###)
+                if (line.startsWith('###')) {
+                    if (inList && listItems.length > 0) {
+                        processed.push('<ul>' + listItems.join('') + '</ul>');
+                        listItems = [];
+                        inList = false;
+                    }
+                    processed.push('<div class="subsection-header">' + line.replace(/^###\s*/, '') + '</div>');
+                    continue;
+                }
+                
+                // Regular text
+                if (inList && listItems.length > 0) {
+                    processed.push('<ul>' + listItems.join('') + '</ul>');
+                    listItems = [];
+                    inList = false;
+                }
+                processed.push('<p>' + line + '</p>');
+            }
+            
+            // Close any open list
+            if (inList && listItems.length > 0) {
+                processed.push('<ul>' + listItems.join('') + '</ul>');
+            }
+            
+            return processed.join('\n');
+        }
+
+        function buildResponseHTML(content, sources, metadata) {
             var personality = metadata.personality || CONFIG.DEFAULTS.PERSONALITY;
             var personalityLabel = personality.charAt(0).toUpperCase() + personality.slice(1);
             
             var confidence = calculateConfidence(metadata);
             var confidenceClass = confidence === 'High' ? 'confidence-high' : 
                                  confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
+            
+            var title = 'AI Technology Analysis';
+            var query = metadata.query || '';
+            if (query) {
+                title = 'Analysis: ' + query.substring(0, 60) + (query.length > 60 ? '...' : '');
+            }
 
             var html = `
                 <div class="enhanced-response">
                     <div class="personality-header">
                         <span class="personality-badge">${personalityLabel}: Structured contextual analysis</span>
                     </div>
+                    
+                    <div class="response-title">${title}</div>
+                    
                     <div class="response-content">
-                        ${cleanedText.replace(/\n/g, '<br>')}
+                        ${content}
                     </div>
             `;
 
+            // Add Grok API Reasoning Trace if available
+            if (metadata.grok_trace) {
+                html += `
+                    <div class="grok-trace">
+                        <span class="trace-label">Grok API Reasoning Trace</span>
+                        ${metadata.grok_trace}
+                    </div>
+                `;
+            }
+
             // Add sources if available
             if (sources && sources.length > 0) {
-                html += generateClickableSources(sources);
+                var validSources = sources.filter(function(s) {
+                    return s && (s.title || s.source_name) && 
+                           s.title !== 'Untitled' && 
+                           s.source_name !== 'Unknown';
+                });
+                
+                if (validSources.length > 0) {
+                    html += generateClickableSources(validSources);
+                }
             }
 
             // Add metadata
@@ -2265,32 +2461,8 @@
             return html;
         }
 
-        function cleanResponseText(text) {
-            if (!text) return '';
-            
-            var cleaned = text;
-            cleaned = cleaned.replace(/Source \d+:/g, '');
-            cleaned = cleaned.replace(/Title:/g, '');
-            cleaned = cleaned.replace(/Content:/g, '');
-            cleaned = cleaned.replace(/\[object Object\]/g, '');
-            cleaned = cleaned.replace(/undefined/g, '');
-            cleaned = cleaned.replace(/Untitled/g, '');
-            cleaned = cleaned.replace(/\s{3,}/g, '  ');
-            cleaned = cleaned.replace(/^[•\-*]\s*$/gm, '');
-            
-            return cleaned;
-        }
-
         function generateClickableSources(sources) {
             if (!sources || sources.length === 0) return '';
-            
-            var validSources = sources.filter(function(s) {
-                return s.title && s.title !== 'Untitled' && s.source_name && s.source_name !== 'Unknown';
-            });
-            
-            var displaySources = validSources.length > 0 ? validSources.slice(0, 5) : sources.slice(0, 5);
-            
-            if (displaySources.length === 0) return '';
             
             var html = `
                 <div class="response-footer">
@@ -2298,8 +2470,8 @@
                     <div class="source-grid">
             `;
             
-            for (var i = 0; i < displaySources.length; i++) {
-                var s = displaySources[i];
+            for (var i = 0; i < Math.min(sources.length, 5); i++) {
+                var s = sources[i];
                 var title = s.title && s.title !== 'Untitled' ? s.title : (s.source_name || 'Source');
                 var sourceName = s.source_name || 'Unknown';
                 var url = s.source || s.url || '#';
@@ -2454,7 +2626,8 @@
 
                 var data = await callAPI(message, {
                     userHistory: loadChatHistory().slice(-5),
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    query: message
                 });
 
                 removeTypingIndicator();
@@ -2703,7 +2876,7 @@
 
         console.log('Omni Brand Intelligence Bot initialized successfully');
         console.log('Integration: /api/data with GROQ_API_KEY');
-        console.log('Version: 4.0.0 - Professional Publishing Framework');
+        console.log('Version: 5.0.0 - Markdown Chat Interface Format');
     </script>
 </body>
 </html>
