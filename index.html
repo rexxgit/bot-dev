@@ -683,7 +683,7 @@
         }
 
         /* ============================================
-           ENHANCED RESPONSE STYLES
+           ENHANCED RESPONSE STYLES - Markdown Rendering
            ============================================ */
         .enhanced-response {
             width: 100%;
@@ -735,23 +735,18 @@
             word-wrap: break-word;
         }
 
-        .response-content .section-header {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--text-primary);
+        .response-content h1, .response-content h2, .response-content h3, 
+        .response-content h4, .response-content h5, .response-content h6 {
+            font-weight: 600;
             margin-top: 14px;
             margin-bottom: 6px;
-            display: block;
+            color: var(--text-primary);
         }
 
-        .response-content .subsection-header {
-            font-weight: 600;
-            font-size: 0.92rem;
-            color: var(--text-primary);
-            margin-top: 10px;
-            margin-bottom: 4px;
-            display: block;
-        }
+        .response-content h1 { font-size: 1.4rem; }
+        .response-content h2 { font-size: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
+        .response-content h3 { font-size: 1.05rem; }
+        .response-content h4 { font-size: 0.95rem; }
 
         .response-content p {
             margin-bottom: 8px;
@@ -780,6 +775,22 @@
             line-height: 1.7;
         }
 
+        .response-content blockquote {
+            border-left: 4px solid var(--text-link);
+            padding: 8px 16px;
+            margin: 8px 0;
+            background: var(--bg-accent);
+            border-radius: 4px;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .response-content hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 14px 0;
+        }
+
         .response-content a {
             color: var(--text-link);
             text-decoration: underline;
@@ -799,111 +810,12 @@
             font-size: 0.85em;
         }
 
-        .response-content .blockquote {
-            border-left: 4px solid var(--text-link);
-            padding: 8px 16px;
-            margin: 8px 0;
-            background: var(--bg-accent);
-            border-radius: 4px;
+        .response-content strong {
+            font-weight: 700;
+        }
+
+        .response-content em {
             font-style: italic;
-            color: var(--text-secondary);
-        }
-
-        .response-content hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 14px 0;
-        }
-
-        .response-content .grok-trace {
-            background: var(--bg-accent);
-            border-left: 4px solid var(--text-link);
-            padding: 10px 14px;
-            margin: 8px 0 14px 0;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        .response-content .grok-trace .trace-label {
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--text-link);
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .summary-box {
-            background: var(--bg-accent);
-            border-radius: 10px;
-            padding: 14px 16px;
-            border: 1px solid var(--border-color);
-            position: relative;
-            margin-bottom: 12px;
-        }
-
-        .summary-box .summary-label {
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            margin-bottom: 3px;
-            display: block;
-        }
-
-        .summary-box p {
-            font-size: 0.9rem;
-            line-height: 1.8;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-
-        .confidence-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            background: var(--bg-card);
-            padding: 3px 10px;
-            border-radius: 100px;
-            border: 1px solid var(--border-color);
-        }
-
-        .confidence-badge .badge-icon {
-            color: #22C55E;
-        }
-
-        .confidence-high { color: var(--confidence-high); }
-        .confidence-medium { color: var(--confidence-medium); }
-        .confidence-low { color: var(--confidence-low); }
-
-        .section {
-            margin: 12px 0;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .section:last-child {
-            border-bottom: none;
-        }
-
-        .section h3 {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .section h3 .section-icon {
-            opacity: 0.7;
-            font-size: 0.85rem;
         }
 
         .response-footer {
@@ -1332,10 +1244,6 @@
                 font-size: 1rem;
             }
 
-            .summary-box p {
-                font-size: 0.82rem;
-            }
-
             .response-content {
                 font-size: 0.82rem;
             }
@@ -1434,8 +1342,9 @@
     </style>
 </head>
 <body>
+    <!-- Rest of body content... -->
+    <!-- (Same as previous version - keeping the body simple) -->
     <div class="bot-container">
-        <!-- HEADER -->
         <header class="header">
             <div class="logo-area">
                 <div class="robot-icon" aria-label="Omni Brand Intelligence Bot logo">
@@ -1485,7 +1394,6 @@
         </header>
 
         <div class="flex-main">
-            <!-- DESKTOP SIDEBAR -->
             <aside class="sidebar">
                 <div class="sidebar-section">
                     <div class="ai-accent">
@@ -1497,7 +1405,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="sidebar-section">
                     <div class="status-box">
                         <div class="status-item">
@@ -1515,7 +1422,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="sidebar-section">
                     <span class="sidebar-section-title">Process</span>
                     <div class="how-it-works">
@@ -1529,7 +1435,6 @@
                 </div>
             </aside>
 
-            <!-- MOBILE SIDEBAR -->
             <div class="sidebar-mobile-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
             <div class="sidebar-mobile" id="sidebarMobile">
                 <button class="close-sidebar" onclick="toggleMobileSidebar()"><i class="fas fa-times"></i></button>
@@ -1569,7 +1474,6 @@
                 </div>
             </div>
 
-            <!-- CHAT AREA -->
             <main class="chat-area">
                 <div class="chat-messages" id="chat-messages">
                     <div class="empty-state" id="empty-state">
@@ -1601,7 +1505,6 @@
                     </div>
                 </div>
 
-                <!-- QUICK SUGGESTIONS -->
                 <div class="suggestions-container" id="suggestionsContainer">
                     <button class="suggestion-chip" data-query="What are the top AI tools for 2026?">
                         <i class="fas fa-rocket"></i> Top AI Tools 2026
@@ -1658,7 +1561,7 @@
 
     <script>
         // ============================================================
-        // GROK API INTEGRATION - Professional Framework v5.0
+        // GROK API INTEGRATION - Professional Framework v6.0
         // ============================================================
 
         // ============================================================
@@ -1872,31 +1775,99 @@
         }
 
         // ============================================================
-        // SECTION 8: MESSAGE RENDERING
+        // SECTION 8: MARKDOWN RENDERER - CORE FIX
         // ============================================================
 
-        function renderMarkdown(text) {
-            if (!text) return text;
-            
-            // Convert [Text](URL) to clickable link
-            var result = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
+        /**
+         * Parse markdown text to HTML
+         * This is the core fix - properly renders markdown from the API response
+         */
+        function parseMarkdown(text) {
+            if (!text) return '';
+
+            var result = text;
+
+            // 1. Convert markdown links: [Text](URL) -> <a href="URL">Text</a>
+            result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
                 if (url && url !== '[object Object]' && url !== '#' && url.trim().length > 0) {
                     return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--text-link); text-decoration: underline; word-break: break-all;">' + linkText + '</a>';
                 }
                 return linkText;
             });
-            
-            // Convert **bold** to <strong>
+
+            // 2. Convert headers: ## Header -> <h2>Header</h2>
+            result = result.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
+            result = result.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
+            result = result.replace(/^####\s+(.+)$/gm, '<h4>$1</h4>');
+
+            // 3. Convert horizontal rules: --- -> <hr>
+            result = result.replace(/^---$/gm, '<hr>');
+
+            // 4. Convert bold: **text** -> <strong>text</strong>
             result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-            
-            // Convert *italic* to <em>
+
+            // 5. Convert italic: *text* -> <em>text</em>
             result = result.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-            
-            // Convert `code` to <code>
+
+            // 6. Convert inline code: `text` -> <code>text</code>
             result = result.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
-            
+
+            // 7. Convert blockquotes: > text -> <blockquote>text</blockquote>
+            result = result.replace(/^>\s+(.+)$/gm, '<blockquote>$1</blockquote>');
+
+            // 8. Convert bullet lists: - item or * item -> <ul><li>item</li></ul>
+            var bulletListRegex = /^[•\-*]\s+(.+)$/gm;
+            var bulletMatches = result.match(bulletListRegex);
+            if (bulletMatches) {
+                // Handle bullet lists - simple approach
+                var bulletItems = bulletMatches.map(function(item) {
+                    return '<li>' + item.replace(/^[•\-*]\s+/, '') + '</li>';
+                });
+                result = result.replace(/(?:^[•\-*]\s+.+$\n?)+/gm, function(match) {
+                    var items = match.split('\n').filter(function(line) { return line.trim(); });
+                    var listItems = items.map(function(item) {
+                        return '<li>' + item.replace(/^[•\-*]\s+/, '') + '</li>';
+                    });
+                    return '<ul>' + listItems.join('') + '</ul>';
+                });
+            }
+
+            // 9. Convert numbered lists: 1. item -> <ol><li>item</li></ol>
+            var numberedListRegex = /^\d+\.\s+(.+)$/gm;
+            var numberedMatches = result.match(numberedListRegex);
+            if (numberedMatches) {
+                result = result.replace(/(?:^\d+\.\s+.+$\n?)+/gm, function(match) {
+                    var items = match.split('\n').filter(function(line) { return line.trim(); });
+                    var listItems = items.map(function(item) {
+                        return '<li>' + item.replace(/^\d+\.\s+/, '') + '</li>';
+                    });
+                    return '<ol>' + listItems.join('') + '</ol>';
+                });
+            }
+
+            // 10. Convert plain text to paragraphs
+            // Split by double newlines for paragraphs
+            var paragraphs = result.split(/\n\s*\n/);
+            var processedParagraphs = [];
+            for (var i = 0; i < paragraphs.length; i++) {
+                var para = paragraphs[i].trim();
+                if (!para) continue;
+                // Skip if already wrapped in HTML tags
+                if (para.match(/^<[a-z]/)) {
+                    processedParagraphs.push(para);
+                } else {
+                    // Wrap in paragraph tags
+                    processedParagraphs.push('<p>' + para.replace(/\n/g, ' ') + '</p>');
+                }
+            }
+            result = processedParagraphs.join('');
+
             return result;
         }
+
+        // ============================================================
+        // SECTION 9: MESSAGE RENDERING
+        // ============================================================
 
         function addMessageToUI(role, content, id, isStreaming) {
             var container = DOM.chatMessages;
@@ -1918,7 +1889,7 @@
 
             if (role === 'assistant' && !isStreaming) {
                 // Parse markdown and display
-                var parsedContent = parseResponseContent(content);
+                var parsedContent = parseMarkdown(content);
                 bubble.innerHTML = parsedContent;
                 
                 if (content && !content.includes('error') && !content.includes('No Results')) {
@@ -1941,109 +1912,6 @@
             }
 
             return messageId;
-        }
-
-        function parseResponseContent(content) {
-            if (!content) return '';
-            
-            // First, render markdown
-            var rendered = renderMarkdown(content);
-            
-            // Then apply paragraph formatting
-            var lines = rendered.split('\n');
-            var result = [];
-            var inList = false;
-            var listItems = [];
-            
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i].trim();
-                
-                // Handle empty lines
-                if (!line) {
-                    if (inList && listItems.length > 0) {
-                        result.push('<ul>' + listItems.join('') + '</ul>');
-                        listItems = [];
-                        inList = false;
-                    }
-                    result.push('');
-                    continue;
-                }
-                
-                // Handle HTML already rendered (links, bold, etc.)
-                if (line.match(/^<[a-z]/)) {
-                    if (inList && listItems.length > 0) {
-                        result.push('<ul>' + listItems.join('') + '</ul>');
-                        listItems = [];
-                        inList = false;
-                    }
-                    result.push(line);
-                    continue;
-                }
-                
-                // Handle bullet points
-                if (line.match(/^[•\-*]\s/)) {
-                    var item = line.replace(/^[•\-*]\s/, '');
-                    listItems.push('<li>' + item + '</li>');
-                    inList = true;
-                    continue;
-                }
-                
-                // Handle numbered items
-                if (line.match(/^\d+\.\s/)) {
-                    var numItem = line.replace(/^\d+\.\s/, '');
-                    listItems.push('<li>' + numItem + '</li>');
-                    inList = true;
-                    continue;
-                }
-                
-                // Handle section headers (##)
-                if (line.match(/^##\s/)) {
-                    if (inList && listItems.length > 0) {
-                        result.push('<ul>' + listItems.join('') + '</ul>');
-                        listItems = [];
-                        inList = false;
-                    }
-                    result.push('<div class="section-header">' + line.replace(/^##\s*/, '') + '</div>');
-                    continue;
-                }
-                
-                // Handle sub-section headers (###)
-                if (line.match(/^###\s/)) {
-                    if (inList && listItems.length > 0) {
-                        result.push('<ul>' + listItems.join('') + '</ul>');
-                        listItems = [];
-                        inList = false;
-                    }
-                    result.push('<div class="subsection-header">' + line.replace(/^###\s*/, '') + '</div>');
-                    continue;
-                }
-                
-                // Handle horizontal rules
-                if (line.match(/^---$/)) {
-                    if (inList && listItems.length > 0) {
-                        result.push('<ul>' + listItems.join('') + '</ul>');
-                        listItems = [];
-                        inList = false;
-                    }
-                    result.push('<hr>');
-                    continue;
-                }
-                
-                // Regular text
-                if (inList && listItems.length > 0) {
-                    result.push('<ul>' + listItems.join('') + '</ul>');
-                    listItems = [];
-                    inList = false;
-                }
-                result.push('<p>' + line + '</p>');
-            }
-            
-            // Close any open list
-            if (inList && listItems.length > 0) {
-                result.push('<ul>' + listItems.join('') + '</ul>');
-            }
-            
-            return result.join('\n');
         }
 
         function addFeedbackControls(bubble, messageId) {
@@ -2100,7 +1968,7 @@
         }
 
         // ============================================================
-        // SECTION 9: TYPING INDICATOR
+        // SECTION 10: TYPING INDICATOR
         // ============================================================
 
         var typingIndicatorElement = null;
@@ -2133,7 +2001,7 @@
         }
 
         // ============================================================
-        // SECTION 10: STREAMING RESPONSE
+        // SECTION 11: STREAMING RESPONSE
         // ============================================================
 
         function streamResponse(messageElement, fullContent, speed) {
@@ -2207,7 +2075,7 @@
         }
 
         // ============================================================
-        // SECTION 11: API COMMUNICATION
+        // SECTION 12: API COMMUNICATION
         // ============================================================
 
         async function callAPI(query, context) {
@@ -2244,13 +2112,13 @@
 
                 var data = await response.json();
                 
-                // Ensure sources are properly formatted
+                // Clean up sources - filter out invalid ones
                 if (data.sources) {
                     data.sources = data.sources.filter(function(s) {
                         return s && (s.title || s.source_name) && 
                                s.title !== 'Untitled' && 
                                s.source_name !== 'Unknown' &&
-                               s.source !== '#';
+                               s.source && s.source !== '#';
                     });
                 }
                 
@@ -2262,7 +2130,7 @@
         }
 
         // ============================================================
-        // SECTION 12: RESPONSE FORMATTING
+        // SECTION 13: RESPONSE FORMATTING
         // ============================================================
 
         function formatResponse(data) {
@@ -2278,10 +2146,10 @@
                 return generateEmptyResponse();
             }
 
-            // Clean up the response text
+            // Clean up the response text - remove raw data markers
             var cleanedText = cleanResponseText(responseText);
             
-            // Build the HTML response
+            // Build the HTML response using markdown parser
             var html = buildResponseHTML(cleanedText, sources, metadata);
             
             return html;
@@ -2299,7 +2167,6 @@
             cleaned = cleaned.replace(/\[object Object\]/g, '');
             cleaned = cleaned.replace(/undefined/g, '');
             cleaned = cleaned.replace(/\s{3,}/g, '  ');
-            cleaned = cleaned.replace(/^[•\-*]\s*$/gm, '');
             
             // Remove empty markdown links
             cleaned = cleaned.replace(/\[([^\]]+)\]\(\)/g, '$1');
@@ -2326,7 +2193,7 @@
                     <div class="response-title">${title}</div>
                     
                     <div class="response-content">
-                        ${parseResponseContent(content)}
+                        ${parseMarkdown(content)}
                     </div>
             `;
 
@@ -2450,7 +2317,7 @@
         }
 
         // ============================================================
-        // SECTION 13: ERROR HANDLING
+        // SECTION 14: ERROR HANDLING
         // ============================================================
 
         function displayError(message, details) {
@@ -2488,7 +2355,7 @@
         }
 
         // ============================================================
-        // SECTION 14: SEND MESSAGE
+        // SECTION 15: SEND MESSAGE
         // ============================================================
 
         async function sendMessage() {
@@ -2638,7 +2505,7 @@
         }
 
         // ============================================================
-        // SECTION 15: CLEAR CHAT
+        // SECTION 16: CLEAR CHAT
         // ============================================================
 
         function clearChat() {
@@ -2685,7 +2552,7 @@
         }
 
         // ============================================================
-        // SECTION 16: SUGGESTIONS
+        // SECTION 17: SUGGESTIONS
         // ============================================================
 
         function setupSuggestions() {
@@ -2702,7 +2569,7 @@
         }
 
         // ============================================================
-        // SECTION 17: MOBILE SIDEBAR
+        // SECTION 18: MOBILE SIDEBAR
         // ============================================================
 
         function toggleMobileSidebar() {
@@ -2713,7 +2580,7 @@
         }
 
         // ============================================================
-        // SECTION 18: EVENT LISTENERS & INITIALIZATION
+        // SECTION 19: EVENT LISTENERS & INITIALIZATION
         // ============================================================
 
         document.addEventListener('keydown', function(e) {
@@ -2762,7 +2629,7 @@
 
         console.log('Omni Brand Intelligence Bot initialized successfully');
         console.log('Integration: /api/data with GROQ_API_KEY');
-        console.log('Version: 5.0.0 - Markdown Chat Interface Format');
+        console.log('Version: 6.0.0 - Proper Markdown Rendering');
     </script>
 </body>
 </html>
