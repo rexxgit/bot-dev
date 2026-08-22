@@ -586,6 +586,7 @@
             position: relative;
             transition: box-shadow 0.3s ease;
             width: 100%;
+            overflow: hidden;
         }
 
         .message-bubble:hover {
@@ -682,11 +683,39 @@
         }
 
         /* ============================================
-           ENHANCED RESPONSE STYLES - Markdown Style
+           ENHANCED RESPONSE STYLES
            ============================================ */
         .enhanced-response {
             width: 100%;
             animation: fadeInUp 0.5s ease-out;
+        }
+
+        .personality-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .personality-badge {
+            background: var(--personality-bg);
+            color: var(--personality-text);
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            border: 1px solid rgba(67, 56, 202, 0.15);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .personality-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
         }
 
         .response-title {
@@ -702,6 +731,8 @@
             line-height: 1.8;
             font-size: 0.9rem;
             color: var(--text-primary);
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         .response-content .section-header {
@@ -724,6 +755,7 @@
 
         .response-content p {
             margin-bottom: 8px;
+            padding-left: 2px;
         }
 
         .response-content ul {
@@ -872,121 +904,6 @@
         .section h3 .section-icon {
             opacity: 0.7;
             font-size: 0.85rem;
-        }
-
-        .analysis-points {
-            list-style: none;
-            padding: 0;
-        }
-
-        .analysis-points li {
-            padding: 4px 0 4px 20px;
-            position: relative;
-            font-size: 0.85rem;
-            line-height: 1.7;
-            color: var(--text-secondary);
-        }
-
-        .analysis-points li::before {
-            content: "▸";
-            position: absolute;
-            left: 2px;
-            color: var(--text-link);
-            font-weight: bold;
-        }
-
-        .findings-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        @media (max-width: 768px) {
-            .findings-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .finding-card {
-            background: var(--bg-card);
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .finding-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .finding-icon {
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            margin-top: 2px;
-            opacity: 0.7;
-            color: var(--text-link);
-        }
-
-        .finding-card p {
-            font-size: 0.8rem;
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
-
-        .recommendations {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .recommendations {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .rec-item {
-            background: var(--bg-card);
-            border-radius: 10px;
-            padding: 12px 14px;
-            border: 1px solid var(--border-color);
-        }
-
-        .rec-tag {
-            display: inline-block;
-            font-size: 0.6rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 2px 10px;
-            border-radius: 100px;
-            background: var(--bg-accent);
-            color: var(--text-link);
-            margin-bottom: 4px;
-        }
-
-        .rec-item ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .rec-item ul li {
-            padding: 3px 0 3px 16px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            position: relative;
-            line-height: 1.6;
-        }
-
-        .rec-item ul li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: var(--text-link);
         }
 
         .response-footer {
@@ -1409,14 +1326,6 @@
             .personality-badge {
                 font-size: 0.6rem;
                 padding: 2px 8px;
-            }
-
-            .findings-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .recommendations {
-                grid-template-columns: 1fr;
             }
 
             .response-title {
@@ -2008,11 +1917,9 @@
             bubble.className = 'message-bubble';
 
             if (role === 'assistant' && !isStreaming) {
-                if (content && content.trim().startsWith('<')) {
-                    bubble.innerHTML = content;
-                } else {
-                    bubble.innerHTML = renderMarkdown(content);
-                }
+                // Parse markdown and display
+                var parsedContent = parseResponseContent(content);
+                bubble.innerHTML = parsedContent;
                 
                 if (content && !content.includes('error') && !content.includes('No Results')) {
                     addFeedbackControls(bubble, messageId);
@@ -2034,6 +1941,109 @@
             }
 
             return messageId;
+        }
+
+        function parseResponseContent(content) {
+            if (!content) return '';
+            
+            // First, render markdown
+            var rendered = renderMarkdown(content);
+            
+            // Then apply paragraph formatting
+            var lines = rendered.split('\n');
+            var result = [];
+            var inList = false;
+            var listItems = [];
+            
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                
+                // Handle empty lines
+                if (!line) {
+                    if (inList && listItems.length > 0) {
+                        result.push('<ul>' + listItems.join('') + '</ul>');
+                        listItems = [];
+                        inList = false;
+                    }
+                    result.push('');
+                    continue;
+                }
+                
+                // Handle HTML already rendered (links, bold, etc.)
+                if (line.match(/^<[a-z]/)) {
+                    if (inList && listItems.length > 0) {
+                        result.push('<ul>' + listItems.join('') + '</ul>');
+                        listItems = [];
+                        inList = false;
+                    }
+                    result.push(line);
+                    continue;
+                }
+                
+                // Handle bullet points
+                if (line.match(/^[•\-*]\s/)) {
+                    var item = line.replace(/^[•\-*]\s/, '');
+                    listItems.push('<li>' + item + '</li>');
+                    inList = true;
+                    continue;
+                }
+                
+                // Handle numbered items
+                if (line.match(/^\d+\.\s/)) {
+                    var numItem = line.replace(/^\d+\.\s/, '');
+                    listItems.push('<li>' + numItem + '</li>');
+                    inList = true;
+                    continue;
+                }
+                
+                // Handle section headers (##)
+                if (line.match(/^##\s/)) {
+                    if (inList && listItems.length > 0) {
+                        result.push('<ul>' + listItems.join('') + '</ul>');
+                        listItems = [];
+                        inList = false;
+                    }
+                    result.push('<div class="section-header">' + line.replace(/^##\s*/, '') + '</div>');
+                    continue;
+                }
+                
+                // Handle sub-section headers (###)
+                if (line.match(/^###\s/)) {
+                    if (inList && listItems.length > 0) {
+                        result.push('<ul>' + listItems.join('') + '</ul>');
+                        listItems = [];
+                        inList = false;
+                    }
+                    result.push('<div class="subsection-header">' + line.replace(/^###\s*/, '') + '</div>');
+                    continue;
+                }
+                
+                // Handle horizontal rules
+                if (line.match(/^---$/)) {
+                    if (inList && listItems.length > 0) {
+                        result.push('<ul>' + listItems.join('') + '</ul>');
+                        listItems = [];
+                        inList = false;
+                    }
+                    result.push('<hr>');
+                    continue;
+                }
+                
+                // Regular text
+                if (inList && listItems.length > 0) {
+                    result.push('<ul>' + listItems.join('') + '</ul>');
+                    listItems = [];
+                    inList = false;
+                }
+                result.push('<p>' + line + '</p>');
+            }
+            
+            // Close any open list
+            if (inList && listItems.length > 0) {
+                result.push('<ul>' + listItems.join('') + '</ul>');
+            }
+            
+            return result.join('\n');
         }
 
         function addFeedbackControls(bubble, messageId) {
@@ -2237,7 +2247,10 @@
                 // Ensure sources are properly formatted
                 if (data.sources) {
                     data.sources = data.sources.filter(function(s) {
-                        return s && (s.title || s.source_name);
+                        return s && (s.title || s.source_name) && 
+                               s.title !== 'Untitled' && 
+                               s.source_name !== 'Unknown' &&
+                               s.source !== '#';
                     });
                 }
                 
@@ -2249,7 +2262,7 @@
         }
 
         // ============================================================
-        // SECTION 12: ENHANCED RESPONSE FORMATTING
+        // SECTION 12: RESPONSE FORMATTING
         // ============================================================
 
         function formatResponse(data) {
@@ -2268,14 +2281,8 @@
             // Clean up the response text
             var cleanedText = cleanResponseText(responseText);
             
-            // Process the content to extract sections
-            var processedContent = processResponseContent(cleanedText);
-            
-            // Render markdown
-            var renderedContent = renderMarkdown(processedContent);
-            
             // Build the HTML response
-            var html = buildResponseHTML(renderedContent, sources, metadata);
+            var html = buildResponseHTML(cleanedText, sources, metadata);
             
             return html;
         }
@@ -2294,114 +2301,10 @@
             cleaned = cleaned.replace(/\s{3,}/g, '  ');
             cleaned = cleaned.replace(/^[•\-*]\s*$/gm, '');
             
-            // Fix markdown links with empty URLs
+            // Remove empty markdown links
             cleaned = cleaned.replace(/\[([^\]]+)\]\(\)/g, '$1');
-            cleaned = cleaned.replace(/\[([^\]]+)\]\([^)]*\)/g, function(match, text) {
-                if (match.indexOf('()') > -1 || match.indexOf('( )') > -1) {
-                    return text;
-                }
-                return match;
-            });
             
             return cleaned;
-        }
-
-        function processResponseContent(text) {
-            if (!text) return text;
-            
-            // Try to identify and structure the content
-            var lines = text.split('\n');
-            var processed = [];
-            var inList = false;
-            var listItems = [];
-            var inCodeBlock = false;
-            var codeLines = [];
-            
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i].trim();
-                
-                // Handle code blocks
-                if (line.startsWith('```')) {
-                    if (!inCodeBlock) {
-                        inCodeBlock = true;
-                        codeLines = [];
-                        continue;
-                    } else {
-                        inCodeBlock = false;
-                        processed.push('<pre><code>' + codeLines.join('\n') + '</code></pre>');
-                        continue;
-                    }
-                }
-                
-                if (inCodeBlock) {
-                    codeLines.push(line);
-                    continue;
-                }
-                
-                // Handle empty lines
-                if (!line) {
-                    if (inList && listItems.length > 0) {
-                        processed.push('<ul>' + listItems.join('') + '</ul>');
-                        listItems = [];
-                        inList = false;
-                    }
-                    processed.push('');
-                    continue;
-                }
-                
-                // Handle bullet points
-                if (line.match(/^[•\-*]\s/)) {
-                    var item = line.replace(/^[•\-*]\s/, '');
-                    listItems.push('<li>' + item + '</li>');
-                    inList = true;
-                    continue;
-                }
-                
-                // Handle numbered items
-                if (line.match(/^\d+\.\s/)) {
-                    var numItem = line.replace(/^\d+\.\s/, '');
-                    listItems.push('<li>' + numItem + '</li>');
-                    inList = true;
-                    continue;
-                }
-                
-                // Handle section headers (##)
-                if (line.startsWith('##')) {
-                    if (inList && listItems.length > 0) {
-                        processed.push('<ul>' + listItems.join('') + '</ul>');
-                        listItems = [];
-                        inList = false;
-                    }
-                    processed.push('<div class="section-header">' + line.replace(/^##\s*/, '') + '</div>');
-                    continue;
-                }
-                
-                // Handle sub-section headers (###)
-                if (line.startsWith('###')) {
-                    if (inList && listItems.length > 0) {
-                        processed.push('<ul>' + listItems.join('') + '</ul>');
-                        listItems = [];
-                        inList = false;
-                    }
-                    processed.push('<div class="subsection-header">' + line.replace(/^###\s*/, '') + '</div>');
-                    continue;
-                }
-                
-                // Regular text
-                if (inList && listItems.length > 0) {
-                    processed.push('<ul>' + listItems.join('') + '</ul>');
-                    listItems = [];
-                    inList = false;
-                }
-                processed.push('<p>' + line + '</p>');
-            }
-            
-            // Close any open list
-            if (inList && listItems.length > 0) {
-                processed.push('<ul>' + listItems.join('') + '</ul>');
-            }
-            
-            return processed.join('\n');
         }
 
         function buildResponseHTML(content, sources, metadata) {
@@ -2413,10 +2316,6 @@
                                  confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
             
             var title = 'AI Technology Analysis';
-            var query = metadata.query || '';
-            if (query) {
-                title = 'Analysis: ' + query.substring(0, 60) + (query.length > 60 ? '...' : '');
-            }
 
             var html = `
                 <div class="enhanced-response">
@@ -2427,31 +2326,13 @@
                     <div class="response-title">${title}</div>
                     
                     <div class="response-content">
-                        ${content}
+                        ${parseResponseContent(content)}
                     </div>
             `;
 
-            // Add Grok API Reasoning Trace if available
-            if (metadata.grok_trace) {
-                html += `
-                    <div class="grok-trace">
-                        <span class="trace-label">Grok API Reasoning Trace</span>
-                        ${metadata.grok_trace}
-                    </div>
-                `;
-            }
-
             // Add sources if available
             if (sources && sources.length > 0) {
-                var validSources = sources.filter(function(s) {
-                    return s && (s.title || s.source_name) && 
-                           s.title !== 'Untitled' && 
-                           s.source_name !== 'Unknown';
-                });
-                
-                if (validSources.length > 0) {
-                    html += generateClickableSources(validSources);
-                }
+                html += generateClickableSources(sources);
             }
 
             // Add metadata
@@ -2470,7 +2351,8 @@
                     <div class="source-grid">
             `;
             
-            for (var i = 0; i < Math.min(sources.length, 5); i++) {
+            var displayed = 0;
+            for (var i = 0; i < sources.length && displayed < 5; i++) {
                 var s = sources[i];
                 var title = s.title && s.title !== 'Untitled' ? s.title : (s.source_name || 'Source');
                 var sourceName = s.source_name || 'Unknown';
@@ -2483,6 +2365,9 @@
                 if (pct === 0 && s.score) {
                     pct = Math.min(Math.round(s.score * 5), 100);
                 }
+                
+                // Skip sources with invalid URLs
+                if (url === '#' || !url) continue;
                 
                 var color = pct > 60 ? '#22C55E' : pct > 30 ? '#F59E0B' : '#EF4444';
                 
@@ -2501,6 +2386,7 @@
                         </a>
                     </div>
                 `;
+                displayed++;
             }
             
             html += `
