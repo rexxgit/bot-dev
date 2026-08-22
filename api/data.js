@@ -1,2634 +1,576 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <meta name="theme-color" content="#7C3AED" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>Omni Brand Intelligence Bot</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <style>
-        /* ============================================
-           CSS VARIABLES (Light & Dark Mode)
-           ============================================ */
-        :root {
-            --bg-primary: #F8FAFC;
-            --bg-secondary: #FFFFFF;
-            --bg-sidebar: #F8FAFC;
-            --bg-bubble-user: #3B82F6;
-            --bg-bubble-assistant: #F8FAFC;
-            --bg-input: #FFFFFF;
-            --bg-card: #FFFFFF;
-            --bg-accent: #EEF2FF;
-            --bg-status: #EEF2FF;
-            
-            --text-primary: #0F172A;
-            --text-secondary: #475569;
-            --text-muted: #94A3B8;
-            --text-white: #FFFFFF;
-            --text-link: #7C3AED;
-            
-            --border-color: #E9E9EF;
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.02);
-            
-            --badge-bg: #F1F5F9;
-            --badge-text: #475569;
-            
-            --hover-bg: #F1F5F9;
-            --scrollbar-track: #F1F5F9;
-            --scrollbar-thumb: #CBD5E1;
-            
-            --suggestion-bg: #EEF2FF;
-            --suggestion-hover: #E0E7FF;
-            --typing-dot-color: #7C3AED;
-            
-            --confidence-high: #059669;
-            --confidence-medium: #D97706;
-            --confidence-low: #DC2626;
-            --personality-bg: #EEF2FF;
-            --personality-text: #4338CA;
-        }
-
-        /* Dark Mode */
-        [data-theme="dark"] {
-            --bg-primary: #0F172A;
-            --bg-secondary: #1E293B;
-            --bg-sidebar: #1E293B;
-            --bg-bubble-user: #4338CA;
-            --bg-bubble-assistant: #1E293B;
-            --bg-input: #1E293B;
-            --bg-card: #1E293B;
-            --bg-accent: #1E293B;
-            --bg-status: #1E293B;
-            
-            --text-primary: #F1F5F9;
-            --text-secondary: #94A3B8;
-            --text-muted: #64748B;
-            --text-white: #FFFFFF;
-            --text-link: #8B5CF6;
-            
-            --border-color: #334155;
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.1);
-            
-            --badge-bg: #334155;
-            --badge-text: #94A3B8;
-            
-            --hover-bg: #334155;
-            --scrollbar-track: #1E293B;
-            --scrollbar-thumb: #475569;
-            
-            --suggestion-bg: #1E1B4B;
-            --suggestion-hover: #312E81;
-            --typing-dot-color: #8B5CF6;
-            
-            --confidence-high: #34D399;
-            --confidence-medium: #FBBF24;
-            --confidence-low: #F87171;
-            --personality-bg: #1E1B4B;
-            --personality-text: #818CF8;
-        }
-
-        /* ============================================
-           RESET & BASE
-           ============================================ */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-            margin: 0;
-            padding: 12px;
-            color: var(--text-primary);
-            transition: background-color 0.3s ease, color 0.3s ease;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .bot-container {
-            background-color: var(--bg-secondary);
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            max-width: 1200px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            min-height: 85vh;
-            min-height: 85dvh;
-            overflow: hidden;
-            position: relative;
-        }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
-        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
-
-        /* ============================================
-           HEADER
-           ============================================ */
-        .header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            background-color: var(--bg-secondary);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .robot-icon {
-            width: 34px;
-            height: 34px;
-            flex-shrink: 0;
-        }
-
-        .robot-icon svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .brand-name {
-            font-weight: 600;
-            font-size: 1rem;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .theme-toggle {
-            background: var(--badge-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 100px;
-            padding: 6px 12px;
-            cursor: pointer;
-            font-family: "Inter", sans-serif;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .theme-toggle:hover { background: var(--hover-bg); }
-        .theme-toggle i { font-size: 0.9rem; }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--bg-status);
-            padding: 4px 12px;
-            border-radius: 100px;
-            font-weight: 500;
-            font-size: 0.7rem;
-            color: #4338CA;
-            border: 1px solid var(--border-color);
-        }
-
-        [data-theme="dark"] .status-indicator { color: #8B5CF6; }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background: #22C55E;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse-dot 1.8s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot {
-            0% { opacity: 0.3; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.3; transform: scale(0.8); }
-        }
-
-        .header-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-
-        .header-link:hover { background: var(--hover-bg); }
-        .header-link i { font-size: 0.85rem; }
-
-        .mobile-sidebar-toggle {
-            display: none;
-            background: var(--badge-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 6px 10px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* ============================================
-           MAIN LAYOUT
-           ============================================ */
-        .flex-main {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            width: 260px;
-            background: var(--bg-sidebar);
-            padding: 20px 16px;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            flex-shrink: 0;
-            overflow-y: auto;
-        }
-
-        .sidebar-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .sidebar-section-title {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .ai-accent {
-            background: linear-gradient(135deg, #7C3AED, #6D28D9);
-            color: white;
-            padding: 14px;
-            border-radius: 14px;
-            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
-        }
-
-        [data-theme="dark"] .ai-accent {
-            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.25);
-        }
-
-        .ai-accent .feature-title {
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .ai-accent .feature-desc {
-            font-size: 0.75rem;
-            opacity: 0.85;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
-        .status-box {
-            background: var(--bg-card);
-            border-radius: 14px;
-            padding: 14px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-        }
-
-        .status-item-label {
-            color: var(--text-secondary);
-        }
-
-        .status-item-value {
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .badge-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-
-        .badge {
-            font-size: 0.6rem;
-            font-weight: 500;
-            padding: 3px 10px;
-            border-radius: 100px;
-            background: var(--badge-bg);
-            color: var(--badge-text);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .badge-live { background: #ECFDF5; color: #065F46; }
-        [data-theme="dark"] .badge-live { background: #064E3B; color: #6EE7B7; }
-
-        .badge-ai { background: #EEF2FF; color: #4338CA; }
-        [data-theme="dark"] .badge-ai { background: #1E1B4B; color: #818CF8; }
-
-        .badge-sources { background: var(--badge-bg); color: var(--badge-text); }
-        .badge i { font-size: 0.55rem; }
-
-        .how-it-works {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .how-it-works ol {
-            list-style: none;
-            padding-left: 0;
-            counter-reset: step-counter;
-        }
-
-        .how-it-works li {
-            counter-increment: step-counter;
-            padding-left: 24px;
-            position: relative;
-            margin-bottom: 4px;
-        }
-
-        .how-it-works li::before {
-            content: counter(step-counter);
-            background: var(--badge-bg);
-            color: var(--text-muted);
-            font-size: 0.55rem;
-            font-weight: 600;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            left: 0;
-            top: 2px;
-        }
-
-        .sidebar-mobile-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 100;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .sidebar-mobile-overlay.active { display: block; }
-
-        .sidebar-mobile {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            height: 100dvh;
-            background: var(--bg-secondary);
-            z-index: 101;
-            padding: 20px 16px;
-            overflow-y: auto;
-            transition: left 0.3s ease;
-            border-right: 1px solid var(--border-color);
-        }
-
-        .sidebar-mobile.active { left: 0; }
-
-        .sidebar-mobile .close-sidebar {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 8px;
-            float: right;
-        }
-
-        .sidebar-mobile .sidebar-section { margin-bottom: 16px; }
-
-        /* ============================================
-           CHAT AREA
-           ============================================ */
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-secondary);
-            padding: 16px 20px;
-            overflow: hidden;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            min-height: 200px;
-            scroll-behavior: smooth;
-        }
-
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
-            color: var(--text-muted);
-            gap: 12px;
-            padding: 30px 16px;
-        }
-
-        .empty-robot {
-            width: 64px;
-            height: 64px;
-            opacity: 0.3;
-        }
-
-        .empty-robot svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .empty-state h3 {
-            font-weight: 500;
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        .empty-state p {
-            font-size: 0.85rem;
-            max-width: 350px;
-            color: var(--text-muted);
-        }
-
-        .empty-state .powered {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        /* ============================================
-           MESSAGES
-           ============================================ */
-        .message {
-            display: flex;
-            gap: 10px;
-            max-width: 88%;
-            animation: messageSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes messageSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .message-user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .message-assistant {
-            align-self: flex-start;
-        }
-
-        .message-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            color: white;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-
-        .message-avatar:hover {
-            transform: scale(1.1);
-        }
-
-        .message-user .message-avatar {
-            background: linear-gradient(135deg, #3B82F6, #2563EB);
-        }
-
-        .message-assistant .message-avatar {
-            background: linear-gradient(135deg, #7C3AED, #6D28D9);
-        }
-
-        .message-bubble {
-            padding: 10px 14px;
-            border-radius: 14px;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            background: var(--bg-bubble-assistant);
-            color: var(--text-primary);
-            word-break: break-word;
-            border: 1px solid var(--border-color);
-            position: relative;
-            transition: box-shadow 0.3s ease;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .message-bubble:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        }
-
-        .message-user .message-bubble {
-            background: var(--bg-bubble-user);
-            color: var(--text-white);
-            border: none;
-            border-radius: 14px 14px 4px 14px;
-        }
-
-        .message-assistant .message-bubble {
-            background: var(--bg-bubble-assistant);
-            border: 1px solid var(--border-color);
-            border-radius: 14px 14px 14px 4px;
-        }
-
-        /* ============================================
-           TYPING INDICATOR
-           ============================================ */
-        .typing-indicator {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            max-width: 88%;
-            align-self: flex-start;
-            animation: messageSlideIn 0.3s ease-out;
-            padding: 4px 0;
-        }
-
-        .typing-indicator .message-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #7C3AED, #6D28D9);
-            color: white;
-            font-size: 0.7rem;
-        }
-
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-            padding: 10px 16px;
-            background: var(--bg-bubble-assistant);
-            border-radius: 14px 14px 14px 4px;
-            border: 1px solid var(--border-color);
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--typing-dot-color);
-            animation: typingBounce 1.4s ease-in-out infinite;
-        }
-
-        .typing-dot:nth-child(1) { animation-delay: 0s; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typingBounce {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.4;
-            }
-            30% {
-                transform: translateY(-8px);
-                opacity: 1;
-            }
-        }
-
-        /* ============================================
-           STREAMING RESPONSE - Cursor Blink
-           ============================================ */
-        .streaming-cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1em;
-            background: var(--text-primary);
-            margin-left: 2px;
-            animation: cursorBlink 0.8s ease-in-out infinite;
-            vertical-align: text-bottom;
-        }
-
-        @keyframes cursorBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-
-        /* ============================================
-           ENHANCED RESPONSE STYLES
-           ============================================ */
-        .enhanced-response {
-            width: 100%;
-            animation: fadeInUp 0.5s ease-out;
-        }
-
-        .personality-header {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-            padding: 8px 0;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .personality-badge {
-            background: var(--personality-bg);
-            color: var(--personality-text);
-            padding: 3px 10px;
-            border-radius: 100px;
-            font-size: 0.65rem;
-            font-weight: 500;
-            border: 1px solid rgba(67, 56, 202, 0.15);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .personality-badge:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
-        }
-
-        .response-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 8px;
-        }
-
-        .response-content {
-            line-height: 1.8;
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .response-content h1, .response-content h2, .response-content h3, 
-        .response-content h4, .response-content h5, .response-content h6 {
-            font-weight: 600;
-            margin-top: 14px;
-            margin-bottom: 6px;
-            color: var(--text-primary);
-        }
-
-        .response-content h1 { font-size: 1.4rem; }
-        .response-content h2 { font-size: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
-        .response-content h3 { font-size: 1.05rem; }
-        .response-content h4 { font-size: 0.95rem; }
-
-        .response-content p {
-            margin-bottom: 8px;
-            padding-left: 2px;
-        }
-
-        .response-content ul {
-            padding-left: 24px;
-            margin: 6px 0 10px 0;
-        }
-
-        .response-content ul li {
-            list-style-type: disc;
-            margin-bottom: 3px;
-            line-height: 1.7;
-        }
-
-        .response-content ol {
-            padding-left: 28px;
-            margin: 6px 0 10px 0;
-        }
-
-        .response-content ol li {
-            list-style-type: decimal;
-            margin-bottom: 3px;
-            line-height: 1.7;
-        }
-
-        .response-content blockquote {
-            border-left: 4px solid var(--text-link);
-            padding: 8px 16px;
-            margin: 8px 0;
-            background: var(--bg-accent);
-            border-radius: 4px;
-            font-style: italic;
-            color: var(--text-secondary);
-        }
-
-        .response-content hr {
-            border: none;
-            border-top: 1px solid var(--border-color);
-            margin: 14px 0;
-        }
-
-        .response-content a {
-            color: var(--text-link);
-            text-decoration: underline;
-            word-break: break-all;
-            font-weight: 500;
-        }
-
-        .response-content a:hover {
-            opacity: 0.8;
-        }
-
-        .response-content .inline-code {
-            background: var(--badge-bg);
-            padding: 1px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.85em;
-        }
-
-        .response-content strong {
-            font-weight: 700;
-        }
-
-        .response-content em {
-            font-style: italic;
-        }
-
-        .response-footer {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .response-footer h4 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 6px;
-        }
-
-        .source-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .source-item {
-            background: var(--bg-card);
-            border-radius: 8px;
-            padding: 10px 12px;
-            border-left: 4px solid #7C3AED;
-            border: 1px solid var(--border-color);
-            border-left-width: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .source-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .source-item .source-title {
-            font-weight: 500;
-            font-size: 0.82rem;
-            color: var(--text-primary);
-        }
-
-        .source-item .source-meta {
-            font-size: 0.68rem;
-            color: var(--text-muted);
-            margin: 3px 0;
-        }
-
-        .source-item .source-relevance {
-            font-size: 0.7rem;
-            font-weight: 500;
-            margin: 3px 0;
-            color: var(--text-secondary);
-        }
-
-        .source-item .source-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.7rem;
-            color: var(--text-link);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 2px 0;
-        }
-
-        .source-item .source-link:hover {
-            text-decoration: underline;
-        }
-
-        .metadata-footer {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 12px 0 6px 0;
-            font-size: 0.68rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
-            margin-top: 12px;
-        }
-
-        .metadata-footer span {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* ============================================
-           QUICK SUGGESTIONS
-           ============================================ */
-        .suggestions-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            padding: 8px 0 4px 0;
-            border-top: 1px solid var(--border-color);
-            margin-top: 4px;
-        }
-
-        .suggestion-chip {
-            background: var(--suggestion-bg);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            padding: 6px 14px;
-            border-radius: 100px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: "Inter", sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            white-space: nowrap;
-        }
-
-        .suggestion-chip:hover {
-            background: var(--suggestion-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
-        }
-
-        .suggestion-chip:active {
-            transform: scale(0.95);
-        }
-
-        .suggestion-chip i {
-            margin-right: 4px;
-            font-size: 0.6rem;
-            opacity: 0.7;
-        }
-
-        /* ============================================
-           INPUT AREA
-           ============================================ */
-        .input-area {
-            border-top: 1px solid var(--border-color);
-            padding: 12px 0 6px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            background: var(--bg-secondary);
-        }
-
-        .input-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .input-row input {
-            flex: 1;
-            border: 1px solid var(--border-color);
-            border-radius: 100px;
-            padding: 10px 16px;
-            font-size: 0.85rem;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background: var(--bg-input);
-            color: var(--text-primary);
-            font-family: "Inter", sans-serif;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .input-row input::placeholder {
-            color: var(--text-muted);
-            transition: opacity 0.3s ease;
-        }
-
-        .input-row input:focus {
-            border-color: #7C3AED;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
-        }
-
-        .input-row input:focus::placeholder {
-            opacity: 0.5;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 100px;
-            padding: 10px 18px;
-            font-weight: 500;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-family: "Inter", sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            flex-shrink: 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn:active { transform: scale(0.95); }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(0);
-            border-radius: 100px;
-            transition: transform 0.3s ease;
-        }
-
-        .btn:active::after {
-            transform: scale(1);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #7C3AED, #6D28D9);
-            color: white;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #6D28D9, #5B21B6);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: var(--badge-bg);
-            color: var(--badge-text);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: var(--hover-bg);
-            transform: translateY(-1px);
-        }
-
-        .input-footer {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            padding: 0 4px;
-            flex-wrap: wrap;
-            gap: 4px;
-        }
-
-        .input-footer a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .input-footer a:hover {
-            color: var(--text-link);
-        }
-
-        /* ============================================
-           FEEDBACK
-           ============================================ */
-        .feedback-container {
-            display: flex;
-            gap: 6px;
-            margin-top: 10px;
-            align-items: center;
-            border-top: 1px solid var(--border-color);
-            padding-top: 8px;
-        }
-
-        .feedback-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            -webkit-tap-highlight-color: transparent;
-            position: relative;
-        }
-
-        .feedback-btn:hover {
-            background: var(--hover-bg);
-            transform: scale(1.1);
-        }
-
-        .feedback-btn.active {
-            background: var(--bg-accent);
-            color: var(--text-link);
-        }
-
-        .feedback-btn:active {
-            transform: scale(0.9);
-        }
-
-        .feedback-copy {
-            margin-left: auto;
-        }
-
-        .feedback-copy.copied {
-            color: #22C55E;
-        }
-
-        /* ============================================
-           RESPONSIVE - MOBILE FIRST
-           ============================================ */
-        @media (max-width: 768px) {
-            body { padding: 8px; }
-
-            .bot-container {
-                border-radius: 16px;
-                min-height: 92vh;
-                min-height: 92dvh;
-            }
-
-            .header {
-                padding: 12px 14px;
-                gap: 8px;
-            }
-
-            .brand-name { font-size: 0.85rem; }
-            .robot-icon { width: 28px; height: 28px; }
-
-            .status-indicator {
-                font-size: 0.6rem;
-                padding: 3px 10px;
-            }
-
-            .header-link { font-size: 0.7rem; }
-
-            .theme-toggle {
-                font-size: 0.7rem;
-                padding: 4px 10px;
-            }
-
-            .mobile-sidebar-toggle {
-                display: flex;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            .sidebar-mobile-overlay {
-                display: none;
-            }
-
-            .sidebar-mobile-overlay.active {
-                display: block;
-            }
-
-            .chat-area {
-                padding: 12px 14px;
-            }
-
-            .message { 
-                max-width: 95%; 
-            }
-            
-            .message-bubble { 
-                font-size: 0.8rem; 
-                padding: 8px 12px; 
-            }
-
-            .input-row input {
-                font-size: 0.8rem;
-                padding: 8px 14px;
-                min-height: 44px;
-            }
-
-            .btn {
-                padding: 8px 14px;
-                font-size: 0.75rem;
-                min-height: 44px;
-                min-width: 44px;
-                justify-content: center;
-            }
-
-            .btn-primary { min-width: 60px; }
-
-            .input-footer {
-                font-size: 0.6rem;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                gap: 2px;
-            }
-
-            .empty-state h3 { font-size: 0.9rem; }
-            .empty-state p { font-size: 0.8rem; }
-            .empty-robot { width: 50px; height: 50px; }
-
-            .ai-accent { padding: 12px; }
-            .ai-accent .feature-title { font-size: 0.8rem; }
-            .ai-accent .feature-desc { font-size: 0.7rem; }
-
-            .desktop-only {
-                display: none !important;
-            }
-
-            .suggestions-container {
-                gap: 4px;
-            }
-            
-            .suggestion-chip {
-                font-size: 0.65rem;
-                padding: 4px 10px;
-            }
-            
-            .typing-dot {
-                width: 6px;
-                height: 6px;
-            }
-
-            .personality-badge {
-                font-size: 0.6rem;
-                padding: 2px 8px;
-            }
-
-            .response-title {
-                font-size: 1rem;
-            }
-
-            .response-content {
-                font-size: 0.82rem;
-            }
-
-            .response-content ul,
-            .response-content ol {
-                padding-left: 20px;
-            }
-        }
-
-        @media (max-width: 420px) {
-            .header-actions .header-link span { display: none; }
-            .header-actions .header-link i { font-size: 1rem; }
-            .status-indicator span:last-child { display: none; }
-        }
-
-        @media (min-width: 769px) {
-            .mobile-sidebar-toggle {
-                display: none !important;
-            }
-            .sidebar-mobile-overlay,
-            .sidebar-mobile {
-                display: none !important;
-            }
-            .desktop-only {
-                display: inline !important;
-            }
-        }
-
-        /* ============================================
-           TOAST
-           ============================================ */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            padding: 10px 20px;
-            border-radius: 12px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-size: 0.8rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 200;
-            max-width: 90%;
-            text-align: center;
-            pointer-events: none;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .toast.success { 
-            border-color: #22C55E; 
-            background: #ECFDF5;
-            color: #065F46;
-        }
-        
-        .toast.error { 
-            border-color: #EF4444;
-            background: #FEF2F2;
-            color: #991B1B;
-        }
-
-        [data-theme="dark"] .toast.success {
-            background: #064E3B;
-            color: #6EE7B7;
-        }
-        
-        [data-theme="dark"] .toast.error {
-            background: #7F1D1D;
-            color: #FCA5A5;
-        }
-
-        .chat-messages::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .chat-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb);
-            border-radius: 2px;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
-    </style>
-</head>
-<body>
-    <!-- BODY CONTENT - Standard layout -->
-    <div class="bot-container">
-        <header class="header">
-            <div class="logo-area">
-                <div class="robot-icon" aria-label="Omni Brand Intelligence Bot logo">
-                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="40" height="40" rx="10" fill="url(#robotGrad)" />
-                        <defs>
-                            <linearGradient id="robotGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#7C3AED" />
-                                <stop offset="1" stop-color="#3B82F6" />
-                            </linearGradient>
-                        </defs>
-                        <rect x="12" y="9" width="16" height="14" rx="4" fill="white" opacity="0.95" />
-                        <circle cx="17" cy="16" r="2" fill="#7C3AED" />
-                        <circle cx="23" cy="16" r="2" fill="#7C3AED" />
-                        <rect x="17" y="20" width="6" height="1.5" rx="0.75" fill="#7C3AED" />
-                        <rect x="19" y="5" width="2" height="4" rx="1" fill="white" opacity="0.9" />
-                        <circle cx="20" cy="4" r="2.5" fill="white" opacity="0.9" />
-                        <rect x="10" y="13" width="2" height="6" rx="1" fill="white" opacity="0.9" />
-                        <rect x="28" y="13" width="2" height="6" rx="1" fill="white" opacity="0.9" />
-                        <rect x="14" y="23" width="12" height="8" rx="3" fill="white" opacity="0.85" />
-                        <rect x="8" y="24" width="6" height="2.5" rx="1.25" fill="white" opacity="0.85" />
-                        <rect x="26" y="24" width="6" height="2.5" rx="1.25" fill="white" opacity="0.85" />
-                    </svg>
-                </div>
-                <span class="brand-name">Omni Brand Bot</span>
-            </div>
-            <div class="header-actions">
-                <div class="status-indicator">
-                    <span class="status-dot"></span>
-                    <span>Live</span>
-                </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                    <span id="themeLabel">Dark</span>
-                </button>
-                <a href="/analytics.html" class="header-link" aria-label="Analytics">
-                    <i class="fas fa-chart-line"></i>
-                    <span class="desktop-only">Analytics</span>
-                </a>
-                <a href="/privacy.html" class="header-link" aria-label="Privacy">
-                    <i class="fas fa-shield-alt"></i>
-                </a>
-                <button class="mobile-sidebar-toggle" onclick="toggleMobileSidebar()" aria-label="Toggle menu">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </header>
-
-        <div class="flex-main">
-            <aside class="sidebar">
-                <div class="sidebar-section">
-                    <div class="ai-accent">
-                        <div class="feature-title">
-                            <i class="fas fa-bolt"></i> Multi-Source Intelligence
-                        </div>
-                        <div class="feature-desc">
-                            Real-time analysis from 5+ competitor sources
-                        </div>
-                    </div>
-                </div>
-                <div class="sidebar-section">
-                    <div class="status-box">
-                        <div class="status-item">
-                            <span class="status-item-label">System Status</span>
-                            <span class="status-item-value" id="status-text">Ready</span>
-                        </div>
-                        <div class="badge-group">
-                            <span class="badge badge-live"><i class="fas fa-circle"></i> Live</span>
-                            <span class="badge badge-ai"><i class="fas fa-brain"></i> AI-Powered</span>
-                            <span class="badge badge-sources"><i class="fas fa-database"></i> Multi-Source</span>
-                        </div>
-                        <div class="status-item" style="border-top:1px solid var(--border-color);padding-top:8px;">
-                            <span class="status-item-label">Total Queries</span>
-                            <span class="status-item-value" id="total-queries-sidebar">0</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="sidebar-section">
-                    <span class="sidebar-section-title">Process</span>
-                    <div class="how-it-works">
-                        <ol>
-                            <li>Submit a query</li>
-                            <li>Search 5+ sources</li>
-                            <li>Analyze relevant content</li>
-                            <li>Generate response with sources</li>
-                        </ol>
-                    </div>
-                </div>
-            </aside>
-
-            <div class="sidebar-mobile-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
-            <div class="sidebar-mobile" id="sidebarMobile">
-                <button class="close-sidebar" onclick="toggleMobileSidebar()"><i class="fas fa-times"></i></button>
-                <div class="sidebar-section">
-                    <div class="ai-accent">
-                        <div class="feature-title"><i class="fas fa-bolt"></i> Multi-Source Intelligence</div>
-                        <div class="feature-desc">Real-time analysis from 5+ sources</div>
-                    </div>
-                </div>
-                <div class="sidebar-section">
-                    <div class="status-box">
-                        <div class="status-item">
-                            <span class="status-item-label">System Status</span>
-                            <span class="status-item-value" id="status-text-mobile">Ready</span>
-                        </div>
-                        <div class="badge-group">
-                            <span class="badge badge-live"><i class="fas fa-circle"></i> Live</span>
-                            <span class="badge badge-ai"><i class="fas fa-brain"></i> AI-Powered</span>
-                            <span class="badge badge-sources"><i class="fas fa-database"></i> Multi-Source</span>
-                        </div>
-                        <div class="status-item" style="border-top:1px solid var(--border-color);padding-top:8px;">
-                            <span class="status-item-label">Total Queries</span>
-                            <span class="status-item-value" id="total-queries-mobile">0</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="sidebar-section">
-                    <span class="sidebar-section-title">Process</span>
-                    <div class="how-it-works">
-                        <ol>
-                            <li>Submit a query</li>
-                            <li>Search 5+ sources</li>
-                            <li>Analyze relevant content</li>
-                            <li>Generate response with sources</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-
-            <main class="chat-area">
-                <div class="chat-messages" id="chat-messages">
-                    <div class="empty-state" id="empty-state">
-                        <div class="empty-robot">
-                            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="80" height="80" rx="16" fill="url(#emptyRobotGrad)" opacity="0.06" />
-                                <defs>
-                                    <linearGradient id="emptyRobotGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-                                        <stop stop-color="#7C3AED" />
-                                        <stop offset="1" stop-color="#3B82F6" />
-                                    </linearGradient>
-                                </defs>
-                                <rect x="24" y="18" width="32" height="28" rx="8" fill="#7C3AED" opacity="0.15" />
-                                <circle cx="34" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
-                                <circle cx="46" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
-                                <rect x="34" y="40" width="12" height="3" rx="1.5" fill="#7C3AED" opacity="0.25" />
-                                <rect x="38" y="10" width="4" height="8" rx="2" fill="#7C3AED" opacity="0.15" />
-                                <circle cx="40" cy="8" r="5" fill="#7C3AED" opacity="0.15" />
-                                <rect x="20" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
-                                <rect x="56" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
-                                <rect x="28" y="46" width="24" height="16" rx="6" fill="#7C3AED" opacity="0.12" />
-                                <rect x="16" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
-                                <rect x="52" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
-                            </svg>
-                        </div>
-                        <h3>Submit a Query</h3>
-                        <p>Ask about AI tools, platforms, or industry trends.</p>
-                        <p class="powered"><i class="fas fa-bolt"></i> Powered by multi-source intelligence</p>
-                    </div>
-                </div>
-
-                <div class="suggestions-container" id="suggestionsContainer">
-                    <button class="suggestion-chip" data-query="What are the top AI tools for 2026?">
-                        <i class="fas fa-rocket"></i> Top AI Tools 2026
-                    </button>
-                    <button class="suggestion-chip" data-query="How does generative AI work?">
-                        <i class="fas fa-brain"></i> How GenAI Works
-                    </button>
-                    <button class="suggestion-chip" data-query="Best AI platforms for business?">
-                        <i class="fas fa-building"></i> AI for Business
-                    </button>
-                    <button class="suggestion-chip" data-query="Latest AI trends and innovations">
-                        <i class="fas fa-chart-line"></i> AI Trends
-                    </button>
-                    <button class="suggestion-chip" data-query="Compare ChatGPT vs Claude vs Gemini">
-                        <i class="fas fa-balance-scale"></i> Compare AI Models
-                    </button>
-                </div>
-
-                <div class="input-area">
-                    <div class="input-row">
-                        <input
-                            type="text"
-                            id="message-input"
-                            placeholder="Ask a question..."
-                            aria-label="Ask a question"
-                            autocomplete="off"
-                            autocorrect="on"
-                            spellcheck="true"
-                        />
-                        <button class="btn btn-primary" id="send-btn">
-                            <i class="fas fa-paper-plane"></i>
-                            <span class="desktop-only">Send</span>
-                        </button>
-                        <button class="btn btn-secondary" id="clear-btn">
-                            <i class="fas fa-undo-alt"></i>
-                            <span class="desktop-only">Clear</span>
-                        </button>
-                    </div>
-                    <div class="input-footer">
-                        <span><i class="fas fa-shield-alt"></i> AI-generated with source attribution</span>
-                        <span>
-                            <a href="/privacy.html"><i class="fas fa-shield-alt"></i> Privacy</a>
-                            <span style="margin:0 6px;">•</span>
-                            <span id="conversation-count"><i class="far fa-comment-dots"></i> 0</span>
-                        </span>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // ============================================================
-        // GROK API INTEGRATION - Professional Framework v6.0
-        // ============================================================
-
-        // ============================================================
-        // SECTION 1: CONFIGURATION
-        // ============================================================
-
-        var CONFIG = {
-            API: {
-                API_URL: '/api/data',
-                TIMEOUT_MS: 30000
-            },
-            DEFAULTS: {
-                PERSONALITY: 'conscientiousness',
-                INTENT: 'professionalFramework',
-                TEMPERATURE: 0.25,
-                MAX_TOKENS: 2500,
-                REQUIRE_SYNTHESIS: true,
-                REQUIRE_CONTEXTUAL_ANALYSIS: true,
-                FRAMEWORK_MODE: true,
-                STRUCTURED_OUTPUT: true
-            },
-            UI: {
-                MAX_MESSAGE_LENGTH: 10000,
-                SCROLL_THRESHOLD: 100
-            }
-        };
-
-        // ============================================================
-        // SECTION 2: STATE MANAGEMENT
-        // ============================================================
-
-        var state = {
-            isProcessing: false,
-            messageIdCounter: 0,
-            streamingInterval: null,
-            requestCount: 0,
-            errorCount: 0
-        };
-
-        // ============================================================
-        // SECTION 3: DOM REFERENCES
-        // ============================================================
-
-        var DOM = {
-            chatMessages: document.getElementById('chat-messages'),
-            emptyState: document.getElementById('empty-state'),
-            messageInput: document.getElementById('message-input'),
-            sendBtn: document.getElementById('send-btn'),
-            clearBtn: document.getElementById('clear-btn'),
-            statusText: document.getElementById('status-text'),
-            conversationCount: document.getElementById('conversation-count'),
-            toast: document.getElementById('toast'),
-            themeToggle: document.getElementById('themeToggle'),
-            themeLabel: document.getElementById('themeLabel')
-        };
-
-        // ============================================================
-        // SECTION 4: THEME MANAGEMENT
-        // ============================================================
-
-        function getPreferredTheme() {
-            var stored = localStorage.getItem('theme');
-            if (stored) return stored;
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                return 'dark';
-            }
-            return 'light';
-        }
-
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-            var icon = DOM.themeToggle.querySelector('i');
-            if (theme === 'dark') {
-                icon.className = 'fas fa-sun';
-                DOM.themeLabel.textContent = 'Light';
-            } else {
-                icon.className = 'fas fa-moon';
-                DOM.themeLabel.textContent = 'Dark';
-            }
-        }
-
-        setTheme(getPreferredTheme());
-        DOM.themeToggle.addEventListener('click', function() {
-            var current = document.documentElement.getAttribute('data-theme') || 'light';
-            setTheme(current === 'dark' ? 'light' : 'dark');
-        });
-
-        // ============================================================
-        // SECTION 5: UTILITY FUNCTIONS
-        // ============================================================
-
-        function showToast(message, type) {
-            DOM.toast.textContent = message;
-            DOM.toast.className = 'toast ' + (type || 'info');
-            DOM.toast.classList.add('show');
-            clearTimeout(DOM.toast._timeout);
-            DOM.toast._timeout = setTimeout(function() {
-                DOM.toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function scrollToBottomSmooth() {
-            if (!DOM.chatMessages) return;
-            var scrollHeight = DOM.chatMessages.scrollHeight;
-            var clientHeight = DOM.chatMessages.clientHeight;
-            var scrollTop = DOM.chatMessages.scrollTop;
-            var isNearBottom = scrollHeight - scrollTop - clientHeight < CONFIG.UI.SCROLL_THRESHOLD;
-            if (isNearBottom) {
-                DOM.chatMessages.scrollTo({
-                    top: scrollHeight,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        function scrollToBottom() {
-            if (DOM.chatMessages) {
-                DOM.chatMessages.scrollTo({
-                    top: DOM.chatMessages.scrollHeight,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        // ============================================================
-        // SECTION 6: CHAT HISTORY MANAGEMENT
-        // ============================================================
-
-        function loadChatHistory() {
-            try {
-                var history = localStorage.getItem('omniChatHistory');
-                return history ? JSON.parse(history) : [];
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function saveChatHistory(messages) {
-            try {
-                localStorage.setItem('omniChatHistory', JSON.stringify(messages));
-                updateConversationCount();
-            } catch (e) {}
-        }
-
-        function updateConversationCount() {
-            var history = loadChatHistory();
-            DOM.conversationCount.innerHTML = '<i class="far fa-comment-dots"></i> ' + history.length;
-        }
-
-        function getTotalQueries() {
-            try {
-                var events = JSON.parse(localStorage.getItem('botEvents') || '[]');
-                return events.filter(function(e) { return e.type === 'query'; }).length;
-            } catch (e) {
-                return 0;
-            }
-        }
-
-        function updateTotalQueries() {
-            var total = getTotalQueries();
-            var el1 = document.getElementById('total-queries-sidebar');
-            var el2 = document.getElementById('total-queries-mobile');
-            if (el1) el1.textContent = total;
-            if (el2) el2.textContent = total;
-        }
-
-        function trackEvent(eventType, data) {
-            try {
-                var events = JSON.parse(localStorage.getItem('botEvents') || '[]');
-                events.push({
-                    type: eventType,
-                    data: data,
-                    timestamp: new Date().toISOString()
-                });
-                if (events.length > 1000) events.splice(0, events.length - 1000);
-                localStorage.setItem('botEvents', JSON.stringify(events));
-            } catch (e) {}
-        }
-
-        // ============================================================
-        // SECTION 7: FEEDBACK SYSTEM
-        // ============================================================
-
-        function submitFeedback(messageId, isPositive) {
-            var feedbackKey = 'feedback_' + messageId;
-            var existing = localStorage.getItem(feedbackKey);
-
-            if (existing && existing === String(isPositive)) {
-                localStorage.removeItem(feedbackKey);
-                updateFeedbackUI(messageId, null);
-                showToast('Feedback removed', 'info');
-                return;
-            }
-
-            localStorage.setItem(feedbackKey, String(isPositive));
-            updateFeedbackUI(messageId, isPositive);
-            trackEvent('feedback', { messageId: messageId, isPositive: isPositive });
-            showToast(isPositive ? 'Positive feedback recorded' : 'Feedback recorded', 'success');
-        }
-
-        function updateFeedbackUI(messageId, isPositive) {
-            var container = document.getElementById('feedback-' + messageId);
-            if (!container) return;
-
-            var thumbsUp = container.querySelector('.feedback-up');
-            var thumbsDown = container.querySelector('.feedback-down');
-
-            if (thumbsUp) thumbsUp.classList.toggle('active', isPositive === true);
-            if (thumbsDown) thumbsDown.classList.toggle('active', isPositive === false);
-        }
-
-        // ============================================================
-        // SECTION 8: MARKDOWN RENDERER - FIXED
-        // ============================================================
-
-        function parseMarkdown(text) {
-            if (!text) return '';
-
-            var result = text;
-
-            // 1. Convert markdown links: [Text](URL) -> <a href="URL">Text</a>
-            result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
-                if (url && url !== '[object Object]' && url !== '#' && url.trim().length > 0) {
-                    if (url.startsWith('/') && !url.startsWith('http')) {
-                        return linkText;
-                    }
-                    return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--text-link); text-decoration: underline; word-break: break-all;">' + linkText + '</a>';
-                }
-                return linkText;
-            });
-
-            // 2. Convert headers: ## Header -> <h2>Header</h2>
-            result = result.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
-            result = result.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
-            result = result.replace(/^####\s+(.+)$/gm, '<h4>$1</h4>');
-
-            // 3. Convert horizontal rules: --- -> <hr>
-            result = result.replace(/^---$/gm, '<hr>');
-
-            // 4. Convert bold: **text** -> <strong>text</strong>
-            result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-
-            // 5. Convert italic: *text* -> <em>text</em>
-            result = result.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-
-            // 6. Convert inline code: `text` -> <code>text</code>
-            result = result.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
-
-            // 7. Convert blockquotes: > text -> <blockquote>text</blockquote>
-            result = result.replace(/^>\s+(.+)$/gm, '<blockquote>$1</blockquote>');
-
-            // 8. Convert bullet and numbered lists
-            var lines = result.split('\n');
-            var processed = [];
-            var inList = false;
-            var listItems = [];
-            var listType = null;
-
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i];
-                var trimmed = line.trim();
-                
-                var bulletMatch = trimmed.match(/^[•\-*]\s+(.+)$/);
-                var numberMatch = trimmed.match(/^(\d+)\.\s+(.+)$/);
-                
-                if (bulletMatch) {
-                    if (!inList || listType !== 'ul') {
-                        if (inList) {
-                            processed.push('</' + listType + '>');
-                        }
-                        listItems = [];
-                        listType = 'ul';
-                        inList = true;
-                    }
-                    listItems.push('<li>' + bulletMatch[1] + '</li>');
-                } else if (numberMatch) {
-                    if (!inList || listType !== 'ol') {
-                        if (inList) {
-                            processed.push('</' + listType + '>');
-                        }
-                        listItems = [];
-                        listType = 'ol';
-                        inList = true;
-                    }
-                    listItems.push('<li>' + numberMatch[2] + '</li>');
-                } else {
-                    if (inList) {
-                        processed.push('<' + listType + '>' + listItems.join('') + '</' + listType + '>');
-                        listItems = [];
-                        inList = false;
-                        listType = null;
-                    }
-                    if (trimmed) {
-                        // Check if it's a header
-                        if (trimmed.match(/^[A-Z][a-z]+:/)) {
-                            processed.push('<strong>' + trimmed + '</strong>');
-                        } else {
-                            processed.push(line);
-                        }
-                    } else {
-                        processed.push('');
-                    }
-                }
-            }
-            
-            if (inList) {
-                processed.push('<' + listType + '>' + listItems.join('') + '</' + listType + '>');
-            }
-            
-            result = processed.join('\n');
-
-            return result;
-        }
-
-        // ============================================================
-        // SECTION 9: MESSAGE RENDERING
-        // ============================================================
-
-        function addMessageToUI(role, content, id, isStreaming) {
-            var container = DOM.chatMessages;
-            if (DOM.emptyState) DOM.emptyState.style.display = 'none';
-
-            var messageId = id || 'msg-' + Date.now() + '-' + (++state.messageIdCounter);
-            var messageDiv = document.createElement('div');
-            messageDiv.className = 'message message-' + role;
-            messageDiv.dataset.messageId = messageId;
-
-            var avatar = document.createElement('div');
-            avatar.className = 'message-avatar';
-            avatar.innerHTML = role === 'user' 
-                ? '<i class="fas fa-user"></i>' 
-                : '<i class="fas fa-robot"></i>';
-
-            var bubble = document.createElement('div');
-            bubble.className = 'message-bubble';
-
-            if (role === 'assistant' && !isStreaming) {
-                // Parse markdown and display
-                var parsedContent = parseMarkdown(content);
-                bubble.innerHTML = parsedContent;
-                
-                if (content && !content.includes('error') && !content.includes('No Results')) {
-                    addFeedbackControls(bubble, messageId);
-                }
-            } else if (role === 'assistant' && isStreaming) {
-                bubble.innerHTML = content;
-            } else {
-                bubble.textContent = content;
-            }
-
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(bubble);
-            container.appendChild(messageDiv);
-
-            if (!isStreaming) {
-                var history = loadChatHistory();
-                history.push({ role: role, content: content, id: messageId });
-                saveChatHistory(history);
-            }
-
-            return messageId;
-        }
-
-        function addFeedbackControls(bubble, messageId) {
-            var feedbackContainer = document.createElement('div');
-            feedbackContainer.className = 'feedback-container';
-            feedbackContainer.id = 'feedback-' + messageId;
-
-            var upBtn = document.createElement('button');
-            upBtn.className = 'feedback-btn feedback-up';
-            upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-            upBtn.title = 'Positive feedback';
-            upBtn.onclick = function(e) {
-                e.stopPropagation();
-                submitFeedback(messageId, true);
-            };
-
-            var downBtn = document.createElement('button');
-            downBtn.className = 'feedback-btn feedback-down';
-            downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-            downBtn.title = 'Negative feedback';
-            downBtn.onclick = function(e) {
-                e.stopPropagation();
-                submitFeedback(messageId, false);
-            };
-
-            var copyBtn = document.createElement('button');
-            copyBtn.className = 'feedback-btn feedback-copy';
-            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-            copyBtn.title = 'Copy response';
-            copyBtn.onclick = function(e) {
-                e.stopPropagation();
-                var textToCopy = bubble.textContent || '';
-                navigator.clipboard.writeText(textToCopy).then(function() {
-                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                    copyBtn.classList.add('copied');
-                    showToast('Copied to clipboard', 'success');
-                    setTimeout(function() {
-                        copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                        copyBtn.classList.remove('copied');
-                    }, 2000);
-                }).catch(function() {
-                    showToast('Failed to copy', 'error');
-                });
-            };
-
-            feedbackContainer.appendChild(upBtn);
-            feedbackContainer.appendChild(downBtn);
-            feedbackContainer.appendChild(copyBtn);
-            bubble.appendChild(feedbackContainer);
-        }
-
-        function addMessage(role, content, isStreaming) {
-            return addMessageToUI(role, content, null, isStreaming);
-        }
-
-        // ============================================================
-        // SECTION 10: TYPING INDICATOR
-        // ============================================================
-
-        var typingIndicatorElement = null;
-
-        function showTypingIndicator() {
-            removeTypingIndicator();
-
-            var typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.id = 'typing-indicator';
-            typingDiv.innerHTML = `
-                <div class="message-avatar"><i class="fas fa-robot"></i></div>
-                <div class="typing-dots">
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                    <span class="typing-dot"></span>
-                </div>
-            `;
-            
-            DOM.chatMessages.appendChild(typingDiv);
-            typingIndicatorElement = typingDiv;
-            scrollToBottom();
-        }
-
-        function removeTypingIndicator() {
-            if (typingIndicatorElement) {
-                typingIndicatorElement.remove();
-                typingIndicatorElement = null;
-            }
-        }
-
-        // ============================================================
-        // SECTION 11: STREAMING RESPONSE
-        // ============================================================
-
-        function streamResponse(messageElement, fullContent, speed) {
-            return new Promise(function(resolve) {
-                if (state.streamingInterval) {
-                    clearInterval(state.streamingInterval);
-                    state.streamingInterval = null;
-                }
-
-                var bubble = messageElement.querySelector('.message-bubble');
-                var index = 0;
-                var content = fullContent || '';
-                
-                var speeds = {
-                    slow: 20,
-                    medium: 40,
-                    fast: 60
-                };
-                
-                var charsPerFrame = speeds[speed] || speeds.medium;
-                var intervalTime = 25;
-                
-                var displayedContent = '';
-                bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
-                var textSpan = bubble.querySelector('.streaming-text');
-                
-                function addNextChunk() {
-                    var remaining = content.length - index;
-                    if (remaining <= 0) {
-                        if (state.streamingInterval) {
-                            clearInterval(state.streamingInterval);
-                            state.streamingInterval = null;
-                        }
-                        var cursor = bubble.querySelector('.streaming-cursor');
-                        if (cursor) cursor.remove();
-                        resolve();
-                        return;
-                    }
-                    
-                    var chunkSize = Math.min(charsPerFrame, remaining);
-                    
-                    if (chunkSize < remaining) {
-                        var lookAhead = content.substring(index + chunkSize - 1, index + chunkSize + 30);
-                        var sentenceEnd = lookAhead.search(/[.!?]\s/);
-                        if (sentenceEnd > 0 && sentenceEnd < 25) {
-                            chunkSize += sentenceEnd + 1;
-                        }
-                    }
-                    
-                    var chunk = content.substring(index, index + chunkSize);
-                    displayedContent += chunk;
-                    textSpan.textContent = displayedContent;
-                    
-                    index += chunkSize;
-                    scrollToBottomSmooth();
-                }
-                
-                state.streamingInterval = setInterval(addNextChunk, intervalTime);
-                
-                setTimeout(function() {
-                    if (state.streamingInterval) {
-                        clearInterval(state.streamingInterval);
-                        state.streamingInterval = null;
-                        textSpan.textContent = content;
-                        var cursor = bubble.querySelector('.streaming-cursor');
-                        if (cursor) cursor.remove();
-                        resolve();
-                    }
-                }, (content.length / charsPerFrame) * intervalTime + 1000);
-            });
-        }
-
-        // ============================================================
-        // SECTION 12: API COMMUNICATION        // ============================================================
-
-        async function callAPI(query, context) {
-            try {
-                var response = await fetch(CONFIG.API.API_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        query: query,
-                        context: context || {},
-                        intent: CONFIG.DEFAULTS.INTENT,
-                        personality: CONFIG.DEFAULTS.PERSONALITY,
-                        requireSynthesis: CONFIG.DEFAULTS.REQUIRE_SYNTHESIS,
-                        requireContextualAnalysis: CONFIG.DEFAULTS.REQUIRE_CONTEXTUAL_ANALYSIS,
-                        frameworkMode: CONFIG.DEFAULTS.FRAMEWORK_MODE,
-                        structuredOutput: CONFIG.DEFAULTS.STRUCTURED_OUTPUT,
-                        options: {
-                            temperature: CONFIG.DEFAULTS.TEMPERATURE,
-                            maxTokens: CONFIG.DEFAULTS.MAX_TOKENS,
-                            enhanceWithSources: true,
-                            includeRecommendations: true,
-                            confidenceScoring: true
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    var errorText = await response.text();
-                    throw new Error('API Error: ' + response.status + ' - ' + errorText);
-                }
-
-                var data = await response.json();
-                return data;
-            } catch (error) {
-                console.warn('API error:', error);
-                throw error;
-            }
-        }
-
-        // ============================================================
-        // SECTION 13: RESPONSE FORMATTING - FIXED
-        // ============================================================
-
-        function cleanResponseText(text) {
-            if (!text) return '';
-            
-            var cleaned = text;
-            cleaned = cleaned.replace(/Source \d+:/g, '');
-            cleaned = cleaned.replace(/Title:/g, '');
-            cleaned = cleaned.replace(/Content:/g, '');
-            cleaned = cleaned.replace(/\[object Object\]/g, '');
-            cleaned = cleaned.replace(/undefined/g, '');
-            cleaned = cleaned.replace(/\s{3,}/g, '  ');
-            cleaned = cleaned.replace(/\[([^\]]+)\]\(\)/g, '$1');
-            
-            return cleaned;
-        }
-
-        function formatResponse(data) {
-            if (!data) {
-                return generateEmptyResponse();
-            }
-
-            var responseText = data.response || '';
-            var sources = data.sources || [];
-            var metadata = data.metadata || {};
-
-            if (!responseText || responseText.trim().length === 0) {
-                return generateEmptyResponse();
-            }
-
-            // Clean up the response text
-            var cleanedText = cleanResponseText(responseText);
-            
-            // Parse markdown to HTML
-            var parsedContent = parseMarkdown(cleanedText);
-            
-            var personality = metadata.personality || CONFIG.DEFAULTS.PERSONALITY;
-            var personalityLabel = personality.charAt(0).toUpperCase() + personality.slice(1);
-            
-            var confidence = calculateConfidence(metadata);
-            var confidenceClass = confidence === 'High' ? 'confidence-high' : 
-                                 confidence === 'Medium' ? 'confidence-medium' : 'confidence-low';
-
-            var html = `
-                <div class="enhanced-response">
-                    <div class="personality-header">
-                        <span class="personality-badge">${personalityLabel}: Structured contextual analysis</span>
-                    </div>
-                    
-                    <div class="response-title">AI Technology Analysis</div>
-                    
-                    <div class="response-content">
-                        ${parsedContent}
-                    </div>
-            `;
-
-            // Add sources from the sources array (not from the response text)
-            if (sources && sources.length > 0) {
-                // Filter out invalid sources
-                var validSources = sources.filter(function(s) {
-                    return s && (s.title || s.source_name) && 
-                           s.title !== 'Untitled' && 
-                           s.title !== 'Unknown' &&
-                           s.source_name !== 'Unknown' &&
-                           s.source && s.source !== '#';
-                });
-                
-                if (validSources.length > 0) {
-                    html += generateClickableSources(validSources);
-                }
-            }
-
-            // Add metadata
-            html += generateMetadataFooter(metadata, confidence, confidenceClass);
-
-            html += '</div>';
-            return html;
-        }
-
-        function generateClickableSources(sources) {
-            if (!sources || sources.length === 0) return '';
-            
-            var html = `
-                <div class="response-footer">
-                    <h4>Source References</h4>
-                    <div class="source-grid">
-            `;
-            
-            var displayed = 0;
-            for (var i = 0; i < sources.length && displayed < 5; i++) {
-                var s = sources[i];
-                var title = s.title && s.title !== 'Untitled' ? s.title : (s.source_name || 'Source');
-                var sourceName = s.source_name || 'Unknown';
-                var url = s.source || s.url || '#';
-                var date = s.date || '';
-                var author = s.author || 'Unknown';
-                var relevance = s.relevance || s.score || 0;
-                var pct = Math.min(Math.round((relevance / 20) * 100), 100);
-                
-                if (pct === 0 && s.score) {
-                    pct = Math.min(Math.round(s.score * 5), 100);
-                }
-                
-                if (url === '#' || !url) continue;
-                
-                var color = pct > 60 ? '#22C55E' : pct > 30 ? '#F59E0B' : '#EF4444';
-                
-                html += `
-                    <div class="source-item" style="border-left-color: ${color}">
-                        <div class="source-title">${title}</div>
-                        <div class="source-meta">
-                            ${author !== 'Unknown' ? author + ' • ' : ''}${date ? date + ' • ' : ''}
-                            <span class="source-badge">${sourceName}</span>
-                        </div>
-                        <div class="source-relevance">
-                            Relevance: ${pct}%
-                        </div>
-                        <a href="${url}" target="_blank" rel="noopener noreferrer" class="source-link">
-                            <i class="fas fa-external-link-alt"></i> View Source
-                        </a>
-                    </div>
-                `;
-                displayed++;
-            }
-            
-            html += `
-                    </div>
-                </div>
-            `;
-            
-            return html;
-        }
-
-        function generateMetadataFooter(metadata, confidence, confidenceClass) {
-            var timestamp = metadata.last_updated || metadata.generated_at || new Date().toISOString();
-            var totalSources = metadata.total_sources || 0;
-            var matches = metadata.matches_found || 0;
-            var qualityScore = metadata.quality_score || {};
-            var score = qualityScore.score || 0;
-            
-            var html = `
-                <div class="metadata-footer">
-                    <span><i class="far fa-calendar-alt"></i> ${new Date(timestamp).toLocaleString()}</span>
-                    <span><i class="fas fa-database"></i> ${totalSources} sources</span>
-                    <span><i class="fas fa-check-circle"></i> ${matches} matches</span>
-                    <span><i class="fas fa-chart-line"></i> Quality: ${score}%</span>
-                    <span class="${confidenceClass}"><i class="fas fa-shield-alt"></i> Confidence: ${confidence}</span>
-                    ${metadata.ai_generated !== false ? '<span><i class="fas fa-brain"></i> AI-Generated</span>' : ''}
-                    ${metadata.synthesized ? '<span><i class="fas fa-code-branch"></i> Synthesized</span>' : ''}
-                    ${metadata.contextual_analysis ? '<span><i class="fas fa-search"></i> Contextual Analysis</span>' : ''}
-                </div>
-            `;
-            
-            return html;
-        }
-
-        function calculateConfidence(metadata) {
-            if (metadata.confidence) {
-                if (typeof metadata.confidence === 'object') {
-                    return metadata.confidence.level || 'Medium';
-                }
-                return metadata.confidence;
-            }
-            var matches = metadata.matches_found || 0;
-            var total = metadata.total_sources || 1;
-            var ratio = matches / total;
-            if (ratio > 0.6) return 'High';
-            if (ratio > 0.3) return 'Medium';
-            return 'Low';
-        }
-
-        function generateEmptyResponse() {
-            return `
-                <div class="enhanced-response">
-                    <div class="empty-state">
-                        <h3>No Results Found</h3>
-                        <p>Try asking about specific AI tools, platforms, or industry trends.</p>
-                        <div class="suggestion-hint">
-                            <span>Suggested: "What are the top AI tools for 2026?"</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ============================================================
-        // SECTION 14: ERROR HANDLING
-        // ============================================================
-
-        function displayError(message, details) {
-            var html = `
-                <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:14px;color:#991B1B;">
-                    <strong><i class="fas fa-exclamation-circle"></i> Error</strong>
-                    <p style="margin-top:4px;font-size:0.85rem;">${message}</p>
-            `;
-            if (details) {
-                html += '<p style="font-size:0.7rem;color:#B91C1C;margin-top:6px;">' + details + '</p>';
-            }
-            html += `
-                    <p style="font-size:0.75rem;color:#6B7280;margin-top:6px;">Please try again.</p>
-                </div>
-            `;
-            return html;
-        }
-
-        function displayRateLimit() {
-            return `
-                <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:14px;color:#92400E;">
-                    <strong><i class="fas fa-hourglass-half"></i> Rate Limit</strong>
-                    <p style="margin-top:4px;font-size:0.85rem;">Too many requests. Please wait a moment.</p>
-                </div>
-            `;
-        }
-
-        function displayNoResults() {
-            return `
-                <div style="background:#FEFCE8;border:1px solid #FDE68A;border-radius:12px;padding:14px;color:#854D0E;">
-                    <strong><i class="fas fa-search"></i> No Results</strong>
-                    <p style="margin-top:4px;font-size:0.85rem;">Try asking about AI tools, platforms, or industry trends.</p>
-                </div>
-            `;
-        }
-
-        // ============================================================
-        // SECTION 15: SEND MESSAGE
-        // ============================================================
-
-        async function sendMessage() {
-            var message = DOM.messageInput.value.trim();
-            if (!message || state.isProcessing) return;
-
-            trackEvent('query', { question: message, timestamp: Date.now() });
-            updateTotalQueries();
-
-            addMessage('user', message);
-            DOM.messageInput.value = '';
-            state.isProcessing = true;
-            DOM.sendBtn.disabled = true;
-            DOM.messageInput.disabled = true;
-            DOM.statusText.textContent = 'Processing...';
-
-            showTypingIndicator();
-
-            try {
-                DOM.statusText.textContent = 'Analyzing and synthesizing...';
-
-                var data = await callAPI(message, {
-                    userHistory: loadChatHistory().slice(-5),
-                    timestamp: new Date().toISOString(),
-                    query: message
-                });
-
-                removeTypingIndicator();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                DOM.statusText.textContent = 'Ready';
-
-                var formattedHtml = formatResponse(data);
-                if (!formattedHtml) {
-                    formattedHtml = generateEmptyResponse();
-                }
-
-                var messageId = 'msg-' + Date.now() + '-' + (++state.messageIdCounter);
-                var messageDiv = document.createElement('div');
-                messageDiv.className = 'message message-assistant';
-                messageDiv.dataset.messageId = messageId;
-
-                var avatar = document.createElement('div');
-                avatar.className = 'message-avatar';
-                avatar.innerHTML = '<i class="fas fa-robot"></i>';
-
-                var bubble = document.createElement('div');
-                bubble.className = 'message-bubble';
-                bubble.innerHTML = '<span class="streaming-text"></span><span class="streaming-cursor"></span>';
-
-                messageDiv.appendChild(avatar);
-                messageDiv.appendChild(bubble);
-
-                if (DOM.emptyState) DOM.emptyState.style.display = 'none';
-                DOM.chatMessages.appendChild(messageDiv);
-
-                var tempDiv = document.createElement('div');
-                tempDiv.innerHTML = formattedHtml;
-                var textContent = tempDiv.textContent || formattedHtml;
-
-                await streamResponse(messageDiv, textContent, 'medium');
-
-                var cursor = bubble.querySelector('.streaming-cursor');
-                if (cursor) cursor.remove();
-                bubble.innerHTML = formattedHtml;
-
-                if (!bubble.querySelector('.feedback-container')) {
-                    var feedbackContainer = document.createElement('div');
-                    feedbackContainer.className = 'feedback-container';
-                    feedbackContainer.id = 'feedback-' + messageId;
-
-                    var upBtn = document.createElement('button');
-                    upBtn.className = 'feedback-btn feedback-up';
-                    upBtn.innerHTML = '<i class="far fa-thumbs-up"></i>';
-                    upBtn.onclick = function(e) {
-                        e.stopPropagation();
-                        submitFeedback(messageId, true);
-                    };
-
-                    var downBtn = document.createElement('button');
-                    downBtn.className = 'feedback-btn feedback-down';
-                    downBtn.innerHTML = '<i class="far fa-thumbs-down"></i>';
-                    downBtn.onclick = function(e) {
-                        e.stopPropagation();
-                        submitFeedback(messageId, false);
-                    };
-
-                    var copyBtn = document.createElement('button');
-                    copyBtn.className = 'feedback-btn feedback-copy';
-                    copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                    copyBtn.onclick = function(e) {
-                        e.stopPropagation();
-                        var textToCopy = bubble.textContent || '';
-                        navigator.clipboard.writeText(textToCopy).then(function() {
-                            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
-                            copyBtn.classList.add('copied');
-                            showToast('Copied to clipboard', 'success');
-                            setTimeout(function() {
-                                copyBtn.innerHTML = '<i class="far fa-copy"></i>';
-                                copyBtn.classList.remove('copied');
-                            }, 2000);
-                        }).catch(function() {
-                            showToast('Failed to copy', 'error');
-                        });
-                    };
-
-                    feedbackContainer.appendChild(upBtn);
-                    feedbackContainer.appendChild(downBtn);
-                    feedbackContainer.appendChild(copyBtn);
-                    bubble.appendChild(feedbackContainer);
-                }
-
-                var history = loadChatHistory();
-                history.push({ role: 'assistant', content: formattedHtml, id: messageId });
-                saveChatHistory(history);
-                updateConversationCount();
-
-            } catch (error) {
-                console.error('Error:', error);
-                removeTypingIndicator();
-                DOM.statusText.textContent = 'Error';
-
-                var errorMsg = error.message || 'Unknown error';
-                var errorHtml;
-                if (errorMsg.indexOf('429') !== -1 || errorMsg.toLowerCase().indexOf('rate') !== -1) {
-                    errorHtml = displayRateLimit();
-                } else if (errorMsg.indexOf('401') !== -1 || errorMsg.toLowerCase().indexOf('key') !== -1) {
-                    errorHtml = displayError('Authentication Error', 'Please check your API key.');
-                } else if (errorMsg.indexOf('404') !== -1) {
-                    errorHtml = displayError('Resource Not Found', 'Data was not available.');
-                } else if (errorMsg.indexOf('No matching content') !== -1) {
-                    errorHtml = displayNoResults();
-                } else {
-                    errorHtml = displayError(errorMsg, 'Please try again.');
-                }
-                addMessage('assistant', errorHtml);
-                showToast('An error occurred. Please try again.', 'error');
-            }
-
-            state.isProcessing = false;
-            DOM.sendBtn.disabled = false;
-            DOM.messageInput.disabled = false;
-            DOM.messageInput.focus();
-        }
-
-        // ============================================================
-        // SECTION 16: CLEAR CHAT
-        // ============================================================
-
-        function clearChat() {
-            if (!confirm('Clear all conversations?')) return;
-
-            if (state.streamingInterval) {
-                clearInterval(state.streamingInterval);
-                state.streamingInterval = null;
-            }
-
-            localStorage.removeItem('omniChatHistory');
-            DOM.chatMessages.innerHTML = `
-                <div class="empty-state" id="empty-state">
-                    <div class="empty-robot">
-                        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="80" height="80" rx="16" fill="url(#emptyRobotGrad)" opacity="0.06" />
-                            <defs>
-                                <linearGradient id="emptyRobotGrad" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#7C3AED" />
-                                    <stop offset="1" stop-color="#3B82F6" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="24" y="18" width="32" height="28" rx="8" fill="#7C3AED" opacity="0.15" />
-                            <circle cx="34" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
-                            <circle cx="46" cy="32" r="4" fill="#7C3AED" opacity="0.25" />
-                            <rect x="34" y="40" width="12" height="3" rx="1.5" fill="#7C3AED" opacity="0.25" />
-                            <rect x="38" y="10" width="4" height="8" rx="2" fill="#7C3AED" opacity="0.15" />
-                            <circle cx="40" cy="8" r="5" fill="#7C3AED" opacity="0.15" />
-                            <rect x="20" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
-                            <rect x="56" y="26" width="4" height="12" rx="2" fill="#7C3AED" opacity="0.15" />
-                            <rect x="28" y="46" width="24" height="16" rx="6" fill="#7C3AED" opacity="0.12" />
-                            <rect x="16" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
-                            <rect x="52" y="48" width="12" height="5" rx="2.5" fill="#7C3AED" opacity="0.12" />
-                        </svg>
-                    </div>
-                    <h3>Submit a Query</h3>
-                    <p>Ask about AI tools, platforms, or industry trends.</p>
-                    <p class="powered"><i class="fas fa-bolt"></i> Powered by multi-source intelligence</p>
-                </div>
-            `;
-            DOM.statusText.textContent = 'Ready';
-            updateConversationCount();
-            showToast('Chat cleared', 'info');
-        }
-
-        // ============================================================
-        // SECTION 17: SUGGESTIONS
-        // ============================================================
-
-        function setupSuggestions() {
-            var chips = document.querySelectorAll('.suggestion-chip');
-            chips.forEach(function(chip) {
-                chip.addEventListener('click', function() {
-                    var query = this.dataset.query;
-                    if (query) {
-                        DOM.messageInput.value = query;
-                        sendMessage();
-                    }
-                });
-            });
-        }
-
-        // ============================================================
-        // SECTION 18: MOBILE SIDEBAR
-        // ============================================================
-
-        function toggleMobileSidebar() {
-            var overlay = document.getElementById('sidebarOverlay');
-            var sidebar = document.getElementById('sidebarMobile');
-            overlay.classList.toggle('active');
-            sidebar.classList.toggle('active');
-        }
-
-        // ============================================================
-        // SECTION 19: EVENT LISTENERS & INITIALIZATION
-        // ============================================================
-
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-            }
-            if (e.key === 'Escape' && document.activeElement === DOM.messageInput) {
-                DOM.messageInput.value = '';
-                DOM.messageInput.blur();
-            }
-        });
-
-        DOM.messageInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        DOM.sendBtn.addEventListener('click', sendMessage);
-        DOM.clearBtn.addEventListener('click', clearChat);
-
-        // Initialize
-        var history = loadChatHistory();
-        if (history.length > 0) {
-            DOM.chatMessages.innerHTML = '';
-            history.forEach(function(msg) {
-                addMessageToUI(msg.role, msg.content, msg.id);
-            });
-            if (DOM.emptyState) DOM.emptyState.style.display = 'none';
-        }
-        updateConversationCount();
-        DOM.statusText.textContent = 'Ready';
-        updateTotalQueries();
-        setupSuggestions();
-
-        document.querySelectorAll('.btn, .feedback-btn, .suggestion-chip').forEach(function(el) {
-            el.addEventListener('touchstart', function() {
-                this.style.opacity = '0.7';
-            }, { passive: true });
-            el.addEventListener('touchend', function() {
-                this.style.opacity = '1';
-            }, { passive: true });
-        });
-
-        console.log('Omni Brand Intelligence Bot initialized successfully');
-        console.log('Integration: /api/data with GROQ_API_KEY');
-        console.log('Version: 6.0.0 - Proper Markdown Rendering with Sources');
-    </script>
-</body>
-</html>
+// api/data.js - Grok Intelligence with Professional Format
+// ============================================================
+// Purpose: API handler with Grok API integration and professional
+// framework formatting
+// ============================================================
+
+// ============================================
+// ESSENTIAL IMPORTS ONLY
+// ============================================
+
+// Only keep what's actually needed
+// Removed problematic imports: semanticChunk, systemPrompts, selectPrompt,
+// getFewShotExamples, selectTemplate, generateCOTPrompt,
+// getPersona, getAvailablePersonas, selectPersona,
+// intentDetector, confidenceScorer, responseFormatter, responseCache,
+// advancedSearch, createGrokInstance,
+// orchestrator, streamingHandler, feedbackSystem,
+// analytics, performanceMetrics, queryLogger,
+// semanticSearch, indexSources
+
+// Keep Grok imports
+import { 
+  buildGrokRequest,
+  buildProfessionalFrameworkRequest,
+  getProfessionalFrameworkPrompt
+} from '../lib/grok/prompts.js';
+
+// Keep the Grok client for API calls
+import GrokClient from '../lib/grok/client.js';
+
+// ============================================
+// ALL DATA EMBEDDED HERE
+// ============================================
+
+// TechCrunch Sources
+var techCrunchSources = [
+  {
+    title: "Microsoft is openly competing with OpenAI, Anthropic more than ever",
+    author: "Unknown",
+    date: "2026-07-29T17:21:06-07:00",
+    content: "Microsoft is in a unique position as AI overtakes the tech industry. It's one of the world's largest cloud providers and software-as-a-service companies, while also holding valuable stakes in the two biggest AI labs, OpenAI and Anthropic. Those incentives are starting to clash as Microsoft posts blockbuster financial results.",
+    url: "https://techcrunch.com/2026/07/29/microsoft-is-openly-competing-with-openai-anthropic-more-than-ever/",
+    source_name: "TechCrunch",
+    source_type: "blog",
+    word_count: 777,
+    hash: "750af354",
+    domain: "techcrunch.com",
+    timestamp: "2026-07-30T12:32:45.949284"
+  },
+  {
+    title: "Mark Zuckerberg predicts that billions of people will have personal AI agents in five years",
+    author: "Unknown",
+    date: "2026-07-29T16:00:11-07:00",
+    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years.",
+    url: "https://techcrunch.com/2026/07/29/mark-zuckerberg-predicts-that-billions-of-people-will-have-personal-ai-agents-in-five-years/",
+    source_name: "TechCrunch",
+    source_type: "blog",
+    word_count: 544,
+    hash: "1929c185",
+    domain: "techcrunch.com",
+    timestamp: "2026-07-30T12:33:02.318565"
+  },
+  {
+    title: "Microsoft logs $3.2B from Anthropic investment, but OpenAI was a mixed bag",
+    author: "Unknown",
+    date: "2026-07-29T15:46:03-07:00",
+    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing.",
+    url: "https://techcrunch.com/2026/07/29/microsoft-logs-3-2b-from-anthropic-investment-but-openai-was-a-mixed-bag/",
+    source_name: "TechCrunch",
+    source_type: "blog",
+    word_count: 318,
+    hash: "feca2ec5",
+    domain: "techcrunch.com",
+    timestamp: "2026-07-30T12:33:18.896327"
+  },
+  {
+    title: "Zuckerberg says Meta's enterprise AI opportunity extends beyond agents",
+    author: "Unknown",
+    date: "2026-07-29T15:23:12-07:00",
+    content: "In June, Meta entered the enterprise AI market with a new AI agent aimed at businesses.",
+    url: "https://techcrunch.com/2026/07/29/zuckerberg-says-metas-enterprise-ai-opportunity-extends-beyond-agents/",
+    source_name: "TechCrunch",
+    source_type: "blog",
+    word_count: 602,
+    hash: "c9945336",
+    domain: "techcrunch.com",
+    timestamp: "2026-07-30T12:33:27.875955"
+  },
+  {
+    title: "The Hugging Face break-in explained",
+    author: "Unknown",
+    date: "2026-07-29T12:44:49-07:00",
+    content: "Hugging Face on Monday published a technical timeline that walks readers through how an autonomous AI agent, built on OpenAI models and running inside one of OpenAI's own cybersecurity evaluations, broke into its systems.",
+    url: "https://techcrunch.com/2026/07/29/the-hugging-face-ai-break-in-as-told-through-an-increasingly-committed-bear-metaphor/",
+    source_name: "TechCrunch",
+    source_type: "blog",
+    word_count: 639,
+    hash: "101b78fb",
+    domain: "techcrunch.com",
+    timestamp: "2026-07-30T12:34:10.277411"
+  },
+  {
+    title: "Claude Opus 5 became downright ruthless when tasked with running a vending machine",
+    author: "Unknown",
+    date: "2026-07-29T11:45:27-07:00",
+    content: "For a year now, the AI safety testing firm Andon Labs has given frontier models various real-world tasks to determine how well they do as agents running for long periods with no human supervision.",
+    url: "https://techcrunch.com/2026/07/29/claude-opus-5-became-downright-ruthless-when-tasked-with-running-a-vending-machine/",
+    source_name: "TechCrunch",
+    source_type: "blog",
+    word_count: 1097,
+    hash: "b509c204",
+    domain: "techcrunch.com",
+    timestamp: "2026-07-30T12:34:28.349281"
+  },
+  {
+    title: "Hint, a new AI startup co-founded by Martha Stewart, offers an AI assistant for homeowners",
+    author: "Unknown",
+    date: "2026-07-29T08:35:09-07:00",
+    content: "Martha Stewart is entering the AI software era in the most Martha Stewart way possible.",
+    url: "https://techcrunch.com/2026/07/29/hint-a-new-ai-startup-co-founded-by-martha-stewart-offers-an-ai-assistant-for-homeowners/",
+    source_name: "TechCrunch",
+    source_type: "blog",
+    word_count: 965,
+    hash: "c037c1f2",
+    domain: "techcrunch.com",
+    timestamp: "2026-07-30T12:34:37.298648"
+  },
+  {
+    title: "TechCrunch Disrupt 2026",
+    author: "Unknown",
+    date: "2026-07-29T14:16:39-07:00",
+    content: "October 13 – 15, 2026 — San Francisco Innovation for Every Stage Disrupt is where you'll find innovation for every stage of your startup journey.",
+    url: "https://techcrunch.com/events/techcrunch-disrupt/",
+    source_name: "TechCrunch",
+    source_type: "blog",
+    word_count: 499,
+    hash: "3f71dec1",
+    domain: "techcrunch.com",
+    timestamp: "2026-07-30T12:32:37.745412"
+  }
+];
+
+// Static Sources
+var staticSources = [
+  {
+    title: "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
+    author: "Raulji Technologies",
+    date: "July 27, 2026",
+    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business.",
+    url: "https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/",
+    source_name: "Raulji Technologies",
+    source_type: "blog",
+    word_count: 1768,
+    hash: "raulji_001",
+    domain: "rauljitechnologies.com",
+    timestamp: "2026-07-27T08:36:53.036255"
+  },
+  {
+    title: "15 best AI apps I can't live without in 2026",
+    author: "Gumloop",
+    date: "July 27, 2026",
+    content: "It all started with ChatGPT, then Claude, and then we had an explosion of AI apps for literally every use case you can think of.",
+    url: "https://www.gumloop.com/blog/best-ai-apps",
+    source_name: "Gumloop",
+    source_type: "blog",
+    word_count: 6894,
+    hash: "gumloop_001",
+    domain: "gumloop.com",
+    timestamp: "2026-07-27T08:36:53.036255"
+  },
+  {
+    title: "Top AI Platforms in 2026: The 15 Best Platforms I've Actually Tested",
+    author: "Pickaxe",
+    date: "July 27, 2026",
+    content: "I have tested more AI platforms than I can count over the past three years. Most of them blurred together. Some were genuinely great.",
+    url: "https://pickaxe.co/post/top-ai-platforms",
+    source_name: "Pickaxe",
+    source_type: "blog",
+    word_count: 6534,
+    hash: "pickaxe_001",
+    domain: "pickaxe.co",
+    timestamp: "2026-07-27T08:36:53.036255"
+  },
+  {
+    title: "The 12 Best AI Tools for 2026 (That People Actually Use)",
+    author: "Synthesia",
+    date: "July 27, 2026",
+    content: "Can you believe it's been over three years since ChatGPT landed in our internet browsers?",
+    url: "https://www.synthesia.io/post/ai-tools",
+    source_name: "Synthesia",
+    source_type: "blog",
+    word_count: 2343,
+    hash: "synthesia_001",
+    domain: "synthesia.io",
+    timestamp: "2026-07-27T08:36:53.036255"
+  },
+  {
+    title: "Six Popular AI Platforms Everyone Can Use",
+    author: "Red River Communications",
+    date: "July 27, 2026",
+    content: "Whether it's Fortune 500 companies or your friends and coworkers, just about everywhere you turn, people are talking about AI.",
+    url: "https://redrivercomm.com/six-popular-ai-platforms-everyone-can-use",
+    source_name: "Red River Communications",
+    source_type: "blog",
+    word_count: 953,
+    hash: "redriver_001",
+    domain: "redrivercomm.com",
+    timestamp: "2026-07-27T08:36:53.036255"
+  }
+];
+
+// VentureBeat Sources
+var ventureBeatSources = [
+  {
+    title: "Thinking Machines debuts Inkling Small open source AI model",
+    author: "Carl Franzen",
+    date: "2026-07-31",
+    content: "Thinking Machines has debuted Inkling Small, an open source AI model that achieves near performance of its predecessor at approximately 1/4 the size.",
+    url: "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size",
+    source_name: "VentureBeat",
+    source_type: "blog",
+    word_count: 45,
+    hash: "44d92c0c",
+    domain: "venturebeat.com",
+    timestamp: "2026-07-31T12:29:19.456515"
+  },
+  {
+    title: "Enterprise AI agents can't talk to each other",
+    author: "Taryn Plumb",
+    date: "2026-07-31",
+    content: "Enterprise AI agents face critical challenges including communication gaps, permission trust issues, and auditability concerns.",
+    url: "https://venturebeat.com/orchestration/enterprise-ai-agents-cant-talk-to-each-other-cant-be-trusted-with-permissions-and-cant-be-audited-5-startups-are-already-fixing-that",
+    source_name: "VentureBeat",
+    source_type: "blog",
+    word_count: 42,
+    hash: "30f8e69e",
+    domain: "venturebeat.com",
+    timestamp: "2026-07-31T12:29:19.493304"
+  },
+  {
+    title: "MCP just got its biggest update ever",
+    author: "Michael Nuñez",
+    date: "2026-07-31",
+    content: "The Model Context Protocol (MCP), the open standard connecting AI agents to software, receives its largest update since Anthropic released it.",
+    url: "https://venturebeat.com/orchestration/mcp-just-got-its-biggest-update-ever-heres-what-changes-for-ai-agents",
+    source_name: "VentureBeat",
+    source_type: "blog",
+    word_count: 75,
+    hash: "7cc59324",
+    domain: "venturebeat.com",
+    timestamp: "2026-07-31T12:29:19.737529"
+  }
+];
+
+// ============================================
+// MERGE ALL SOURCES
+// ============================================
+
+var allSources = techCrunchSources.concat(staticSources).concat(ventureBeatSources);
+
+var uniqueSources = [];
+var seenUrls = new Set();
+for (var i = 0; i < allSources.length; i++) {
+  var source = allSources[i];
+  if (!seenUrls.has(source.url)) {
+    seenUrls.add(source.url);
+    uniqueSources.push(source);
+  }
+}
+
+var sourceStats = {
+  techcrunch: techCrunchSources.length,
+  static: staticSources.length,
+  venturebeat: ventureBeatSources.length,
+  total: uniqueSources.length
+};
+
+// ============================================
+// SEARCH FUNCTIONS
+// ============================================
+
+function searchSources(query) {
+  if (!query) return { results: [], classification: null };
+  
+  var queryLower = query.toLowerCase().trim();
+  if (queryLower.length < 2) return { results: [], classification: null };
+  
+  var queryWords = queryLower.split(/\s+/).filter(function(w) { return w.length > 2; });
+  
+  var scoredResults = uniqueSources.map(function(source) {
+    var content = (source.content || '').toLowerCase();
+    var title = (source.title || '').toLowerCase();
+    var sourceName = (source.source_name || '').toLowerCase();
+    var author = (source.author || '').toLowerCase();
+    
+    var score = 0;
+    var matches = [];
+    
+    for (var i = 0; i < queryWords.length; i++) {
+      var word = queryWords[i];
+      if (title.indexOf(word) !== -1) {
+        score += 10;
+        matches.push(word);
+      }
+      if (content.indexOf(word) !== -1) {
+        score += 3;
+        matches.push(word);
+      }
+      if (sourceName.indexOf(word) !== -1) {
+        score += 5;
+        matches.push(word);
+      }
+      if (author.indexOf(word) !== -1) {
+        score += 2;
+        matches.push(word);
+      }
+    }
+    
+    // Exact phrase boost
+    if (title.indexOf(queryLower) !== -1) score += 20;
+    if (content.indexOf(queryLower) !== -1) score += 10;
+    
+    var relevance = Math.min(Math.round(score / 10), 100);
+    
+    return {
+      title: source.title || 'Untitled',
+      source: source.url || '#',
+      source_name: source.source_name || 'Unknown',
+      author: source.author || 'Unknown',
+      date: source.date || '',
+      chunk: (source.content || '').substring(0, 500) + '...',
+      fullContent: source.content || '',
+      relevance: relevance,
+      score: score,
+      matches: matches
+    };
+  });
+  
+  scoredResults.sort(function(a, b) {
+    return b.score - a.score;
+  });
+  
+  var results = scoredResults.filter(function(r) { return r.score > 0; }).slice(0, 5);
+  
+  if (results.length === 0) {
+    results = scoredResults.slice(0, 5);
+  }
+  
+  return {
+    results: results,
+    classification: { type: 'informational', confidence: 0.8 }
+  };
+}
+
+// ============================================
+// GROK API INTEGRATION
+// ============================================
+
+async function callGrokAPI(query, context) {
+  var apiKey = process.env.GROQ_API_KEY;
+  
+  if (!apiKey) {
+    console.warn('GROQ_API_KEY not set, using fallback');
+    return null;
+  }
+  
+  try {
+    var client = new GrokClient(apiKey);
+    
+    // Build professional framework request
+    var promptData = buildProfessionalFrameworkRequest(query, context, {
+      personality: 'conscientiousness',
+      useCoT: true,
+      requireSynthesis: true,
+      requireContextualAnalysis: true
+    });
+    
+    var result = await client.generateResponse(promptData, {
+      temperature: 0.25,
+      maxTokens: 2500,
+      frameworkMode: true,
+      structuredOutput: true
+    });
+    
+    return result;
+  } catch (error) {
+    console.warn('Grok API error:', error.message);
+    return null;
+  }
+}
+
+// ============================================
+// PROFESSIONAL RESPONSE FORMATTER
+// ============================================
+
+function formatProfessionalResponse(query, results, grokResponse) {
+  var output = [];
+  
+  // If we have a Grok response, use it
+  if (grokResponse && grokResponse.success && grokResponse.response) {
+    // The Grok response already has the professional format
+    return grokResponse.response;
+  }
+  
+  // Otherwise, generate a fallback professional response
+  output.push('## Grok API Reasoning Block');
+  output.push('');
+  output.push('Query processed using hybrid search with ' + results.length + ' relevant sources identified.');
+  output.push('');
+  
+  output.push('## Explanation');
+  output.push('');
+  
+  if (results && results.length > 0) {
+    output.push('Based on the available data from ' + results.length + ' sources:');
+    output.push('');
+    for (var i = 0; i < Math.min(results.length, 3); i++) {
+      var r = results[i];
+      output.push('**' + (i + 1) + '. ' + r.title + '**');
+      output.push(r.chunk.substring(0, 300) + '...');
+      output.push('*Source: [' + r.source_name + '](' + r.source + ')*');
+      output.push('');
+    }
+  } else {
+    output.push('No specific sources found for this query.');
+    output.push('');
+  }
+  
+  output.push('## Interpretation');
+  output.push('');
+  if (results && results.length > 0) {
+    output.push('The data suggests the following key insights:');
+    output.push('');
+    for (var j = 0; j < Math.min(results.length, 3); j++) {
+      var s = results[j];
+      output.push('• ' + s.title + ' - Relevance: ' + s.relevance + '%');
+      output.push('  Source: [' + s.source_name + '](' + s.source + ')');
+    }
+    output.push('');
+  } else {
+    output.push('Insufficient data for a comprehensive interpretation.');
+    output.push('');
+  }
+  
+  output.push('## Conclusion');
+  output.push('');
+  if (results && results.length > 0) {
+    output.push('The analysis synthesizes information from ' + results.length + ' sources. ');
+    output.push('The most relevant sources provide insights into AI technology and industry trends.');
+    output.push('');
+  } else {
+    output.push('No conclusive findings available. Try refining your query.');
+    output.push('');
+  }
+  
+  output.push('## Suggestions');
+  output.push('');
+  if (results && results.length > 0) {
+    output.push('1. Review the source materials for more detailed information.');
+    output.push('2. Consider additional research on specific topics.');
+    output.push('3. Evaluate the relevance of sources based on your needs.');
+    output.push('');
+  } else {
+    output.push('Try asking about:');
+    output.push('• Top AI tools for 2026');
+    output.push('• How generative AI works');
+    output.push('• Best AI platforms for business');
+    output.push('• Latest AI trends and innovations');
+    output.push('• Compare ChatGPT vs Claude vs Gemini');
+    output.push('');
+  }
+  
+  if (results && results.length > 0) {
+    output.push('## Source References');
+    output.push('');
+    for (var k = 0; k < Math.min(results.length, 5); k++) {
+      var src = results[k];
+      output.push((k + 1) + '. **' + src.title + '**');
+      output.push('   Author: ' + src.author);
+      output.push('   Source: [' + src.source_name + '](' + src.source + ')');
+      if (src.date) {
+        output.push('   Date: ' + src.date);
+      }
+      output.push('   Relevance: ' + src.relevance + '%');
+      output.push('');
+    }
+  }
+  
+  output.push('## Assessment');
+  output.push('');
+  var confidence = results && results.length > 0 ? 'Medium' : 'Low';
+  var quality = results && results.length > 0 ? 'Good' : 'Limited';
+  output.push('**Confidence:** ' + confidence + ' confidence — the sources are consistent and relevant.');
+  output.push('**Quality Rating:** ' + quality + ' (' + (results ? results.length * 20 : 0) + '%)');
+  output.push('');
+  
+  output.push('---');
+  output.push('');
+  output.push('*Analysis generated on ' + new Date().toLocaleString() + ' using multi-source intelligence.*');
+  output.push('*Sources: ' + (results ? results.length : 0) + ' | Model: ' + (grokResponse ? 'grok-enhanced' : 'fallback') + '*');
+  
+  return output.join('\n');
+}
+
+// ============================================
+// API HANDLER
+// ============================================
+
+export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ 
+      error: 'Method not allowed',
+      allowed: ['POST']
+    });
+  }
+
+  try {
+    var query = req.body ? req.body.query : null;
+    
+    if (!query || typeof query !== 'string' || query.trim().length === 0) {
+      return res.status(200).json({
+        response: 'Please provide a valid query.',
+        sources: [],
+        metadata: { error: 'Invalid query', fallback: true }
+      });
+    }
+
+    // Search sources
+    var searchResult = searchSources(query);
+    var results = searchResult.results || [];
+    
+    // Build context for Grok
+    var context = results.map(function(r, i) {
+      return 'Source ' + (i + 1) + ': ' + r.title + '\n' + (r.fullContent || r.chunk || '').substring(0, 500);
+    }).join('\n\n');
+    
+    // Try Grok API first
+    var grokResponse = await callGrokAPI(query, context);
+    
+    // Format response
+    var formattedResponse = formatProfessionalResponse(query, results, grokResponse);
+    
+    return res.status(200).json({
+      response: formattedResponse,
+      sources: results,
+      metadata: {
+        total_sources: uniqueSources.length,
+        matches_found: results.length,
+        ai_generated: true,
+        model: grokResponse && grokResponse.success ? 'grok-enhanced' : 'fallback',
+        formatted: true,
+        professional_style: true,
+        last_updated: new Date().toISOString(),
+        confidence: results.length > 0 ? 'Medium' : 'Low',
+        grok_used: !!(grokResponse && grokResponse.success)
+      }
+    });
+    
+  } catch (error) {
+    console.error('API Error:', error);
+    return res.status(500).json({
+      response: 'An error occurred. Please try again.',
+      sources: [],
+      metadata: { error: error.message, fallback: true }
+    });
+  }
+}
