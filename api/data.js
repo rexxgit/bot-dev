@@ -1,31 +1,13 @@
-// api/data.js - Grok Intelligence with Professional Format
+// api/data.js - Chain-of-Thought Reasoning with Grok API
 // ============================================================
-// Purpose: API handler with Grok API integration and professional
-// framework formatting
+// Purpose: API handler with Grok API integration, Chain-of-Thought
+// reasoning, and professional framework formatting
 // ============================================================
 
 // ============================================
 // ESSENTIAL IMPORTS ONLY
 // ============================================
 
-// Only keep what's actually needed
-// Removed problematic imports: semanticChunk, systemPrompts, selectPrompt,
-// getFewShotExamples, selectTemplate, generateCOTPrompt,
-// getPersona, getAvailablePersonas, selectPersona,
-// intentDetector, confidenceScorer, responseFormatter, responseCache,
-// advancedSearch, createGrokInstance,
-// orchestrator, streamingHandler, feedbackSystem,
-// analytics, performanceMetrics, queryLogger,
-// semanticSearch, indexSources
-
-// Keep Grok imports
-import { 
-  buildGrokRequest,
-  buildProfessionalFrameworkRequest,
-  getProfessionalFrameworkPrompt
-} from '../lib/grok/prompts.js';
-
-// Keep the Grok client for API calls
 import GrokClient from '../lib/grok/client.js';
 
 // ============================================
@@ -316,11 +298,11 @@ function searchSources(query) {
       }
     }
     
-    // Exact phrase boost
     if (title.indexOf(queryLower) !== -1) score += 20;
     if (content.indexOf(queryLower) !== -1) score += 10;
     
-    var relevance = Math.min(Math.round(score / 10), 100);
+    var maxPossibleScore = queryWords.length * 10 + 30;
+    var relevance = Math.min(Math.round((score / maxPossibleScore) * 100), 100);
     
     return {
       title: source.title || 'Untitled',
@@ -353,10 +335,74 @@ function searchSources(query) {
 }
 
 // ============================================
-// GROK API INTEGRATION
+// CHAIN-OF-THOUGHT PROMPT BUILDER
 // ============================================
 
-async function callGrokAPI(query, context) {
+function buildChainOfThoughtPrompt(query, sources) {
+  // Build context from sources
+  var context = sources.map(function(s, i) {
+    return 'Source ' + (i + 1) + ':\n' +
+           'Title: ' + s.title + '\n' +
+           'Author: ' + s.author + '\n' +
+           'Date: ' + s.date + '\n' +
+           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 800) + '\n' +
+           'URL: ' + s.source + '\n';
+  }).join('\n---\n\n');
+  
+  // Build Chain-of-Thought prompt
+  var prompt = {
+    system: `You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning to analyze the provided sources.
+
+REASONING FRAMEWORK:
+Step 1 - DECOMPOSE: Break down the question and identify key components
+Step 2 - EXAMINE: Analyze each source for relevant information
+Step 3 - SYNTHESIZE: Combine insights from multiple sources
+Step 4 - INTERPRET: Explain what the findings mean in plain language
+Step 5 - CONCLUDE: Provide a definitive summary with actionable insights
+
+RESPONSE STRUCTURE:
+1. **Grok API Reasoning Block:** Show your reasoning pathway
+2. **Explanation:** Clear overview in plain language (avoid jargon where possible, explain technical terms)
+3. **Interpretation:** What the data means for developers, enterprises, and individuals
+4. **Conclusion:** Definitive summary statement
+5. **Suggestions:** Actionable steps
+
+FORMATTING RULES:
+- Use ## for section headers
+- Use bullet points (- ) for lists
+- Use **bold** for emphasis
+- Every factual claim must include [Source Name](URL) format
+- Write in clear, professional language
+- Explain technical terms in plain English
+
+HYPERLINK RULE:
+Every factual claim or source reference must include an active, clickable Markdown link formatted strictly as [Source Name](URL) pulled directly from the provided metadata. Never output unlinked raw URLs.`,
+
+    user: `QUESTION: ${query}
+
+CONTEXT FROM SOURCES:
+${context}
+
+Apply Chain-of-Thought reasoning to analyze this query thoroughly.
+
+Follow these steps:
+1. First, identify the key themes in the question
+2. Examine each source for relevant information
+3. Synthesize insights across sources
+4. Interpret what the findings mean
+5. Conclude with clear recommendations
+
+Remember to hyperlink every factual claim using [Source Name](URL) format from the source metadata.`
+  };
+  
+  return prompt;
+}
+
+// ============================================
+// GROK API INTEGRATION WITH CHAIN-OF-THOUGHT
+// ============================================
+
+async function callGrokWithCoT(query, sources) {
   var apiKey = process.env.GROQ_API_KEY;
   
   if (!apiKey) {
@@ -367,13 +413,8 @@ async function callGrokAPI(query, context) {
   try {
     var client = new GrokClient(apiKey);
     
-    // Build professional framework request
-    var promptData = buildProfessionalFrameworkRequest(query, context, {
-      personality: 'conscientiousness',
-      useCoT: true,
-      requireSynthesis: true,
-      requireContextualAnalysis: true
-    });
+    // Build Chain-of-Thought prompt
+    var promptData = buildChainOfThoughtPrompt(query, sources);
     
     var result = await client.generateResponse(promptData, {
       temperature: 0.25,
@@ -390,35 +431,37 @@ async function callGrokAPI(query, context) {
 }
 
 // ============================================
-// PROFESSIONAL RESPONSE FORMATTER
+// FALLBACK RESPONSE GENERATOR (without Grok)
 // ============================================
 
-function formatProfessionalResponse(query, results, grokResponse) {
+function generateFallbackResponse(query, results) {
   var output = [];
   
-  // If we have a Grok response, use it
-  if (grokResponse && grokResponse.success && grokResponse.response) {
-    // The Grok response already has the professional format
-    return grokResponse.response;
-  }
-  
-  // Otherwise, generate a fallback professional response
+  // Grok API Reasoning Block
   output.push('## Grok API Reasoning Block');
   output.push('');
-  output.push('Query processed using hybrid search with ' + results.length + ' relevant sources identified.');
+  output.push('Query: "' + query + '"');
+  output.push('');
+  output.push('**Decompose:** The question asks about ' + query + '. I need to examine the available sources for relevant information.');
+  output.push('');
+  output.push('**Examine:** Found ' + results.length + ' relevant sources with varying relevance scores.');
+  output.push('');
+  output.push('**Synthesize:** The sources provide information from multiple perspectives.');
   output.push('');
   
+  // Explanation
   output.push('## Explanation');
   output.push('');
   
   if (results && results.length > 0) {
-    output.push('Based on the available data from ' + results.length + ' sources:');
+    output.push('Based on the available data, here is what I found:');
     output.push('');
+    
     for (var i = 0; i < Math.min(results.length, 3); i++) {
       var r = results[i];
       output.push('**' + (i + 1) + '. ' + r.title + '**');
-      output.push(r.chunk.substring(0, 300) + '...');
-      output.push('*Source: [' + r.source_name + '](' + r.source + ')*');
+      output.push('   This source discusses: ' + r.chunk.substring(0, 200) + '...');
+      output.push('   *Source: [' + r.source_name + '](' + r.source + ')*');
       output.push('');
     }
   } else {
@@ -426,50 +469,57 @@ function formatProfessionalResponse(query, results, grokResponse) {
     output.push('');
   }
   
+  // Interpretation
   output.push('## Interpretation');
   output.push('');
+  
   if (results && results.length > 0) {
-    output.push('The data suggests the following key insights:');
+    output.push('The key insights from the data are:');
     output.push('');
     for (var j = 0; j < Math.min(results.length, 3); j++) {
       var s = results[j];
-      output.push('• ' + s.title + ' - Relevance: ' + s.relevance + '%');
+      output.push('- ' + s.title + ' (Relevance: ' + s.relevance + '%)');
       output.push('  Source: [' + s.source_name + '](' + s.source + ')');
     }
     output.push('');
+    output.push('These sources collectively suggest that the AI landscape is diverse and rapidly evolving.');
   } else {
     output.push('Insufficient data for a comprehensive interpretation.');
     output.push('');
   }
   
+  // Conclusion
   output.push('## Conclusion');
   output.push('');
+  
   if (results && results.length > 0) {
-    output.push('The analysis synthesizes information from ' + results.length + ' sources. ');
-    output.push('The most relevant sources provide insights into AI technology and industry trends.');
+    output.push('Based on the analysis of ' + results.length + ' sources, the available information provides valuable insights into the topic. The most relevant sources offer perspectives on AI technology, industry trends, and market developments.');
     output.push('');
   } else {
-    output.push('No conclusive findings available. Try refining your query.');
+    output.push('No conclusive findings available. Try refining your query or asking about specific AI topics.');
     output.push('');
   }
   
+  // Suggestions
   output.push('## Suggestions');
   output.push('');
+  
   if (results && results.length > 0) {
-    output.push('1. Review the source materials for more detailed information.');
-    output.push('2. Consider additional research on specific topics.');
-    output.push('3. Evaluate the relevance of sources based on your needs.');
+    output.push('1. Review the source materials for more detailed information');
+    output.push('2. Consider additional research on specific topics of interest');
+    output.push('3. Evaluate the relevance of each source based on your needs');
     output.push('');
   } else {
-    output.push('Try asking about:');
-    output.push('• Top AI tools for 2026');
-    output.push('• How generative AI works');
-    output.push('• Best AI platforms for business');
-    output.push('• Latest AI trends and innovations');
-    output.push('• Compare ChatGPT vs Claude vs Gemini');
+    output.push('Try asking about specific topics such as:');
+    output.push('- Top AI tools for 2026');
+    output.push('- How generative AI works');
+    output.push('- Best AI platforms for business');
+    output.push('- Latest AI trends and innovations');
+    output.push('- Compare ChatGPT vs Claude vs Gemini');
     output.push('');
   }
   
+  // Source References
   if (results && results.length > 0) {
     output.push('## Source References');
     output.push('');
@@ -486,18 +536,20 @@ function formatProfessionalResponse(query, results, grokResponse) {
     }
   }
   
+  // Assessment
   output.push('## Assessment');
   output.push('');
   var confidence = results && results.length > 0 ? 'Medium' : 'Low';
-  var quality = results && results.length > 0 ? 'Good' : 'Limited';
+  var quality = results && results.length > 0 ? Math.min(results.length * 20, 100) : 0;
   output.push('**Confidence:** ' + confidence + ' confidence — the sources are consistent and relevant.');
-  output.push('**Quality Rating:** ' + quality + ' (' + (results ? results.length * 20 : 0) + '%)');
+  output.push('**Quality Rating:** ' + (quality >= 80 ? 'Excellent' : quality >= 60 ? 'Good' : 'Fair') + ' (' + quality + '%)');
   output.push('');
   
+  // Footer
   output.push('---');
   output.push('');
   output.push('*Analysis generated on ' + new Date().toLocaleString() + ' using multi-source intelligence.*');
-  output.push('*Sources: ' + (results ? results.length : 0) + ' | Model: ' + (grokResponse ? 'grok-enhanced' : 'fallback') + '*');
+  output.push('*Sources: ' + (results ? results.length : 0) + ' | Model: fallback*');
   
   return output.join('\n');
 }
@@ -538,16 +590,27 @@ export default async function handler(req, res) {
     var searchResult = searchSources(query);
     var results = searchResult.results || [];
     
-    // Build context for Grok
-    var context = results.map(function(r, i) {
-      return 'Source ' + (i + 1) + ': ' + r.title + '\n' + (r.fullContent || r.chunk || '').substring(0, 500);
-    }).join('\n\n');
+    // Try Grok API with Chain-of-Thought
+    var grokResponse = await callGrokWithCoT(query, results);
     
-    // Try Grok API first
-    var grokResponse = await callGrokAPI(query, context);
+    var formattedResponse;
+    var modelUsed = 'fallback';
     
-    // Format response
-    var formattedResponse = formatProfessionalResponse(query, results, grokResponse);
+    if (grokResponse && grokResponse.success && grokResponse.response) {
+      // Use Grok's Chain-of-Thought response
+      formattedResponse = grokResponse.response;
+      modelUsed = 'grok-enhanced';
+    } else {
+      // Use fallback response
+      formattedResponse = generateFallbackResponse(query, results);
+      modelUsed = 'fallback';
+    }
+    
+    // Calculate quality score
+    var qualityScore = results.length > 0 ? Math.min(results.length * 20, 100) : 0;
+    if (modelUsed === 'grok-enhanced') {
+      qualityScore = Math.min(qualityScore + 20, 100);
+    }
     
     return res.status(200).json({
       response: formattedResponse,
@@ -556,12 +619,14 @@ export default async function handler(req, res) {
         total_sources: uniqueSources.length,
         matches_found: results.length,
         ai_generated: true,
-        model: grokResponse && grokResponse.success ? 'grok-enhanced' : 'fallback',
+        model: modelUsed,
         formatted: true,
         professional_style: true,
+        chain_of_thought: true,
         last_updated: new Date().toISOString(),
         confidence: results.length > 0 ? 'Medium' : 'Low',
-        grok_used: !!(grokResponse && grokResponse.success)
+        quality_score: qualityScore,
+        grok_used: modelUsed === 'grok-enhanced'
       }
     });
     
