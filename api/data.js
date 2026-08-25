@@ -1,6 +1,7 @@
-// api/data.js - OVHcloud Working Version
+// api/data.js - OpenAI API with Multiple Models
 // ============================================================
-// Purpose: API handler using OVHcloud gpt-oss-120b via server-side fetch
+// Purpose: API handler using OpenAI API with multiple model support
+// Environment variable: OPEN_AI_KEY
 // ============================================================
 
 // ============================================
@@ -302,10 +303,35 @@ function searchSources(query) {
 }
 
 // ============================================
-// BUILD OVHCLOUD PROMPT
+// OPENAI API CONFIGURATION
 // ============================================
 
-function buildOVHCloudPrompt(query, sources) {
+var OPENAI_MODELS = {
+  // Premium models (best quality, higher cost)
+  premium: [
+    { id: 'gpt-4-turbo-preview', name: 'GPT-4 Turbo', cost: 'high' },
+    { id: 'gpt-4', name: 'GPT-4', cost: 'high' }
+  ],
+  // Balanced models (good quality, reasonable cost)
+  balanced: [
+    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', cost: 'low' },
+    { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', cost: 'low' }
+  ],
+  // Fast models (cheap, fast)
+  fast: [
+    { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', cost: 'low' }
+  ]
+};
+
+// Default model selection
+var DEFAULT_MODEL = 'gpt-4o-mini'; // Free tier friendly
+var FALLBACK_MODELS = ['gpt-3.5-turbo', 'gpt-4o-mini'];
+
+// ============================================
+// BUILD OPENAI PROMPT
+// ============================================
+
+function buildOpenAIPrompt(query, sources) {
   var context = sources.map(function(s, i) {
     return 'Source ' + (i + 1) + ':\n' +
            'Title: ' + s.title + '\n' +
@@ -316,7 +342,7 @@ function buildOVHCloudPrompt(query, sources) {
            'Relevance: ' + s.relevance + '%\n';
   }).join('\n---\n\n');
   
-  var systemPrompt = 'You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning.\n\nREASONING STEPS:\n1. DECOMPOSE: Break down the question\n2. EXAMINE: Analyze each source\n3. SYNTHESIZE: Combine insights\n4. INTERPRET: Explain findings in plain language\n5. CONCLUDE: Provide summary with recommendations\n\nRESPONSE STRUCTURE:\n## Grok API Reasoning Block\n## Explanation\n## Interpretation\n## Conclusion\n## Suggestions\n## Source References\n## Assessment\n\nHYPERLINK RULE: Every source must be linked as [Source Name](URL).\n\nUse bullet points for lists. Use **bold** for emphasis.';
+  var systemPrompt = 'You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning.\n\nREASONING STEPS:\n1. DECOMPOSE: Break down the question\n2. EXAMINE: Analyze each source\n3. SYNTHESIZE: Combine insights\n4. INTERPRET: Explain findings in plain language\n5. CONCLUDE: Provide summary with recommendations\n\nRESPONSE STRUCTURE:\n## Grok API Reasoning Block\n[Show your reasoning pathway]\n\n## Explanation\n[Clear overview in plain language]\n\n## Interpretation\n[What the data means for developers and enterprises]\n\n## Conclusion\n[Definitive summary statement]\n\n## Suggestions\n[Actionable steps]\n\n## Source References\n[All sources with [Source Name](URL) clickable links]\n\n## Assessment\n[Confidence and quality rating]\n\nHYPERLINK RULE: Every source must be linked as [Source Name](URL).\n\nUse bullet points for lists. Use **bold** for emphasis. Write in clear, professional language.';
   
   var userPrompt = 'QUESTION: ' + query + '\n\nCONTEXT FROM SOURCES:\n' + context + '\n\nApply Chain-of-Thought reasoning. Hyperlink every source using [Source Name](URL).';
   
@@ -329,55 +355,92 @@ function buildOVHCloudPrompt(query, sources) {
 }
 
 // ============================================
-// CALL OVHCLOUD API DIRECTLY
+// CALL OPENAI API
 // ============================================
 
-async function callOVHCloud(query, sources) {
+async function callOpenAI(query, sources, model) {
+  var apiKey = process.env.OPEN_AI_KEY;
+  
+  if (!apiKey) {
+    console.error('OPEN_AI_KEY not set in environment variables');
+    return null;
+  }
+  
+  var modelToUse = model || DEFAULT_MODEL;
+  
   try {
-    var promptData = buildOVHCloudPrompt(query, sources);
+    var promptData = buildOpenAIPrompt(query, sources);
     
     var requestBody = {
-      model: 'gpt-oss-120b',
+      model: modelToUse,
       messages: promptData.messages,
       temperature: 0.25,
       max_tokens: 2500,
       top_p: 0.95
     };
     
-    console.log('Calling OVHcloud API...');
-    console.log('URL: https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions');
+    console.log('Calling OpenAI API with model:', modelToUse);
     
-    var response = await fetch('https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions', {
+    var response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Authorization': 'Bearer ' + apiKey
       },
       body: JSON.stringify(requestBody)
     });
     
     if (!response.ok) {
-      var errorText = await response.text();
-      console.error('OVHcloud error:', response.status, errorText);
+      var errorData = await response.json();
+      console.error('OpenAI error:', response.status, errorData);
       return null;
     }
     
     var data = await response.json();
-    console.log('OVHcloud response received successfully');
+    console.log('OpenAI response received successfully with model:', data.model);
     
     if (data.choices && data.choices[0] && data.choices[0].message) {
       return {
         success: true,
         response: data.choices[0].message.content,
-        model: data.model || 'gpt-oss-120b'
+        model: data.model || modelToUse,
+        usage: data.usage || null
       };
     }
     
     return null;
   } catch (error) {
-    console.error('OVHcloud API error:', error.message);
+    console.error('OpenAI API error:', error.message);
     return null;
   }
+}
+
+// ============================================
+// CALL OPENAI WITH FALLBACK
+// ============================================
+
+async function callOpenAIWithFallback(query, sources) {
+  // Try primary model first
+  var result = await callOpenAI(query, sources, DEFAULT_MODEL);
+  
+  if (result && result.success) {
+    return result;
+  }
+  
+  // Try fallback models
+  for (var i = 0; i < FALLBACK_MODELS.length; i++) {
+    var model = FALLBACK_MODELS[i];
+    if (model === DEFAULT_MODEL) continue; // Skip if already tried
+    
+    console.log('Trying fallback model:', model);
+    var fallbackResult = await callOpenAI(query, sources, model);
+    
+    if (fallbackResult && fallbackResult.success) {
+      return fallbackResult;
+    }
+  }
+  
+  return null;
 }
 
 // ============================================
@@ -535,23 +598,25 @@ export default async function handler(req, res) {
     var searchResult = searchSources(query);
     var results = searchResult.results || [];
     
-    // Try OVHcloud API
-    console.log('Attempting OVHcloud API call...');
-    var ovhResponse = await callOVHCloud(query, results);
+    // Try OpenAI API
+    console.log('Attempting OpenAI API call...');
+    console.log('Using OPEN_AI_KEY from environment');
+    
+    var openAIResponse = await callOpenAIWithFallback(query, results);
     
     var formattedResponse;
     var modelUsed;
-    var usingOVHcloud = false;
+    var usingOpenAI = false;
     
-    if (ovhResponse && ovhResponse.success && ovhResponse.response) {
-      formattedResponse = ovhResponse.response;
-      modelUsed = 'gpt-oss-120b (OVHcloud)';
-      usingOVHcloud = true;
-      console.log('OVHcloud response used successfully');
+    if (openAIResponse && openAIResponse.success && openAIResponse.response) {
+      formattedResponse = openAIResponse.response;
+      modelUsed = openAIResponse.model || 'openai';
+      usingOpenAI = true;
+      console.log('OpenAI response used successfully with model:', modelUsed);
     } else {
       formattedResponse = generateFallbackResponse(query, results);
       modelUsed = 'fallback';
-      usingOVHcloud = false;
+      usingOpenAI = false;
       console.log('Using fallback response');
     }
     
@@ -565,7 +630,7 @@ export default async function handler(req, res) {
       qualityScore = Math.round(total / results.length);
     }
     
-    if (usingOVHcloud) {
+    if (usingOpenAI) {
       qualityScore = Math.min(qualityScore + 20, 100);
     }
     
@@ -577,13 +642,13 @@ export default async function handler(req, res) {
         matches_found: results.length,
         ai_generated: true,
         model: modelUsed,
-        provider: usingOVHcloud ? 'OVHcloud AI Endpoints' : 'Fallback',
+        provider: usingOpenAI ? 'OpenAI API' : 'Fallback',
         formatted: true,
         chain_of_thought: true,
         last_updated: new Date().toISOString(),
         confidence: results.length >= 3 ? 'High' : results.length >= 1 ? 'Medium' : 'Low',
         quality_score: qualityScore,
-        ovhcloud_used: usingOVHcloud
+        openai_used: usingOpenAI
       }
     });
     
