@@ -1,7 +1,7 @@
-// api/data.js - OpenAI API with Multiple Models
+// api/data.js - OpenAI API Working Version
 // ============================================================
-// Purpose: API handler using OpenAI API with multiple model support
-// Environment variable: OPEN_AI_KEY
+// Purpose: API handler using OpenAI API with OPEN_AI_KEY
+// Environment variable: OPEN_AI_KEY (set in Vercel)
 // ============================================================
 
 // ============================================
@@ -303,84 +303,79 @@ function searchSources(query) {
 }
 
 // ============================================
-// OPENAI API CONFIGURATION
+// OPENAI API CALL
 // ============================================
 
-var OPENAI_MODELS = {
-  // Premium models (best quality, higher cost)
-  premium: [
-    { id: 'gpt-4-turbo-preview', name: 'GPT-4 Turbo', cost: 'high' },
-    { id: 'gpt-4', name: 'GPT-4', cost: 'high' }
-  ],
-  // Balanced models (good quality, reasonable cost)
-  balanced: [
-    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', cost: 'low' },
-    { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', cost: 'low' }
-  ],
-  // Fast models (cheap, fast)
-  fast: [
-    { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', cost: 'low' }
-  ]
-};
-
-// Default model selection
-var DEFAULT_MODEL = 'gpt-4o-mini'; // Free tier friendly
-var FALLBACK_MODELS = ['gpt-3.5-turbo', 'gpt-4o-mini'];
-
-// ============================================
-// BUILD OPENAI PROMPT
-// ============================================
-
-function buildOpenAIPrompt(query, sources) {
-  var context = sources.map(function(s, i) {
-    return 'Source ' + (i + 1) + ':\n' +
-           'Title: ' + s.title + '\n' +
-           'Author: ' + s.author + '\n' +
-           'Date: ' + s.date + '\n' +
-           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 600) + '\n' +
-           'URL: ' + s.source + '\n' +
-           'Relevance: ' + s.relevance + '%\n';
-  }).join('\n---\n\n');
-  
-  var systemPrompt = 'You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning.\n\nREASONING STEPS:\n1. DECOMPOSE: Break down the question\n2. EXAMINE: Analyze each source\n3. SYNTHESIZE: Combine insights\n4. INTERPRET: Explain findings in plain language\n5. CONCLUDE: Provide summary with recommendations\n\nRESPONSE STRUCTURE:\n## Grok API Reasoning Block\n[Show your reasoning pathway]\n\n## Explanation\n[Clear overview in plain language]\n\n## Interpretation\n[What the data means for developers and enterprises]\n\n## Conclusion\n[Definitive summary statement]\n\n## Suggestions\n[Actionable steps]\n\n## Source References\n[All sources with [Source Name](URL) clickable links]\n\n## Assessment\n[Confidence and quality rating]\n\nHYPERLINK RULE: Every source must be linked as [Source Name](URL).\n\nUse bullet points for lists. Use **bold** for emphasis. Write in clear, professional language.';
-  
-  var userPrompt = 'QUESTION: ' + query + '\n\nCONTEXT FROM SOURCES:\n' + context + '\n\nApply Chain-of-Thought reasoning. Hyperlink every source using [Source Name](URL).';
-  
-  return {
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt }
-    ]
-  };
-}
-
-// ============================================
-// CALL OPENAI API
-// ============================================
-
-async function callOpenAI(query, sources, model) {
+async function callOpenAIAPI(query, sources) {
   var apiKey = process.env.OPEN_AI_KEY;
   
+  // Check if API key exists
   if (!apiKey) {
-    console.error('OPEN_AI_KEY not set in environment variables');
+    console.error('OPEN_AI_KEY environment variable is not set');
     return null;
   }
   
-  var modelToUse = model || DEFAULT_MODEL;
+  // Log API key status (masked for security)
+  var maskedKey = apiKey.substring(0, 10) + '...' + apiKey.substring(apiKey.length - 4);
+  console.log('Using OPEN_AI_KEY:', maskedKey);
   
   try {
-    var promptData = buildOpenAIPrompt(query, sources);
+    // Build context from sources
+    var context = sources.map(function(s, i) {
+      return 'Source ' + (i + 1) + ':\n' +
+             'Title: ' + s.title + '\n' +
+             'Author: ' + s.author + '\n' +
+             'Date: ' + s.date + '\n' +
+             'Content: ' + (s.fullContent || s.chunk || '').substring(0, 600) + '\n' +
+             'URL: ' + s.source + '\n' +
+             'Relevance: ' + s.relevance + '%\n';
+    }).join('\n---\n\n');
     
+    // Build system prompt
+    var systemPrompt = 
+      'You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning.\n\n' +
+      'REASONING STEPS:\n' +
+      '1. DECOMPOSE: Break down the question\n' +
+      '2. EXAMINE: Analyze each source\n' +
+      '3. SYNTHESIZE: Combine insights\n' +
+      '4. INTERPRET: Explain findings in plain language\n' +
+      '5. CONCLUDE: Provide summary with recommendations\n\n' +
+      'RESPONSE STRUCTURE:\n' +
+      '## Grok API Reasoning Block\n' +
+      '[Show your reasoning pathway]\n\n' +
+      '## Explanation\n' +
+      '[Clear overview in plain language]\n\n' +
+      '## Interpretation\n' +
+      '[What the data means for developers and enterprises]\n\n' +
+      '## Conclusion\n' +
+      '[Definitive summary statement]\n\n' +
+      '## Suggestions\n' +
+      '[Actionable steps]\n\n' +
+      '## Source References\n' +
+      '[All sources with [Source Name](URL) clickable links]\n\n' +
+      '## Assessment\n' +
+      '[Confidence and quality rating]\n\n' +
+      'HYPERLINK RULE: Every source must be linked as [Source Name](URL).\n' +
+      'Use bullet points for lists. Use **bold** for emphasis. Write in clear, professional language.';
+    
+    // Build user prompt
+    var userPrompt = 'QUESTION: ' + query + '\n\nCONTEXT FROM SOURCES:\n' + context + '\n\nApply Chain-of-Thought reasoning. Hyperlink every source using [Source Name](URL).';
+    
+    // Build request body
     var requestBody = {
-      model: modelToUse,
-      messages: promptData.messages,
+      model: 'gpt-4o-mini', // Using the cheapest model
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
       temperature: 0.25,
       max_tokens: 2500,
       top_p: 0.95
     };
     
-    console.log('Calling OpenAI API with model:', modelToUse);
+    console.log('Calling OpenAI API with model: gpt-4o-mini');
     
+    // Make the API call
     var response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -390,20 +385,21 @@ async function callOpenAI(query, sources, model) {
       body: JSON.stringify(requestBody)
     });
     
+    // Check response
     if (!response.ok) {
-      var errorData = await response.json();
-      console.error('OpenAI error:', response.status, errorData);
+      var errorText = await response.text();
+      console.error('OpenAI API error:', response.status, errorText);
       return null;
     }
     
     var data = await response.json();
-    console.log('OpenAI response received successfully with model:', data.model);
+    console.log('OpenAI API call successful');
     
     if (data.choices && data.choices[0] && data.choices[0].message) {
       return {
         success: true,
         response: data.choices[0].message.content,
-        model: data.model || modelToUse,
+        model: data.model || 'gpt-4o-mini',
         usage: data.usage || null
       };
     }
@@ -413,34 +409,6 @@ async function callOpenAI(query, sources, model) {
     console.error('OpenAI API error:', error.message);
     return null;
   }
-}
-
-// ============================================
-// CALL OPENAI WITH FALLBACK
-// ============================================
-
-async function callOpenAIWithFallback(query, sources) {
-  // Try primary model first
-  var result = await callOpenAI(query, sources, DEFAULT_MODEL);
-  
-  if (result && result.success) {
-    return result;
-  }
-  
-  // Try fallback models
-  for (var i = 0; i < FALLBACK_MODELS.length; i++) {
-    var model = FALLBACK_MODELS[i];
-    if (model === DEFAULT_MODEL) continue; // Skip if already tried
-    
-    console.log('Trying fallback model:', model);
-    var fallbackResult = await callOpenAI(query, sources, model);
-    
-    if (fallbackResult && fallbackResult.success) {
-      return fallbackResult;
-    }
-  }
-  
-  return null;
 }
 
 // ============================================
@@ -600,9 +568,7 @@ export default async function handler(req, res) {
     
     // Try OpenAI API
     console.log('Attempting OpenAI API call...');
-    console.log('Using OPEN_AI_KEY from environment');
-    
-    var openAIResponse = await callOpenAIWithFallback(query, results);
+    var openAIResponse = await callOpenAIAPI(query, results);
     
     var formattedResponse;
     var modelUsed;
@@ -612,12 +578,12 @@ export default async function handler(req, res) {
       formattedResponse = openAIResponse.response;
       modelUsed = openAIResponse.model || 'openai';
       usingOpenAI = true;
-      console.log('OpenAI response used successfully with model:', modelUsed);
+      console.log('OpenAI API used successfully');
     } else {
       formattedResponse = generateFallbackResponse(query, results);
       modelUsed = 'fallback';
       usingOpenAI = false;
-      console.log('Using fallback response');
+      console.log('Using fallback response (OpenAI unavailable)');
     }
     
     // Calculate quality score
