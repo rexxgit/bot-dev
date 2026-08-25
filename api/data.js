@@ -1,12 +1,10 @@
-// api/data.js - Minimal Working Version
+// api/data.js - OVHcloud Working Version
 // ============================================================
-// Purpose: API handler using OVHcloud gpt-oss-120b
+// Purpose: API handler using OVHcloud gpt-oss-120b via server-side fetch
 // ============================================================
-
-import GrokClient from '../lib/grok/client.js';
 
 // ============================================
-// DATA
+// ALL DATA EMBEDDED HERE
 // ============================================
 
 var techCrunchSources = [
@@ -14,7 +12,7 @@ var techCrunchSources = [
     title: "Microsoft is openly competing with OpenAI, Anthropic more than ever",
     author: "Unknown",
     date: "2026-07-29T17:21:06-07:00",
-    content: "Microsoft is in a unique position as AI overtakes the tech industry.",
+    content: "Microsoft is in a unique position as AI overtakes the tech industry. It's one of the world's largest cloud providers and software-as-a-service companies, while also holding valuable stakes in the two biggest AI labs, OpenAI and Anthropic. Those incentives are starting to clash as Microsoft posts blockbuster financial results.",
     url: "https://techcrunch.com/2026/07/29/microsoft-is-openly-competing-with-openai-anthropic-more-than-ever/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -27,7 +25,7 @@ var techCrunchSources = [
     title: "Mark Zuckerberg predicts that billions of people will have personal AI agents in five years",
     author: "Unknown",
     date: "2026-07-29T16:00:11-07:00",
-    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future.",
+    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future - one where billions of people will have their own personal AI agents in the next five years.",
     url: "https://techcrunch.com/2026/07/29/mark-zuckerberg-predicts-that-billions-of-people-will-have-personal-ai-agents-in-five-years/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -40,7 +38,7 @@ var techCrunchSources = [
     title: "Microsoft logs $3.2B from Anthropic investment, but OpenAI was a mixed bag",
     author: "Unknown",
     date: "2026-07-29T15:46:03-07:00",
-    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year.",
+    content: "When Microsoft reported killer fourth-quarter earnings for its fiscal 2026 year (which ended June 30), it tucked in an interesting little tidbit about how its investments in the two biggest, and competing, AI labs are doing.",
     url: "https://techcrunch.com/2026/07/29/microsoft-logs-3-2b-from-anthropic-investment-but-openai-was-a-mixed-bag/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -66,7 +64,7 @@ var techCrunchSources = [
     title: "The Hugging Face break-in explained",
     author: "Unknown",
     date: "2026-07-29T12:44:49-07:00",
-    content: "Hugging Face on Monday published a technical timeline.",
+    content: "Hugging Face on Monday published a technical timeline that walks readers through how an autonomous AI agent, built on OpenAI models and running inside one of OpenAI's own cybersecurity evaluations, broke into its systems.",
     url: "https://techcrunch.com/2026/07/29/the-hugging-face-ai-break-in-as-told-through-an-increasingly-committed-bear-metaphor/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -79,7 +77,7 @@ var techCrunchSources = [
     title: "Claude Opus 5 became downright ruthless when tasked with running a vending machine",
     author: "Unknown",
     date: "2026-07-29T11:45:27-07:00",
-    content: "For a year now, the AI safety testing firm Andon Labs has given frontier models various real-world tasks.",
+    content: "For a year now, the AI safety testing firm Andon Labs has given frontier models various real-world tasks to determine how well they do as agents running for long periods with no human supervision.",
     url: "https://techcrunch.com/2026/07/29/claude-opus-5-became-downright-ruthless-when-tasked-with-running-a-vending-machine/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -89,10 +87,10 @@ var techCrunchSources = [
     timestamp: "2026-07-30T12:34:28.349281"
   },
   {
-    title: "Hint, a new AI startup co-founded by Martha Stewart",
+    title: "Hint, a new AI startup co-founded by Martha Stewart, offers an AI assistant for homeowners",
     author: "Unknown",
     date: "2026-07-29T08:35:09-07:00",
-    content: "Martha Stewart is entering the AI software era.",
+    content: "Martha Stewart is entering the AI software era in the most Martha Stewart way possible.",
     url: "https://techcrunch.com/2026/07/29/hint-a-new-ai-startup-co-founded-by-martha-stewart-offers-an-ai-assistant-for-homeowners/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -105,7 +103,7 @@ var techCrunchSources = [
     title: "TechCrunch Disrupt 2026",
     author: "Unknown",
     date: "2026-07-29T14:16:39-07:00",
-    content: "October 13 - 15, 2026 - San Francisco Innovation for Every Stage.",
+    content: "October 13 - 15, 2026 - San Francisco Innovation for Every Stage Disrupt is where you'll find innovation for every stage of your startup journey.",
     url: "https://techcrunch.com/events/techcrunch-disrupt/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -121,7 +119,7 @@ var staticSources = [
     title: "GPT-5.6, Claude Sonnet 5 and Grok 4.5: What the July 2026 AI Model Wave Means for Your Business",
     author: "Raulji Technologies",
     date: "July 27, 2026",
-    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks.",
+    content: "Anthropic, OpenAI, and xAI all shipped major models in weeks. Here is what the July 2026 AI model wave means for your business.",
     url: "https://www.rauljitechnologies.com/blog/july-2026-ai-model-wave/",
     source_name: "Raulji Technologies",
     source_type: "blog",
@@ -134,7 +132,7 @@ var staticSources = [
     title: "15 best AI apps I can't live without in 2026",
     author: "Gumloop",
     date: "July 27, 2026",
-    content: "It all started with ChatGPT, then Claude, and then we had an explosion of AI apps.",
+    content: "It all started with ChatGPT, then Claude, and then we had an explosion of AI apps for literally every use case you can think of.",
     url: "https://www.gumloop.com/blog/best-ai-apps",
     source_name: "Gumloop",
     source_type: "blog",
@@ -147,7 +145,7 @@ var staticSources = [
     title: "Top AI Platforms in 2026: The 15 Best Platforms I've Actually Tested",
     author: "Pickaxe",
     date: "July 27, 2026",
-    content: "I have tested more AI platforms than I can count over the past three years.",
+    content: "I have tested more AI platforms than I can count over the past three years. Most of them blurred together. Some were genuinely great.",
     url: "https://pickaxe.co/post/top-ai-platforms",
     source_name: "Pickaxe",
     source_type: "blog",
@@ -173,7 +171,7 @@ var staticSources = [
     title: "Six Popular AI Platforms Everyone Can Use",
     author: "Red River Communications",
     date: "July 27, 2026",
-    content: "Whether it's Fortune 500 companies or your friends and coworkers, people are talking about AI.",
+    content: "Whether it's Fortune 500 companies or your friends and coworkers, just about everywhere you turn, people are talking about AI.",
     url: "https://redrivercomm.com/six-popular-ai-platforms-everyone-can-use",
     source_name: "Red River Communications",
     source_type: "blog",
@@ -189,7 +187,7 @@ var ventureBeatSources = [
     title: "Thinking Machines debuts Inkling Small open source AI model",
     author: "Carl Franzen",
     date: "2026-07-31",
-    content: "Thinking Machines has debuted Inkling Small, an open source AI model.",
+    content: "Thinking Machines has debuted Inkling Small, an open source AI model that achieves near performance of its predecessor at approximately 1/4 the size.",
     url: "https://venturebeat.com/technology/thinking-machines-debuts-inkling-small-open-source-ai-model-nearing-performance-of-predecessor-at-about-1-4-size",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -202,7 +200,7 @@ var ventureBeatSources = [
     title: "Enterprise AI agents can't talk to each other",
     author: "Taryn Plumb",
     date: "2026-07-31",
-    content: "Enterprise AI agents face critical challenges including communication gaps.",
+    content: "Enterprise AI agents face critical challenges including communication gaps, permission trust issues, and auditability concerns.",
     url: "https://venturebeat.com/orchestration/enterprise-ai-agents-cant-talk-to-each-other-cant-be-trusted-with-permissions-and-cant-be-audited-5-startups-are-already-fixing-that",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -215,7 +213,7 @@ var ventureBeatSources = [
     title: "MCP just got its biggest update ever",
     author: "Michael Nunez",
     date: "2026-07-31",
-    content: "The Model Context Protocol (MCP) receives its largest update since Anthropic released it.",
+    content: "The Model Context Protocol (MCP), the open standard connecting AI agents to software, receives its largest update since Anthropic released it.",
     url: "https://venturebeat.com/orchestration/mcp-just-got-its-biggest-update-ever-heres-what-changes-for-ai-agents",
     source_name: "VentureBeat",
     source_type: "blog",
@@ -242,15 +240,8 @@ for (var i = 0; i < allSources.length; i++) {
   }
 }
 
-var sourceStats = {
-  techcrunch: techCrunchSources.length,
-  static: staticSources.length,
-  venturebeat: ventureBeatSources.length,
-  total: uniqueSources.length
-};
-
 // ============================================
-// SEARCH
+// SEARCH FUNCTION
 // ============================================
 
 function searchSources(query) {
@@ -302,73 +293,121 @@ function searchSources(query) {
   
   if (results.length === 0) {
     results = scoredResults.slice(0, 5);
+    for (var j = 0; j < results.length; j++) {
+      results[j].relevance = Math.max(results[j].relevance, 10);
+    }
   }
   
   return { results: results };
 }
 
 // ============================================
-// BUILD PROMPT
+// BUILD OVHCLOUD PROMPT
 // ============================================
 
-function buildChainOfThoughtPrompt(query, sources) {
+function buildOVHCloudPrompt(query, sources) {
   var context = sources.map(function(s, i) {
     return 'Source ' + (i + 1) + ':\n' +
            'Title: ' + s.title + '\n' +
-           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 500) + '\n' +
+           'Author: ' + s.author + '\n' +
+           'Date: ' + s.date + '\n' +
+           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 600) + '\n' +
            'URL: ' + s.source + '\n' +
            'Relevance: ' + s.relevance + '%\n';
   }).join('\n---\n\n');
   
+  var systemPrompt = 'You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning.\n\nREASONING STEPS:\n1. DECOMPOSE: Break down the question\n2. EXAMINE: Analyze each source\n3. SYNTHESIZE: Combine insights\n4. INTERPRET: Explain findings in plain language\n5. CONCLUDE: Provide summary with recommendations\n\nRESPONSE STRUCTURE:\n## Grok API Reasoning Block\n## Explanation\n## Interpretation\n## Conclusion\n## Suggestions\n## Source References\n## Assessment\n\nHYPERLINK RULE: Every source must be linked as [Source Name](URL).\n\nUse bullet points for lists. Use **bold** for emphasis.';
+  
+  var userPrompt = 'QUESTION: ' + query + '\n\nCONTEXT FROM SOURCES:\n' + context + '\n\nApply Chain-of-Thought reasoning. Hyperlink every source using [Source Name](URL).';
+  
   return {
-    system: 'You are a Senior Technical Analyst. Use Chain-of-Thought reasoning.\n\nREASONING STEPS:\n1. Decompose the question\n2. Examine each source\n3. Synthesize insights\n4. Interpret findings\n5. Conclude with recommendations\n\nRESPONSE STRUCTURE:\n## Grok API Reasoning Block\n## Explanation\n## Interpretation\n## Conclusion\n## Suggestions\n## Source References\n## Assessment\n\nUse ## for headers. Use bullet points. Use **bold** for emphasis. Hyperlink sources as [Source Name](URL).',
-    
-    user: 'QUESTION: ' + query + '\n\nCONTEXT:\n' + context + '\n\nApply Chain-of-Thought reasoning. Hyperlink every factual claim using [Source Name](URL).'
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ]
   };
 }
 
 // ============================================
-// CALL OVHCLOUD
+// CALL OVHCLOUD API DIRECTLY
 // ============================================
 
-async function callOVHCloudAI(query, sources) {
+async function callOVHCloud(query, sources) {
   try {
-    var client = new GrokClient(null, {
-      timeoutMs: 30000,
-      maxRetries: 2
-    });
+    var promptData = buildOVHCloudPrompt(query, sources);
     
-    var promptData = buildChainOfThoughtPrompt(query, sources);
-    
-    var result = await client.generateResponse(promptData, {
+    var requestBody = {
+      model: 'gpt-oss-120b',
+      messages: promptData.messages,
       temperature: 0.25,
-      maxTokens: 2500
+      max_tokens: 2500,
+      top_p: 0.95
+    };
+    
+    console.log('Calling OVHcloud API...');
+    console.log('URL: https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions');
+    
+    var response = await fetch('https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
     });
     
-    return result;
+    if (!response.ok) {
+      var errorText = await response.text();
+      console.error('OVHcloud error:', response.status, errorText);
+      return null;
+    }
+    
+    var data = await response.json();
+    console.log('OVHcloud response received successfully');
+    
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      return {
+        success: true,
+        response: data.choices[0].message.content,
+        model: data.model || 'gpt-oss-120b'
+      };
+    }
+    
+    return null;
   } catch (error) {
-    console.warn('OVHcloud error:', error.message);
+    console.error('OVHcloud API error:', error.message);
     return null;
   }
 }
 
 // ============================================
-// FALLBACK
+// GENERATE FALLBACK RESPONSE
 // ============================================
 
-function generateFallback(query, results) {
+function generateFallbackResponse(query, results) {
   var output = [];
   
   output.push('## Grok API Reasoning Block');
   output.push('');
-  output.push('Query: ' + query);
+  output.push('**Query Analysis:** "' + query + '"');
   output.push('');
-  output.push('Found ' + results.length + ' relevant sources.');
+  output.push('**Decompose:** The question seeks information about ' + query + '. I identified ' + results.length + ' relevant sources.');
+  output.push('');
+  
+  if (results && results.length > 0) {
+    var topSource = results[0].source_name || 'Unknown';
+    output.push('**Examine:** The most relevant content comes from ' + topSource + ' and related sources.');
+    output.push('');
+    output.push('**Synthesize:** Key themes include AI model capabilities, market trends, and platform comparisons.');
+  }
   output.push('');
   
   output.push('## Explanation');
   output.push('');
+  
   if (results && results.length > 0) {
+    output.push('Based on the available intelligence:');
+    output.push('');
     for (var i = 0; i < Math.min(results.length, 3); i++) {
       var r = results[i];
       output.push('**' + (i + 1) + '. ' + r.title + '**');
@@ -377,26 +416,64 @@ function generateFallback(query, results) {
       output.push('');
     }
   } else {
-    output.push('No sources found.');
+    output.push('No specific sources found.');
     output.push('');
   }
   
-  output.push('## Conclusion');
+  output.push('## Interpretation');
   output.push('');
+  
   if (results && results.length > 0) {
-    output.push('Analysis based on ' + results.length + ' sources.');
+    output.push('Key insights from the data:');
+    output.push('');
+    for (var j = 0; j < Math.min(results.length, 3); j++) {
+      var s = results[j];
+      output.push('- **' + s.title + '** (Relevance: ' + s.relevance + '%)');
+      output.push('  Source: [' + s.source_name + '](' + s.source + ')');
+    }
+    output.push('');
+    output.push('These sources suggest the AI landscape is diverse with multiple competing platforms.');
   } else {
-    output.push('No conclusive findings.');
+    output.push('Insufficient data for interpretation.');
   }
   output.push('');
   
-  output.push('## Source References');
+  output.push('## Conclusion');
   output.push('');
+  
   if (results && results.length > 0) {
+    output.push('Based on ' + results.length + ' sources, the available information provides valuable insights into ' + query + '.');
+  } else {
+    output.push('No conclusive findings. Try refining your query.');
+  }
+  output.push('');
+  
+  output.push('## Suggestions');
+  output.push('');
+  
+  if (results && results.length > 0) {
+    output.push('1. Review the source materials for more detailed information');
+    output.push('2. Cross-reference findings across multiple sources');
+    output.push('3. Evaluate the relevance of each source based on your needs');
+  } else {
+    output.push('Try asking about specific topics like:');
+    output.push('- Top AI tools and platforms for 2026');
+    output.push('- How generative AI works');
+    output.push('- Best AI platforms for business');
+  }
+  output.push('');
+  
+  if (results && results.length > 0) {
+    output.push('## Source References');
+    output.push('');
     for (var k = 0; k < Math.min(results.length, 5); k++) {
       var src = results[k];
       output.push((k + 1) + '. **' + src.title + '**');
+      output.push('   Author: ' + src.author);
       output.push('   Source: [' + src.source_name + '](' + src.source + ')');
+      if (src.date) {
+        output.push('   Date: ' + src.date);
+      }
       output.push('   Relevance: ' + src.relevance + '%');
       output.push('');
     }
@@ -404,14 +481,25 @@ function generateFallback(query, results) {
   
   output.push('## Assessment');
   output.push('');
+  
   var confidence = results && results.length >= 3 ? 'High' : results && results.length >= 1 ? 'Medium' : 'Low';
+  var qualityScore = 0;
+  if (results && results.length > 0) {
+    var total = 0;
+    for (var m = 0; m < results.length; m++) {
+      total += results[m].relevance || 0;
+    }
+    qualityScore = Math.round(total / results.length);
+  }
+  
   output.push('**Confidence:** ' + confidence);
+  output.push('**Quality Rating:** ' + qualityScore + '%');
   output.push('');
   
   output.push('---');
   output.push('');
-  output.push('*Generated on ' + new Date().toLocaleString() + '*');
-  output.push('*Sources: ' + (results ? results.length : 0) + '*');
+  output.push('*Analysis generated on ' + new Date().toLocaleString() + ' using multi-source intelligence.*');
+  output.push('*Sources: ' + (results ? results.length : 0) + ' | Model: fallback*');
   
   return output.join('\n');
 }
@@ -447,22 +535,27 @@ export default async function handler(req, res) {
     var searchResult = searchSources(query);
     var results = searchResult.results || [];
     
-    var aiResponse = await callOVHCloudAI(query, results);
+    // Try OVHcloud API
+    console.log('Attempting OVHcloud API call...');
+    var ovhResponse = await callOVHCloud(query, results);
     
     var formattedResponse;
     var modelUsed;
     var usingOVHcloud = false;
     
-    if (aiResponse && aiResponse.success && aiResponse.response) {
-      formattedResponse = aiResponse.response;
+    if (ovhResponse && ovhResponse.success && ovhResponse.response) {
+      formattedResponse = ovhResponse.response;
       modelUsed = 'gpt-oss-120b (OVHcloud)';
       usingOVHcloud = true;
+      console.log('OVHcloud response used successfully');
     } else {
-      formattedResponse = generateFallback(query, results);
+      formattedResponse = generateFallbackResponse(query, results);
       modelUsed = 'fallback';
       usingOVHcloud = false;
+      console.log('Using fallback response');
     }
     
+    // Calculate quality score
     var qualityScore = 0;
     if (results && results.length > 0) {
       var total = 0;
