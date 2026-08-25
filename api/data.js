@@ -1,11 +1,11 @@
-// api/data.js - Chain-of-Thought Reasoning with OVHcloud AI Endpoints
+// api/data.js - OVHcloud AI Endpoints Only
 // ============================================================
-// Purpose: API handler with OVHcloud AI Endpoints (free tier),
-// Chain-of-Thought reasoning, and professional framework formatting
+// Purpose: API handler using OVHcloud gpt-oss-120b (free tier)
+// No Grok, no fallback - only OVHcloud AI
 // ============================================================
 
 // ============================================
-// ESSENTIAL IMPORTS ONLY
+// ONLY IMPORT - OVHcloud Client
 // ============================================
 
 import GrokClient from '../lib/grok/client.js';
@@ -258,7 +258,7 @@ var sourceStats = {
 };
 
 // ============================================
-// SEARCH FUNCTIONS WITH BETTER SCORING
+// SEARCH FUNCTIONS
 // ============================================
 
 function searchSources(query) {
@@ -306,11 +306,6 @@ function searchSources(query) {
       score += 15;
     }
     
-    // Word count bonus
-    var wordCount = (source.content || '').split(' ').length;
-    if (wordCount > 500) score += 5;
-    if (wordCount > 1000) score += 10;
-    
     var maxScore = queryWords.length * 15 + 45;
     var relevance = Math.min(Math.round((score / Math.max(maxScore, 1)) * 100), 100);
     
@@ -324,8 +319,7 @@ function searchSources(query) {
       fullContent: source.content || '',
       relevance: relevance,
       score: score,
-      matchedTerms: matchedTerms,
-      wordCount: wordCount
+      matchedTerms: matchedTerms
     };
   });
   
@@ -347,7 +341,7 @@ function searchSources(query) {
 }
 
 // ============================================
-// CHAIN-OF-THOUGHT PROMPT BUILDER (For OVHcloud)
+// CHAIN-OF-THOUGHT PROMPT BUILDER (OVHcloud)
 // ============================================
 
 function buildChainOfThoughtPrompt(query, sources) {
@@ -413,7 +407,7 @@ Every factual claim or source reference must include an active, clickable Markdo
 }
 
 // ============================================
-// OVHCLOUD AI ENDPOINTS INTEGRATION (FREE)
+// OVHCLOUD AI ENDPOINTS INTEGRATION
 // ============================================
 
 async function callOVHCloudAI(query, sources) {
@@ -423,8 +417,6 @@ async function callOVHCloudAI(query, sources) {
   try {
     // Initialize client with OVHcloud (free tier)
     var client = new GrokClient(null, {
-      useOvh: true,  // Use OVHcloud free tier
-      ovhModel: 'gpt-oss-120b',
       timeoutMs: 30000,
       maxRetries: 2
     });
@@ -447,7 +439,7 @@ async function callOVHCloudAI(query, sources) {
 }
 
 // ============================================
-// INTELLIGENT FALLBACK RESPONSE GENERATOR
+// FALLBACK RESPONSE (if OVHcloud fails)
 // ============================================
 
 function generateIntelligentFallback(query, results) {
@@ -636,21 +628,29 @@ export default async function handler(req, res) {
     
     var formattedResponse;
     var modelUsed;
+    var usingOVHcloud = false;
     
     if (aiResponse && aiResponse.success && aiResponse.response) {
       // Use OVHcloud AI response with Chain-of-Thought
       formattedResponse = aiResponse.response;
       modelUsed = 'gpt-oss-120b (OVHcloud)';
+      usingOVHcloud = true;
     } else {
       // Use intelligent fallback
       formattedResponse = generateIntelligentFallback(query, results);
       modelUsed = 'intelligent-fallback';
+      usingOVHcloud = false;
     }
     
     // Calculate quality score
     var qualityScore = 0;
     if (results && results.length > 0) {
       qualityScore = Math.min(results.reduce(function(sum, r) { return sum + r.relevance; }, 0) / results.length, 100);
+    }
+    
+    // If OVHcloud was used, boost quality score
+    if (usingOVHcloud) {
+      qualityScore = Math.min(qualityScore + 20, 100);
     }
     
     return res.status(200).json({
@@ -661,13 +661,14 @@ export default async function handler(req, res) {
         matches_found: results.length,
         ai_generated: true,
         model: modelUsed,
-        provider: 'OVHcloud AI Endpoints',
+        provider: usingOVHcloud ? 'OVHcloud AI Endpoints' : 'Fallback',
         formatted: true,
         professional_style: true,
         chain_of_thought: true,
         last_updated: new Date().toISOString(),
         confidence: results.length >= 3 ? 'High' : results.length >= 1 ? 'Medium' : 'Low',
-        quality_score: Math.round(qualityScore)
+        quality_score: Math.round(qualityScore),
+        ovhcloud_used: usingOVHcloud
       }
     });
     
