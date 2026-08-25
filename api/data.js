@@ -1,4 +1,4 @@
-// api/data.js - OVHcloud AI Endpoints Only
+// api/data.js - OVHcloud AI Endpoints Only (Clean Version)
 // ============================================================
 // Purpose: API handler using OVHcloud gpt-oss-120b (free tier)
 // No Grok, no fallback - only OVHcloud AI
@@ -33,7 +33,7 @@ var techCrunchSources = [
     title: "Mark Zuckerberg predicts that billions of people will have personal AI agents in five years",
     author: "Unknown",
     date: "2026-07-29T16:00:11-07:00",
-    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future — one where billions of people will have their own personal AI agents in the next five years.",
+    content: "Meta founder and CEO Mark Zuckerberg is trying to sell investors on his prediction for the future - one where billions of people will have their own personal AI agents in the next five years.",
     url: "https://techcrunch.com/2026/07/29/mark-zuckerberg-predicts-that-billions-of-people-will-have-personal-ai-agents-in-five-years/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -111,7 +111,7 @@ var techCrunchSources = [
     title: "TechCrunch Disrupt 2026",
     author: "Unknown",
     date: "2026-07-29T14:16:39-07:00",
-    content: "October 13 – 15, 2026 — San Francisco Innovation for Every Stage Disrupt is where you'll find innovation for every stage of your startup journey.",
+    content: "October 13 - 15, 2026 - San Francisco Innovation for Every Stage Disrupt is where you'll find innovation for every stage of your startup journey.",
     url: "https://techcrunch.com/events/techcrunch-disrupt/",
     source_name: "TechCrunch",
     source_type: "blog",
@@ -221,7 +221,7 @@ var ventureBeatSources = [
   },
   {
     title: "MCP just got its biggest update ever",
-    author: "Michael Nuñez",
+    author: "Michael Nunez",
     date: "2026-07-31",
     content: "The Model Context Protocol (MCP), the open standard connecting AI agents to software, receives its largest update since Anthropic released it.",
     url: "https://venturebeat.com/orchestration/mcp-just-got-its-biggest-update-ever-heres-what-changes-for-ai-agents",
@@ -298,7 +298,6 @@ function searchSources(query) {
       }
     }
     
-    // Boost for exact phrase matches
     if (title.indexOf(queryLower) !== -1) {
       score += 30;
     }
@@ -341,11 +340,10 @@ function searchSources(query) {
 }
 
 // ============================================
-// CHAIN-OF-THOUGHT PROMPT BUILDER (OVHcloud)
+// CHAIN-OF-THOUGHT PROMPT BUILDER
 // ============================================
 
 function buildChainOfThoughtPrompt(query, sources) {
-  // Build context from sources
   var context = sources.map(function(s, i) {
     return 'Source ' + (i + 1) + ':\n' +
            'Title: ' + s.title + '\n' +
@@ -356,50 +354,9 @@ function buildChainOfThoughtPrompt(query, sources) {
            'Relevance: ' + s.relevance + '%\n';
   }).join('\n---\n\n');
   
-  // Build Chain-of-Thought prompt
   var prompt = {
-    system: `You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning to analyze the provided sources.
-
-REASONING STEPS:
-1. DECOMPOSE: Break down the question into key components
-2. EXAMINE: Analyze each source for relevant information
-3. SYNTHESIZE: Combine insights from multiple sources
-4. INTERPRET: Explain findings in plain, professional language
-5. CONCLUDE: Provide a definitive summary with actionable insights
-
-RESPONSE STRUCTURE:
-## Grok API Reasoning Block
-[Show your reasoning pathway]
-
-## Explanation
-[Clear overview in plain language]
-
-## Interpretation
-[What the data means for developers, enterprises, and individuals]
-
-## Conclusion
-[Definitive summary statement]
-
-## Suggestions
-[Actionable steps]
-
-## Source References
-[All sources with [Source Name](URL) clickable links]
-
-## Assessment
-[Confidence and quality rating]
-
-FORMATTING RULES:
-- Use ## for section headers
-- Use bullet points (- ) for lists
-- Use **bold** for emphasis
-- Every factual claim must include [Source Name](URL) format
-- Write in clear, professional language
-- Explain technical terms in plain English
-
-HYPERLINK RULE:
-Every factual claim or source reference must include an active, clickable Markdown link formatted strictly as [Source Name](URL) pulled directly from the provided metadata.`,
-
+    system: 'You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning to analyze the provided sources.\n\nREASONING STEPS:\n1. DECOMPOSE: Break down the question into key components\n2. EXAMINE: Analyze each source for relevant information\n3. SYNTHESIZE: Combine insights from multiple sources\n4. INTERPRET: Explain findings in plain, professional language\n5. CONCLUDE: Provide a definitive summary with actionable insights\n\nRESPONSE STRUCTURE:\n## Grok API Reasoning Block\n[Show your reasoning pathway]\n\n## Explanation\n[Clear overview in plain language]\n\n## Interpretation\n[What the data means for developers, enterprises, and individuals]\n\n## Conclusion\n[Definitive summary statement]\n\n## Suggestions\n[Actionable steps]\n\n## Source References\n[All sources with [Source Name](URL) clickable links]\n\n## Assessment\n[Confidence and quality rating]\n\nFORMATTING RULES:\n- Use ## for section headers\n- Use bullet points (- ) for lists\n- Use **bold** for emphasis\n- Every factual claim must include [Source Name](URL) format\n- Write in clear, professional language\n- Explain technical terms in plain English\n\nHYPERLINK RULE:\nEvery factual claim or source reference must include an active, clickable Markdown link formatted strictly as [Source Name](URL) pulled directly from the provided metadata.',
+    
     user: 'QUESTION: ' + query + '\n\nCONTEXT FROM SOURCES:\n' + context + '\n\nApply Chain-of-Thought reasoning to analyze this query thoroughly.\n\nFollow these steps:\n1. Decompose the question\n2. Examine each source\n3. Synthesize insights\n4. Interpret findings\n5. Conclude with recommendations\n\nRemember to hyperlink every factual claim using [Source Name](URL) format.'
   };
   
@@ -411,17 +368,12 @@ Every factual claim or source reference must include an active, clickable Markdo
 // ============================================
 
 async function callOVHCloudAI(query, sources) {
-  // OVHcloud AI Endpoints - FREE tier (no API key required)
-  // Rate limit: 2 RPM per IP per model
-  
   try {
-    // Initialize client with OVHcloud (free tier)
     var client = new GrokClient(null, {
       timeoutMs: 30000,
       maxRetries: 2
     });
     
-    // Build Chain-of-Thought prompt
     var promptData = buildChainOfThoughtPrompt(query, sources);
     
     var result = await client.generateResponse(promptData, {
@@ -439,13 +391,12 @@ async function callOVHCloudAI(query, sources) {
 }
 
 // ============================================
-// FALLBACK RESPONSE (if OVHcloud fails)
+// FALLBACK RESPONSE
 // ============================================
 
 function generateIntelligentFallback(query, results) {
   var output = [];
   
-  // Count unique sources
   var sourceNames = {};
   results.forEach(function(r) {
     if (!sourceNames[r.source_name]) sourceNames[r.source_name] = 0;
@@ -456,7 +407,6 @@ function generateIntelligentFallback(query, results) {
     return sourceNames[a] > sourceNames[b] ? a : b;
   }, Object.keys(sourceNames)[0] || 'Multiple Sources');
   
-  // Grok API Reasoning Block
   output.push('## Grok API Reasoning Block');
   output.push('');
   output.push('**Query Analysis:** "' + query + '"');
@@ -468,7 +418,6 @@ function generateIntelligentFallback(query, results) {
   output.push('**Synthesize:** The key themes across sources include AI model capabilities, market trends, and platform comparisons.');
   output.push('');
   
-  // Explanation
   output.push('## Explanation');
   output.push('');
   
@@ -493,7 +442,6 @@ function generateIntelligentFallback(query, results) {
     output.push('');
   }
   
-  // Interpretation
   output.push('## Interpretation');
   output.push('');
   
@@ -516,7 +464,6 @@ function generateIntelligentFallback(query, results) {
   }
   output.push('');
   
-  // Conclusion
   output.push('## Conclusion');
   output.push('');
   
@@ -529,7 +476,6 @@ function generateIntelligentFallback(query, results) {
   }
   output.push('');
   
-  // Suggestions
   output.push('## Suggestions');
   output.push('');
   
@@ -548,7 +494,6 @@ function generateIntelligentFallback(query, results) {
   }
   output.push('');
   
-  // Source References
   if (results && results.length > 0) {
     output.push('## Source References');
     output.push('');
@@ -565,7 +510,6 @@ function generateIntelligentFallback(query, results) {
     }
   }
   
-  // Assessment
   output.push('## Assessment');
   output.push('');
   
@@ -573,11 +517,10 @@ function generateIntelligentFallback(query, results) {
   var qualityScore = results && results.length > 0 ? Math.min(results.reduce(function(sum, r) { return sum + r.relevance; }, 0) / results.length, 100) : 0;
   var qualityLabel = qualityScore >= 80 ? 'Excellent' : qualityScore >= 60 ? 'Good' : qualityScore >= 40 ? 'Fair' : 'Limited';
   
-  output.push('**Confidence:** ' + confidence + ' confidence — the sources are consistent and relevant.');
+  output.push('**Confidence:** ' + confidence + ' confidence - the sources are consistent and relevant.');
   output.push('**Quality Rating:** ' + qualityLabel + ' (' + Math.round(qualityScore) + '%)');
   output.push('');
   
-  // Footer
   output.push('---');
   output.push('');
   output.push('*Analysis generated on ' + new Date().toLocaleString() + ' using multi-source intelligence.*');
@@ -591,7 +534,6 @@ function generateIntelligentFallback(query, results) {
 // ============================================
 
 export default async function handler(req, res) {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -618,11 +560,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // Search sources
     var searchResult = searchSources(query);
     var results = searchResult.results || [];
     
-    // Try OVHcloud AI Endpoints (free tier)
     console.log('Using OVHcloud AI Endpoints (free tier) with gpt-oss-120b');
     var aiResponse = await callOVHCloudAI(query, results);
     
@@ -631,24 +571,20 @@ export default async function handler(req, res) {
     var usingOVHcloud = false;
     
     if (aiResponse && aiResponse.success && aiResponse.response) {
-      // Use OVHcloud AI response with Chain-of-Thought
       formattedResponse = aiResponse.response;
       modelUsed = 'gpt-oss-120b (OVHcloud)';
       usingOVHcloud = true;
     } else {
-      // Use intelligent fallback
       formattedResponse = generateIntelligentFallback(query, results);
       modelUsed = 'intelligent-fallback';
       usingOVHcloud = false;
     }
     
-    // Calculate quality score
     var qualityScore = 0;
     if (results && results.length > 0) {
       qualityScore = Math.min(results.reduce(function(sum, r) { return sum + r.relevance; }, 0) / results.length, 100);
     }
     
-    // If OVHcloud was used, boost quality score
     if (usingOVHcloud) {
       qualityScore = Math.min(qualityScore + 20, 100);
     }
