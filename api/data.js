@@ -1,8 +1,10 @@
-// api/data.js - DreamPrompting API Integration
+// api/data.js - DreamPrompting API Integration (Correct Endpoint)
 // ============================================================
-// Purpose: API handler using DreamPrompting API (multiple models)
+// Purpose: API handler using DreamPrompting API
 // Environment variable: OPEN_AI_KEY (DreamPrompting API key)
 // API Format: dp-xxxxx (DreamPrompting format)
+// Endpoint: https://dreamprompting.com/api/v1/chat/completions
+// Model: "auto" (automatically routes to best model)
 // ============================================================
 
 // ============================================
@@ -304,7 +306,7 @@ function searchSources(query) {
 }
 
 // ============================================
-// DREAM PROMPTING API CALL
+// DREAM PROMPTING API CALL (Correct Endpoint)
 // ============================================
 
 async function callDreamPromptingAPI(query, sources) {
@@ -359,72 +361,55 @@ async function callDreamPromptingAPI(query, sources) {
   
   var userPrompt = 'QUESTION: ' + query + '\n\nCONTEXT FROM SOURCES:\n' + context + '\n\nApply Chain-of-Thought reasoning. Hyperlink every source using [Source Name](URL).';
   
-  // DreamPrompting API endpoint
-  var url = 'https://api.dreamprompting.com/v1/chat/completions';
+  // CORRECT DreamPrompting API endpoint
+  var url = 'https://dreamprompting.com/api/v1/chat/completions';
   
-  // Models to try (DreamPrompting supports many models)
-  var modelsToTry = [
-    'gpt-4o-mini',
-    'gpt-4-turbo-preview',
-    'gpt-3.5-turbo',
-    'claude-3-haiku-20240307',
-    'claude-3-sonnet-20240229',
-    'gemini-1.5-flash'
-  ];
-  
-  // Try each model until one works
-  for (var modelIndex = 0; modelIndex < modelsToTry.length; modelIndex++) {
-    var model = modelsToTry[modelIndex];
+  try {
+    console.log('Calling DreamPrompting API with model: auto');
     
-    try {
-      console.log('Calling DreamPrompting API with model: ' + model);
-      
-      var requestBody = {
-        model: model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.25,
-        max_tokens: 2500,
-        top_p: 0.95
-      };
-      
-      var response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + apiKey
-        },
-        body: JSON.stringify(requestBody)
-      });
-      
-      if (!response.ok) {
-        var errorText = await response.text();
-        console.error('DreamPrompting API error (' + model + '):', response.status, errorText);
-        continue; // Try next model
-      }
-      
-      var data = await response.json();
-      
-      if (data.choices && data.choices[0] && data.choices[0].message) {
-        console.log('DreamPrompting API call successful with model: ' + model);
-        return {
-          success: true,
-          response: data.choices[0].message.content,
-          model: model,
-          usage: data.usage || null
-        };
-      }
-      
-    } catch (error) {
-      console.error('DreamPrompting API error (' + model + '):', error.message);
-      // Continue to next model
+    var requestBody = {
+      model: 'auto',  // IMPORTANT: Use "auto" - DreamPrompting automatically routes to best model
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
+      temperature: 0.25,
+      max_tokens: 2500,
+      top_p: 0.95
+    };
+    
+    var response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey
+      },
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+      var errorText = await response.text();
+      console.error('DreamPrompting API error:', response.status, errorText);
+      return null;
     }
+    
+    var data = await response.json();
+    console.log('DreamPrompting API call successful with model: auto');
+    
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      return {
+        success: true,
+        response: data.choices[0].message.content,
+        model: data.model || 'auto',
+        usage: data.usage || null
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('DreamPrompting API error:', error.message);
+    return null;
   }
-  
-  console.error('All DreamPrompting models failed');
-  return null;
 }
 
 // ============================================
@@ -592,7 +577,7 @@ export default async function handler(req, res) {
     
     if (apiResponse && apiResponse.success && apiResponse.response) {
       formattedResponse = apiResponse.response;
-      modelUsed = apiResponse.model || 'dream-prompting';
+      modelUsed = apiResponse.model || 'dream-prompting-auto';
       usingAPI = true;
       console.log('DreamPrompting API used successfully');
     } else {
