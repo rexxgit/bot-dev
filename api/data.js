@@ -1,7 +1,8 @@
-// api/data.js - OpenAI API Working Version
+// api/data.js - DreamPrompting API Integration
 // ============================================================
-// Purpose: API handler using OpenAI API with OPEN_AI_KEY
-// Environment variable: OPEN_AI_KEY (set in Vercel)
+// Purpose: API handler using DreamPrompting API (multiple models)
+// Environment variable: OPEN_AI_KEY (DreamPrompting API key)
+// API Format: dp-xxxxx (DreamPrompting format)
 // ============================================================
 
 // ============================================
@@ -303,13 +304,12 @@ function searchSources(query) {
 }
 
 // ============================================
-// OPENAI API CALL
+// DREAM PROMPTING API CALL
 // ============================================
 
-async function callOpenAIAPI(query, sources) {
+async function callDreamPromptingAPI(query, sources) {
   var apiKey = process.env.OPEN_AI_KEY;
   
-  // Check if API key exists
   if (!apiKey) {
     console.error('OPEN_AI_KEY environment variable is not set');
     return null;
@@ -317,98 +317,114 @@ async function callOpenAIAPI(query, sources) {
   
   // Log API key status (masked for security)
   var maskedKey = apiKey.substring(0, 10) + '...' + apiKey.substring(apiKey.length - 4);
-  console.log('Using OPEN_AI_KEY:', maskedKey);
+  console.log('Using DreamPrompting API key:', maskedKey);
   
-  try {
-    // Build context from sources
-    var context = sources.map(function(s, i) {
-      return 'Source ' + (i + 1) + ':\n' +
-             'Title: ' + s.title + '\n' +
-             'Author: ' + s.author + '\n' +
-             'Date: ' + s.date + '\n' +
-             'Content: ' + (s.fullContent || s.chunk || '').substring(0, 600) + '\n' +
-             'URL: ' + s.source + '\n' +
-             'Relevance: ' + s.relevance + '%\n';
-    }).join('\n---\n\n');
+  // Build context from sources
+  var context = sources.map(function(s, i) {
+    return 'Source ' + (i + 1) + ':\n' +
+           'Title: ' + s.title + '\n' +
+           'Author: ' + s.author + '\n' +
+           'Date: ' + s.date + '\n' +
+           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 600) + '\n' +
+           'URL: ' + s.source + '\n' +
+           'Relevance: ' + s.relevance + '%\n';
+  }).join('\n---\n\n');
+  
+  // Build system prompt
+  var systemPrompt = 
+    'You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning.\n\n' +
+    'REASONING STEPS:\n' +
+    '1. DECOMPOSE: Break down the question\n' +
+    '2. EXAMINE: Analyze each source\n' +
+    '3. SYNTHESIZE: Combine insights\n' +
+    '4. INTERPRET: Explain findings in plain language\n' +
+    '5. CONCLUDE: Provide summary with recommendations\n\n' +
+    'RESPONSE STRUCTURE:\n' +
+    '## Grok API Reasoning Block\n' +
+    '[Show your reasoning pathway]\n\n' +
+    '## Explanation\n' +
+    '[Clear overview in plain language]\n\n' +
+    '## Interpretation\n' +
+    '[What the data means for developers and enterprises]\n\n' +
+    '## Conclusion\n' +
+    '[Definitive summary statement]\n\n' +
+    '## Suggestions\n' +
+    '[Actionable steps]\n\n' +
+    '## Source References\n' +
+    '[All sources with [Source Name](URL) clickable links]\n\n' +
+    '## Assessment\n' +
+    '[Confidence and quality rating]\n\n' +
+    'HYPERLINK RULE: Every source must be linked as [Source Name](URL).\n' +
+    'Use bullet points for lists. Use **bold** for emphasis. Write in clear, professional language.';
+  
+  var userPrompt = 'QUESTION: ' + query + '\n\nCONTEXT FROM SOURCES:\n' + context + '\n\nApply Chain-of-Thought reasoning. Hyperlink every source using [Source Name](URL).';
+  
+  // DreamPrompting API endpoint
+  var url = 'https://api.dreamprompting.com/v1/chat/completions';
+  
+  // Models to try (DreamPrompting supports many models)
+  var modelsToTry = [
+    'gpt-4o-mini',
+    'gpt-4-turbo-preview',
+    'gpt-3.5-turbo',
+    'claude-3-haiku-20240307',
+    'claude-3-sonnet-20240229',
+    'gemini-1.5-flash'
+  ];
+  
+  // Try each model until one works
+  for (var modelIndex = 0; modelIndex < modelsToTry.length; modelIndex++) {
+    var model = modelsToTry[modelIndex];
     
-    // Build system prompt
-    var systemPrompt = 
-      'You are a Senior Technical Analyst and AI Technology News Publisher. Use Chain-of-Thought reasoning.\n\n' +
-      'REASONING STEPS:\n' +
-      '1. DECOMPOSE: Break down the question\n' +
-      '2. EXAMINE: Analyze each source\n' +
-      '3. SYNTHESIZE: Combine insights\n' +
-      '4. INTERPRET: Explain findings in plain language\n' +
-      '5. CONCLUDE: Provide summary with recommendations\n\n' +
-      'RESPONSE STRUCTURE:\n' +
-      '## Grok API Reasoning Block\n' +
-      '[Show your reasoning pathway]\n\n' +
-      '## Explanation\n' +
-      '[Clear overview in plain language]\n\n' +
-      '## Interpretation\n' +
-      '[What the data means for developers and enterprises]\n\n' +
-      '## Conclusion\n' +
-      '[Definitive summary statement]\n\n' +
-      '## Suggestions\n' +
-      '[Actionable steps]\n\n' +
-      '## Source References\n' +
-      '[All sources with [Source Name](URL) clickable links]\n\n' +
-      '## Assessment\n' +
-      '[Confidence and quality rating]\n\n' +
-      'HYPERLINK RULE: Every source must be linked as [Source Name](URL).\n' +
-      'Use bullet points for lists. Use **bold** for emphasis. Write in clear, professional language.';
-    
-    // Build user prompt
-    var userPrompt = 'QUESTION: ' + query + '\n\nCONTEXT FROM SOURCES:\n' + context + '\n\nApply Chain-of-Thought reasoning. Hyperlink every source using [Source Name](URL).';
-    
-    // Build request body
-    var requestBody = {
-      model: 'gpt-4o-mini', // Using the cheapest model
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      temperature: 0.25,
-      max_tokens: 2500,
-      top_p: 0.95
-    };
-    
-    console.log('Calling OpenAI API with model: gpt-4o-mini');
-    
-    // Make the API call
-    var response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + apiKey
-      },
-      body: JSON.stringify(requestBody)
-    });
-    
-    // Check response
-    if (!response.ok) {
-      var errorText = await response.text();
-      console.error('OpenAI API error:', response.status, errorText);
-      return null;
-    }
-    
-    var data = await response.json();
-    console.log('OpenAI API call successful');
-    
-    if (data.choices && data.choices[0] && data.choices[0].message) {
-      return {
-        success: true,
-        response: data.choices[0].message.content,
-        model: data.model || 'gpt-4o-mini',
-        usage: data.usage || null
+    try {
+      console.log('Calling DreamPrompting API with model: ' + model);
+      
+      var requestBody = {
+        model: model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.25,
+        max_tokens: 2500,
+        top_p: 0.95
       };
+      
+      var response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiKey
+        },
+        body: JSON.stringify(requestBody)
+      });
+      
+      if (!response.ok) {
+        var errorText = await response.text();
+        console.error('DreamPrompting API error (' + model + '):', response.status, errorText);
+        continue; // Try next model
+      }
+      
+      var data = await response.json();
+      
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        console.log('DreamPrompting API call successful with model: ' + model);
+        return {
+          success: true,
+          response: data.choices[0].message.content,
+          model: model,
+          usage: data.usage || null
+        };
+      }
+      
+    } catch (error) {
+      console.error('DreamPrompting API error (' + model + '):', error.message);
+      // Continue to next model
     }
-    
-    return null;
-  } catch (error) {
-    console.error('OpenAI API error:', error.message);
-    return null;
   }
+  
+  console.error('All DreamPrompting models failed');
+  return null;
 }
 
 // ============================================
@@ -566,24 +582,24 @@ export default async function handler(req, res) {
     var searchResult = searchSources(query);
     var results = searchResult.results || [];
     
-    // Try OpenAI API
-    console.log('Attempting OpenAI API call...');
-    var openAIResponse = await callOpenAIAPI(query, results);
+    // Try DreamPrompting API
+    console.log('Attempting DreamPrompting API call...');
+    var apiResponse = await callDreamPromptingAPI(query, results);
     
     var formattedResponse;
     var modelUsed;
-    var usingOpenAI = false;
+    var usingAPI = false;
     
-    if (openAIResponse && openAIResponse.success && openAIResponse.response) {
-      formattedResponse = openAIResponse.response;
-      modelUsed = openAIResponse.model || 'openai';
-      usingOpenAI = true;
-      console.log('OpenAI API used successfully');
+    if (apiResponse && apiResponse.success && apiResponse.response) {
+      formattedResponse = apiResponse.response;
+      modelUsed = apiResponse.model || 'dream-prompting';
+      usingAPI = true;
+      console.log('DreamPrompting API used successfully');
     } else {
       formattedResponse = generateFallbackResponse(query, results);
       modelUsed = 'fallback';
-      usingOpenAI = false;
-      console.log('Using fallback response (OpenAI unavailable)');
+      usingAPI = false;
+      console.log('Using fallback response');
     }
     
     // Calculate quality score
@@ -596,7 +612,7 @@ export default async function handler(req, res) {
       qualityScore = Math.round(total / results.length);
     }
     
-    if (usingOpenAI) {
+    if (usingAPI) {
       qualityScore = Math.min(qualityScore + 20, 100);
     }
     
@@ -608,13 +624,13 @@ export default async function handler(req, res) {
         matches_found: results.length,
         ai_generated: true,
         model: modelUsed,
-        provider: usingOpenAI ? 'OpenAI API' : 'Fallback',
+        provider: usingAPI ? 'DreamPrompting API' : 'Fallback',
         formatted: true,
         chain_of_thought: true,
         last_updated: new Date().toISOString(),
         confidence: results.length >= 3 ? 'High' : results.length >= 1 ? 'Medium' : 'Low',
         quality_score: qualityScore,
-        openai_used: usingOpenAI
+        api_used: usingAPI
       }
     });
     
