@@ -1,7 +1,7 @@
 {
   "source": "VentureBeat AI",
   "source_url": "https://venturebeat.com/category/ai/",
-  "total_articles": 8,
+  "total_articles": 9,
   "articles": [
     {
       "title": "VentureBeat lead analyst Rob Strechay, left, speaking at VB Transform in July",
@@ -16,7 +16,37 @@
       "headings": [
         "VentureBeat names Rob Strechay as its first Lead Analyst, expanding its enterprise AI research push"
       ],
-      "timestamp": "2026-08-24T08:40:06.673938"
+      "timestamp": "2026-08-25T08:35:08.234183"
+    },
+    {
+      "title": "CleoPtolemy made with Midjourney",
+      "author": "Midhula Mariyam Jeevan",
+      "date": "Midhula Mariyam Jeevan",
+      "content": "CleoPtolemy made with Midjourney For much of the past two years, the general belief in enterprise AI has been that more autonomy equals better performance. Build agents that can plan, decide, and act across multi-step workflows, and give them as much room to run as possible. That assumption is now being tested at scale, in real production environments — and in a lot of deployments it's failing. The companies that end up benefiting from agentic AI won't necessarily be the ones that have given their agents the most flexibility. They're the ones who create AI agents with specific responsibilities and make sure they operate within clear rules.",
+      "url": "https://venturebeat.com/orchestration/enterprises-winning-with-ai-agents-are-limiting-how-much-the-agents-can-do-alone",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 107,
+      "hash": "e2c8ceb7",
+      "headings": [
+        "Enterprises winning with AI agents are limiting how much the agents can do alone"
+      ],
+      "timestamp": "2026-08-25T08:35:08.279932"
+    },
+    {
+      "title": "Image credit: VentureBeat with ChatGPT",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Image credit: VentureBeat with ChatGPT",
+      "url": "https://venturebeat.com/technology/nvidia-finds-that-simple-linear-math-can-replace-costly-ai-model-handoffs",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "719e8899",
+      "headings": [
+        "Nvidia finds that simple linear math can replace costly AI model handoffs"
+      ],
+      "timestamp": "2026-08-25T08:35:08.315514"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -31,7 +61,7 @@
       "headings": [
         "Slack wants to drag AI coding out of the terminal and into the group chat"
       ],
-      "timestamp": "2026-08-24T08:40:06.696331"
+      "timestamp": "2026-08-25T08:35:08.357035"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -46,7 +76,7 @@
       "headings": [
         "One in five enterprises can't stop a runaway AI agent's spending in real time"
       ],
-      "timestamp": "2026-08-24T08:40:06.716000"
+      "timestamp": "2026-08-25T08:35:08.397269"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -61,7 +91,7 @@
       "headings": [
         "NanoClaw comes to Slack, letting you create persistent AI agent teams and colleagues from a single message"
       ],
-      "timestamp": "2026-08-24T08:40:06.735949"
+      "timestamp": "2026-08-25T08:35:08.435189"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -76,7 +106,7 @@
       "headings": [
         "Serval’s super agent Catalyst creates roving background agents to identify and fix IT issues before they’re ticketed"
       ],
-      "timestamp": "2026-08-24T08:40:06.768319"
+      "timestamp": "2026-08-25T08:35:08.472798"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney v8.2",
@@ -91,7 +121,7 @@
       "headings": [
         "TrueFoundry's open source AI agent harness TrueForge boasts 30%-75% cheaper task completion than Claude Managed Agents"
       ],
-      "timestamp": "2026-08-24T08:40:06.787308"
+      "timestamp": "2026-08-25T08:35:08.509450"
     },
     {
       "title": "VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -106,23 +136,8 @@
       "headings": [
         "GLM-5.3 hits the API at $1.4/$4.4 per million tokens"
       ],
-      "timestamp": "2026-08-24T08:40:06.805333"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/orchestration/blocks-new-apache-2-0-agent-workspace-berd-works-across-models-and-harnesses-stores-conversation-history-locally",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "8938f3f3",
-      "headings": [
-        "Block’s new Apache 2.0 agent workspace Berd works across models and harnesses, stores conversation history locally"
-      ],
-      "timestamp": "2026-08-24T08:40:06.824282"
+      "timestamp": "2026-08-25T08:35:08.542985"
     }
   ],
-  "last_updated": "2026-08-24T08:40:06.863750"
+  "last_updated": "2026-08-25T08:35:08.585909"
 }
