@@ -16,7 +16,22 @@
       "headings": [
         "VentureBeat names Rob Strechay as its first Lead Analyst, expanding its enterprise AI research push"
       ],
-      "timestamp": "2026-08-25T08:35:08.234183"
+      "timestamp": "2026-08-26T08:35:22.800700"
+    },
+    {
+      "title": "CleoPtolemy made with Midjourney",
+      "author": "Shuhua Xu",
+      "date": "Shuhua Xu",
+      "content": "CleoPtolemy made with Midjourney Enterprise AI has largely been built around context engineering. Teams connect enterprise systems, generate chunks and embeddings, build retrieval pipelines, and assemble the context needed by individual AI applications. While this approach works well for isolated assistants and copilots, it treats enterprise knowledge as application-specific context rather than a shared enterprise asset.",
+      "url": "https://venturebeat.com/orchestration/enterprise-ai-agents-are-only-as-reliable-as-the-messiest-documents-behind-them",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 56,
+      "hash": "bbc5cc3f",
+      "headings": [
+        "Enterprise AI agents are only as reliable as the messiest documents behind them"
+      ],
+      "timestamp": "2026-08-26T08:35:22.842431"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -31,7 +46,7 @@
       "headings": [
         "Enterprises winning with AI agents are limiting how much the agents can do alone"
       ],
-      "timestamp": "2026-08-25T08:35:08.279932"
+      "timestamp": "2026-08-26T08:35:22.884105"
     },
     {
       "title": "Image credit: VentureBeat with ChatGPT",
@@ -46,7 +61,7 @@
       "headings": [
         "Nvidia finds that simple linear math can replace costly AI model handoffs"
       ],
-      "timestamp": "2026-08-25T08:35:08.315514"
+      "timestamp": "2026-08-26T08:35:22.919536"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -61,7 +76,7 @@
       "headings": [
         "Slack wants to drag AI coding out of the terminal and into the group chat"
       ],
-      "timestamp": "2026-08-25T08:35:08.357035"
+      "timestamp": "2026-08-26T08:35:22.958846"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -76,7 +91,7 @@
       "headings": [
         "One in five enterprises can't stop a runaway AI agent's spending in real time"
       ],
-      "timestamp": "2026-08-25T08:35:08.397269"
+      "timestamp": "2026-08-26T08:35:22.996083"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -91,7 +106,7 @@
       "headings": [
         "NanoClaw comes to Slack, letting you create persistent AI agent teams and colleagues from a single message"
       ],
-      "timestamp": "2026-08-25T08:35:08.435189"
+      "timestamp": "2026-08-26T08:35:23.033824"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -106,7 +121,7 @@
       "headings": [
         "Serval’s super agent Catalyst creates roving background agents to identify and fix IT issues before they’re ticketed"
       ],
-      "timestamp": "2026-08-25T08:35:08.472798"
+      "timestamp": "2026-08-26T08:35:23.071061"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney v8.2",
@@ -121,23 +136,8 @@
       "headings": [
         "TrueFoundry's open source AI agent harness TrueForge boasts 30%-75% cheaper task completion than Claude Managed Agents"
       ],
-      "timestamp": "2026-08-25T08:35:08.509450"
-    },
-    {
-      "title": "VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/technology/glm-5-3-hits-the-api-at-1-4-4-4-per-million-tokens",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 5,
-      "hash": "4f558c19",
-      "headings": [
-        "GLM-5.3 hits the API at $1.4/$4.4 per million tokens"
-      ],
-      "timestamp": "2026-08-25T08:35:08.542985"
+      "timestamp": "2026-08-26T08:35:23.108425"
     }
   ],
-  "last_updated": "2026-08-25T08:35:08.585909"
+  "last_updated": "2026-08-26T08:35:23.145462"
 }
