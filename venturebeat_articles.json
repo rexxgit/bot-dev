@@ -1,22 +1,67 @@
 {
   "source": "VentureBeat AI",
   "source_url": "https://venturebeat.com/category/ai/",
-  "total_articles": 9,
+  "total_articles": 8,
   "articles": [
     {
-      "title": "VentureBeat lead analyst Rob Strechay, left, speaking at VB Transform in July",
-      "author": "Matt Marshall",
-      "date": "Matt Marshall",
-      "content": "VentureBeat lead analyst Rob Strechay, left, speaking at VB Transform in July Rob Strechay, until recently managing director and principal analyst at theCUBE Research, has joined VentureBeat as our first Lead Analyst and a founding analyst of VentureBeat Research. His arrival is the next step in a deliberate move at VentureBeat toward deeper specialization: analysis built for the technical decision-makers — the directors, VPs, CIOs, and CTOs — who are evaluating, buying, and deploying enterprise AI.",
-      "url": "https://venturebeat.com/ai/venturebeat-names-rob-strechay-as-its-first-lead-analyst-expanding-its-enterprise-ai-research-push",
+      "title": "Credit: VentureBeat made with Midjourney",
+      "author": "Michael Nuñez",
+      "date": "Michael Nuñez",
+      "content": "Credit: VentureBeat made with Midjourney The centerpiece of the announcement is Salesforce in Claude, a plugin for Anthropic's Claude CoWork that ships with 37 pre-built sales skills — covering meeting preparation, deal health reviews, and pipeline analysis — and lets sellers query, update, and act on live CRM data without ever opening Salesforce itself. The product is available to select pilot customers today, with an open beta planned for September and additional skills for other business functions beginning to launch in the third quarter.",
+      "url": "https://venturebeat.com/orchestration/salesforce-just-put-its-entire-crm-inside-claude-and-says-youll-never-need-its-app-again",
       "source_name": "VentureBeat",
       "source_type": "blog",
-      "word_count": 76,
-      "hash": "f8a8e90f",
+      "word_count": 84,
+      "hash": "40cdbdc2",
       "headings": [
-        "VentureBeat names Rob Strechay as its first Lead Analyst, expanding its enterprise AI research push"
+        "Salesforce just put its entire CRM inside Claude — and says you’ll never need its app again"
       ],
-      "timestamp": "2026-08-26T08:35:22.800700"
+      "timestamp": "2026-08-27T18:43:04.821260"
+    },
+    {
+      "title": "Credit: VentureBeat made with Midjourney",
+      "author": "Michael Nuñez",
+      "date": "Michael Nuñez",
+      "content": "Credit: VentureBeat made with Midjourney The launch, developed in close partnership with Nvidia, is one of the most aggressive attempts yet to move serious AI agent workloads off the cloud and onto local devices. The model, the user's files, and the work itself can all stay on the machine. Work completed locally consumes no billing credits, and the company says every task starts on the device by default — with the system asking permission before sending any individual step to a more powerful frontier model in the cloud.",
+      "url": "https://venturebeat.com/infrastructure/perplexity-partners-with-nvidia-to-launch-portable-computer-a-fully-local-ai-agent-with-zero-token-costs",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 88,
+      "hash": "2996a3e4",
+      "headings": [
+        "Perplexity partners with Nvidia to launch Portable Computer, a fully local AI agent with zero token costs"
+      ],
+      "timestamp": "2026-08-27T18:43:04.860574"
+    },
+    {
+      "title": "Credit: VentureBeat made with Midjourney",
+      "author": "Michael Nuñez",
+      "date": "Michael Nuñez",
+      "content": "Credit: VentureBeat made with Midjourney In an exclusive interview with VentureBeat, Scott White, Anthropic's head of product for enterprise, laid out the company's thesis for what it calls \"multiplayer AI\": a shift away from the single-user chatbot paradigm toward AI agents that operate across teams, read organizational context, and proactively insert themselves into work — sometimes without being asked.",
+      "url": "https://venturebeat.com/orchestration/anthropics-new-claude-tag-update-lets-its-slack-agent-read-the-full-conversation-and-jump-in-unprompted",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 59,
+      "hash": "721163ab",
+      "headings": [
+        "Anthropic’s new Claude Tag update lets its Slack agent read the full conversation — and jump in unprompted"
+      ],
+      "timestamp": "2026-08-27T18:43:04.900844"
+    },
+    {
+      "title": "Credit: VentureBeat made with Midjourney",
+      "author": "Michael Nuñez",
+      "date": "Michael Nuñez",
+      "content": "Credit: VentureBeat made with Midjourney The chip, which will power the next generation of IBM Z and LinuxONE systems, is the first dual-architecture mainframe processor ever built. It is designed to let enterprises run the vast and fast-growing ecosystem of Arm-native Linux software — including the AI frameworks that increasingly define modern infrastructure — directly alongside the z/OS transaction-processing workloads that anchor the world's banks, insurers, and governments.",
+      "url": "https://venturebeat.com/infrastructure/ibms-next-gen-mainframe-chip-is-the-first-to-run-arm-and-z-workloads-on-the-same-cores",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 68,
+      "hash": "f0b0f472",
+      "headings": [
+        "IBM’s next-gen mainframe chip is the first to run Arm and Z workloads on the same cores "
+      ],
+      "timestamp": "2026-08-27T18:43:04.941126"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -31,7 +76,7 @@
       "headings": [
         "Enterprise AI agents are only as reliable as the messiest documents behind them"
       ],
-      "timestamp": "2026-08-26T08:35:22.842431"
+      "timestamp": "2026-08-27T18:43:04.982337"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -46,7 +91,7 @@
       "headings": [
         "Enterprises winning with AI agents are limiting how much the agents can do alone"
       ],
-      "timestamp": "2026-08-26T08:35:22.884105"
+      "timestamp": "2026-08-27T18:43:05.020523"
     },
     {
       "title": "Image credit: VentureBeat with ChatGPT",
@@ -61,7 +106,7 @@
       "headings": [
         "Nvidia finds that simple linear math can replace costly AI model handoffs"
       ],
-      "timestamp": "2026-08-26T08:35:22.919536"
+      "timestamp": "2026-08-27T18:43:05.054820"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -76,68 +121,8 @@
       "headings": [
         "Slack wants to drag AI coding out of the terminal and into the group chat"
       ],
-      "timestamp": "2026-08-26T08:35:22.958846"
-    },
-    {
-      "title": "CleoPtolemy made with Midjourney",
-      "author": "Taryn Plumb",
-      "date": "Taryn Plumb",
-      "content": "CleoPtolemy made with Midjourney",
-      "url": "https://venturebeat.com/orchestration/one-in-five-enterprises-cant-stop-a-runaway-ai-agents-spending-in-real-time",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 4,
-      "hash": "3a911763",
-      "headings": [
-        "One in five enterprises can't stop a runaway AI agent's spending in real time"
-      ],
-      "timestamp": "2026-08-26T08:35:22.996083"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/orchestration/nanoclaw-comes-to-slack-letting-you-create-persistent-ai-agent-teams-and-colleagues-from-a-single-message",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "8ccef80e",
-      "headings": [
-        "NanoClaw comes to Slack, letting you create persistent AI agent teams and colleagues from a single message"
-      ],
-      "timestamp": "2026-08-26T08:35:23.033824"
-    },
-    {
-      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
-      "url": "https://venturebeat.com/infrastructure/servals-super-agent-catalyst-creates-roving-background-agents-to-identify-and-fix-it-issues-before-theyre-ticketed",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "5c4ab768",
-      "headings": [
-        "Serval’s super agent Catalyst creates roving background agents to identify and fix IT issues before they’re ticketed"
-      ],
-      "timestamp": "2026-08-26T08:35:23.071061"
-    },
-    {
-      "title": "Credit: VentureBeat made with Midjourney v8.2",
-      "author": "Carl Franzen",
-      "date": "Carl Franzen",
-      "content": "Credit: VentureBeat made with Midjourney v8.2",
-      "url": "https://venturebeat.com/orchestration/truefoundrys-open-source-ai-agent-harness-trueforge-boasts-30-75-cheaper-task-completion-than-claude-managed-agents",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 6,
-      "hash": "586970a0",
-      "headings": [
-        "TrueFoundry's open source AI agent harness TrueForge boasts 30%-75% cheaper task completion than Claude Managed Agents"
-      ],
-      "timestamp": "2026-08-26T08:35:23.108425"
+      "timestamp": "2026-08-27T18:43:05.093832"
     }
   ],
-  "last_updated": "2026-08-26T08:35:23.145462"
+  "last_updated": "2026-08-27T18:43:05.130568"
 }
