@@ -4,6 +4,21 @@
   "total_articles": 8,
   "articles": [
     {
+      "title": "Image credit: VentureBeat with ChatGPT",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Image credit: VentureBeat with ChatGPT",
+      "url": "https://venturebeat.com/orchestration/meta-researchers-taught-an-8b-ai-model-to-match-claude-opus-4-5-without-the-frontier-price-tag",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "9e40a309",
+      "headings": [
+        "Meta researchers taught an 8B AI model to match Claude Opus 4.5 — without the frontier price tag"
+      ],
+      "timestamp": "2026-08-28T19:50:06.245339"
+    },
+    {
       "title": "Credit: VentureBeat made with Midjourney",
       "author": "Michael Nuñez",
       "date": "Michael Nuñez",
@@ -16,7 +31,7 @@
       "headings": [
         "Salesforce just put its entire CRM inside Claude — and says you’ll never need its app again"
       ],
-      "timestamp": "2026-08-27T18:43:04.821260"
+      "timestamp": "2026-08-28T19:50:06.300623"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -31,7 +46,7 @@
       "headings": [
         "Perplexity partners with Nvidia to launch Portable Computer, a fully local AI agent with zero token costs"
       ],
-      "timestamp": "2026-08-27T18:43:04.860574"
+      "timestamp": "2026-08-28T19:50:06.359463"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -46,7 +61,7 @@
       "headings": [
         "Anthropic’s new Claude Tag update lets its Slack agent read the full conversation — and jump in unprompted"
       ],
-      "timestamp": "2026-08-27T18:43:04.900844"
+      "timestamp": "2026-08-28T19:50:06.405098"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -61,7 +76,7 @@
       "headings": [
         "IBM’s next-gen mainframe chip is the first to run Arm and Z workloads on the same cores "
       ],
-      "timestamp": "2026-08-27T18:43:04.941126"
+      "timestamp": "2026-08-28T19:50:06.447547"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -76,7 +91,7 @@
       "headings": [
         "Enterprise AI agents are only as reliable as the messiest documents behind them"
       ],
-      "timestamp": "2026-08-27T18:43:04.982337"
+      "timestamp": "2026-08-28T19:50:06.489712"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -91,7 +106,7 @@
       "headings": [
         "Enterprises winning with AI agents are limiting how much the agents can do alone"
       ],
-      "timestamp": "2026-08-27T18:43:05.020523"
+      "timestamp": "2026-08-28T19:50:06.532181"
     },
     {
       "title": "Image credit: VentureBeat with ChatGPT",
@@ -106,23 +121,8 @@
       "headings": [
         "Nvidia finds that simple linear math can replace costly AI model handoffs"
       ],
-      "timestamp": "2026-08-27T18:43:05.054820"
-    },
-    {
-      "title": "Credit: VentureBeat made with Midjourney",
-      "author": "Michael Nuñez",
-      "date": "Michael Nuñez",
-      "content": "Credit: VentureBeat made with Midjourney The Salesforce-owned messaging platform today announced Slack Code, a new product that embeds AI coding agents — including Anthropic's Claude Code, Cognition's Devin, GitHub Copilot, and Vercel's agent — directly into dedicated Slack channels where entire teams can watch, steer, review, and ship software together. Slack Code is available on any Slack plan at launch, though customers need their own access to the partner agents.",
-      "url": "https://venturebeat.com/orchestration/slack-wants-to-drag-ai-coding-out-of-the-terminal-and-into-the-group-chat",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 70,
-      "hash": "289a9e94",
-      "headings": [
-        "Slack wants to drag AI coding out of the terminal and into the group chat"
-      ],
-      "timestamp": "2026-08-27T18:43:05.093832"
+      "timestamp": "2026-08-28T19:50:06.568511"
     }
   ],
-  "last_updated": "2026-08-27T18:43:05.130568"
+  "last_updated": "2026-08-28T19:50:06.615321"
 }
