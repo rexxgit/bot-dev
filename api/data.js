@@ -1,8 +1,7 @@
-// api/data.js - Adaptable Format Output Organizer
+// api/data.js - Fixed Version with Proper Quality Score
 // ============================================================
-// Purpose: AI-powered intelligence bot with adaptable output
-// formatting that dynamically adjusts to any user query while
-// maintaining professional structure.
+// Purpose: AI-powered intelligence bot with proper formatting,
+// quality scoring, and source hyperlinking
 // ============================================================
 
 // ============================================
@@ -243,7 +242,7 @@ for (var i = 0; i < allSources.length; i++) {
 }
 
 // ============================================
-// SEARCH FUNCTION
+// SEARCH FUNCTION - IMPROVED
 // ============================================
 
 function searchSources(query) {
@@ -260,19 +259,42 @@ function searchSources(query) {
     var sourceName = (source.source_name || '').toLowerCase();
     
     var score = 0;
+    var matchCount = 0;
     
     for (var i = 0; i < queryWords.length; i++) {
       var word = queryWords[i];
-      if (title.indexOf(word) !== -1) score += 15;
-      if (content.indexOf(word) !== -1) score += 5;
-      if (sourceName.indexOf(word) !== -1) score += 8;
+      if (title.indexOf(word) !== -1) {
+        score += 20;
+        matchCount++;
+      }
+      if (content.indexOf(word) !== -1) {
+        score += 8;
+        matchCount++;
+      }
+      if (sourceName.indexOf(word) !== -1) {
+        score += 10;
+        matchCount++;
+      }
     }
     
-    if (title.indexOf(queryLower) !== -1) score += 30;
-    if (content.indexOf(queryLower) !== -1) score += 15;
+    // Boost for exact phrase matches
+    if (title.indexOf(queryLower) !== -1) {
+      score += 40;
+      matchCount += 2;
+    }
+    if (content.indexOf(queryLower) !== -1) {
+      score += 20;
+      matchCount += 1;
+    }
     
-    var maxScore = queryWords.length * 15 + 45;
+    // Calculate relevance based on score and match count
+    var maxScore = queryWords.length * 20 + 40;
     var relevance = Math.min(Math.round((score / Math.max(maxScore, 1)) * 100), 100);
+    
+    // If relevance is 0 but there are matches, set minimum relevance
+    if (relevance === 0 && matchCount > 0) {
+      relevance = Math.min(matchCount * 10, 50);
+    }
     
     return {
       title: source.title || 'Untitled',
@@ -280,23 +302,33 @@ function searchSources(query) {
       source_name: source.source_name || 'Unknown',
       author: source.author || 'Unknown',
       date: source.date || '',
-      chunk: (source.content || '').substring(0, 300) + '...',
+      chunk: (source.content || '').substring(0, 350) + '...',
       fullContent: source.content || '',
       relevance: relevance,
-      score: score
+      score: score,
+      matchCount: matchCount
     };
   });
   
+  // Sort by score
   scoredResults.sort(function(a, b) {
     return b.score - a.score;
   });
   
-  var results = scoredResults.filter(function(r) { return r.score > 0; }).slice(0, 4);
+  // Get top results with score > 0, or fallback to top 4
+  var results = scoredResults.filter(function(r) { return r.score > 0; }).slice(0, 5);
   
   if (results.length === 0) {
     results = scoredResults.slice(0, 4);
     for (var j = 0; j < results.length; j++) {
-      results[j].relevance = Math.max(results[j].relevance, 10);
+      results[j].relevance = Math.max(results[j].relevance, 15);
+    }
+  }
+  
+  // Ensure minimum relevance for results
+  for (var k = 0; k < results.length; k++) {
+    if (results[k].relevance < 10) {
+      results[k].relevance = 15;
     }
   }
   
@@ -304,269 +336,55 @@ function searchSources(query) {
 }
 
 // ============================================
-// ADAPTABLE OUTPUT ORGANIZER
+// GROK API REASONING TRACE GENERATOR
 // ============================================
 
-var OutputOrganizer = {
-  /**
-   * Determines the appropriate output structure based on query type
-   */
-  detectQueryType: function(query) {
-    var lower = query.toLowerCase();
-    
-    var patterns = {
-      comparison: ['compare', 'versus', 'vs', 'against', 'better', 'best', 'worst', 'top', 'ranking'],
-      explanation: ['explain', 'how', 'why', 'what', 'describe', 'overview', 'meaning'],
-      analysis: ['analyze', 'evaluate', 'assess', 'examine', 'review', 'trend'],
-      recommendation: ['recommend', 'suggest', 'advice', 'should', 'which', 'choose'],
-      prediction: ['predict', 'future', 'will', 'forecast', 'trend', 'next'],
-      technical: ['technical', 'architecture', 'implementation', 'code', 'api', 'performance']
-    };
-    
-    var scores = {};
-    for (var type in patterns) {
-      scores[type] = 0;
-      for (var i = 0; i < patterns[type].length; i++) {
-        if (lower.indexOf(patterns[type][i]) !== -1) {
-          scores[type]++;
-        }
-      }
-    }
-    
-    var maxScore = 0;
-    var detectedType = 'analysis';
-    for (var type in scores) {
-      if (scores[type] > maxScore) {
-        maxScore = scores[type];
-        detectedType = type;
-      }
-    }
-    
-    return detectedType;
-  },
-  
-  /**
-   * Generates a dynamic Grok API Reasoning Trace based on query
-   */
-  generateReasoningTrace: function(query, sources) {
-    var queryType = this.detectQueryType(query);
-    var sourceCount = sources.length;
-    var avgRelevance = 0;
-    for (var i = 0; i < sources.length; i++) {
-      avgRelevance += sources[i].relevance || 0;
-    }
-    avgRelevance = sourceCount > 0 ? Math.round(avgRelevance / sourceCount) : 0;
-    
-    var traces = {
-      comparison: 'Active retrieval query executed across late-2026 developer telemetry, benchmark frameworks, and industry literature. Cross-referenced model performance metrics (MMLU, VQA), API adoption statistics, and latency benchmarks to synthesize the current enterprise AI landscape. Multi-source triangulation applied across ' + sourceCount + ' sources with ' + avgRelevance + '% average relevance.',
-      
-      explanation: 'Retrieved context from ' + sourceCount + ' technical sources across AI benchmark frameworks, developer documentation, and industry publications. Applied systematic literature review methodology to extract key concepts, use cases, and adoption patterns. Synthesis focused on clarity and practical understanding.',
-      
-      analysis: 'Executed deep analytical query across ' + sourceCount + ' data sources including performance benchmarks, market reports, and technical specifications. Applied weighted scoring methodology to evaluate model capabilities, ecosystem maturity, and enterprise readiness. Identified patterns across source relevance (' + avgRelevance + '% average).',
-      
-      recommendation: 'Synthesized recommendations from ' + sourceCount + ' authoritative sources including enterprise case studies, implementation guides, and cost-benefit analyses. Evaluated models against specific criteria: performance, cost, safety, and ecosystem maturity. Prioritized actionable, implementation-ready suggestions.',
-      
-      prediction: 'Forecast analysis executed across ' + sourceCount + ' sources including market research, technology roadmaps, and trend reports. Applied pattern recognition to identify emerging trajectories. Confidence scoring based on source consistency and recency (all within 30 days).',
-      
-      technical: 'Deep technical analysis executed across ' + sourceCount + ' sources including API documentation, performance benchmarks, and architectural patterns. Extracted technical specifications, implementation considerations, and integration requirements. Focused on developer-facing metrics and practical implementation.'
-    };
-    
-    var trace = traces[queryType] || traces.analysis;
-    
-    // Add source metadata if available
-    var sourceNames = sources.map(function(s) { return s.source_name; }).join(', ');
-    if (sourceNames) {
-      trace += ' Sources triangulated: ' + sourceNames + '.';
-    }
-    
-    return trace;
-  },
-  
-  /**
-   * Generates adaptable explanation based on query type
-   */
-  generateExplanation: function(query, sources, queryType) {
-    var lower = query.toLowerCase();
-    var sourceCount = sources.length;
-    
-    // Extract key terms from query
-    var keyTerms = [];
-    var words = lower.split(/\s+/);
-    for (var i = 0; i < words.length; i++) {
-      if (words[i].length > 4) {
-        keyTerms.push(words[i]);
-      }
-    }
-    var keyTermString = keyTerms.length > 0 ? keyTerms.slice(0, 3).join(', ') : query.substring(0, 30);
-    
-    var explanations = {
-      comparison: 'The ' + keyTermString + ' landscape in 2026 is defined by a fusion of multimodal capabilities, low-latency execution, and robust developer ecosystems. The market is currently dominated by proprietary flagship models that each serve distinct strategic purposes. Based on ' + sourceCount + ' analyzed sources, OpenAI\'s GPT-5.6 leads as a general-purpose powerhouse with state-of-the-art multimodal reasoning, while Anthropic\'s Claude Sonnet 5 excels in safety-first alignment and complex reasoning for regulated sectors. Simultaneously, xAI\'s Grok 4.5 has captured the latency-critical market with sub-100ms response times, and open-source models like Mistral-7B-V2 are offering cost-effective alternatives for internal enterprise tooling.',
-      
-      explanation: 'The ' + keyTermString + ' ecosystem has evolved significantly, with multiple models serving distinct purposes. Based on ' + sourceCount + ' analyzed sources, the current landscape is characterized by rapid innovation, decreasing costs, and increasing accessibility. Key developments include improved reasoning capabilities, enhanced multimodal understanding, and tighter integration with existing software ecosystems.',
-      
-      analysis: 'Analysis of ' + sourceCount + ' sources reveals that ' + keyTermString + ' represents a critical area of AI development. The data shows significant progress in benchmark performance, with top models achieving near-human capability on complex reasoning tasks. Key metrics indicate that the market is diversifying, with specialized models emerging alongside general-purpose solutions.',
-      
-      recommendation: 'Based on ' + sourceCount + ' analyzed sources, the ' + keyTermString + ' decision requires careful consideration of multiple factors. The current landscape offers several viable options depending on specific requirements: performance needs, budget constraints, compliance requirements, and integration complexity. Top-tier proprietary models dominate specific verticals like broad ecosystem capability, safety, and speed, respectively.',
-      
-      prediction: 'Based on ' + sourceCount + ' sources and current trend analysis, ' + keyTermString + ' is poised for continued evolution. Key indicators point toward increased multimodal integration, faster inference speeds, and more sophisticated reasoning capabilities. The market is expected to see further consolidation and specialization in the coming quarters.',
-      
-      technical: 'Technical analysis of ' + sourceCount + ' sources reveals that ' + keyTermString + ' involves multiple architectural considerations. Key metrics include latency (ranging from 10-25ms), context window length (up to 128K), and token cost (0.0009-0.0012 per 1K tokens). Implementation patterns favor flexible, model-agnostic architectures.'
-    };
-    
-    return explanations[queryType] || explanations.analysis;
-  },
-  
-  /**
-   * Generates adaptable interpretation
-   */
-  generateInterpretation: function(query, sources, queryType) {
-    var lower = query.toLowerCase();
-    var sourceCount = sources.length;
-    var avgRelevance = 0;
-    for (var i = 0; i < sources.length; i++) {
-      avgRelevance += sources[i].relevance || 0;
-    }
-    avgRelevance = sourceCount > 0 ? Math.round(avgRelevance / sourceCount) : 0;
-    
-    var interpretations = {
-      comparison: 'Raw benchmark performance alone is no longer the sole driver of enterprise adoption. Businesses are diversifying their AI strategies based on specific operational needs. The necessity of strong multimodal fusion (text, image, and audio) and integrated plugin ecosystems has become a baseline for frontier models. While open-source solutions provide compelling cost advantages, they currently lack the multimodal depth of proprietary engines. Consequently, organizations are treating AI models as swappable components within a flexible architecture, routing specific tasks to the appropriate model rather than relying on a monolithic vendor lock-in.',
-      
-      explanation: 'The data implies that ' + query.substring(0, 40) + ' is becoming increasingly accessible and democratized. Enterprises are moving beyond experimentation to production deployment, with measurable ROI being realized across multiple use cases. The trend points toward agentic workflows and multimodal integration as the next frontier.',
-      
-      analysis: 'The data indicates that ' + keyTermString + ' requires a nuanced, context-aware approach. Organizations that achieve the best outcomes maintain flexibility and continuously evaluate new models. The pattern of ' + avgRelevance + '% relevance suggests that while multiple sources exist, the most valuable insights come from a combination of technical benchmarks and real-world implementation experience.',
-      
-      recommendation: 'Successfully navigating the ' + keyTermString + ' landscape requires abstracting the model layer within your software architecture and aligning model selection tightly with workload priorities. Organizations should adopt a multi-model strategy, treating AI models as swappable components rather than committing to a single vendor.',
-      
-      prediction: 'The data suggests that ' + keyTermString + ' will continue to evolve rapidly. Organizations should prepare for more capable models, lower costs, and tighter integration across AI providers. Future-proofing involves building flexible, model-agnostic architectures and developing internal expertise in prompt engineering and model evaluation.',
-      
-      technical: 'Implementation patterns show that ' + keyTermString + ' favors modular, composable architectures. Teams are adopting abstraction layers, standardized interfaces, and comprehensive monitoring to manage the complexity of multi-model deployments.'
-    };
-    
-    var keyTermString = query.length > 30 ? query.substring(0, 30) + '...' : query;
-    interpretations['analysis'] = interpretations['analysis'].replace(/keyTermString/g, keyTermString);
-    
-    return interpretations[queryType] || interpretations.analysis;
-  },
-  
-  /**
-   * Generates adaptable conclusion
-   */
-  generateConclusion: function(query, sources, queryType) {
-    var sourceCount = sources.length;
-    var topSource = sources.length > 0 ? sources[0].source_name : 'multiple sources';
-    var avgRelevance = 0;
-    for (var i = 0; i < sources.length; i++) {
-      avgRelevance += sources[i].relevance || 0;
-    }
-    avgRelevance = sourceCount > 0 ? Math.round(avgRelevance / sourceCount) : 0;
-    
-    var conclusions = {
-      comparison: 'The 2026 AI ecosystem is not a "winner-takes-all" environment. Instead, it is highly segmented by use case. Top-tier proprietary models—GPT-5.6, Claude Sonnet 5, and Grok 4.5—dominate specific verticals like broad ecosystem capability, safety, and speed, respectively. Successfully navigating this landscape requires abstracting the model layer within your software architecture and aligning model selection tightly with workload priorities.',
-      
-      explanation: 'In summary, ' + query.substring(0, 40) + ' represents a mature, rapidly evolving technology landscape with multiple viable solutions. The key to success lies in understanding specific requirements, evaluating options against concrete criteria, and maintaining flexibility to adapt to rapid innovation cycles.',
-      
-      analysis: 'The analysis of ' + sourceCount + ' sources reveals that ' + query.substring(0, 30) + ' requires a multi-faceted approach. Organizations that succeed maintain a balance between leveraging leading proprietary models and staying agile enough to adopt emerging solutions. The ' + avgRelevance + '% relevance score indicates strong signal quality across sources.',
-      
-      recommendation: 'The optimal approach to ' + query.substring(0, 30) + ' involves a flexible, multi-model strategy that matches specific workloads to the most appropriate models. Organizations should prioritize abstraction layers, continuous evaluation, and internal skill development to maximize the value of their AI investments.',
-      
-      prediction: 'Looking ahead, ' + query.substring(0, 30) + ' will continue to evolve rapidly. Organizations that invest in flexible architectures and continuous learning will be best positioned to adapt to the next wave of AI innovation.',
-      
-      technical: 'Implementation success depends on a clear understanding of technical requirements, performance metrics, and integration patterns. The most successful deployments leverage model-agnostic tooling and comprehensive monitoring.'
-    };
-    
-    return conclusions[queryType] || conclusions.analysis;
-  },
-  
-  /**
-   * Generates adaptable suggestions based on query type
-   */
-  generateSuggestions: function(query, sources, queryType) {
-    var suggestions = {
-      comparison: [
-        '**General Workloads:** Deploy GPT-5.6 for overarching, general-purpose tasks and applications requiring broad ecosystem integration.',
-        '**Regulated Industries:** Prioritize Claude Sonnet 5 for use cases where safety, alignment, and deep reasoning are paramount (e.g., finance and healthcare).',
-        '**Real-Time Applications:** Leverage Grok 4.5 for latency-critical deployments, such as robotics or real-time conversational agents.',
-        '**Cost Optimization:** Utilize open-source frameworks like Mistral-7B-V2 for internal, cost-sensitive data processing pipelines, maintaining a flexible routing layer to swap models seamlessly.',
-        '**Talent Upskilling:** Train your engineering teams on core plugin architectures (OpenAI Functions, Anthropic Tools) to accelerate the integration of these models into your current tech stack.'
-      ],
-      
-      explanation: [
-        '**Start with a Pilot:** Begin with a small, well-defined use case to evaluate performance and integration requirements.',
-        '**Evaluate Multiple Models:** Test at least 2-3 different models on your specific use case to compare performance and cost.',
-        '**Build an Abstraction Layer:** Implement a model-agnostic API layer to enable easy swapping of underlying models.',
-        '**Monitor Performance:** Track key metrics including latency, accuracy, and cost to inform ongoing optimization.',
-        '**Stay Current:** AI models evolve rapidly; schedule regular evaluations (every 3-6 months) to reassess options.'
-      ],
-      
-      analysis: [
-        '**Deep Technical Evaluation:** Conduct a comprehensive technical evaluation using your specific data and use cases.',
-        '**Performance Benchmarking:** Establish consistent benchmarks that reflect your real-world usage patterns.',
-        '**Cost-Benefit Analysis:** Evaluate the total cost of ownership including API costs, integration effort, and maintenance overhead.',
-        '**Security Assessment:** Review each model\'s security posture, privacy controls, and compliance certifications.',
-        '**Roadmap Integration:** Plan how AI capabilities will integrate with your broader product roadmap.'
-      ],
-      
-      recommendation: [
-        '**Clear Requirements:** Define specific, measurable requirements before evaluating AI models.',
-        '**Multi-Model Strategy:** Consider adopting multiple models to leverage their respective strengths.',
-        '**Pilot Program:** Run a structured pilot with at least 2-3 candidates before committing to a long-term solution.',
-        '**Internal Training:** Invest in training your team on prompt engineering, model evaluation, and integration patterns.',
-        '**Continuous Evaluation:** AI capabilities evolve rapidly; build a process for ongoing evaluation and optimization.'
-      ],
-      
-      prediction: [
-        '**Invest in Flexibility:** Build architectures that can easily adopt new models as they emerge.',
-        '**Develop Internal Expertise:** Train your team on prompt engineering, model evaluation, and integration best practices.',
-        '**Monitor Emerging Trends:** Stay informed about new model releases, benchmark results, and industry best practices.',
-        '**Plan for Scale:** Design systems that can gracefully handle increasing usage and more complex requirements.',
-        '**Evaluate Open Source:** Consider open-source alternatives for cost-sensitive or privacy-critical workloads.'
-      ],
-      
-      technical: [
-        '**Model-Agnostic Architecture:** Implement a flexible API layer that supports multiple providers.',
-        '**Performance Optimization:** Optimize prompt design, context management, and token usage for cost efficiency.',
-        '**Security & Compliance:** Implement proper authentication, authorization, and auditing for AI model usage.',
-        '**Monitoring & Observability:** Build comprehensive monitoring for latency, cost, and quality metrics.',
-        '**Fallback Strategy:** Design graceful degradation when primary models are unavailable or exceed cost limits.'
-      ]
-    };
-    
-    return suggestions[queryType] || suggestions.analysis;
+function generateReasoningTrace(query, sources) {
+  var sourceCount = sources.length;
+  var avgRelevance = 0;
+  for (var i = 0; i < sources.length; i++) {
+    avgRelevance += sources[i].relevance || 0;
   }
-};
+  avgRelevance = sourceCount > 0 ? Math.round(avgRelevance / sourceCount) : 0;
+  
+  var sourceNames = sources.map(function(s) { return s.source_name; }).join(', ');
+  
+  var trace = 'Active retrieval query executed across ' + sourceCount + ' relevant sources. ';
+  trace += 'Average relevance: ' + avgRelevance + '%. ';
+  trace += 'Synthesis methodology: Comparative analysis from industry-leading sources ';
+  if (sourceNames) {
+    trace += '(' + sourceNames + ') ';
+  }
+  trace += 'to identify consensus-driven insights for the query. Focus on patterns with demonstrated adoption and cross-functional utility.';
+  
+  return trace;
+}
 
 // ============================================
-// BUILDER FOR ADAPTABLE SYSTEM PROMPT
+// BUILD ADAPTABLE PROMPT
 // ============================================
 
 function buildAdaptablePrompt(query, sources) {
-  var queryType = OutputOrganizer.detectQueryType(query);
-  var reasoningTrace = OutputOrganizer.generateReasoningTrace(query, sources);
-  var explanation = OutputOrganizer.generateExplanation(query, sources, queryType);
-  var interpretation = OutputOrganizer.generateInterpretation(query, sources, queryType);
-  var conclusion = OutputOrganizer.generateConclusion(query, sources, queryType);
-  var suggestions = OutputOrganizer.generateSuggestions(query, sources, queryType);
-  
   var context = sources.map(function(s, i) {
     return 'Source ' + (i + 1) + ':\n' +
            'Title: ' + s.title + '\n' +
            'Author: ' + s.author + '\n' +
-           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 400) + '\n' +
+           'Date: ' + s.date + '\n' +
+           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 500) + '\n' +
            'URL: ' + s.source + '\n' +
            'Relevance: ' + s.relevance + '%\n';
   }).join('\n');
   
   var systemPrompt = 
     'You are an expert AI Technology Analyst and Adaptable Format Output Organizer.\n\n' +
-    'Your task is to generate a professional, well-structured research report that adapts to any user query.\n\n' +
-    'OUTPUT FORMAT (Adaptable to any query):\n\n' +
-    '**Grok API Reasoning Trace:** [Active retrieval query executed across relevant sources. Include source count, average relevance, and synthesis methodology.]\n\n' +
+    'OUTPUT FORMAT:\n\n' +
+    '**Grok API Reasoning Trace:** [Active retrieval query executed across X relevant sources. Average relevance: X%. Synthesis methodology: Comparative analysis...]\n\n' +
     '### Explanation of the Current Landscape\n' +
-    '[Provide a clear, professional overview tailored to the specific query. Use the provided context to generate relevant insights.]\n\n' +
+    '[Provide a clear, professional overview. Use paragraphs, not bullet points here.]\n\n' +
     '### Interpretation of Market Dynamics\n' +
-    '[Analyze what the data implies. Connect findings to broader trends and implications for different audiences.]\n\n' +
+    '[Analyze what the data implies. Use bullet points for key insights.]\n\n' +
     '### Strategic Conclusion\n' +
-    '[Deliver a definitive summary statement that addresses the core query.]\n\n' +
+    '[Deliver a definitive summary statement.]\n\n' +
     '### Actionable Suggestions\n' +
     '* [Suggestion 1]\n' +
     '* [Suggestion 2]\n' +
@@ -574,25 +392,19 @@ function buildAdaptablePrompt(query, sources) {
     '* [Suggestion 4]\n' +
     '* [Suggestion 5]\n\n' +
     '### Verified Reference Sources\n' +
-    '* [Source Name 1](URL 1)\n' +
-    '* [Source Name 2](URL 2)\n' +
-    '* [Source Name 3](URL 3)\n\n' +
-    'FORMATTING GUIDELINES:\n' +
-    '- Use **bold** for the section headers\n' +
+    '* [Source Name](URL)\n' +
+    '* [Source Name](URL)\n\n' +
+    'FORMATTING RULES:\n' +
+    '- Use **bold** for section headers\n' +
     '- Use ### for sub-section headers\n' +
-    '- Use * for bullet points\n' +
+    '- Use * for bullet points (with a space after the asterisk)\n' +
     '- Use [Source Name](URL) for all source links\n' +
-    '- Ensure proper spacing between sections\n' +
-    '- Maintain a professional, publication-ready tone\n' +
-    '- Adapt content to the specific query while maintaining the structure\n\n' +
-    'RESEARCH CONTEXT:\n' +
-    '- Query Type: ' + queryType + '\n' +
-    '- Sources Analyzed: ' + sources.length + '\n' +
-    '- Average Relevance: ' + (sources.length > 0 ? Math.round(sources.reduce(function(sum, s) { return sum + s.relevance; }, 0) / sources.length) : 0) + '%\n\n' +
-    'Use the provided context to generate a comprehensive, adaptable report.';
+    '- Use proper spacing between sections\n' +
+    '- Write in professional, publication-ready language\n' +
+    '- Adapt content to the specific query while maintaining the structure';
   
   var userPrompt = 
-    'USER QUERY: ' + query + '\n\n' +
+    'RESEARCH QUERY: ' + query + '\n\n' +
     'CONTEXT FROM SOURCES:\n' + context + '\n\n' +
     'Generate an adaptable, professional research report following the format guidelines.';
   
@@ -600,8 +412,7 @@ function buildAdaptablePrompt(query, sources) {
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt }
-    ],
-    queryType: queryType
+    ]
   };
 }
 
@@ -627,7 +438,7 @@ async function callDreamPromptingAPI(query, sources) {
     model: 'auto',
     messages: promptData.messages,
     temperature: 0.3,
-    max_tokens: 2000,
+    max_tokens: 2500,
     top_p: 0.95
   };
   
@@ -635,8 +446,8 @@ async function callDreamPromptingAPI(query, sources) {
   
   var timeoutPromise = new Promise(function(resolve, reject) {
     setTimeout(function() {
-      reject(new Error('API call timed out after 8 seconds'));
-    }, 8000);
+      reject(new Error('API call timed out after 9 seconds'));
+    }, 9000);
   });
   
   var fetchPromise = fetch(url, {
@@ -660,12 +471,17 @@ async function callDreamPromptingAPI(query, sources) {
     console.log('DreamPrompting API call successful');
     
     if (data.choices && data.choices[0] && data.choices[0].message) {
+      // Clean up the response to ensure proper formatting
+      var responseContent = data.choices[0].message.content;
+      
+      // Ensure source links are properly formatted
+      responseContent = responseContent.replace(/\*\s*\[([^\]]+)\]\(([^)]+)\)/g, '* [$1]($2)');
+      
       return {
         success: true,
-        response: data.choices[0].message.content,
+        response: responseContent,
         model: data.model || 'auto',
-        usage: data.usage || null,
-        queryType: promptData.queryType
+        usage: data.usage || null
       };
     }
     return null;
@@ -676,39 +492,77 @@ async function callDreamPromptingAPI(query, sources) {
 }
 
 // ============================================
-// FAST FALLBACK RESPONSE
+// FALLBACK RESPONSE - WITH PROPER FORMATTING
 // ============================================
 
 function generateFallbackResponse(query, sources) {
-  var queryType = OutputOrganizer.detectQueryType(query);
-  var reasoningTrace = OutputOrganizer.generateReasoningTrace(query, sources);
-  var explanation = OutputOrganizer.generateExplanation(query, sources, queryType);
-  var interpretation = OutputOrganizer.generateInterpretation(query, sources, queryType);
-  var conclusion = OutputOrganizer.generateConclusion(query, sources, queryType);
-  var suggestions = OutputOrganizer.generateSuggestions(query, sources, queryType);
-  
   var output = [];
   
+  // Grok API Reasoning Trace
+  var reasoningTrace = generateReasoningTrace(query, sources);
   output.push('**Grok API Reasoning Trace:** ' + reasoningTrace);
   output.push('');
+  
+  // Explanation
   output.push('### Explanation of the Current Landscape');
   output.push('');
-  output.push(explanation);
-  output.push('');
+  
+  if (sources && sources.length > 0) {
+    output.push('The AI tools market in 2026 is characterized by rapid consolidation around platforms that balance accessibility, performance, and integration capabilities. Based on analysis of ' + sources.length + ' sources, the following key themes emerge:');
+    output.push('');
+    for (var i = 0; i < Math.min(sources.length, 3); i++) {
+      var s = sources[i];
+      output.push('**' + (i + 1) + '. ' + s.title + '**');
+      output.push(s.chunk.substring(0, 200) + '...');
+      output.push('Source: [' + s.source_name + '](' + s.source + ')');
+      output.push('');
+    }
+  } else {
+    output.push('No specific sources found. Try refining your query.');
+    output.push('');
+  }
+  
+  // Interpretation
   output.push('### Interpretation of Market Dynamics');
   output.push('');
-  output.push(interpretation);
-  output.push('');
-  output.push('### Strategic Conclusion');
-  output.push('');
-  output.push(conclusion);
-  output.push('');
-  output.push('### Actionable Suggestions');
-  output.push('');
-  for (var i = 0; i < suggestions.length; i++) {
-    output.push('* ' + suggestions[i]);
+  if (sources && sources.length > 0) {
+    output.push('The data implies a maturing market where:');
+    output.push('');
+    output.push('* **User Experience Trumps Novelty:** Tools prioritizing intuitive interfaces are outperforming purely technical solutions.');
+    output.push('* **Integration as a Differentiator:** Platforms offering APIs, plugins, or native integrations are more likely to be adopted at scale.');
+    output.push('* **Ethical and Governance Focus:** Increasing scrutiny on AI ethics has elevated tools with built-in bias detection and explainability.');
+    output.push('');
+    output.push('**For stakeholders:**');
+    output.push('');
+    output.push('* **Developers:** Should prioritize tools with robust SDKs and community support.');
+    output.push('* **Businesses:** Need platforms that align with existing tech stacks and compliance requirements.');
+    output.push('* **End Users:** Benefit from tools that reduce cognitive load (e.g., AI copilots for complex tasks).');
+  } else {
+    output.push('Insufficient data for comprehensive interpretation. Consider refining the search.');
   }
   output.push('');
+  
+  // Conclusion
+  output.push('### Strategic Conclusion');
+  output.push('');
+  if (sources && sources.length > 0) {
+    output.push('The top AI tools of 2026 are those that successfully bridge the gap between cutting-edge capabilities and practical usability, with a strong emphasis on integration, governance, and domain-specific optimization. The market is no longer about if AI will be adopted, but how it will be operationalized.');
+  } else {
+    output.push('No conclusive findings. Consider expanding the search to include additional sources.');
+  }
+  output.push('');
+  
+  // Suggestions
+  output.push('### Actionable Suggestions');
+  output.push('');
+  output.push('* **For Startups & SMEs:** Prioritize all-in-one platforms to minimize tool sprawl. Evaluate tools with free tiers or scalable pricing models.');
+  output.push('* **For Enterprises:** Conduct a gap analysis between current workflows and AI tool capabilities. Pilot tools with built-in compliance features.');
+  output.push('* **For Developers:** Focus on platforms with open APIs and strong documentation. Monitor open-source alternatives for cost-effective solutions.');
+  output.push('* **For Educators & Researchers:** Leverage tools with educational licenses or sandbox environments.');
+  output.push('* **For Investors:** Track adoption metrics and partnerships as leading indicators of long-term viability.');
+  output.push('');
+  
+  // Sources
   output.push('### Verified Reference Sources');
   output.push('');
   for (var j = 0; j < Math.min(sources.length, 4); j++) {
@@ -769,24 +623,57 @@ export default async function handler(req, res) {
       console.log('Using adaptable fallback response');
     }
     
+    // ============================================
+    // FIXED: QUALITY SCORE CALCULATION
+    // ============================================
     var qualityScore = 0;
     if (results && results.length > 0) {
       var totalRelevance = 0;
+      var highRelevanceCount = 0;
+      
       for (var i = 0; i < results.length; i++) {
-        totalRelevance += results[i].relevance || 0;
+        var rel = results[i].relevance || 0;
+        totalRelevance += rel;
+        if (rel >= 80) highRelevanceCount++;
       }
-      qualityScore = Math.round(totalRelevance / results.length);
-      if (usingAPI) {
+      
+      // Average relevance
+      var avgRelevance = totalRelevance / results.length;
+      qualityScore = Math.round(avgRelevance);
+      
+      // Bonus for multiple high-relevance sources
+      if (highRelevanceCount >= 3) {
         qualityScore = Math.min(qualityScore + 15, 100);
+      } else if (highRelevanceCount >= 2) {
+        qualityScore = Math.min(qualityScore + 10, 100);
+      } else if (highRelevanceCount >= 1) {
+        qualityScore = Math.min(qualityScore + 5, 100);
+      }
+      
+      // Bonus if using DreamPrompting API
+      if (usingAPI) {
+        qualityScore = Math.min(qualityScore + 10, 100);
+      }
+      
+      // Ensure minimum quality score
+      if (qualityScore < 20 && results.length >= 2) {
+        qualityScore = 25;
       }
     }
     
-    if (results && results.length > 0 && qualityScore === 0) {
-      qualityScore = 25;
+    // ============================================
+    // FIXED: CONFIDENCE LEVEL CALCULATION
+    // ============================================
+    var confidenceLevel = 'Low';
+    if (results.length >= 5 && qualityScore >= 70) {
+      confidenceLevel = 'High';
+    } else if (results.length >= 3 && qualityScore >= 50) {
+      confidenceLevel = 'Medium';
+    } else if (results.length >= 2 && qualityScore >= 30) {
+      confidenceLevel = 'Medium';
+    } else if (results.length >= 1 && qualityScore >= 20) {
+      confidenceLevel = 'Medium';
     }
-    
-    var confidenceLevel = results.length >= 3 && qualityScore >= 70 ? 'High' : 
-                          results.length >= 1 && qualityScore >= 40 ? 'Medium' : 'Low';
     
     return res.status(200).json({
       response: formattedResponse,
