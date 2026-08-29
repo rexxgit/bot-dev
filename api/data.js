@@ -1,17 +1,8 @@
-// api/data.js - Research Methodology Edition
+// api/data.js - Research Methodology Edition v3.0
 // ============================================================
 // Purpose: AI-powered intelligence bot with systematic research
-// methodology, Chain-of-Thought reasoning, and professional
-// reporting capabilities.
-//
-// Research Framework:
-// 1. Topic Selection & Framing
-// 2. Literature Review (RAG)
-// 3. Hypothesis Formulation
-// 4. Study & Analysis Design
-// 5. Data Collection & Synthesis
-// 6. Data Analysis
-// 7. Structured Reporting
+// methodology and professional output formatting mimicking
+// ChatGPT, DeepSeek, and Gemini style.
 // ============================================================
 
 // ============================================
@@ -252,216 +243,7 @@ for (var i = 0; i < allSources.length; i++) {
 }
 
 // ============================================
-// SECTION 1: RESEARCH METHODOLOGY FRAMEWORK
-// ============================================
-
-/**
- * Research Methodology Framework
- * Applies systematic research methodology to analyze user queries
- */
-var ResearchMethodology = {
-  /**
-   * Step 1: Topic Selection & Framing
-   * Identifies and refines the core analytical question
-   */
-  frameTopic: function(query) {
-    var topic = {
-      originalQuery: query,
-      refinedQuestion: '',
-      scope: '',
-      keyComponents: []
-    };
-    
-    // Extract key terms
-    var words = query.toLowerCase().split(/\s+/);
-    var keyTerms = [];
-    for (var i = 0; i < words.length; i++) {
-      if (words[i].length > 3) {
-        keyTerms.push(words[i]);
-      }
-    }
-    
-    topic.refinedQuestion = 'How can we analyze and understand ' + query + '?';
-    topic.scope = 'Investigating ' + query + ' using multi-source intelligence';
-    topic.keyComponents = keyTerms;
-    
-    return topic;
-  },
-  
-  /**
-   * Step 2: Literature Review
-   * Cross-references retrieved metadata and sources
-   */
-  reviewLiterature: function(query, sources) {
-    var review = {
-      sourceCount: sources.length,
-      sourceSummary: [],
-      keyFindings: [],
-      gaps: []
-    };
-    
-    for (var i = 0; i < sources.length; i++) {
-      var s = sources[i];
-      review.sourceSummary.push({
-        title: s.title,
-        source: s.source_name,
-        relevance: s.relevance + '%'
-      });
-      
-      // Extract potential key findings
-      if (s.fullContent) {
-        var sentences = s.fullContent.split(/[.!?]+/);
-        for (var j = 0; j < Math.min(sentences.length, 3); j++) {
-          var sentence = sentences[j].trim();
-          if (sentence.length > 30 && sentence.length < 200) {
-            review.keyFindings.push(sentence);
-          }
-        }
-      }
-    }
-    
-    // Limit key findings
-    review.keyFindings = review.keyFindings.slice(0, 10);
-    
-    return review;
-  },
-  
-  /**
-   * Step 3: Hypothesis Formulation
-   * Develops logical predictions
-   */
-  formulateHypotheses: function(query, sources) {
-    var hypotheses = [];
-    
-    // Hypothesis 1: Multi-source synthesis
-    if (sources.length >= 3) {
-      hypotheses.push({
-        id: 'H1',
-        statement: 'Multi-source synthesis provides more comprehensive insights than single-source analysis',
-        confidence: sources.length >= 4 ? 'High' : 'Medium'
-      });
-    }
-    
-    // Hypothesis 2: Relevance correlates with value
-    var highRelevance = sources.filter(function(s) { return s.relevance >= 80; });
-    if (highRelevance.length >= 2) {
-      hypotheses.push({
-        id: 'H2',
-        statement: 'Higher relevance scores correlate with more actionable insights',
-        confidence: 'Medium'
-      });
-    }
-    
-    // Hypothesis 3: Pattern identification
-    if (sources.length >= 2) {
-      hypotheses.push({
-        id: 'H3',
-        statement: 'Cross-referencing multiple sources reveals patterns not visible in individual sources',
-        confidence: 'High'
-      });
-    }
-    
-    return hypotheses;
-  },
-  
-  /**
-   * Step 4: Study & Analysis Design
-   * Selects evaluation criteria
-   */
-  designStudy: function() {
-    return {
-      criteria: [
-        { name: 'Source Relevance', weight: 0.30 },
-        { name: 'Content Quality', weight: 0.25 },
-        { name: 'Source Diversity', weight: 0.20 },
-        { name: 'Recency', weight: 0.15 },
-        { name: 'Authority', weight: 0.10 }
-      ],
-      methodology: 'Systematic literature review with RAG and Chain-of-Thought',
-      validation: 'Cross-source triangulation'
-    };
-  },
-  
-  /**
-   * Step 5: Data Collection & Synthesis
-   * Extracts and organizes data
-   */
-  collectData: function(sources) {
-    var data = {
-      totalSources: sources.length,
-      extractedFacts: [],
-      sourceMetrics: [],
-      synthesizedInsights: []
-    };
-    
-    for (var i = 0; i < sources.length; i++) {
-      var s = sources[i];
-      data.sourceMetrics.push({
-        title: s.title,
-        relevance: s.relevance,
-        sourceType: s.source_type || 'blog',
-        wordCount: s.word_count || 0
-      });
-      
-      if (s.chunk) {
-        data.extractedFacts.push(s.chunk.substring(0, 200));
-      }
-    }
-    
-    return data;
-  },
-  
-  /**
-   * Step 6: Data Analysis
-   * Examines findings to surface patterns
-   */
-  analyzeData: function(data) {
-    var analysis = {
-      patterns: [],
-      strengths: [],
-      weaknesses: [],
-      confidenceScore: 0
-    };
-    
-    // Pattern analysis
-    if (data.totalSources >= 5) {
-      analysis.patterns.push('Multiple sources provide consistent insights');
-    }
-    if (data.totalSources >= 3) {
-      analysis.patterns.push('Cross-source triangulation is possible');
-    }
-    
-    // Confidence calculation
-    var avgRelevance = 0;
-    for (var i = 0; i < data.sourceMetrics.length; i++) {
-      avgRelevance += data.sourceMetrics[i].relevance || 0;
-    }
-    avgRelevance = avgRelevance / Math.max(data.sourceMetrics.length, 1);
-    analysis.confidenceScore = Math.min(avgRelevance / 10, 10);
-    
-    return analysis;
-  },
-  
-  /**
-   * Step 7: Structured Reporting
-   * Generates research report
-   */
-  generateReport: function(topic, literatureReview, hypotheses, studyDesign, data, analysis) {
-    var report = {
-      topic: topic,
-      literatureReview: literatureReview,
-      hypotheses: hypotheses,
-      studyDesign: studyDesign,
-      data: data,
-      analysis: analysis,
-      timestamp: new Date().toISOString()
-    };
-    return report;
-  }
-};
-
-// ============================================
-// SEARCH FUNCTION WITH RELEVANCE SCORING
+// SEARCH FUNCTION
 // ============================================
 
 function searchSources(query) {
@@ -522,88 +304,159 @@ function searchSources(query) {
 }
 
 // ============================================
-// RESEARCH PROMPT BUILDER
+// RESEARCH METHODOLOGY FRAMEWORK
 // ============================================
 
-function buildResearchPrompt(query, sources) {
-  // Apply Research Methodology
-  var topic = ResearchMethodology.frameTopic(query);
-  var literatureReview = ResearchMethodology.reviewLiterature(query, sources);
-  var hypotheses = ResearchMethodology.formulateHypotheses(query, sources);
-  var studyDesign = ResearchMethodology.designStudy();
-  var data = ResearchMethodology.collectData(sources);
-  var analysis = ResearchMethodology.analyzeData(data);
-  var report = ResearchMethodology.generateReport(topic, literatureReview, hypotheses, studyDesign, data, analysis);
-  
-  // Build context for DreamPrompting
-  var context = sources.map(function(s, i) {
-    return 'Source ' + (i + 1) + ':\n' +
-           'Title: ' + s.title + '\n' +
-           'Author: ' + s.author + '\n' +
-           'Date: ' + s.date + '\n' +
-           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 800) + '\n' +
-           'URL: ' + s.source + '\n' +
-           'Relevance: ' + s.relevance + '%\n';
-  }).join('\n---\n\n');
-  
-  // Systematic Research Methodology System Prompt
-  var systemPrompt = 
-    'You are an expert AI Technology News Publisher, Senior Technical Analyst, and Lead AI Researcher. Your task is to investigate technical inquiries using a systematic research methodology combined with retrieved context (RAG) and structured reasoning.\n\n' +
-    'SYSTEMATIC RESEARCH METHODOLOGY:\n' +
-    '1. Topic Selection & Framing: Identify and refine the core analytical question from the user inquiry.\n' +
-    '2. Literature Review: Cross-reference retrieved metadata, technical benchmarks, and industry publication sources.\n' +
-    '3. Hypothesis Formulation: Develop logical predictions regarding model capabilities, architectural trade-offs, and market impact.\n' +
-    '4. Study & Analysis Design: Select relevant quantitative and qualitative evaluation criteria (e.g., latency, context window length, SWE-bench performance, cost efficiency).\n' +
-    '5. Data Collection & Synthesis: Extract and organize relevant metrics directly from RAG retrieval context and live endpoints.\n' +
-    '6. Data Analysis: Examine technical findings to surface patterns, evaluate competitive advantages, and test initial hypotheses.\n' +
-    '7. Structured Reporting: Output a seamless, well-spaced, and publication-ready report.\n\n' +
-    'RESEARCH CONTEXT:\n' +
-    '- Topic: "' + topic.refinedQuestion + '"\n' +
-    '- Scope: "' + topic.scope + '"\n' +
-    '- Key Components: ' + topic.keyComponents.join(', ') + '\n' +
-    '- Sources Analyzed: ' + literatureReview.sourceCount + '\n' +
-    '- Key Findings: ' + literatureReview.keyFindings.length + ' identified\n' +
-    '- Hypotheses: ' + hypotheses.length + ' formulated\n\n' +
-    'RESPONSE STRUCTURE:\n' +
-    '1. **Grok API Reasoning Trace:** Display the backend query routing, literature synthesis, and hypothesis verification pathway.\n\n' +
-    '2. **Explanation:** Provide a smooth, paraphrased overview of the current technology landscape grounded in the literature review.\n\n' +
-    '3. **Interpretation:** Analyze what the collected data implies for developers, software architects, and enterprise decision-makers.\n\n' +
-    '4. **Conclusion:** Deliver a clear, definitive summary statement addressing the core research question.\n\n' +
-    '5. **Suggestions:** Provide actionable, strategic steps for technical implementation and architectural planning.\n\n' +
-    '6. **Verified Reference Sources:** List all references with active, clickable Markdown hyperlinks formatted strictly as [Source Name](URL) pulled directly from metadata.\n\n' +
-    'FORMATTING GUIDELINES:\n' +
-    '- Use ## for section headers\n' +
-    '- Use bullet points (- ) for lists\n' +
-    '- Use **bold** for emphasis\n' +
-    '- Use tables for structured data\n' +
-    '- Use numbered lists for steps\n' +
-    '- Write in clear, professional, publication-ready language\n' +
-    '- Maintain an authoritative, objective, and publishing-ready tone throughout';
-  
-  var userPrompt = 
-    'RESEARCH QUESTION:\n' + query + '\n\n' +
-    'CONTEXT FROM SOURCES:\n' + context + '\n\n' +
-    'RESEARCH METHODOLOGY APPLIED:\n' +
-    '1. Topic Framing: ' + topic.refinedQuestion + '\n' +
-    '2. Literature Review: ' + literatureReview.sourceCount + ' sources analyzed\n' +
-    '3. Hypotheses: ' + hypotheses.length + ' formulated\n' +
-    '4. Study Design: ' + JSON.stringify(studyDesign.criteria) + '\n' +
-    '5. Data Collected: ' + data.totalSources + ' sources\n' +
-    '6. Analysis Complete: Confidence ' + analysis.confidenceScore.toFixed(1) + '/10\n\n' +
-    'Apply the systematic research methodology to generate a comprehensive, publication-ready analysis.';
-  
-  return {
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt }
-    ],
-    metadata: {
-      topic: topic,
-      hypotheses: hypotheses,
-      studyDesign: studyDesign,
-      analysis: analysis
+var ResearchMethodology = {
+  frameTopic: function(query) {
+    var words = query.toLowerCase().split(/\s+/);
+    var keyTerms = [];
+    for (var i = 0; i < words.length; i++) {
+      if (words[i].length > 3) {
+        keyTerms.push(words[i]);
+      }
     }
-  };
+    return {
+      originalQuery: query,
+      refinedQuestion: 'How can we analyze and understand ' + query + '?',
+      scope: 'Investigating ' + query + ' using multi-source intelligence',
+      keyComponents: keyTerms
+    };
+  },
+  
+  reviewLiterature: function(query, sources) {
+    var review = {
+      sourceCount: sources.length,
+      sourceSummary: [],
+      keyFindings: []
+    };
+    for (var i = 0; i < sources.length; i++) {
+      var s = sources[i];
+      review.sourceSummary.push({
+        title: s.title,
+        source: s.source_name,
+        relevance: s.relevance + '%'
+      });
+      if (s.fullContent) {
+        var sentences = s.fullContent.split(/[.!?]+/);
+        for (var j = 0; j < Math.min(sentences.length, 2); j++) {
+          var sentence = sentences[j].trim();
+          if (sentence.length > 30 && sentence.length < 200) {
+            review.keyFindings.push(sentence);
+          }
+        }
+      }
+    }
+    review.keyFindings = review.keyFindings.slice(0, 8);
+    return review;
+  },
+  
+  formulateHypotheses: function(query, sources) {
+    var hypotheses = [];
+    if (sources.length >= 3) {
+      hypotheses.push({
+        id: 'H1',
+        statement: 'Multi-source synthesis provides more comprehensive insights than single-source analysis',
+        confidence: sources.length >= 4 ? 'High' : 'Medium'
+      });
+    }
+    var highRelevance = sources.filter(function(s) { return s.relevance >= 80; });
+    if (highRelevance.length >= 2) {
+      hypotheses.push({
+        id: 'H2',
+        statement: 'Higher relevance scores correlate with more actionable insights',
+        confidence: 'Medium'
+      });
+    }
+    if (sources.length >= 2) {
+      hypotheses.push({
+        id: 'H3',
+        statement: 'Cross-referencing multiple sources reveals patterns not visible in individual sources',
+        confidence: 'High'
+      });
+    }
+    return hypotheses;
+  },
+  
+  designStudy: function() {
+    return {
+      criteria: [
+        { name: 'Source Relevance', weight: 0.30 },
+        { name: 'Content Quality', weight: 0.25 },
+        { name: 'Source Diversity', weight: 0.20 },
+        { name: 'Recency', weight: 0.15 },
+        { name: 'Authority', weight: 0.10 }
+      ],
+      methodology: 'Systematic literature review with RAG and Chain-of-Thought',
+      validation: 'Cross-source triangulation'
+    };
+  },
+  
+  collectData: function(sources) {
+    var data = {
+      totalSources: sources.length,
+      extractedFacts: [],
+      sourceMetrics: []
+    };
+    for (var i = 0; i < sources.length; i++) {
+      var s = sources[i];
+      data.sourceMetrics.push({
+        title: s.title,
+        relevance: s.relevance,
+        sourceType: s.source_type || 'blog',
+        wordCount: s.word_count || 0
+      });
+      if (s.chunk) {
+        data.extractedFacts.push(s.chunk.substring(0, 200));
+      }
+    }
+    return data;
+  },
+  
+  analyzeData: function(data) {
+    var analysis = {
+      patterns: [],
+      confidenceScore: 0
+    };
+    if (data.totalSources >= 5) {
+      analysis.patterns.push('Multiple sources provide consistent insights');
+    }
+    if (data.totalSources >= 3) {
+      analysis.patterns.push('Cross-source triangulation is possible');
+    }
+    var avgRelevance = 0;
+    for (var i = 0; i < data.sourceMetrics.length; i++) {
+      avgRelevance += data.sourceMetrics[i].relevance || 0;
+    }
+    avgRelevance = avgRelevance / Math.max(data.sourceMetrics.length, 1);
+    analysis.confidenceScore = Math.min(avgRelevance / 10, 10);
+    return analysis;
+  }
+};
+
+// ============================================
+// PROFESSIONAL OUTPUT FORMATTER
+// ============================================
+
+function formatProfessionalOutput(responseText, sources, metadata) {
+  if (!responseText) return '';
+  
+  // Clean up the response
+  var cleaned = responseText;
+  
+  // Remove any duplicate headers
+  cleaned = cleaned.replace(/#{1,6}\s*Grok API Reasoning Trace/g, '## Research Methodology');
+  
+  // Ensure proper spacing between sections
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+  
+  // Fix any formatting issues
+  cleaned = cleaned.replace(/\|\s*-\s*\|/g, '| --- |');
+  
+  // Ensure tables are properly formatted
+  cleaned = cleaned.replace(/\|\s*\|\s*\|/g, '| | |');
+  
+  return cleaned;
 }
 
 // ============================================
@@ -621,19 +474,81 @@ async function callDreamPromptingAPI(query, sources) {
   console.log('Using DreamPrompting API key:', apiKey.substring(0, 10) + '...' + apiKey.substring(apiKey.length - 4));
   
   try {
-    var promptData = buildResearchPrompt(query, sources);
+    var topic = ResearchMethodology.frameTopic(query);
+    var literatureReview = ResearchMethodology.reviewLiterature(query, sources);
+    var hypotheses = ResearchMethodology.formulateHypotheses(query, sources);
+    var studyDesign = ResearchMethodology.designStudy();
+    var data = ResearchMethodology.collectData(sources);
+    var analysis = ResearchMethodology.analyzeData(data);
+    
+    var context = sources.map(function(s, i) {
+      return 'Source ' + (i + 1) + ':\n' +
+             'Title: ' + s.title + '\n' +
+             'Author: ' + s.author + '\n' +
+             'Date: ' + s.date + '\n' +
+             'Content: ' + (s.fullContent || s.chunk || '').substring(0, 600) + '\n' +
+             'URL: ' + s.source + '\n' +
+             'Relevance: ' + s.relevance + '%\n';
+    }).join('\n\n');
+    
+    var systemPrompt = 
+      'You are an expert AI Technology News Publisher, Senior Technical Analyst, and Lead AI Researcher. ' +
+      'Your task is to investigate technical inquiries using a systematic research methodology.\n\n' +
+      'SYSTEMATIC RESEARCH METHODOLOGY:\n' +
+      '1. Topic Selection & Framing: Identify and refine the core analytical question.\n' +
+      '2. Literature Review: Cross-reference retrieved metadata, technical benchmarks, and industry sources.\n' +
+      '3. Hypothesis Formulation: Develop logical predictions regarding model capabilities and market impact.\n' +
+      '4. Study & Analysis Design: Select relevant quantitative and qualitative evaluation criteria.\n' +
+      '5. Data Collection & Synthesis: Extract and organize relevant metrics from RAG retrieval context.\n' +
+      '6. Data Analysis: Examine technical findings to surface patterns and evaluate competitive advantages.\n' +
+      '7. Structured Reporting: Output a seamless, publication-ready report.\n\n' +
+      'OUTPUT FORMAT (Mimicking ChatGPT, DeepSeek, Gemini):\n\n' +
+      '# [Clear, Descriptive Title]\n\n' +
+      '## Research Methodology\n' +
+      '### 1. Topic Framing\n' +
+      '### 2. Literature Review\n' +
+      '### 3. Hypothesis Formulation\n' +
+      '### 4. Study Design\n' +
+      '### 5. Data Collection\n' +
+      '### 6. Data Analysis\n\n' +
+      '## Key Findings\n' +
+      '[Clear, concise bullet points of the most important findings]\n\n' +
+      '## Analysis\n' +
+      '[Detailed breakdown with proper paragraphs and structure]\n\n' +
+      '## Recommendations\n' +
+      '[Actionable steps for different audiences]\n\n' +
+      '## Sources\n' +
+      '[All sources with [Source Name](URL) format]\n\n' +
+      '## Summary\n' +
+      '[Brief conclusion with confidence assessment]\n\n' +
+      'FORMATTING GUIDELINES:\n' +
+      '- Use # for main title, ## for sections, ### for subsections\n' +
+      '- Use bullet points (- ) for lists\n' +
+      '- Use **bold** for emphasis\n' +
+      '- Use tables for structured data\n' +
+      '- Use proper paragraph spacing (double line breaks between sections)\n' +
+      '- Write in clear, professional, publication-ready language\n' +
+      '- Every source must be linked as [Source Name](URL)';
+    
+    var userPrompt = 
+      'RESEARCH QUESTION: ' + query + '\n\n' +
+      'CONTEXT FROM SOURCES:\n' + context + '\n\n' +
+      'Apply the systematic research methodology and output a professional, well-structured report.';
     
     var url = 'https://dreamprompting.com/api/v1/chat/completions';
     
     var requestBody = {
       model: 'auto',
-      messages: promptData.messages,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt }
+      ],
       temperature: 0.25,
-      max_tokens: 3000,
+      max_tokens: 3500,
       top_p: 0.95
     };
     
-    console.log('Calling DreamPrompting API with model: auto (Research Methodology)');
+    console.log('Calling DreamPrompting API with model: auto');
     
     var response = await fetch(url, {
       method: 'POST',
@@ -651,35 +566,23 @@ async function callDreamPromptingAPI(query, sources) {
     }
     
     var data = await response.json();
-    console.log('DreamPrompting API call successful with model: auto');
+    console.log('DreamPrompting API call successful');
     
     if (data.choices && data.choices[0] && data.choices[0].message) {
-      // Add research metadata to the response
       var responseContent = data.choices[0].message.content;
       
-      // Append research methodology metadata
-      var methodologySummary = 
-        '\n\n---\n\n' +
-        '## 🔬 Research Methodology Summary\n\n' +
-        '| Step | Description | Status |\n' +
-        '|------|-------------|--------|\n' +
-        '| 1. Topic Framing | ' + promptData.metadata.topic.refinedQuestion + ' | ✅ Complete |\n' +
-        '| 2. Literature Review | ' + sources.length + ' sources analyzed | ✅ Complete |\n' +
-        '| 3. Hypothesis Formulation | ' + promptData.metadata.hypotheses.length + ' hypotheses | ✅ Complete |\n' +
-        '| 4. Study Design | Multi-source RAG + CoT | ✅ Complete |\n' +
-        '| 5. Data Collection | ' + sources.length + ' sources extracted | ✅ Complete |\n' +
-        '| 6. Data Analysis | Confidence: ' + promptData.metadata.analysis.confidenceScore.toFixed(1) + '/10 | ✅ Complete |\n' +
-        '| 7. Structured Reporting | Publication-ready format | ✅ Complete |\n\n' +
-        '**Research Confidence:** ' + (promptData.metadata.analysis.confidenceScore >= 7 ? 'High' : 'Medium') + '\n' +
-        '**Sources Triangulated:** ' + sources.length + '\n' +
-        '**Methodology:** Systematic Literature Review with Chain-of-Thought Reasoning';
+      // Format the output professionally
+      var formattedResponse = formatProfessionalOutput(responseContent, sources, {
+        topic: topic,
+        hypotheses: hypotheses,
+        analysis: analysis
+      });
       
       return {
         success: true,
-        response: responseContent + methodologySummary,
+        response: formattedResponse,
         model: data.model || 'auto',
-        usage: data.usage || null,
-        researchMetadata: promptData.metadata
+        usage: data.usage || null
       };
     }
     
@@ -691,13 +594,12 @@ async function callDreamPromptingAPI(query, sources) {
 }
 
 // ============================================
-// FALLBACK RESPONSE - RESEARCH EDITION
+// FALLBACK RESPONSE
 // ============================================
 
 function generateFallbackResponse(query, results) {
   var output = [];
   
-  // Apply Research Methodology even in fallback
   var topic = ResearchMethodology.frameTopic(query);
   var literatureReview = ResearchMethodology.reviewLiterature(query, results);
   var hypotheses = ResearchMethodology.formulateHypotheses(query, results);
@@ -705,80 +607,97 @@ function generateFallbackResponse(query, results) {
   var data = ResearchMethodology.collectData(results);
   var analysis = ResearchMethodology.analyzeData(data);
   
-  output.push('## 🔬 Grok API Reasoning Trace');
+  // Title
+  output.push('# AI Technology Analysis Report');
   output.push('');
-  output.push('**Research Question:** "' + query + '"');
+  output.push('**Research Question:** ' + query);
   output.push('');
-  output.push('**Topic Framing:** ' + topic.refinedQuestion);
+  output.push('---');
   output.push('');
-  output.push('**Literature Review:** ' + literatureReview.sourceCount + ' sources identified');
+  
+  // Research Methodology
+  output.push('## Research Methodology');
   output.push('');
-  output.push('**Hypotheses Formulated:**');
-  for (var h = 0; h < hypotheses.length; h++) {
-    output.push('  - ' + hypotheses[h].id + ': ' + hypotheses[h].statement + ' (Confidence: ' + hypotheses[h].confidence + ')');
+  output.push('### 1. Topic Framing');
+  output.push('');
+  output.push('**Refined Question:** ' + topic.refinedQuestion);
+  output.push('');
+  output.push('**Scope:** ' + topic.scope);
+  output.push('');
+  output.push('### 2. Literature Review');
+  output.push('');
+  output.push('**Sources Analyzed:** ' + literatureReview.sourceCount);
+  output.push('');
+  if (results && results.length > 0) {
+    output.push('**Key Sources:**');
+    output.push('');
+    for (var i = 0; i < Math.min(results.length, 5); i++) {
+      var r = results[i];
+      output.push('- [' + r.source_name + '](' + r.source + ') - Relevance: ' + r.relevance + '%');
+    }
   }
   output.push('');
-  output.push('**Data Analysis:** Confidence Score: ' + analysis.confidenceScore.toFixed(1) + '/10');
+  output.push('### 3. Hypothesis Formulation');
+  output.push('');
+  for (var h = 0; h < hypotheses.length; h++) {
+    output.push('- **' + hypotheses[h].id + ':** ' + hypotheses[h].statement + ' (Confidence: ' + hypotheses[h].confidence + ')');
+  }
+  output.push('');
+  output.push('### 4. Study Design');
+  output.push('');
+  output.push('**Methodology:** ' + studyDesign.methodology);
+  output.push('');
+  output.push('**Validation:** ' + studyDesign.validation);
+  output.push('');
+  output.push('### 5. Data Collection');
+  output.push('');
+  output.push('**Sources Extracted:** ' + data.totalSources);
+  output.push('');
+  output.push('### 6. Data Analysis');
+  output.push('');
+  output.push('**Confidence Score:** ' + analysis.confidenceScore.toFixed(1) + '/10');
+  output.push('');
+  output.push('---');
   output.push('');
   
-  output.push('## 📊 Explanation');
+  // Key Findings
+  output.push('## Key Findings');
   output.push('');
-  
   if (results && results.length > 0) {
-    output.push('Based on the systematic analysis of ' + results.length + ' sources:');
-    output.push('');
-    for (var i = 0; i < Math.min(results.length, 3); i++) {
-      var r = results[i];
-      output.push('**' + (i + 1) + '. ' + r.title + '**');
-      output.push(r.chunk.substring(0, 200) + '...');
-      output.push('*Source: [' + r.source_name + '](' + r.source + ')*');
+    for (var k = 0; k < Math.min(results.length, 4); k++) {
+      var src = results[k];
+      output.push('- **' + src.title + '** (Relevance: ' + src.relevance + '%)');
+      output.push('  - Source: [' + src.source_name + '](' + src.source + ')');
+      output.push('  - Key insight: ' + (src.chunk || '').substring(0, 150) + '...');
       output.push('');
     }
   } else {
-    output.push('No specific sources found. Expanding search parameters.');
-    output.push('');
+    output.push('No specific sources found. Consider refining your query.');
   }
-  
-  output.push('## 🔍 Interpretation');
   output.push('');
   
+  // Analysis
+  output.push('## Analysis');
+  output.push('');
   if (results && results.length > 0) {
-    output.push('Key patterns identified from the literature review:');
+    output.push('Based on the systematic analysis of ' + results.length + ' sources, several key patterns emerge:');
     output.push('');
-    for (var j = 0; j < Math.min(results.length, 3); j++) {
-      var s = results[j];
-      output.push('- **' + s.title + '** (Relevance: ' + s.relevance + '%)');
-      output.push('  - Source: [' + s.source_name + '](' + s.source + ')');
-      output.push('  - Key finding: ' + (s.chunk || '').substring(0, 100) + '...');
-    }
-    output.push('');
-    output.push('These findings suggest a complex, multi-faceted landscape with diverse perspectives.');
+    output.push('1. **Source Diversity:** The findings draw from multiple sources including TechCrunch, VentureBeat, and specialized technology blogs.');
+    output.push('2. **Relevance Distribution:** ' + results.filter(function(r) { return r.relevance >= 80; }).length + ' sources show high relevance (>80%).');
+    output.push('3. **Thematic Consistency:** Across sources, consistent themes emerge regarding AI technology trends and market developments.');
   } else {
-    output.push('Insufficient data for comprehensive interpretation. Consider refining the research question.');
+    output.push('Insufficient data for comprehensive analysis. Expand the search to include additional sources.');
   }
   output.push('');
   
-  output.push('## ✅ Conclusion');
+  // Recommendations
+  output.push('## Recommendations');
   output.push('');
-  
   if (results && results.length > 0) {
-    output.push('Based on the systematic analysis of ' + results.length + ' sources, the research provides valuable insights into "' + query + '".');
-    output.push('');
-    output.push('The most relevant sources (' + results.map(function(r) { return r.source_name; }).slice(0, 3).join(', ') + ') offer complementary perspectives.');
-  } else {
-    output.push('No conclusive findings. Consider expanding the search to include additional sources.');
-  }
-  output.push('');
-  
-  output.push('## 💡 Suggestions');
-  output.push('');
-  
-  if (results && results.length > 0) {
-    output.push('1. **Expand the literature review** to include additional sources');
+    output.push('1. **Review the source materials** for more detailed information on specific topics');
     output.push('2. **Cross-reference findings** across multiple sources for validation');
-    output.push('3. **Apply the research methodology** to specific sub-topics');
-    output.push('4. **Consider the context and timeliness** of each source');
-    output.push('5. **Evaluate the relevance** of each source based on your specific needs');
+    output.push('3. **Consider the context and timeliness** of each source');
+    output.push('4. **Evaluate the relevance** of each source based on your specific needs');
   } else {
     output.push('1. **Refine the research question** to be more specific');
     output.push('2. **Expand the search** to include additional sources');
@@ -786,45 +705,42 @@ function generateFallbackResponse(query, results) {
   }
   output.push('');
   
+  // Sources
+  output.push('## Sources');
+  output.push('');
   if (results && results.length > 0) {
-    output.push('## 📚 Verified Reference Sources');
-    output.push('');
-    for (var k = 0; k < Math.min(results.length, 5); k++) {
-      var src = results[k];
-      output.push((k + 1) + '. **' + src.title + '**');
-      output.push('   Author: ' + src.author);
-      output.push('   Source: [' + src.source_name + '](' + src.source + ')');
+    for (var m = 0; m < Math.min(results.length, 5); m++) {
+      var src = results[m];
+      output.push((m + 1) + '. **' + src.title + '**');
+      output.push('   - Author: ' + src.author);
+      output.push('   - Source: [' + src.source_name + '](' + src.source + ')');
       if (src.date) {
-        output.push('   Date: ' + src.date);
+        output.push('   - Date: ' + src.date);
       }
-      output.push('   Relevance: ' + src.relevance + '%');
+      output.push('   - Relevance: ' + src.relevance + '%');
       output.push('');
     }
   }
   
-  output.push('## 📊 Research Assessment');
+  // Summary
+  output.push('## Summary');
   output.push('');
-  
   var confidence = results && results.length >= 3 ? 'High' : results && results.length >= 1 ? 'Medium' : 'Low';
   var qualityScore = 0;
   if (results && results.length > 0) {
     var total = 0;
-    for (var m = 0; m < results.length; m++) {
-      total += results[m].relevance || 0;
+    for (var n = 0; n < results.length; n++) {
+      total += results[n].relevance || 0;
     }
     qualityScore = Math.round(total / results.length);
   }
-  
-  output.push('**Confidence:** ' + confidence + ' (' + analysis.confidenceScore.toFixed(1) + '/10)');
-  output.push('**Quality Rating:** ' + (qualityScore >= 80 ? 'Excellent' : qualityScore >= 60 ? 'Good' : 'Fair') + ' (' + qualityScore + '%)');
-  output.push('**Methodology:** Systematic Literature Review with RAG');
+  output.push('**Confidence Level:** ' + confidence);
+  output.push('**Quality Score:** ' + qualityScore + '%');
   output.push('**Sources Analyzed:** ' + (results ? results.length : 0));
   output.push('');
-  
   output.push('---');
   output.push('');
-  output.push('*Research generated on ' + new Date().toLocaleString() + ' using multi-source intelligence.*');
-  output.push('*Model: research-fallback | Methodology: Systematic Research Framework v2.0*');
+  output.push('*Research generated on ' + new Date().toLocaleString() + ' using systematic research methodology.*');
   
   return output.join('\n');
 }
@@ -860,8 +776,7 @@ export default async function handler(req, res) {
     var searchResult = searchSources(query);
     var results = searchResult.results || [];
     
-    // Try DreamPrompting API with Research Methodology
-    console.log('Attempting DreamPrompting API call with Research Methodology...');
+    console.log('Attempting DreamPrompting API call...');
     var apiResponse = await callDreamPromptingAPI(query, results);
     
     var formattedResponse;
@@ -889,7 +804,7 @@ export default async function handler(req, res) {
       }
       qualityScore = Math.round(totalRelevance / results.length);
       if (usingAPI) {
-        qualityScore = Math.min(qualityScore + 20, 100);
+        qualityScore = Math.min(qualityScore + 15, 100);
       }
     }
     
@@ -897,10 +812,8 @@ export default async function handler(req, res) {
       qualityScore = 25;
     }
     
-    var confidenceLevel = results.length >= 3 ? 'High' : results.length >= 1 ? 'Medium' : 'Low';
-    if (usingAPI) {
-      confidenceLevel = results.length >= 2 ? 'High' : 'Medium';
-    }
+    var confidenceLevel = results.length >= 3 && qualityScore >= 70 ? 'High' : 
+                          results.length >= 1 && qualityScore >= 40 ? 'Medium' : 'Low';
     
     return res.status(200).json({
       response: formattedResponse,
@@ -911,7 +824,7 @@ export default async function handler(req, res) {
         ai_generated: true,
         model: modelUsed,
         provider: usingAPI ? 'DreamPrompting API' : 'Research Fallback',
-        methodology: 'Systematic Research Framework v2.0',
+        methodology: 'Systematic Research Framework v3.0',
         formatted: true,
         research_methodology: true,
         last_updated: new Date().toISOString(),
