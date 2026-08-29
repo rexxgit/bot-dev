@@ -1,8 +1,7 @@
-// api/data.js - Research Methodology Edition v3.0
+// api/data.js - Optimized with Timeout Handling
 // ============================================================
-// Purpose: AI-powered intelligence bot with systematic research
-// methodology and professional output formatting mimicking
-// ChatGPT, DeepSeek, and Gemini style.
+// Purpose: AI-powered intelligence bot with timeout handling
+// and efficient API calls
 // ============================================================
 
 // ============================================
@@ -280,7 +279,7 @@ function searchSources(query) {
       source_name: source.source_name || 'Unknown',
       author: source.author || 'Unknown',
       date: source.date || '',
-      chunk: (source.content || '').substring(0, 500) + '...',
+      chunk: (source.content || '').substring(0, 300) + '...',
       fullContent: source.content || '',
       relevance: relevance,
       score: score
@@ -291,10 +290,10 @@ function searchSources(query) {
     return b.score - a.score;
   });
   
-  var results = scoredResults.filter(function(r) { return r.score > 0; }).slice(0, 5);
+  var results = scoredResults.filter(function(r) { return r.score > 0; }).slice(0, 4);
   
   if (results.length === 0) {
-    results = scoredResults.slice(0, 5);
+    results = scoredResults.slice(0, 4);
     for (var j = 0; j < results.length; j++) {
       results[j].relevance = Math.max(results[j].relevance, 10);
     }
@@ -347,7 +346,7 @@ var ResearchMethodology = {
         }
       }
     }
-    review.keyFindings = review.keyFindings.slice(0, 8);
+    review.keyFindings = review.keyFindings.slice(0, 6);
     return review;
   },
   
@@ -407,7 +406,7 @@ var ResearchMethodology = {
         wordCount: s.word_count || 0
       });
       if (s.chunk) {
-        data.extractedFacts.push(s.chunk.substring(0, 200));
+        data.extractedFacts.push(s.chunk.substring(0, 150));
       }
     }
     return data;
@@ -418,7 +417,7 @@ var ResearchMethodology = {
       patterns: [],
       confidenceScore: 0
     };
-    if (data.totalSources >= 5) {
+    if (data.totalSources >= 4) {
       analysis.patterns.push('Multiple sources provide consistent insights');
     }
     if (data.totalSources >= 3) {
@@ -435,169 +434,10 @@ var ResearchMethodology = {
 };
 
 // ============================================
-// PROFESSIONAL OUTPUT FORMATTER
+// FAST FALLBACK RESPONSE (No API Call)
 // ============================================
 
-function formatProfessionalOutput(responseText, sources, metadata) {
-  if (!responseText) return '';
-  
-  // Clean up the response
-  var cleaned = responseText;
-  
-  // Remove any duplicate headers
-  cleaned = cleaned.replace(/#{1,6}\s*Grok API Reasoning Trace/g, '## Research Methodology');
-  
-  // Ensure proper spacing between sections
-  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
-  
-  // Fix any formatting issues
-  cleaned = cleaned.replace(/\|\s*-\s*\|/g, '| --- |');
-  
-  // Ensure tables are properly formatted
-  cleaned = cleaned.replace(/\|\s*\|\s*\|/g, '| | |');
-  
-  return cleaned;
-}
-
-// ============================================
-// DREAM PROMPTING API CALL
-// ============================================
-
-async function callDreamPromptingAPI(query, sources) {
-  var apiKey = process.env.OPEN_AI_KEY;
-  
-  if (!apiKey) {
-    console.error('OPEN_AI_KEY environment variable is not set');
-    return null;
-  }
-  
-  console.log('Using DreamPrompting API key:', apiKey.substring(0, 10) + '...' + apiKey.substring(apiKey.length - 4));
-  
-  try {
-    var topic = ResearchMethodology.frameTopic(query);
-    var literatureReview = ResearchMethodology.reviewLiterature(query, sources);
-    var hypotheses = ResearchMethodology.formulateHypotheses(query, sources);
-    var studyDesign = ResearchMethodology.designStudy();
-    var data = ResearchMethodology.collectData(sources);
-    var analysis = ResearchMethodology.analyzeData(data);
-    
-    var context = sources.map(function(s, i) {
-      return 'Source ' + (i + 1) + ':\n' +
-             'Title: ' + s.title + '\n' +
-             'Author: ' + s.author + '\n' +
-             'Date: ' + s.date + '\n' +
-             'Content: ' + (s.fullContent || s.chunk || '').substring(0, 600) + '\n' +
-             'URL: ' + s.source + '\n' +
-             'Relevance: ' + s.relevance + '%\n';
-    }).join('\n\n');
-    
-    var systemPrompt = 
-      'You are an expert AI Technology News Publisher, Senior Technical Analyst, and Lead AI Researcher. ' +
-      'Your task is to investigate technical inquiries using a systematic research methodology.\n\n' +
-      'SYSTEMATIC RESEARCH METHODOLOGY:\n' +
-      '1. Topic Selection & Framing: Identify and refine the core analytical question.\n' +
-      '2. Literature Review: Cross-reference retrieved metadata, technical benchmarks, and industry sources.\n' +
-      '3. Hypothesis Formulation: Develop logical predictions regarding model capabilities and market impact.\n' +
-      '4. Study & Analysis Design: Select relevant quantitative and qualitative evaluation criteria.\n' +
-      '5. Data Collection & Synthesis: Extract and organize relevant metrics from RAG retrieval context.\n' +
-      '6. Data Analysis: Examine technical findings to surface patterns and evaluate competitive advantages.\n' +
-      '7. Structured Reporting: Output a seamless, publication-ready report.\n\n' +
-      'OUTPUT FORMAT (Mimicking ChatGPT, DeepSeek, Gemini):\n\n' +
-      '# [Clear, Descriptive Title]\n\n' +
-      '## Research Methodology\n' +
-      '### 1. Topic Framing\n' +
-      '### 2. Literature Review\n' +
-      '### 3. Hypothesis Formulation\n' +
-      '### 4. Study Design\n' +
-      '### 5. Data Collection\n' +
-      '### 6. Data Analysis\n\n' +
-      '## Key Findings\n' +
-      '[Clear, concise bullet points of the most important findings]\n\n' +
-      '## Analysis\n' +
-      '[Detailed breakdown with proper paragraphs and structure]\n\n' +
-      '## Recommendations\n' +
-      '[Actionable steps for different audiences]\n\n' +
-      '## Sources\n' +
-      '[All sources with [Source Name](URL) format]\n\n' +
-      '## Summary\n' +
-      '[Brief conclusion with confidence assessment]\n\n' +
-      'FORMATTING GUIDELINES:\n' +
-      '- Use # for main title, ## for sections, ### for subsections\n' +
-      '- Use bullet points (- ) for lists\n' +
-      '- Use **bold** for emphasis\n' +
-      '- Use tables for structured data\n' +
-      '- Use proper paragraph spacing (double line breaks between sections)\n' +
-      '- Write in clear, professional, publication-ready language\n' +
-      '- Every source must be linked as [Source Name](URL)';
-    
-    var userPrompt = 
-      'RESEARCH QUESTION: ' + query + '\n\n' +
-      'CONTEXT FROM SOURCES:\n' + context + '\n\n' +
-      'Apply the systematic research methodology and output a professional, well-structured report.';
-    
-    var url = 'https://dreamprompting.com/api/v1/chat/completions';
-    
-    var requestBody = {
-      model: 'auto',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-      ],
-      temperature: 0.25,
-      max_tokens: 3500,
-      top_p: 0.95
-    };
-    
-    console.log('Calling DreamPrompting API with model: auto');
-    
-    var response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + apiKey
-      },
-      body: JSON.stringify(requestBody)
-    });
-    
-    if (!response.ok) {
-      var errorText = await response.text();
-      console.error('DreamPrompting API error:', response.status, errorText);
-      return null;
-    }
-    
-    var data = await response.json();
-    console.log('DreamPrompting API call successful');
-    
-    if (data.choices && data.choices[0] && data.choices[0].message) {
-      var responseContent = data.choices[0].message.content;
-      
-      // Format the output professionally
-      var formattedResponse = formatProfessionalOutput(responseContent, sources, {
-        topic: topic,
-        hypotheses: hypotheses,
-        analysis: analysis
-      });
-      
-      return {
-        success: true,
-        response: formattedResponse,
-        model: data.model || 'auto',
-        usage: data.usage || null
-      };
-    }
-    
-    return null;
-  } catch (error) {
-    console.error('DreamPrompting API error:', error.message);
-    return null;
-  }
-}
-
-// ============================================
-// FALLBACK RESPONSE
-// ============================================
-
-function generateFallbackResponse(query, results) {
+function generateFastFallbackResponse(query, results) {
   var output = [];
   
   var topic = ResearchMethodology.frameTopic(query);
@@ -631,7 +471,7 @@ function generateFallbackResponse(query, results) {
   if (results && results.length > 0) {
     output.push('**Key Sources:**');
     output.push('');
-    for (var i = 0; i < Math.min(results.length, 5); i++) {
+    for (var i = 0; i < Math.min(results.length, 4); i++) {
       var r = results[i];
       output.push('- [' + r.source_name + '](' + r.source + ') - Relevance: ' + r.relevance + '%');
     }
@@ -668,7 +508,7 @@ function generateFallbackResponse(query, results) {
       var src = results[k];
       output.push('- **' + src.title + '** (Relevance: ' + src.relevance + '%)');
       output.push('  - Source: [' + src.source_name + '](' + src.source + ')');
-      output.push('  - Key insight: ' + (src.chunk || '').substring(0, 150) + '...');
+      output.push('  - Key insight: ' + (src.chunk || '').substring(0, 120) + '...');
       output.push('');
     }
   } else {
@@ -709,7 +549,7 @@ function generateFallbackResponse(query, results) {
   output.push('## Sources');
   output.push('');
   if (results && results.length > 0) {
-    for (var m = 0; m < Math.min(results.length, 5); m++) {
+    for (var m = 0; m < Math.min(results.length, 4); m++) {
       var src = results[m];
       output.push((m + 1) + '. **' + src.title + '**');
       output.push('   - Author: ' + src.author);
@@ -743,6 +583,111 @@ function generateFallbackResponse(query, results) {
   output.push('*Research generated on ' + new Date().toLocaleString() + ' using systematic research methodology.*');
   
   return output.join('\n');
+}
+
+// ============================================
+// FAST DREAM PROMPTING API CALL (With Timeout)
+// ============================================
+
+async function callDreamPromptingAPI(query, sources) {
+  var apiKey = process.env.OPEN_AI_KEY;
+  
+  if (!apiKey) {
+    console.error('OPEN_AI_KEY environment variable is not set');
+    return null;
+  }
+  
+  console.log('Using DreamPrompting API key:', apiKey.substring(0, 10) + '...' + apiKey.substring(apiKey.length - 4));
+  
+  // Build context (smaller for faster response)
+  var context = sources.map(function(s, i) {
+    return 'Source ' + (i + 1) + ':\n' +
+           'Title: ' + s.title + '\n' +
+           'Author: ' + s.author + '\n' +
+           'Content: ' + (s.fullContent || s.chunk || '').substring(0, 400) + '\n' +
+           'URL: ' + s.source + '\n' +
+           'Relevance: ' + s.relevance + '%\n';
+  }).join('\n');
+  
+  var systemPrompt = 
+    'You are an expert AI Technology Analyst. Provide a concise, well-structured research report.\n\n' +
+    'OUTPUT FORMAT:\n' +
+    '# Title\n' +
+    '## Research Methodology\n' +
+    '### 1. Topic Framing\n' +
+    '### 2. Literature Review\n' +
+    '### 3. Hypothesis Formulation\n' +
+    '### 4. Study Design\n' +
+    '### 5. Data Collection\n' +
+    '### 6. Data Analysis\n' +
+    '## Key Findings\n' +
+    '## Analysis\n' +
+    '## Recommendations\n' +
+    '## Sources\n' +
+    '## Summary\n\n' +
+    'Keep it concise and professional. Use [Source Name](URL) format for all sources.';
+  
+  var userPrompt = 'RESEARCH QUESTION: ' + query + '\n\nCONTEXT:\n' + context + '\n\nGenerate a concise research report.';
+  
+  var url = 'https://dreamprompting.com/api/v1/chat/completions';
+  
+  var requestBody = {
+    model: 'auto',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ],
+    temperature: 0.3,
+    max_tokens: 2000,  // Reduced for faster response
+    top_p: 0.95
+  };
+  
+  console.log('Calling DreamPrompting API with model: auto (timeout: 8s)');
+  
+  // Create a timeout promise
+  var timeoutPromise = new Promise(function(resolve, reject) {
+    setTimeout(function() {
+      reject(new Error('API call timed out after 8 seconds'));
+    }, 8000);
+  });
+  
+  // Create the fetch promise
+  var fetchPromise = fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey
+    },
+    body: JSON.stringify(requestBody)
+  }).then(function(response) {
+    if (!response.ok) {
+      return response.text().then(function(text) {
+        throw new Error('API error: ' + response.status + ' - ' + text);
+      });
+    }
+    return response.json();
+  });
+  
+  try {
+    // Race the fetch against the timeout
+    var data = await Promise.race([fetchPromise, timeoutPromise]);
+    
+    console.log('DreamPrompting API call successful');
+    
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      return {
+        success: true,
+        response: data.choices[0].message.content,
+        model: data.model || 'auto',
+        usage: data.usage || null
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('DreamPrompting API error:', error.message);
+    return null;
+  }
 }
 
 // ============================================
@@ -789,10 +734,10 @@ export default async function handler(req, res) {
       usingAPI = true;
       console.log('DreamPrompting API used successfully');
     } else {
-      formattedResponse = generateFallbackResponse(query, results);
+      formattedResponse = generateFastFallbackResponse(query, results);
       modelUsed = 'research-fallback';
       usingAPI = false;
-      console.log('Using fallback response');
+      console.log('Using fast fallback response');
     }
     
     // Calculate quality score
@@ -823,8 +768,8 @@ export default async function handler(req, res) {
         matches_found: results.length,
         ai_generated: true,
         model: modelUsed,
-        provider: usingAPI ? 'DreamPrompting API' : 'Research Fallback',
-        methodology: 'Systematic Research Framework v3.0',
+        provider: usingAPI ? 'DreamPrompting API' : 'Fast Fallback',
+        methodology: 'Systematic Research Framework v3.0 (Optimized)',
         formatted: true,
         research_methodology: true,
         last_updated: new Date().toISOString(),
