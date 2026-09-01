@@ -4,6 +4,36 @@
   "total_articles": 8,
   "articles": [
     {
+      "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/openclaw-2-0-is-here-what-it-means-for-enterprises",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 6,
+      "hash": "a0032c01",
+      "headings": [
+        "OpenClaw 2.0 is here, ushering in the era of 'multiplayer' AI coding: What it means for enterprises"
+      ],
+      "timestamp": "2026-09-01T12:57:05.817540"
+    },
+    {
+      "title": "Made by VentureBeat with Gemini",
+      "author": "Ananth Packkildurai",
+      "date": "Ananth Packkildurai",
+      "content": "Made by VentureBeat with Gemini",
+      "url": "https://venturebeat.com/orchestration/software-engineers-new-job-isnt-writing-code-its-designing-the-boundaries-ai-agents-cant-break",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "8e7bdcb9",
+      "headings": [
+        "Software engineers' new job isn't writing code — it's designing the boundaries AI agents can't break"
+      ],
+      "timestamp": "2026-09-01T12:57:05.852847"
+    },
+    {
       "title": "Image credit: VentureBeat with ChatGPT",
       "author": "Ben Dickson",
       "date": "Ben Dickson",
@@ -16,7 +46,7 @@
       "headings": [
         "Meta researchers taught an 8B AI model to match Claude Opus 4.5 — without the frontier price tag"
       ],
-      "timestamp": "2026-08-31T15:44:46.853257"
+      "timestamp": "2026-09-01T12:57:05.886548"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -31,7 +61,7 @@
       "headings": [
         "Salesforce just put its entire CRM inside Claude — and says you’ll never need its app again"
       ],
-      "timestamp": "2026-08-31T15:44:46.902894"
+      "timestamp": "2026-09-01T12:57:05.934346"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -46,7 +76,7 @@
       "headings": [
         "Perplexity partners with Nvidia to launch Portable Computer, a fully local AI agent with zero token costs"
       ],
-      "timestamp": "2026-08-31T15:44:46.941952"
+      "timestamp": "2026-09-01T12:57:05.969533"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -61,7 +91,7 @@
       "headings": [
         "Anthropic’s new Claude Tag update lets its Slack agent read the full conversation — and jump in unprompted"
       ],
-      "timestamp": "2026-08-31T15:44:46.980068"
+      "timestamp": "2026-09-01T12:57:06.004771"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -76,7 +106,7 @@
       "headings": [
         "IBM’s next-gen mainframe chip is the first to run Arm and Z workloads on the same cores "
       ],
-      "timestamp": "2026-08-31T15:44:47.017668"
+      "timestamp": "2026-09-01T12:57:06.039981"
     },
     {
       "title": "CleoPtolemy made with Midjourney",
@@ -91,38 +121,8 @@
       "headings": [
         "Enterprise AI agents are only as reliable as the messiest documents behind them"
       ],
-      "timestamp": "2026-08-31T15:44:47.054597"
-    },
-    {
-      "title": "CleoPtolemy made with Midjourney",
-      "author": "Midhula Mariyam Jeevan",
-      "date": "Midhula Mariyam Jeevan",
-      "content": "CleoPtolemy made with Midjourney For much of the past two years, the general belief in enterprise AI has been that more autonomy equals better performance. Build agents that can plan, decide, and act across multi-step workflows, and give them as much room to run as possible. That assumption is now being tested at scale, in real production environments — and in a lot of deployments it's failing. The companies that end up benefiting from agentic AI won't necessarily be the ones that have given their agents the most flexibility. They're the ones who create AI agents with specific responsibilities and make sure they operate within clear rules.",
-      "url": "https://venturebeat.com/orchestration/enterprises-winning-with-ai-agents-are-limiting-how-much-the-agents-can-do-alone",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 107,
-      "hash": "e2c8ceb7",
-      "headings": [
-        "Enterprises winning with AI agents are limiting how much the agents can do alone"
-      ],
-      "timestamp": "2026-08-31T15:44:47.092149"
-    },
-    {
-      "title": "Image credit: VentureBeat with ChatGPT",
-      "author": "Ben Dickson",
-      "date": "Ben Dickson",
-      "content": "Image credit: VentureBeat with ChatGPT",
-      "url": "https://venturebeat.com/technology/nvidia-finds-that-simple-linear-math-can-replace-costly-ai-model-handoffs",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 5,
-      "hash": "719e8899",
-      "headings": [
-        "Nvidia finds that simple linear math can replace costly AI model handoffs"
-      ],
-      "timestamp": "2026-08-31T15:44:47.124573"
+      "timestamp": "2026-09-01T12:57:06.074963"
     }
   ],
-  "last_updated": "2026-08-31T15:44:47.162297"
+  "last_updated": "2026-09-01T12:57:06.113185"
 }
