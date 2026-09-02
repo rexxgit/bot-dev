@@ -1,8 +1,53 @@
 {
   "source": "VentureBeat AI",
   "source_url": "https://venturebeat.com/category/ai/",
-  "total_articles": 8,
+  "total_articles": 7,
   "articles": [
+    {
+      "title": "Image credit: VentureBeat with ChatGPT",
+      "author": "Ben Dickson",
+      "date": "Ben Dickson",
+      "content": "Image credit: VentureBeat with ChatGPT",
+      "url": "https://venturebeat.com/orchestration/frontier-models-can-recover-up-to-65-of-facts-they-cant-directly-recall-just-by-thinking-longer",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "af44748d",
+      "headings": [
+        "Frontier models can recover up to 65% of facts they can't directly recall — just by thinking longer"
+      ],
+      "timestamp": "2026-09-02T12:27:06.947398"
+    },
+    {
+      "title": "VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "VentureBeat made with OpenAI ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/anthropics-claude-fable-5-1-and-mythos-5-1-arrive-with-a-75-cost-reduction-for-fable-cache-reads",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "b4bd4af6",
+      "headings": [
+        "Anthropic's Claude Fable 5.1 and Mythos 5.1 arrive with a 75% cost reduction for Fable cache reads"
+      ],
+      "timestamp": "2026-09-02T12:27:06.980429"
+    },
+    {
+      "title": "Credit: VentureBeat Made with Midjourney",
+      "author": "Michael Nuñez",
+      "date": "Michael Nuñez",
+      "content": "Credit: VentureBeat Made with Midjourney The company says it is the first time an AI agent can begin a task in the cloud and dynamically hand off the confidential portions of that same task to a model running on the user's own hardware, without restarting the job or losing context. The feature becomes available today through Perplexity's desktop app for enterprise customers that opt in, as well as Pro and Max subscribers, on any Apple silicon Mac running macOS 15 or later.",
+      "url": "https://venturebeat.com/orchestration/your-files-stay-put-perplexitys-hybrid-ai-keeps-confidential-data-off-the-cloud",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 82,
+      "hash": "856b6bc9",
+      "headings": [
+        "Your files stay put: Perplexity’s hybrid AI keeps confidential data off the cloud"
+      ],
+      "timestamp": "2026-09-02T12:27:07.017472"
+    },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
       "author": "Carl Franzen",
@@ -16,7 +61,7 @@
       "headings": [
         "OpenClaw 2.0 is here, ushering in the era of 'multiplayer' AI coding: What it means for enterprises"
       ],
-      "timestamp": "2026-09-01T12:57:05.817540"
+      "timestamp": "2026-09-02T12:27:07.059129"
     },
     {
       "title": "Made by VentureBeat with Gemini",
@@ -31,7 +76,7 @@
       "headings": [
         "Software engineers' new job isn't writing code — it's designing the boundaries AI agents can't break"
       ],
-      "timestamp": "2026-09-01T12:57:05.852847"
+      "timestamp": "2026-09-02T12:27:07.092340"
     },
     {
       "title": "Image credit: VentureBeat with ChatGPT",
@@ -46,7 +91,7 @@
       "headings": [
         "Meta researchers taught an 8B AI model to match Claude Opus 4.5 — without the frontier price tag"
       ],
-      "timestamp": "2026-09-01T12:57:05.886548"
+      "timestamp": "2026-09-02T12:27:07.125494"
     },
     {
       "title": "Credit: VentureBeat made with Midjourney",
@@ -61,68 +106,8 @@
       "headings": [
         "Salesforce just put its entire CRM inside Claude — and says you’ll never need its app again"
       ],
-      "timestamp": "2026-09-01T12:57:05.934346"
-    },
-    {
-      "title": "Credit: VentureBeat made with Midjourney",
-      "author": "Michael Nuñez",
-      "date": "Michael Nuñez",
-      "content": "Credit: VentureBeat made with Midjourney The launch, developed in close partnership with Nvidia, is one of the most aggressive attempts yet to move serious AI agent workloads off the cloud and onto local devices. The model, the user's files, and the work itself can all stay on the machine. Work completed locally consumes no billing credits, and the company says every task starts on the device by default — with the system asking permission before sending any individual step to a more powerful frontier model in the cloud.",
-      "url": "https://venturebeat.com/infrastructure/perplexity-partners-with-nvidia-to-launch-portable-computer-a-fully-local-ai-agent-with-zero-token-costs",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 88,
-      "hash": "2996a3e4",
-      "headings": [
-        "Perplexity partners with Nvidia to launch Portable Computer, a fully local AI agent with zero token costs"
-      ],
-      "timestamp": "2026-09-01T12:57:05.969533"
-    },
-    {
-      "title": "Credit: VentureBeat made with Midjourney",
-      "author": "Michael Nuñez",
-      "date": "Michael Nuñez",
-      "content": "Credit: VentureBeat made with Midjourney In an exclusive interview with VentureBeat, Scott White, Anthropic's head of product for enterprise, laid out the company's thesis for what it calls \"multiplayer AI\": a shift away from the single-user chatbot paradigm toward AI agents that operate across teams, read organizational context, and proactively insert themselves into work — sometimes without being asked.",
-      "url": "https://venturebeat.com/orchestration/anthropics-new-claude-tag-update-lets-its-slack-agent-read-the-full-conversation-and-jump-in-unprompted",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 59,
-      "hash": "721163ab",
-      "headings": [
-        "Anthropic’s new Claude Tag update lets its Slack agent read the full conversation — and jump in unprompted"
-      ],
-      "timestamp": "2026-09-01T12:57:06.004771"
-    },
-    {
-      "title": "Credit: VentureBeat made with Midjourney",
-      "author": "Michael Nuñez",
-      "date": "Michael Nuñez",
-      "content": "Credit: VentureBeat made with Midjourney The chip, which will power the next generation of IBM Z and LinuxONE systems, is the first dual-architecture mainframe processor ever built. It is designed to let enterprises run the vast and fast-growing ecosystem of Arm-native Linux software — including the AI frameworks that increasingly define modern infrastructure — directly alongside the z/OS transaction-processing workloads that anchor the world's banks, insurers, and governments.",
-      "url": "https://venturebeat.com/infrastructure/ibms-next-gen-mainframe-chip-is-the-first-to-run-arm-and-z-workloads-on-the-same-cores",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 68,
-      "hash": "f0b0f472",
-      "headings": [
-        "IBM’s next-gen mainframe chip is the first to run Arm and Z workloads on the same cores "
-      ],
-      "timestamp": "2026-09-01T12:57:06.039981"
-    },
-    {
-      "title": "CleoPtolemy made with Midjourney",
-      "author": "Shuhua Xu",
-      "date": "Shuhua Xu",
-      "content": "CleoPtolemy made with Midjourney Enterprise AI has largely been built around context engineering. Teams connect enterprise systems, generate chunks and embeddings, build retrieval pipelines, and assemble the context needed by individual AI applications. While this approach works well for isolated assistants and copilots, it treats enterprise knowledge as application-specific context rather than a shared enterprise asset.",
-      "url": "https://venturebeat.com/orchestration/enterprise-ai-agents-are-only-as-reliable-as-the-messiest-documents-behind-them",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 56,
-      "hash": "bbc5cc3f",
-      "headings": [
-        "Enterprise AI agents are only as reliable as the messiest documents behind them"
-      ],
-      "timestamp": "2026-09-01T12:57:06.074963"
+      "timestamp": "2026-09-02T12:27:07.170572"
     }
   ],
-  "last_updated": "2026-09-01T12:57:06.113185"
+  "last_updated": "2026-09-02T12:27:07.207989"
 }
