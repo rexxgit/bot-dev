@@ -4,6 +4,21 @@
   "total_articles": 7,
   "articles": [
     {
+      "title": "Credit: VentureBeat made with OpenAI-ChatGPT-Images-2.0",
+      "author": "Carl Franzen",
+      "date": "Carl Franzen",
+      "content": "Credit: VentureBeat made with OpenAI-ChatGPT-Images-2.0",
+      "url": "https://venturebeat.com/technology/meta-prices-muse-voice-transcribe-at-0-18-an-hour-with-real-time-diarization-for-20-speakers-a-steal-for-enterprises",
+      "source_name": "VentureBeat",
+      "source_type": "blog",
+      "word_count": 5,
+      "hash": "2593c61a",
+      "headings": [
+        "Meta prices Muse Voice Transcribe at $0.18 an hour, with real-time diarization for 20+ speakers: a steal for enterprises?"
+      ],
+      "timestamp": "2026-09-03T12:27:23.052034"
+    },
+    {
       "title": "Image credit: VentureBeat with ChatGPT",
       "author": "Ben Dickson",
       "date": "Ben Dickson",
@@ -16,7 +31,7 @@
       "headings": [
         "Frontier models can recover up to 65% of facts they can't directly recall — just by thinking longer"
       ],
-      "timestamp": "2026-09-02T12:27:06.947398"
+      "timestamp": "2026-09-03T12:27:23.095997"
     },
     {
       "title": "VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -31,7 +46,7 @@
       "headings": [
         "Anthropic's Claude Fable 5.1 and Mythos 5.1 arrive with a 75% cost reduction for Fable cache reads"
       ],
-      "timestamp": "2026-09-02T12:27:06.980429"
+      "timestamp": "2026-09-03T12:27:23.126920"
     },
     {
       "title": "Credit: VentureBeat Made with Midjourney",
@@ -46,7 +61,7 @@
       "headings": [
         "Your files stay put: Perplexity’s hybrid AI keeps confidential data off the cloud"
       ],
-      "timestamp": "2026-09-02T12:27:07.017472"
+      "timestamp": "2026-09-03T12:27:23.162503"
     },
     {
       "title": "Credit: VentureBeat made with OpenAI ChatGPT-Images-2.0",
@@ -61,7 +76,7 @@
       "headings": [
         "OpenClaw 2.0 is here, ushering in the era of 'multiplayer' AI coding: What it means for enterprises"
       ],
-      "timestamp": "2026-09-02T12:27:07.059129"
+      "timestamp": "2026-09-03T12:27:23.201952"
     },
     {
       "title": "Made by VentureBeat with Gemini",
@@ -76,7 +91,7 @@
       "headings": [
         "Software engineers' new job isn't writing code — it's designing the boundaries AI agents can't break"
       ],
-      "timestamp": "2026-09-02T12:27:07.092340"
+      "timestamp": "2026-09-03T12:27:23.233451"
     },
     {
       "title": "Image credit: VentureBeat with ChatGPT",
@@ -91,23 +106,8 @@
       "headings": [
         "Meta researchers taught an 8B AI model to match Claude Opus 4.5 — without the frontier price tag"
       ],
-      "timestamp": "2026-09-02T12:27:07.125494"
-    },
-    {
-      "title": "Credit: VentureBeat made with Midjourney",
-      "author": "Michael Nuñez",
-      "date": "Michael Nuñez",
-      "content": "Credit: VentureBeat made with Midjourney The centerpiece of the announcement is Salesforce in Claude, a plugin for Anthropic's Claude CoWork that ships with 37 pre-built sales skills — covering meeting preparation, deal health reviews, and pipeline analysis — and lets sellers query, update, and act on live CRM data without ever opening Salesforce itself. The product is available to select pilot customers today, with an open beta planned for September and additional skills for other business functions beginning to launch in the third quarter.",
-      "url": "https://venturebeat.com/orchestration/salesforce-just-put-its-entire-crm-inside-claude-and-says-youll-never-need-its-app-again",
-      "source_name": "VentureBeat",
-      "source_type": "blog",
-      "word_count": 84,
-      "hash": "40cdbdc2",
-      "headings": [
-        "Salesforce just put its entire CRM inside Claude — and says you’ll never need its app again"
-      ],
-      "timestamp": "2026-09-02T12:27:07.170572"
+      "timestamp": "2026-09-03T12:27:23.265764"
     }
   ],
-  "last_updated": "2026-09-02T12:27:07.207989"
+  "last_updated": "2026-09-03T12:27:23.310596"
 }
